@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Project Monitor</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_main_pager">MainPagerActivity</string>
+    <string name="title_activity_claim_and_invoice_pager">ClaimAndInvoicePagerActivity</string>
+    <string name="wifi_not_connected">WIFI not connected. Please connect to WIFI so that data can be downloaded to your device</string>
+
+</resources>

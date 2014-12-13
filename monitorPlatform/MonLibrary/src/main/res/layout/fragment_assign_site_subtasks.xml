@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/SUBSTAT_handle"
+        android:padding="@dimen/mon_divider"
+        android:background="@color/beige_pale"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/SUBSTAT_title2"
+            style="@style/Title3TextStyleBlack"
+            android:text="Sub Task Status"
+            android:layout_marginLeft="@dimen/mon_widest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/SUBSTAT_middle"
+        android:layout_below="@id/SUBSTAT_handle"
+        android:background="@color/white"
+        android:padding="@dimen/mon_padding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/SUBSTAT_taskName"
+            android:text="Task name here"
+            style="@style/Title2TextStyleBlue"
+            android:layout_marginLeft="@dimen/mon_widest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_below="@id/SUBSTAT_middle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/SUBSTAT_list"
+
+            android:dividerHeight="@dimen/mon_divider"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/SUBSTAT_number"
+        style="@style/GreyCircle"
+        android:text="+"
+        android:layout_marginTop="@dimen/mon_wide"
+        android:layout_marginLeft="@dimen/mon_margin"
+        android:layout_alignParentLeft="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+</RelativeLayout>
