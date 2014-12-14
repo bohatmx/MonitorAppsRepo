@@ -70,6 +70,10 @@ public class RequestSyncService extends IntentService {
             for (RequestCacheEntry e : requestCache.getRequestCacheEntryList()) {
                 list.getRequests().add(e.getRequest());
             }
+            if (list.getRequests().isEmpty()) {
+                Log.d(LOG,"#### no requests cached, quitting...");
+                return;
+            }
             Log.w(LOG, "### sending list of cached requests: " + list.getRequests().size());
             WebSocketUtilForRequests.sendRequest(getApplicationContext(), list, new WebSocketUtilForRequests.WebSocketListener() {
                 @Override

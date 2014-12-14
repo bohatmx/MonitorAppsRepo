@@ -22,14 +22,14 @@
         -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyBG9wbuf9x0ipJt4gf2OAm_LY-4zqw8ymg" />
+            android:value="AIzaSyCsgtnrR5JXX_w5jTYIZiFZv7aZX52iwgo" />
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="1413591595584751" />
 
         <activity
             android:name=".RegistrationActivity"
-            android:label="@string/app_name" >
+            android:label="@string/operations_app" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

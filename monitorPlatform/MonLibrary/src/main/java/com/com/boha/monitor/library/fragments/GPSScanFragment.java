@@ -142,12 +142,14 @@ public class GPSScanFragment extends Fragment implements PageFragment {
                 });
             }
         });
+
         txtAccuracy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Util.flashOnce(txtAccuracy,100,new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
+                        if (projectSite.getAccuracy() == null) return;
                         if (projectSite.getAccuracy() == seekBar.getProgress()
                                 || projectSite.getAccuracy() < seekBar.getProgress()) {
 
@@ -239,6 +241,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         RequestCacheUtil.addRequest(ctx, w, new CacheUtil.CacheRequestListener() {
             @Override
             public void onDataCached() {
+                if (projectSite == null) return;
                 projectSite.setLocationConfirmed(1);
                 Util.showToast(ctx, getString(R.string.location_confirmed));
             }

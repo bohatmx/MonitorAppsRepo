@@ -69,6 +69,8 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     View view;
     ImageView imgLogo, imgSearch1, imgSearch2;
     EditText editSearch;
+    public static final int PROJECT_TYPE = 1, OPERATIONS_TYPE = 2;
+    int type;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,11 +81,12 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.w(LOG,"######### onCreateView");
+        Log.w(LOG,"######### onCreateView... ");
 
         view = inflater.inflate(R.layout.fragment_project, container, false);
         this.inflater = inflater;
         ctx = getActivity();
+        //set fields
         topView = view.findViewById(R.id.topTop);
         imgLogo = (ImageView) view.findViewById(R.id.PROJ_LIST_img);
         txtStatusCount = (TextView) view.findViewById(R.id.HERO_P_statusCount);
@@ -128,11 +131,19 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         if (b != null) {
             Log.w(LOG,"######### onCreateView getArguments not null ...");
             ResponseDTO r = (ResponseDTO) b.getSerializable("response");
+            type = b.getInt("type", PROJECT_TYPE);
             if (r.getCompany() != null) {
                 projectList = r.getCompany().getProjectList();
                 statusCountInPeriod = r.getStatusCountInPeriod();
             } else {
                 Log.e(LOG,"-----------------> ERROR company frome getArguments is null");
+            }
+            switch (type) {
+                case OPERATIONS_TYPE:
+                    break;
+                case PROJECT_TYPE:
+                    heroImage.setImageDrawable(ctx.getResources().getDrawable(R.drawable.banner_construction11));
+                    break;
             }
         }
 

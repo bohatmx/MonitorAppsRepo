@@ -60,6 +60,7 @@ import com.com.boha.monitor.library.fragments.SiteTaskAndStatusAssignmentFragmen
 import com.com.boha.monitor.library.fragments.StaffListFragment;
 import com.com.boha.monitor.library.fragments.TaskListFragment;
 import com.com.boha.monitor.library.fragments.TaskStatusListFragment;
+import com.com.boha.monitor.library.services.RequestSyncService;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
@@ -177,33 +178,37 @@ public class OperationsPagerActivity extends ActionBarActivity
                     @Override
                     public void run() {
                         progressBar.setVisibility(View.GONE);
+
                         if (!ErrorUtil.checkServerError(ctx, r)) {
                             return;
                         }
                         response = r;
                         projectList = r.getCompany().getProjectList();
-                        Log.d(LOG,"##### got meself a list of projects: " + projectList.size());
+                        Log.d(LOG,"##### got myself a list of projects: " + projectList.size());
                         buildPages();
 
+                        CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
+                            @Override
+                            public void onFileDataDeserialized(ResponseDTO response) {
+
+                            }
+
+                            @Override
+                            public void onDataCached() {
+                                Intent i = new Intent(getApplicationContext(), RequestSyncService.class);
+                                startService(i);
+                            }
+
+                            @Override
+                            public void onError() {
+
+                            }
+                        });
+
                     }
                 });
 
-                CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
-                    @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
 
-                    }
-
-                    @Override
-                    public void onDataCached() {
-
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
             }
 
             @Override
@@ -439,7 +444,12 @@ public class OperationsPagerActivity extends ActionBarActivity
             return true;
         }
         if (id == R.id.action_refresh) {
-            getCompanyData();
+            WebCheckResult r = WebCheck.checkNetworkAvailability(ctx);
+            if (r.isWifiConnected()) {
+                getCompanyData();
+            } else {
+                Util.showToast(ctx, ctx.getString(R.string.wifi_not_connected));
+            }
             return true;
         }
         if (id == R.id.action_gallery) {
@@ -459,6 +469,7 @@ public class OperationsPagerActivity extends ActionBarActivity
             projectListFragment = new ProjectListFragment();
             Bundle data1 = new Bundle();
             data1.putSerializable("response", response);
+            data1.putInt("type", ProjectListFragment.OPERATIONS_TYPE);
             projectListFragment.setArguments(data1);
 
             staffListFragment = new StaffListFragment();

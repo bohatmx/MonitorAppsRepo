@@ -180,9 +180,10 @@ public class ProjectPagerActivity extends ActionBarActivity
 
                         if (projectListFragment != null)
                             projectListFragment.stopRotatingLogo();
-                        Log.e(LOG, "############# getCompanyData responded...statusCode: " + r.getStatusCode());
+                        Log.e(LOG, "## getCompanyData responded...statusCode: " + r.getStatusCode());
                         response = r;
                         buildPages();
+                        //cache company data
                         CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
@@ -191,7 +192,9 @@ public class ProjectPagerActivity extends ActionBarActivity
 
                             @Override
                             public void onDataCached() {
-
+                                Log.i(LOG, "** companyData cached, about to start requestSyncService....");
+                               Intent i = new Intent(getApplicationContext(),RequestSyncService.class);
+                               startService(i);
                             }
 
                             @Override
@@ -200,9 +203,7 @@ public class ProjectPagerActivity extends ActionBarActivity
                             }
                         });
 
-                        //upload pending requests
-                        Intent i = new Intent(getApplicationContext(),RequestSyncService.class);
-                        startService(i);
+
                     }
                 });
 
@@ -291,6 +292,7 @@ public class ProjectPagerActivity extends ActionBarActivity
             projectListFragment = new ProjectListFragment();
             Bundle data1 = new Bundle();
             data1.putSerializable("response", response);
+            data1.putInt("type", ProjectListFragment.PROJECT_TYPE);
             projectListFragment.setArguments(data1);
 
             statusReportFragment = new StatusReportFragment();
