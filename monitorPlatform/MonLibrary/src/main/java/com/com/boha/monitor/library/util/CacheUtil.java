@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.services.RequestCache;
@@ -32,24 +33,36 @@ public class CacheUtil {
 
         public void onError();
     }
+
     public interface CacheRequestListener {
         public void onDataCached();
+
         public void onRequestCacheReturned(RequestCache cache);
+
+        public void onError();
+    }
+
+    public interface CacheSiteListener {
+        public void onSiteReturnedFromCache(ProjectSiteDTO site);
+        public void onDataCached();
         public void onError();
     }
 
     static CacheUtilListener utilListener;
     static CacheRequestListener cacheListener;
-    public static final int CACHE_DATA = 1, CACHE_COUNTRIES = 3,
+    static CacheSiteListener siteListener;
+    public static final int CACHE_DATA = 1, CACHE_COUNTRIES = 3, CACHE_SITE = 7,
             CACHE_PHOTOS = 4, CACHE_PROJECT = 5, CACHE_REQUEST = 6;
     static int dataType;
     static Integer projectID;
     static ResponseDTO response;
+    static ProjectSiteDTO projectSite;
+    static Integer projectSiteID;
     static Context ctx;
     static RequestCache requestCache;
     static final String JSON_DATA = "data.json", JSON_COUNTRIES = "countries.json",
             JSON_PROJECT_DATA = "project_data", JSON_PHOTO = "photos.json",
-            JSON_REQUEST = "requestCache.json";
+            JSON_REQUEST = "requestCache.json", JSON_SITE = "site";
 
 
     public static void cacheRequest(Context context, RequestCache cache, CacheRequestListener listener) {
@@ -79,12 +92,24 @@ public class CacheUtil {
         new CacheTask().execute();
     }
 
+    public static void cacheSiteData(Context context, ProjectSiteDTO r,
+                                     CacheSiteListener l) {
+        dataType = CACHE_SITE;
+        projectSite = r;
+        response.setLastCacheDate(new Date());
+        siteListener = l;
+        projectSiteID = r.getProjectSiteID();
+        ctx = context;
+        new CacheTask().execute();
+    }
+
     public static void getCachedData(Context context, int type, CacheUtilListener cacheUtilListener) {
         dataType = type;
         utilListener = cacheUtilListener;
         ctx = context;
         new CacheRetrieveTask().execute();
     }
+
     public static void getCachedRequests(Context context, CacheRequestListener listener) {
         dataType = CACHE_REQUEST;
         cacheListener = listener;
@@ -101,6 +126,15 @@ public class CacheUtil {
         new CacheRetrieveTask().execute();
     }
 
+    public static void getCachedSiteData(Context context, Integer id, CacheSiteListener l) {
+        Log.d(LOG, "################ getting cached site data ..................");
+        dataType = CACHE_SITE;
+        siteListener = l;
+        ctx = context;
+        projectSiteID = id;
+        new CacheRetrieveSiteTask().execute();
+    }
+
 
     static class CacheTask extends AsyncTask<Void, Void, Integer> {
 
@@ -112,7 +146,7 @@ public class CacheUtil {
             try {
                 switch (dataType) {
                     case CACHE_REQUEST:
-                        Log.w(LOG,"## before caching request file, list: " + requestCache.getRequestCacheEntryList().size());
+                        Log.w(LOG, "## before caching request file, list: " + requestCache.getRequestCacheEntryList().size());
                         json = gson.toJson(requestCache);
                         outputStream = ctx.openFileOutput(JSON_REQUEST, Context.MODE_PRIVATE);
                         write(outputStream, json);
@@ -129,6 +163,16 @@ public class CacheUtil {
                         file = ctx.getFileStreamPath(JSON_PROJECT_DATA + projectID + ".json");
                         if (file != null) {
                             Log.e(LOG, "......Project cache json written to disk,  - path: " + file.getAbsolutePath() +
+                                    " - length: " + file.length());
+                        }
+                        break;
+                    case CACHE_SITE:
+                        json = gson.toJson(projectSite);
+                        outputStream = ctx.openFileOutput(JSON_SITE + projectSiteID + ".json", Context.MODE_PRIVATE);
+                        write(outputStream, json);
+                        file = ctx.getFileStreamPath(JSON_SITE + projectSiteID + ".json");
+                        if (file != null) {
+                            Log.e(LOG, "......Site cache json written to disk,  - path: " + file.getAbsolutePath() +
                                     " - length: " + file.length());
                         }
                         break;
@@ -237,7 +281,7 @@ public class CacheUtil {
                 }
 
             } catch (FileNotFoundException e) {
-                Log.d(LOG,"############# cache file not found. not initialised yet. no problem, creating responseDTO");
+                Log.d(LOG, "############# cache file not found. not initialised yet. no problem, creating responseDTO");
                 if (dataType == CACHE_PHOTOS) {
                     response = new ResponseDTO();
                     PhotoCache pc = new PhotoCache();
@@ -259,12 +303,56 @@ public class CacheUtil {
                 Log.i(LOG, "$$$$$$$$$$$$ cached data retrieved");
                 utilListener.onFileDataDeserialized(v);
             } else {
-                Log.e(LOG,"------ No cache, util returns null response object");
+                Log.e(LOG, "------ No cache, util returns null response object");
                 utilListener.onError();
             }
 
         }
     }
+
+    static class CacheRetrieveSiteTask extends AsyncTask<Void, Void, ProjectSiteDTO> {
+
+        private ProjectSiteDTO getData(FileInputStream stream) throws IOException {
+            String json = getStringFromInputStream(stream);
+            ProjectSiteDTO response = gson.fromJson(json, ProjectSiteDTO.class);
+            return response;
+        }
+
+        @Override
+        protected ProjectSiteDTO doInBackground(Void... voids) {
+            ProjectSiteDTO site = null;
+            FileInputStream stream;
+            try {
+
+                stream = ctx.openFileInput(JSON_SITE + projectSiteID + ".json");
+                site = getData(stream);
+
+
+            } catch (FileNotFoundException e) {
+                Log.d(LOG, "############# cache file not found. not initialised yet. no problem");
+
+
+            } catch (IOException e) {
+                Log.v(LOG, "------------ Failed to retrieve cache", e);
+            }
+
+            return site;
+        }
+
+        @Override
+        protected void onPostExecute(ProjectSiteDTO result) {
+            if (siteListener == null) return;
+            if (result != null) {
+                Log.i(LOG, "$$$$$$$$$$$$ cached data retrieved");
+                siteListener.onSiteReturnedFromCache(result);
+            } else {
+                Log.e(LOG, "------ No cache, util returns null site object");
+                siteListener.onError();
+            }
+
+        }
+    }
+
     static class CacheRetrieveRequestTask extends AsyncTask<Void, Void, RequestCache> {
 
         private RequestCache getData(FileInputStream stream) throws IOException {
@@ -282,7 +370,7 @@ public class CacheUtil {
                 cache = getData(stream);
 
             } catch (FileNotFoundException e) {
-                Log.d(LOG,"############# cache file not found. not initialised yet. no problem, creating new cache");
+                Log.d(LOG, "############# cache file not found. not initialised yet. no problem, creating new cache");
                 cache = new RequestCache();
 
             } catch (IOException e) {
@@ -298,7 +386,7 @@ public class CacheUtil {
             if (v != null) {
                 cacheListener.onRequestCacheReturned(v);
             } else {
-                Log.e(LOG,"------ No cache, util returns null response object");
+                Log.e(LOG, "------ No cache, util returns null response object");
                 cacheListener.onError();
             }
 

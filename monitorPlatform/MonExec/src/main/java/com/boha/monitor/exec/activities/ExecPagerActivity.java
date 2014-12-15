@@ -34,7 +34,6 @@ import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.fragments.PageFragment;
 import com.com.boha.monitor.library.fragments.ProjectListFragment;
 import com.com.boha.monitor.library.fragments.StatusReportFragment;
-import com.com.boha.monitor.library.services.RequestSyncService;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
@@ -193,9 +192,9 @@ public class ExecPagerActivity extends ActionBarActivity implements
 
                             @Override
                             public void onDataCached() {
-                                Log.i(LOG, "** companyData cached, about to start requestSyncService....");
-                                Intent i = new Intent(getApplicationContext(), RequestSyncService.class);
-                                startService(i);
+//                                Log.i(LOG, "** companyData cached, about to start requestSyncService....");
+//                                Intent i = new Intent(getApplicationContext(), RequestSyncService.class);
+//                                startService(i);
                             }
 
                             @Override

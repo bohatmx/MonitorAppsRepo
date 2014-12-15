@@ -66,25 +66,25 @@ public class TaskStatusAdapter extends ArrayAdapter<TaskStatusDTO> {
         if (isSmallIcons) {
             switch (color) {
                 case TaskStatusDTO.STATUS_COLOR_GREEN:
-                    item.txtNumber.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xgreen_oval_small));
+                    item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval_small));
                     break;
                 case TaskStatusDTO.STATUS_COLOR_RED:
-                    item.txtNumber.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
+                    item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
                     break;
                 case TaskStatusDTO.STATUS_COLOR_YELLOW:
-                    item.txtNumber.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
+                    item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
                     break;
             }
         } else {
             switch (color) {
                 case TaskStatusDTO.STATUS_COLOR_GREEN:
-                    item.txtNumber.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xgreen_oval));
+                    item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval));
                     break;
                 case TaskStatusDTO.STATUS_COLOR_RED:
-                    item.txtNumber.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xred_oval));
+                    item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval));
                     break;
                 case TaskStatusDTO.STATUS_COLOR_YELLOW:
-                    item.txtNumber.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xorange_oval));
+                    item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval));
                     break;
             }
         }

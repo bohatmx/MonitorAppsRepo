@@ -17,6 +17,7 @@ import android.widget.ListPopupWindow;
 import android.widget.TextView;
 
 import com.boha.monitor.exec.R;
+import com.boha.monitor.exec.activities.ExecStatusReportActivity;
 import com.boha.monitor.exec.adapters.ProjectExecAdapter;
 import com.com.boha.monitor.library.MonitorMapActivity;
 import com.com.boha.monitor.library.adapters.ExecStatusListAdapter;
@@ -66,18 +67,19 @@ public class ExecProjectGridFragment extends Fragment implements PageFragment{
 
     public void refreshData(ResponseDTO response) {
         projectList = response.getCompany().getProjectList();
-        txtCount.setText("" + projectList.size());
+
         setGrid();
     }
     private void setGrid() {
         adapter = new ProjectExecAdapter(ctx,R.layout.project_item, projectList);
-
+        txtCount.setText("" + projectList.size());
         grid.setPadding(2, 2, 2, 2);
         grid.setAdapter(adapter);
         grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 project = projectList.get(position);
+                //setup list for pop
                 final List<String> list = new ArrayList<String>();
                 list.add(ctx.getString(R.string.site_list));
                 list.add(ctx.getString(R.string.quick_status));
@@ -105,7 +107,9 @@ public class ExecProjectGridFragment extends Fragment implements PageFragment{
 
                         }
                         if (list.get(position).equalsIgnoreCase(ctx.getString(R.string.status_reports))) {
-
+                            Intent i = new Intent(getActivity(), ExecStatusReportActivity.class);
+                            i.putExtra("project",project);
+                            startActivity(i);
                         }
                         if (list.get(position).equalsIgnoreCase(ctx.getString(R.string.project_map))) {
                             Intent i = new Intent(ctx, MonitorMapActivity.class);
@@ -132,13 +136,12 @@ public class ExecProjectGridFragment extends Fragment implements PageFragment{
 
         ListPopupWindow win = new ListPopupWindow(ctx);
         win.setAnchorView(txtTitle);
-        win.setPromptView(Util.getHeroView(ctx,project.getProjectName()));
+        win.setPromptView(Util.getHeroView(ctx, project.getProjectName()));
         win.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
         win.setWidth(360);
         win.setHorizontalOffset(100);
 
         win.setAdapter(new ExecStatusListAdapter(ctx,R.layout.quick_status, project.getProjectSiteTaskStatusList()));
-
         win.show();
     }
     private void setFields() {
@@ -176,6 +179,7 @@ public class ExecProjectGridFragment extends Fragment implements PageFragment{
         }
         if (!found) {
            Util.showToast(ctx,ctx.getString(R.string.no_projects) + editSearch.getText().toString());
+
         } else {
             grid.setSelection(index);
         }
@@ -209,19 +213,11 @@ public class ExecProjectGridFragment extends Fragment implements PageFragment{
 
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface ExecProjectGridFragmentListener {
         public void onStatusCountClicked(ProjectDTO project);
     }
+
+
     ExecProjectGridFragmentListener listener;
     ProjectDTO project;
     List<ProjectDTO> projectList;

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/EXEC_STAT_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/EXEC_STAT_hero"
+            android:src="@drawable/banner_meeting3"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mon_hero_height_medium" />
+        <TextView
+            android:id="@+id/EXEC_STAT_caption"
+            android:text="@string/project_status"
+            style="@style/Title1TextStyleBlue"
+            android:textColor="@color/white"
+            android:layout_marginTop="@dimen/mon_widest"
+            android:layout_marginLeft="@dimen/mon_wide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/EXEC_STAT_lights"
+        android:layout_below="@id/EXEC_STAT_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/traffic_lights" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_below="@id/EXEC_STAT_lights"
+        android:orientation="horizontal"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <fragment
+            android:id="@+id/EXEC_STAT_fragment1"
+            android:name="com.com.boha.monitor.library.fragments.ExecProjectSiteListFragment"
+            android:layout_weight="2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+        <fragment
+            android:id="@+id/EXEC_STAT_fragment2"
+            android:name="com.com.boha.monitor.library.fragments.ExecProjectSiteStatusListFragment"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+
+    </LinearLayout>
+</RelativeLayout>

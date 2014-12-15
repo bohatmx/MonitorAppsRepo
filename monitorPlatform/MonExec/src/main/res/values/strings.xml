@@ -16,5 +16,6 @@
     <string name="net_unavailable">WIFI is not available. Please connect to a WIFI network in order to receive data and updates.</string>
     <string name="no_projects">"No projects found with the name: "</string>
     <string name="quick_status">Quick Status</string>
+    <string name="title_activity_exec_status_report">ExecStatusReportActivity</string>
 
 </resources>

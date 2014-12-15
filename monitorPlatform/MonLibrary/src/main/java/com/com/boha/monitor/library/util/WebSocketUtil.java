@@ -76,13 +76,9 @@ public class WebSocketUtil {
 
 
         } catch (WebsocketNotConnectedException e) {
-            try {
-                Log.e(LOG, "WebsocketNotConnectedException. Problems with web socket", e);
-                connectWebSocket(suffix);
-            } catch (URISyntaxException e1) {
                 Log.e(LOG, "Problems with web socket", e);
-                webSocketListener.onError("Problem starting server socket communications\n" + e1.getMessage());
-            }
+                webSocketListener.onError("Problem starting server socket communications\n");
+
         } catch (URISyntaxException e) {
             Log.e(LOG, "Problems with web socket", e);
             webSocketListener.onError("Problem starting server socket communications");

@@ -31,8 +31,6 @@ public class RequestSyncService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.e(LOG, "### RequestSyncService onHandleIntent");
-
-
         CacheUtil.getCachedRequests(getApplicationContext(), new CacheUtil.CacheRequestListener() {
             @Override
             public void onDataCached() {
