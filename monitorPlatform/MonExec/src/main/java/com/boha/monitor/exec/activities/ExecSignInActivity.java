@@ -1,4 +1,4 @@
-package com.boha.monitor.pmanager;
+package com.boha.monitor.exec.activities;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.boha.monitor.exec.R;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
 import com.com.boha.monitor.library.dto.GcmDeviceDTO;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
@@ -39,7 +40,7 @@ import java.util.ArrayList;
 import static com.com.boha.monitor.library.util.Util.showErrorToast;
 import static com.com.boha.monitor.library.util.Util.showToast;
 
-public class SignInActivity extends Activity {
+public class ExecSignInActivity extends Activity {
 
     Spinner spinnerEmail;
     TextView txtApp, txtEmail;
@@ -51,13 +52,13 @@ public class SignInActivity extends Activity {
     ProgressBar progressBar;
 
     GcmDeviceDTO gcmDevice;
-    static final String LOG = SignInActivity.class.getSimpleName();
+    static final String LOG = ExecSignInActivity.class.getSimpleName();
     Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sign_in);
+        setContentView(R.layout.exec_sign_in);
         ctx = getApplicationContext();
         activity = this;
         banner = (ImageView)findViewById(R.id.SI_banner);
@@ -81,7 +82,7 @@ public class SignInActivity extends Activity {
                 registerGCMDevice();
             }
 
-            Intent intent = new Intent(ctx, ProjectPagerActivity.class);
+            Intent intent = new Intent(ctx, ExecPagerActivity.class);
             startActivity(intent);
             //
             finish();
@@ -120,7 +121,7 @@ public class SignInActivity extends Activity {
 //validate
         WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
         if (!wcr.isWifiConnected()) {
-            Util.showToast(ctx,ctx.getString(R.string.wifi_not_available));
+            Util.showToast(ctx,getString(R.string.net_unavailable));
             return;
         }
         if (ePin.getText().toString().isEmpty()) {
@@ -152,7 +153,7 @@ public class SignInActivity extends Activity {
 
                         SharedUtil.saveCompany(ctx, response.getCompany());
                         SharedUtil.saveCompanyStaff(ctx, response.getCompanyStaff());
-                        Intent intent = new Intent(ctx, ProjectPagerActivity.class);
+                        Intent intent = new Intent(ctx, ExecPagerActivity.class);
                         startActivity(intent);
 
                         CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
@@ -248,8 +249,6 @@ public class SignInActivity extends Activity {
                 .isGooglePlayServicesAvailable(ctx);
         if (resultCode != ConnectionResult.SUCCESS) {
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                // GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-                //         PLAY_SERVICES_RESOLUTION_REQUEST).show();
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.gms")));
                 return false;
             } else {
@@ -261,8 +260,7 @@ public class SignInActivity extends Activity {
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.sign_in, menu);
+        getMenuInflater().inflate(R.menu.menu_exec_pager, menu);
         mMenu = menu;
         return true;
     }

@@ -17,12 +17,13 @@
             android:id="@+id/hero_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <include layout="@layout/hero_image_project" />
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/PROJ_LIST_layoutx"
-            android:padding="@dimen/mon_padding"
+            android:padding="@dimen/mon_divider"
             android:layout_below="@id/hero_layout"
             android:background="@color/beige_pale"
             android:layout_width="match_parent"
@@ -51,7 +52,6 @@
             android:id="@+id/PROJ_LIST_layoutStatus"
             android:layout_below="@id/PROJ_LIST_layoutx"
             android:background="@color/beige_pale"
-            android:padding="@dimen/mon_padding"
             android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -67,6 +67,7 @@
                     android:text="Find Something"
                     android:layout_alignParentLeft="true"
                     android:tint="@color/blue"
+                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 

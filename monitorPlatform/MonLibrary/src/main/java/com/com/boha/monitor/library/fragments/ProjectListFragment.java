@@ -136,7 +136,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                 projectList = r.getCompany().getProjectList();
                 statusCountInPeriod = r.getStatusCountInPeriod();
             } else {
-                Log.e(LOG,"-----------------> ERROR company frome getArguments is null");
+                Log.e(LOG,"-----------------> ERROR company from getArguments is null");
             }
             switch (type) {
                 case OPERATIONS_TYPE:

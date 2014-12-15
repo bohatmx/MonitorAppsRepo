@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MonitorPlatform</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_exec_pager">ExecPagerActivity</string>
+    <string name="site_list">Site List</string>
+    <string name="claims_invoices"><![CDATA[Claims & Invoices]]></string>
+    <string name="status_reports">Status Report</string>
+    <string name="project_map">Project Map</string>
+    <string name="net_unavailable">WIFI is not available. Please connect to a WIFI network in order to receive data and updates.</string>
+    <string name="no_projects">"No projects found with the name: "</string>
+    <string name="quick_status">Quick Status</string>
+
+</resources>

@@ -11,6 +11,13 @@
         <item>Engineers</item>
         <item>Beneficiaries</item>
     </string-array>
+    <string-array name="exec_action_items">
+        <item>Projects</item>
+        <item>Staff</item>
+        <item>Clients</item>
+        <item>Task Status</item>
+        <item>Beneficiaries</item>
+    </string-array>
 
     <string name="pay_mobile">Payment via Mobile</string>
     <string name="pay_credit">Payment via Google Play</string>
@@ -320,5 +327,6 @@
     <string name="connect_wifi">Please connect your device to WIFI. Data will be downloaded to your device.</string>
     <string name="cache_uploaded">Status and other data uploaded to office</string>
     <string name="no_networks">Network connections unavailable</string>
+    <string name="status_report">Status Report</string>
 
 </resources>

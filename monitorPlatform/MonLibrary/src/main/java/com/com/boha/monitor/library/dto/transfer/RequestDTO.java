@@ -176,7 +176,8 @@ public class RequestDTO implements Serializable {
             REPORT_PROJECT = 601,
             REPORT_SITE = 602,
             GET_PROJECT_STATUS_LIST = 603,
-            GET_PROJECT_SITE_STATUS_LIST = 604;
+            GET_PROJECT_SITE_STATUS_LIST = 604,
+            GET_EXEC_COMPANY_DATA = 605;
 
 
     public static final String COMPANY_DIR = "company";

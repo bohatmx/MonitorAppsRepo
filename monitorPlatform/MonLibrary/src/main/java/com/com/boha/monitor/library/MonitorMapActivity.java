@@ -53,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class MonitorMapActivity extends ActionBarActivity
         implements LocationListener,
@@ -246,15 +247,18 @@ public class MonitorMapActivity extends ActionBarActivity
             }
         });
     }
+    Random random = new Random(System.currentTimeMillis());
     private void setProjectMarkers() {
 
         googleMap.clear();
         LatLng point = null;
-        int index = 0, count = 0;
+        int index = 0, count = 0, randomIndex = 0;
+        randomIndex = random.nextInt(project.getProjectSiteList().size() - 1);
+        if (randomIndex == -1) randomIndex = 0;
         for (ProjectSiteDTO site : project.getProjectSiteList()) {
             if (site.getLatitude() == null) continue;;
             LatLng pnt = new LatLng(site.getLatitude(), site.getLongitude());
-            if (index == 0) {
+            if (index == randomIndex) {
                 point = pnt;
             }
             BitmapDescriptor desc = null;
@@ -325,27 +329,29 @@ public class MonitorMapActivity extends ActionBarActivity
     List<String> list;
     private void showPopup(final double lat, final double lng, String title) {
         list = new ArrayList<>();
-        list.add("Directions");
-        list.add("Status Report");
+        list.add(ctx.getString(R.string.directions));
+        list.add(getString(R.string.status_report));
+        list.add(getString(R.string.site_gallery));
         if (projectSite != null) {
-            if (projectSite.getLocationConfirmed() == null) {
+            if (projectSite.getLocationConfirmed() == null
+                    && projectSite.getLatitude() != null) {
                 list.add(getString(R.string.confirm_gps));
             }
         }
         Util.showPopupBasicWithHeroImage(ctx,this,list,topLayout,ctx.getString(R.string.select_action),new Util.UtilPopupListener() {
             @Override
             public void onItemSelected(int index) {
-                switch (index) {
-                    case 0:
-                        startDirectionsMap(lat, lng);
-                        break;
-                    case 1:
-                        Util.showToast(ctx, ctx.getString(R.string.under_cons));
-                        break;
-                    case 2:
-                        confirmLocation();
-                        break;
-
+                if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.directions))) {
+                    startDirectionsMap(lat, lng);
+                }
+                if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.status_report))) {
+                    Util.showToast(ctx, ctx.getString(R.string.under_cons));
+                }
+                if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.confirm_gps))) {
+                    confirmLocation();
+                }
+                if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.site_gallery))) {
+                    Util.showToast(ctx, ctx.getString(R.string.under_cons));
                 }
             }
         });
