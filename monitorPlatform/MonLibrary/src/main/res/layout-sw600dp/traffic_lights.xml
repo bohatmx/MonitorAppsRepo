@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:id="@+id/TRAFF_main"
-    android:background="@color/white"
     android:layout_height="wrap_content">
 
     <RelativeLayout
@@ -16,7 +15,7 @@
             android:text="Title, maybe project"
             android:layout_centerHorizontal="true"
             style="@style/Title2TextStyleBlue"
-            android:visibility="visible"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </RelativeLayout>
@@ -26,6 +25,7 @@
         android:layout_below="@id/TRAFF_top"
         android:padding="@dimen/mon_padding"
         android:orientation="horizontal"
+        android:layout_marginBottom="@dimen/mon_margin"
         android:layout_centerHorizontal="true"
         android:layout_height="wrap_content">
 

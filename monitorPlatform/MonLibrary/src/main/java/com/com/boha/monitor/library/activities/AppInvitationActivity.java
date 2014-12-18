@@ -1,6 +1,5 @@
-package com.com.boha.monitor.library;
+package com.com.boha.monitor.library.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -8,25 +7,34 @@ import android.view.MenuItem;
 
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
-import com.com.boha.monitor.library.fragments.StaffFragment;
+import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
+import com.com.boha.monitor.library.fragments.AppInvitationFragment;
 
-public class StaffActivity extends ActionBarActivity implements StaffFragment.StaffFragmentListener {
+import java.util.List;
+
+public class AppInvitationActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_staff);
-        staffFragment = (StaffFragment)getFragmentManager().findFragmentById(R.id.fragment);
-        CompanyStaffDTO staff = (CompanyStaffDTO) getIntent().getSerializableExtra("companyStaff");
-        staffFragment.setCompanyStaff(staff);
+        setContentView(R.layout.activity_app_invitation);
+
+        appInvitationFragment = (AppInvitationFragment) getFragmentManager().findFragmentById(R.id.fragment);
+        ResponseDTO resp = (ResponseDTO) getIntent().getSerializableExtra("response");
+        List<CompanyStaffDTO> list = resp.getCompanyStaffList();
+        int index = getIntent().getIntExtra("index", 0);
+
+        appInvitationFragment.setData(list, index);
+
     }
 
+    CompanyStaffDTO companyStaff;
+    AppInvitationFragment appInvitationFragment;
 
-    StaffFragment staffFragment;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_staff, menu);
+        getMenuInflater().inflate(R.menu.menu_app_invitation, menu);
         return true;
     }
 
@@ -45,32 +53,10 @@ public class StaffActivity extends ActionBarActivity implements StaffFragment.St
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
     public void onPause() {
         overridePendingTransition(com.boha.monitor.library.R.anim.slide_in_left, com.boha.monitor.library.R.anim.slide_out_right);
         super.onPause();
-    }
-
-    CompanyStaffDTO companyStaff;
-    @Override
-    public void onStaffAdded(CompanyStaffDTO companyStaff) {
-        this.companyStaff = companyStaff;
-        onBackPressed();
-    }
-
-    @Override
-    public void onStaffUpdated(CompanyStaffDTO companyStaff) {
-        onBackPressed();
-    }
-    @Override
-    public void onBackPressed() {
-        if (companyStaff != null) {
-            Intent i = new Intent();
-            i.putExtra("companyStaff",companyStaff);
-            setResult(RESULT_OK, i);
-        } else {
-            setResult(RESULT_CANCELED);
-        }
-        finish();
     }
 }

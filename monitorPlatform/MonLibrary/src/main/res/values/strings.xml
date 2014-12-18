@@ -19,6 +19,7 @@
         <item>Beneficiaries</item>
     </string-array>
 
+    <string name="not_avail">NOT AVAILABLE</string>
     <string name="pay_mobile">Payment via Mobile</string>
     <string name="pay_credit">Payment via Google Play</string>
     <string name="subs">mgGolf Subscription</string>
@@ -276,7 +277,7 @@
     <string name="date">Date</string>
     <string name="status_name">Status Name</string>
     <string name="price_list">Price List</string>
-    <string name="task_status_count">Task Status Count</string>
+    <string name="task_status_count">Status Updates</string>
     <string name="task_already">Task already selected, ignored.</string>
     <string name="add_task">Select Task to add</string>
     <string name="pic_reminder">Please take pictures to support the status selected.\n\nDo you want to start taking pictures now?</string>
@@ -328,5 +329,11 @@
     <string name="cache_uploaded">Status and other data uploaded to office</string>
     <string name="no_networks">Network connections unavailable</string>
     <string name="status_report">Status Report</string>
+    <string name="status_syncd">All the sites\' status data has been downloaded to the device.</string>
+    <string name="red">Red</string>
+    <string name="yellow">Yellow</string>
+    <string name="green">Green</string>
+    <string name="status_download_done">Site status data has been downloaded. You can now access the data without a network connection.</string>
+    <string name="rem_take_pic">Please remember to take pictures!</string>
 
 </resources>

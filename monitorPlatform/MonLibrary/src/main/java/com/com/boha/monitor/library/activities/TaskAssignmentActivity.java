@@ -1,4 +1,4 @@
-package com.com.boha.monitor.library;
+package com.com.boha.monitor.library.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -151,12 +151,21 @@ public class TaskAssignmentActivity extends ActionBarActivity implements
     List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList = new ArrayList<>();
     @Override
     public void onCameraRequested(ProjectSiteTaskDTO siteTask, int type) {
-        Intent i = new Intent(ctx, PictureActivity.class);
+        Intent i;
+//        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP ||
+//                Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+//            i = new Intent(this, CameraLollipopActivity.class);
+//        } else {
+//            i = new Intent(this, PictureActivity.class);
+//        }
+
+        i = new Intent(this, PictureActivity.class);
         i.putExtra("type", type);
         i.putExtra("projectSiteTask", siteTask);
-        startActivity(i);
+        startActivityForResult(i, TASK_PICTURE_REQUIRED);
     }
 
+    static final int TASK_PICTURE_REQUIRED = 9582;
     private Menu mMenu;
     public void setRefreshActionButtonState(final boolean refreshing) {
         if (mMenu != null) {

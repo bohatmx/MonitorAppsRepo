@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import com.boha.monitor.exec.R;
 import com.boha.monitor.exec.fragments.ExecProjectGridFragment;
-import com.com.boha.monitor.library.ImagePagerActivity;
+import com.com.boha.monitor.library.activities.ImagePagerActivity;
 import com.com.boha.monitor.library.adapters.DrawerAdapter;
 import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
@@ -163,7 +163,6 @@ public class ExecPagerActivity extends ActionBarActivity implements
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.GET_EXEC_COMPANY_DATA);
         w.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
-
         if (projectListFragment != null)
             projectListFragment.rotateLogo();
         progressBar.setVisibility(View.VISIBLE);
@@ -183,7 +182,7 @@ public class ExecPagerActivity extends ActionBarActivity implements
                         Log.e(LOG, "## getCompanyData responded...statusCode: " + r.getStatusCode());
                         response = r;
                         buildPages();
-                        //cache company data
+                        //cache company data for lookups
                         CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {

@@ -1,4 +1,4 @@
-package com.com.boha.monitor.library;
+package com.com.boha.monitor.library.activities;
 
 /**
  * Created by aubreyM on 2014/10/13.

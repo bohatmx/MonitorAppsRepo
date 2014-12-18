@@ -273,6 +273,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
                 }
             }
         });
+        mListener.onPhotoUploadServiceRequested();
     }
 
 
@@ -462,6 +463,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         public void onSiteOnMapRequested(ProjectSiteDTO projectSite, int index);
 
         public void onNewStatusDone(int count);
+        public void onPhotoUploadServiceRequested();
     }
 
     ProjectDTO project;

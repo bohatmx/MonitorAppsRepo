@@ -745,20 +745,25 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
     private void showPictureReminderDialog() {
         if (getActivity() == null) return;
         AlertDialog.Builder d = new AlertDialog.Builder(getActivity());
+
         d.setTitle(ctx.getString(R.string.reminder))
                 .setMessage(ctx.getString(R.string.pic_reminder))
                 .setPositiveButton(ctx.getString(R.string.yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
                         mListener.onCameraRequested(projectSiteTask, PhotoUploadDTO.TASK_IMAGE);
+
                     }
                 })
                 .setNegativeButton(ctx.getString(R.string.no), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        dialog.cancel();
+                        Util.showErrorToast(ctx, ctx.getString(R.string.rem_take_pic));
                     }
                 })
+                .setIcon(ctx.getResources().getDrawable(R.drawable.maono))
                 .show();
     }
 

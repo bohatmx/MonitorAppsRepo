@@ -8,22 +8,7 @@
         android:id="@+id/EXEC_STAT_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/EXEC_STAT_hero"
-            android:src="@drawable/banner_meeting3"
-            android:scaleType="centerCrop"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/mon_hero_height_medium" />
-        <TextView
-            android:id="@+id/EXEC_STAT_caption"
-            android:text="@string/project_status"
-            style="@style/Title1TextStyleBlue"
-            android:textColor="@color/white"
-            android:layout_marginTop="@dimen/mon_widest"
-            android:layout_marginLeft="@dimen/mon_wide"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <include layout="@layout/hero_status_report" />
 
     </RelativeLayout>
 
@@ -31,6 +16,7 @@
         android:id="@+id/EXEC_STAT_lights"
         android:layout_below="@id/EXEC_STAT_top"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="wrap_content">
 
         <include layout="@layout/traffic_lights" />
@@ -59,4 +45,12 @@
 
 
     </LinearLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:minHeight="@dimen/mon_margin"
+        android:layout_marginLeft="@dimen/mon_padding"
+        android:layout_marginTop="@dimen/mon_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </RelativeLayout>

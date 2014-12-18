@@ -2,6 +2,8 @@ package com.com.boha.monitor.library.services;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.Binder;
+import android.os.IBinder;
 import android.util.Log;
 
 import com.com.boha.monitor.library.dto.transfer.RequestList;
@@ -123,4 +125,19 @@ public class RequestSyncService extends IntentService {
             Log.w(LOG, "+++ " + e.getDateRequested() + " requestType: " + e.getRequest().getRequestType());
         }
     }
+    public class LocalBinder extends Binder {
+        public RequestSyncService getService() {
+            return RequestSyncService.this;
+        }
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
+    private final IBinder mBinder = new LocalBinder();
+    public void startSyncCachedRequests() {
+        onHandleIntent(null);
+    }
+
 }

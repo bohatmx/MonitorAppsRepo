@@ -21,7 +21,7 @@ public class ProjectSiteTaskStatusDTO implements Serializable, Comparable<Projec
     private Date statusDate;
     private TaskStatusDTO taskStatus;
     private TaskDTO task;
-    private Integer projectSiteTaskID;
+    private Integer projectSiteTaskID, projectID,projectSiteID;
     private Integer companyStaffID;
     private String projectSiteName, projectName, staffName;
     private List<SubTaskStatusDTO> subTaskStatusList;
@@ -35,6 +35,22 @@ public class ProjectSiteTaskStatusDTO implements Serializable, Comparable<Projec
 
     public void setSubTaskStatusList(List<SubTaskStatusDTO> subTaskStatusList) {
         this.subTaskStatusList = subTaskStatusList;
+    }
+
+    public Integer getProjectSiteID() {
+        return projectSiteID;
+    }
+
+    public void setProjectSiteID(Integer projectSiteID) {
+        this.projectSiteID = projectSiteID;
+    }
+
+    public Integer getProjectID() {
+        return projectID;
+    }
+
+    public void setProjectID(Integer projectID) {
+        this.projectID = projectID;
     }
 
     public TaskDTO getTask() {

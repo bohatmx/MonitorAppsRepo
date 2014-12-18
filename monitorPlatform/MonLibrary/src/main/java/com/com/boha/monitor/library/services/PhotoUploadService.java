@@ -4,6 +4,8 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.os.Binder;
+import android.os.IBinder;
 import android.util.Log;
 
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
@@ -98,7 +100,7 @@ public class PhotoUploadService extends IntentService {
         dto.setTime(new Date().getTime());
         return dto;
     }
-    private static void addPhotoToCache(final Context context, final PhotoUploadDTO dto) {
+    public static void addPhotoToCache(final Context context, final PhotoUploadDTO dto) {
         Log.w(LOG,"**** addPhotoToCache starting ...");
         CacheUtil.getCachedData(context, CacheUtil.CACHE_PHOTOS, new CacheUtil.CacheUtilListener() {
             @Override
@@ -134,8 +136,13 @@ public class PhotoUploadService extends IntentService {
                     }
                 });
                 //start service to upload images in local cache
-                Intent intent = new Intent(context, PhotoUploadService.class);
-                context.startService(intent);
+                WebCheckResult rr = WebCheck.checkNetworkAvailability(context);
+                if (rr.isWifiConnected()) {
+                    Intent intent = new Intent(context, PhotoUploadService.class);
+                    context.startService(intent);
+                } else {
+                    Log.d(LOG, "%%% PhotoUploadService not started, wifi not connected");
+                }
             }
 
             @Override
@@ -313,4 +320,19 @@ public class PhotoUploadService extends IntentService {
         });
     }
     static final String LOG = PhotoUploadService.class.getSimpleName();
+
+    public class LocalBinder extends Binder {
+        public PhotoUploadService getService() {
+            return PhotoUploadService.this;
+        }
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
+    private final IBinder mBinder = new LocalBinder();
+    public void sendCachedPhotos() {
+        uploadPendingPhotos(getApplicationContext());
+    }
 }

@@ -4,7 +4,7 @@
 
     <application
         android:allowBackup="true"
-        android:name="com.com.boha.monitor.library.MonApp"
+        android:name="com.com.boha.monitor.library.activities.MonApp"
         android:icon="@drawable/ic_launcher"
         android:theme="@style/ProjectManagerTheme">
         <meta-data
@@ -33,52 +33,55 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.com.boha.monitor.library.CameraActivity"
+            android:name="com.com.boha.monitor.library.activities.CameraActivity"
             android:label="@string/title_activity_image" />
         <activity
-            android:name="com.com.boha.monitor.library.ImageActivity"
+            android:name="com.com.boha.monitor.library.activities.ImageActivity"
             android:label="@string/title_activity_image" />
         <activity
 
-            android:name="com.com.boha.monitor.library.TaskAssignmentActivity"
+            android:name="com.com.boha.monitor.library.activities.TaskAssignmentActivity"
             android:screenOrientation="portrait"
             android:label="@string/assign_status" />
         <activity
-            android:name="com.com.boha.monitor.library.MonitorMapActivity"
+            android:name="com.com.boha.monitor.library.activities.MonitorMapActivity"
             android:label="@string/title_activity_monitor_map"
-            android:parentActivityName="com.com.boha.monitor.library.ImageActivity">
+            android:parentActivityName="com.com.boha.monitor.library.activities.ImageActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.com.boha.monitor.library.ImageActivity" />
+                android:value="com.com.boha.monitor.library.activities.ImageActivity" />
         </activity>
         <activity
             android:name=".ProjectPagerActivity"
             android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name="com.com.boha.monitor.library.SitePagerActivity"
+            android:name="com.com.boha.monitor.library.activities.SitePagerActivity"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:parentActivityName=".ProjectPagerActivity" />
+        <activity android:name="com.com.boha.monitor.library.activities.PictureRecyclerGridActivity"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name="com.com.boha.monitor.library.PictureActivity"
+            android:name="com.com.boha.monitor.library.activities.PictureActivity"
             android:configChanges="keyboardHidden|orientation"></activity>
         <activity
-            android:name="com.com.boha.monitor.library.ImagePagerActivity"
+            android:name="com.com.boha.monitor.library.activities.ImagePagerActivity"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name="com.com.boha.monitor.library.ClaimAndInvoicePagerActivity"
+            android:name="com.com.boha.monitor.library.activities.ClaimAndInvoicePagerActivity"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name="com.com.boha.monitor.library.StatusReportActivity"
+            android:name="com.com.boha.monitor.library.activities.StatusReportActivity"
             android:label="@string/title_activity_status_report"></activity>
         <activity
-            android:name="com.com.boha.monitor.library.SubTaskActivity"
+            android:name="com.com.boha.monitor.library.activities.SubTaskActivity"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_sub_task"></activity>
         <activity
-            android:name="com.com.boha.monitor.library.SubTaskStatusAssignmentActivity"
+            android:name="com.com.boha.monitor.library.activities.SubTaskStatusAssignmentActivity"
             android:label="@string/title_activity_sub_task_status_assignment"
-            android:parentActivityName="com.com.boha.monitor.library.TaskAssignmentActivity"></activity>
+            android:parentActivityName="com.com.boha.monitor.library.activities.TaskAssignmentActivity"></activity>
 
 
     </application>

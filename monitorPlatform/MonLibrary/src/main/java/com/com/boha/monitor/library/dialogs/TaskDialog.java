@@ -17,7 +17,7 @@ import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 
 import com.boha.monitor.library.R;
-import com.com.boha.monitor.library.SubTaskActivity;
+import com.com.boha.monitor.library.activities.SubTaskActivity;
 import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.TaskDTO;
 import com.com.boha.monitor.library.dto.TaskPriceDTO;
@@ -26,7 +26,6 @@ import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.ErrorUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
-import com.com.boha.monitor.library.util.ToastUtil;
 import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebSocketUtil;
 

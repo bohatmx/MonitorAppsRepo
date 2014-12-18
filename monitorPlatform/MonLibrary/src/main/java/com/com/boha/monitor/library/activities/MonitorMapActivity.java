@@ -1,4 +1,4 @@
-package com.com.boha.monitor.library;
+package com.com.boha.monitor.library.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,8 +17,6 @@ import android.widget.TextView;
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
-import com.com.boha.monitor.library.dto.ProjectSiteTaskDTO;
-import com.com.boha.monitor.library.dto.ProjectSiteTaskStatusDTO;
 import com.com.boha.monitor.library.dto.TaskStatusDTO;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
@@ -38,19 +36,20 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -91,7 +90,7 @@ public class MonitorMapActivity extends ActionBarActivity
         try {
             setContentView(R.layout.activity_monitor_map);
         } catch (Exception e) {
-            Log.e(LOG,"######## cannot setContentView", e);
+            Log.e(LOG, "######## cannot setContentView", e);
         }
         projectSite = (ProjectSiteDTO) getIntent().getSerializableExtra("projectSite");
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
@@ -104,9 +103,9 @@ public class MonitorMapActivity extends ActionBarActivity
         text = (TextView) findViewById(R.id.text);
         txtCount = (TextView) findViewById(R.id.count);
         txtCount.setText("0");
-        progressBar = (ProgressBar)findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
-        Statics.setRobotoFontBold(ctx,text);
+        Statics.setRobotoFontBold(ctx, text);
 
         topLayout = findViewById(R.id.top);
 
@@ -150,33 +149,39 @@ public class MonitorMapActivity extends ActionBarActivity
                 float mf = location.distanceTo(loc);
                 Log.w(LOG, "######### distance, again: " + mf);
 
-                showPopup(latLng.latitude,latLng.longitude, marker.getTitle() + "\n" + marker.getSnippet());
+                showPopup(latLng.latitude, latLng.longitude, marker.getTitle() + "\n" + marker.getSnippet());
 
                 return true;
             }
         });
         if (projectSite != null) {
             if (projectSite.getLatitude() == null) {
-                Util.showToast(ctx,getString(R.string.no_coords));
+                Util.showToast(ctx, getString(R.string.no_coords));
                 finish();
             } else {
                 setOneMarker();
                 if (projectSite.getLocationConfirmed() == null && !toastHasBeenShown) {
-                    Util.showToast(ctx,getString(R.string.tap_site));
+                    Util.showToast(ctx, getString(R.string.tap_site));
                     toastHasBeenShown = true;
                 }
             }
         }
         if (project != null) {
-            getCachedData();
+            if (project.getProjectSiteList() == null || project.getProjectSiteList().isEmpty()) {
+                getCachedData();
+            } else {
+                setProjectMarkers();
+                text.setText(project.getProjectName() + " - Sites (" + project.getProjectSiteList().size() + ")");
+            }
         }
 
     }
+
     boolean toastHasBeenShown;
     static final DecimalFormat df = new DecimalFormat("###,##0.00");
 
     private void getCachedData() {
-        CacheUtil.getCachedProjectData(ctx,project.getProjectID(),new CacheUtil.CacheUtilListener() {
+        CacheUtil.getCachedProjectData(ctx, project.getProjectID(), new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
                 if (response != null) {
@@ -216,12 +221,15 @@ public class MonitorMapActivity extends ActionBarActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (!ErrorUtil.checkServerError(ctx,response)) {
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        if (response.getProjectList().isEmpty()) {
                             return;
                         }
                         project = response.getProjectList().get(0);
                         setProjectMarkers();
-                        text.setText(project.getProjectName() + " - Sites (" +   project.getProjectSiteList().size() + ")");
+                        text.setText(project.getProjectName() + " - Sites (" + project.getProjectSiteList().size() + ")");
                     }
                 });
             }
@@ -241,42 +249,53 @@ public class MonitorMapActivity extends ActionBarActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Util.showErrorToast(ctx,message);
+                        Util.showErrorToast(ctx, message);
                     }
                 });
             }
         });
     }
-    Random random = new Random(System.currentTimeMillis());
-    private void setProjectMarkers() {
 
+    Random random = new Random(System.currentTimeMillis());
+
+    private void setProjectMarkers() {
         googleMap.clear();
         LatLng point = null;
         int index = 0, count = 0, randomIndex = 0;
         randomIndex = random.nextInt(project.getProjectSiteList().size() - 1);
         if (randomIndex == -1) randomIndex = 0;
-        for (ProjectSiteDTO site : project.getProjectSiteList()) {
-            if (site.getLatitude() == null) continue;;
-            LatLng pnt = new LatLng(site.getLatitude(), site.getLongitude());
-            if (index == randomIndex) {
-                point = pnt;
+
+        if (project.getProjectSiteList().get(randomIndex).getLatitude() == null) {
+            for (ProjectSiteDTO s: project.getProjectSiteList()) {
+                if (s.getLatitude() != null) {
+                   point = new LatLng(s.getLatitude(), s.getLongitude());
+                    break;
+                }
             }
-            BitmapDescriptor desc = null;
-            Short color = getLastStatus(site);
-            if (color == null) {
-                desc = BitmapDescriptorFactory.fromResource(R.drawable.bullet_pink_32);
-            } else {
+        } else {
+            point = new LatLng(project.getProjectSiteList().get(randomIndex).getLatitude(),
+                    project.getProjectSiteList().get(randomIndex).getLongitude());
+        }
+        for (ProjectSiteDTO site : project.getProjectSiteList()) {
+            if (site.getLatitude() == null) continue;
+            LatLng pnt = new LatLng(site.getLatitude(), site.getLongitude());
+            point = pnt;
+            BitmapDescriptor desc = BitmapDescriptorFactory.fromResource(R.drawable.dot_black);
+            Short color = null;
+            if (site.getLastStatus() != null) {
+                color = site.getLastStatus().getTaskStatus().getStatusColor();
                 switch (color) {
                     case TaskStatusDTO.STATUS_COLOR_RED:
-                        desc = BitmapDescriptorFactory.fromResource(R.drawable.bullet_red);
+                        desc = BitmapDescriptorFactory.fromResource(R.drawable.dot_red);
                         break;
                     case TaskStatusDTO.STATUS_COLOR_GREEN:
-                        desc = BitmapDescriptorFactory.fromResource(R.drawable.bullet_green_32);
+                        desc = BitmapDescriptorFactory.fromResource(R.drawable.dot_green);
                         break;
                     case TaskStatusDTO.STATUS_COLOR_YELLOW:
-                        desc = BitmapDescriptorFactory.fromResource(R.drawable.bullet_yellow_32);
+                        desc = BitmapDescriptorFactory.fromResource(R.drawable.dot_yellow);
                         break;
                 }
+
             }
             Marker m =
                     googleMap.addMarker(new MarkerOptions()
@@ -288,24 +307,28 @@ public class MonitorMapActivity extends ActionBarActivity
             index++;
             count++;
         }
-        txtCount.setText(""+count);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 1.0f));
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
-        setTitle(project.getProjectName());
+        googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                //ensure that all markers in bounds
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for (Marker marker : markers) {
+                    builder.include(marker.getPosition());
+                }
+
+                LatLngBounds bounds = builder.build();
+                int padding = 60; // offset from edges of the map in pixels
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+
+                txtCount.setText("" + markers.size());
+                //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 1.0f));
+                googleMap.animateCamera(cu);
+                setTitle(project.getProjectName());
+            }
+        });
+
     }
 
-    private Short getLastStatus(ProjectSiteDTO site) {
-        Short s = null;
-        List<ProjectSiteTaskStatusDTO> stList = new ArrayList<>();
-        for (ProjectSiteTaskDTO task : site.getProjectSiteTaskList()) {
-            stList.addAll(task.getProjectSiteTaskStatusList());
-        }
-        Collections.sort(stList);
-        if (!stList.isEmpty()) {
-            s = stList.get(0).getTaskStatus().getStatusColor();
-        }
-        return s;
-    }
 
     private void setOneMarker() {
         if (projectSite.getLatitude() == null) {
@@ -327,6 +350,7 @@ public class MonitorMapActivity extends ActionBarActivity
     }
 
     List<String> list;
+
     private void showPopup(final double lat, final double lng, String title) {
         list = new ArrayList<>();
         list.add(ctx.getString(R.string.directions));
@@ -338,7 +362,7 @@ public class MonitorMapActivity extends ActionBarActivity
                 list.add(getString(R.string.confirm_gps));
             }
         }
-        Util.showPopupBasicWithHeroImage(ctx,this,list,topLayout,ctx.getString(R.string.select_action),new Util.UtilPopupListener() {
+        Util.showPopupBasicWithHeroImage(ctx, this, list, topLayout, ctx.getString(R.string.select_action), new Util.UtilPopupListener() {
             @Override
             public void onItemSelected(int index) {
                 if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.directions))) {
@@ -358,6 +382,7 @@ public class MonitorMapActivity extends ActionBarActivity
 
 
     }
+
     private void confirmLocation() {
         RequestDTO w = new RequestDTO(RequestDTO.CONFIRM_LOCATION);
         w.setProjectSiteID(projectSite.getProjectSiteID());
@@ -422,6 +447,7 @@ public class MonitorMapActivity extends ActionBarActivity
 //            }
 //        });
     }
+
     private void startDirectionsMap(double lat, double lng) {
         Log.i(LOG, "startDirectionsMap ..........");
         String url = "http://maps.google.com/maps?saddr="
@@ -646,12 +672,13 @@ public class MonitorMapActivity extends ActionBarActivity
     }
 
     boolean coordsConfirmed;
+
     @Override
     public void onBackPressed() {
-        Log.e(LOG,"######## onBackPressed, coordsConfirmed: " + coordsConfirmed);
+        Log.e(LOG, "######## onBackPressed, coordsConfirmed: " + coordsConfirmed);
         if (coordsConfirmed) {
             Intent i = new Intent();
-            i.putExtra("projectSite",projectSite);
+            i.putExtra("projectSite", projectSite);
             setResult(RESULT_OK, i);
         } else {
             setResult(RESULT_CANCELED);

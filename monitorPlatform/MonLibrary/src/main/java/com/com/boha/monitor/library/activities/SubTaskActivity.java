@@ -1,4 +1,4 @@
-package com.com.boha.monitor.library;
+package com.com.boha.monitor.library.activities;
 
 import android.content.Context;
 import android.support.v7.app.ActionBarActivity;

@@ -17,9 +17,9 @@ import android.widget.ListPopupWindow;
 import android.widget.TextView;
 
 import com.boha.monitor.exec.R;
-import com.boha.monitor.exec.activities.ExecStatusReportActivity;
+import com.com.boha.monitor.library.activities.ExecStatusReportActivity;
 import com.boha.monitor.exec.adapters.ProjectExecAdapter;
-import com.com.boha.monitor.library.MonitorMapActivity;
+import com.com.boha.monitor.library.activities.MonitorMapActivity;
 import com.com.boha.monitor.library.adapters.ExecStatusListAdapter;
 import com.com.boha.monitor.library.adapters.PopupListAdapter;
 import com.com.boha.monitor.library.dto.ProjectDTO;
@@ -62,6 +62,7 @@ public class ExecProjectGridFragment extends Fragment implements PageFragment{
         view = inflater.inflate(R.layout.fragment_exec_project_grid, container, false);
         setFields();
         setGrid();
+
         return view;
     }
 

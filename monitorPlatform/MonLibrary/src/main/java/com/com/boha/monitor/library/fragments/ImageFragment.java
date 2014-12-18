@@ -72,7 +72,6 @@ public class ImageFragment extends Fragment implements PageFragment {
 
             //Picasso.with(ctx).load(f).into(image);
             if (image.getWidth() > image.getHeight()) {
-
                 getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             } else {
                 getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

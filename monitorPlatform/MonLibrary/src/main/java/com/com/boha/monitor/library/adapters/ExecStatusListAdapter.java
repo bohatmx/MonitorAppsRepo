@@ -40,7 +40,7 @@ public class ExecStatusListAdapter extends ArrayAdapter<ProjectSiteTaskStatusDTO
 
 
     static class ViewHolderItem {
-        TextView txtTask, txtStatus, txtDate,
+        TextView txtTask, txtStatus, txtDate, txtStaff, txtPhotoCount,
                 txtColor, txtSite, txtProject;
         View topLayout;
     }

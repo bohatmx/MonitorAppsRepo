@@ -15,7 +15,7 @@ public class TimerUtil {
     }
     static TimerListener listener;
     static Timer timer;
-    static final long TEN_SECONDS = 20 * 1000;
+    static final long TEN_SECONDS = 10 * 1000;
     public static void startTimer(TimerListener timerListener) {
         //
         Log.d("TimerUtil", "########## Websocket Session Timer starting .....");

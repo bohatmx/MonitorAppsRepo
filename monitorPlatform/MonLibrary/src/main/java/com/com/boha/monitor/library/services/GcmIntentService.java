@@ -11,7 +11,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.boha.monitor.library.R;
-import com.com.boha.monitor.library.TaskStatusNotificationActivity;
+import com.com.boha.monitor.library.activities.TaskStatusNotificationActivity;
 import com.com.boha.monitor.library.dto.ProjectSiteTaskStatusDTO;
 import com.com.boha.monitor.library.util.GCMUtil;
 import com.google.android.gcm.GCMBaseIntentService;

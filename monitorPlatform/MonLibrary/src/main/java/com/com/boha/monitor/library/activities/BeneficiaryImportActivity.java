@@ -1,4 +1,4 @@
-package com.com.boha.monitor.library;
+package com.com.boha.monitor.library.activities;
 
 import android.content.Intent;
 import android.os.Bundle;

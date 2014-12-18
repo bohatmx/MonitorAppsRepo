@@ -96,7 +96,6 @@ public class CacheUtil {
                                      CacheSiteListener l) {
         dataType = CACHE_SITE;
         projectSite = r;
-        response.setLastCacheDate(new Date());
         siteListener = l;
         projectSiteID = r.getProjectSiteID();
         ctx = context;

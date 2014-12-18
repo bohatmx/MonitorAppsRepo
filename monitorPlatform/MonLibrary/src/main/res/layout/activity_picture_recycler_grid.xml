@@ -1,0 +1,31 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.com.boha.monitor.library.activities.PictureRecyclerGridActivity">
+
+    <RelativeLayout
+        android:id="@+id/RCV_top"
+        android:background="@color/white"
+        android:padding="@dimen/mon_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/RCV_title"
+            android:layout_marginLeft="@dimen/mon_divider"
+            android:text="PlaceHolder Title"
+            style="@style/Title3TextStyleBlue"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/RCV_list"
+        android:background="@color/white"
+        android:layout_below="@id/RCV_top"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>

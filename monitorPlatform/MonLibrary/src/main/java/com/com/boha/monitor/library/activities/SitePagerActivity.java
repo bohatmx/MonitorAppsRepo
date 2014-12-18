@@ -1,9 +1,12 @@
-package com.com.boha.monitor.library;
+package com.com.boha.monitor.library.activities;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -27,6 +30,7 @@ import com.com.boha.monitor.library.fragments.GPSScanFragment;
 import com.com.boha.monitor.library.fragments.PageFragment;
 import com.com.boha.monitor.library.fragments.ProjectSiteListFragment;
 import com.com.boha.monitor.library.fragments.SiteTaskAndStatusAssignmentFragment;
+import com.com.boha.monitor.library.services.PhotoUploadService;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
 import com.com.boha.monitor.library.util.Statics;
@@ -65,12 +69,14 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
         PagerTitleStrip strip = (PagerTitleStrip) findViewById(R.id.pager_title_strip);
         strip.setVisibility(View.GONE);
 
+        //
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
         type = getIntent().getIntExtra("type", SiteTaskAndStatusAssignmentFragment.OPERATIONS);
 
         setTitle(ctx.getString(R.string.project_sites));
         getSupportActionBar().setSubtitle(project.getProjectName());
         mLocationClient = new LocationClient(ctx, this, this);
+        getCachedProjectData();
     }
 
     private void getCachedProjectData() {
@@ -94,12 +100,6 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
 
                     }
                 }
-
-
-                if (r.isWifiConnected()) {
-                    getProjectData();
-                }
-
             }
 
             @Override
@@ -184,13 +184,16 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.site_pager, menu);
         mMenu = menu;
-        getCachedProjectData();
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        if (id == R.id.action_refresh) {
+            getProjectData();
+            return true;
+        }
         if (id == R.id.action_help) {
             showToast(ctx, ctx.getString(R.string.under_cons));
             return true;
@@ -262,6 +265,8 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
             Log.i(LOG,
                     "#################### onStart - locationClient connecting ... ");
         }
+        Intent intent2 = new Intent(this, PhotoUploadService.class);
+        bindService(intent2, pConnection, Context.BIND_AUTO_CREATE);
 
     }
 
@@ -284,9 +289,34 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
             Log.e("map", "### onStop - locationClient disconnected: "
                     + mLocationClient.isConnected());
         }
+        if (pBound) {
+            unbindService(pConnection);
+            pBound = false;
+        }
         super.onStop();
     }
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection pConnection = new ServiceConnection() {
 
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            Log.w(LOG, "## PhotoUploadService ServiceConnection onServiceConnected");
+            PhotoUploadService.LocalBinder binder = (PhotoUploadService.LocalBinder) service;
+            pService = binder.getService();
+            pBound = true;
+            //pService.sendCachedPhotos();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.w(LOG, "## PhotoUploadService onServiceDisconnected");
+            pBound = false;
+        }
+    };
+
+    boolean pBound;
+    PhotoUploadService pService;
     private Location location;
 
     @Override
@@ -336,9 +366,7 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
 
     @Override
     public void onResume() {
-        Log.e(LOG, "######### onResume .........getProjectPhotos");
-        //getProjectPhotos();
-
+        Log.e(LOG, "######### onResume ...");
         super.onResume();
     }
 
@@ -453,7 +481,15 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
 
         selectedSiteIndex = index;
         this.projectSite = projectSite;
-        Intent i = new Intent(this, PictureActivity.class);
+        Intent i;
+//        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP ||
+//                Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+//            i = new Intent(this, CameraLollipopActivity.class);
+//        } else {
+//             i = new Intent(this, PictureActivity.class);
+//        }
+
+        i = new Intent(this, PictureActivity.class);
         i.putExtra("projectSite", projectSite);
         i.putExtra("type", PhotoUploadDTO.SITE_IMAGE);
         startActivityForResult(i, SITE_PICTURE_REQUEST);
@@ -465,7 +501,7 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
     public void onGalleryRequested(ProjectSiteDTO projectSite, int index) {
         selectedSiteIndex = index;
         this.projectSite = projectSite;
-        Intent i = new Intent(this, ImagePagerActivity.class);
+        Intent i = new Intent(this, PictureRecyclerGridActivity.class);
         i.putExtra("projectSite", projectSite);
         i.putExtra("type", ImagePagerActivity.SITE);
         startActivity(i);
@@ -505,6 +541,12 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
     @Override
     public void onNewStatusDone(int count) {
         newStatusDone += count;
+    }
+
+    @Override
+    public void onPhotoUploadServiceRequested() {
+        Log.e(LOG,"**** onPhotoUploadServiceRequested");
+       pService.sendCachedPhotos();
     }
 
     @Override

@@ -1,8 +1,11 @@
 package com.boha.monitor.pmanager;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -21,11 +24,11 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.com.boha.monitor.library.ClaimAndInvoicePagerActivity;
-import com.com.boha.monitor.library.ImagePagerActivity;
-import com.com.boha.monitor.library.MonitorMapActivity;
-import com.com.boha.monitor.library.PictureActivity;
-import com.com.boha.monitor.library.SitePagerActivity;
+import com.com.boha.monitor.library.activities.ClaimAndInvoicePagerActivity;
+import com.com.boha.monitor.library.activities.ImagePagerActivity;
+import com.com.boha.monitor.library.activities.MonitorMapActivity;
+import com.com.boha.monitor.library.activities.PictureActivity;
+import com.com.boha.monitor.library.activities.SitePagerActivity;
 import com.com.boha.monitor.library.adapters.DrawerAdapter;
 import com.com.boha.monitor.library.dialogs.ProjectDialog;
 import com.com.boha.monitor.library.dto.CompanyDTO;
@@ -80,8 +83,7 @@ public class ProjectPagerActivity extends ActionBarActivity
         setTitle(SharedUtil.getCompany(ctx).getCompanyName());
         CompanyStaffDTO staff = SharedUtil.getCompanyStaff(ctx);
         getSupportActionBar().setSubtitle(staff.getFullName());
-        //
-        // PhotoUploadService.uploadPendingPhotos(ctx);
+
     }
 
     private void setDrawerList() {
@@ -94,13 +96,11 @@ public class ProjectPagerActivity extends ActionBarActivity
                         response = r;
                         company = r.getCompany();
                         buildPages();
+                    } else {
+                        getCompanyData();
                     }
                 }
 
-                WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
-                if (wcr.isWifiConnected()) {
-                    getCompanyData();
-                }
                 for (String s : titles) {
                     sTitles.add(s);
                 }
@@ -118,6 +118,7 @@ public class ProjectPagerActivity extends ActionBarActivity
 
                         switch (i) {
                             case PROJECTS:
+
                                 mPager.setCurrentItem(0, true);
                                 mDrawerLayout.closeDrawers();
                                 break;
@@ -126,6 +127,7 @@ public class ProjectPagerActivity extends ActionBarActivity
                                 mDrawerLayout.closeDrawers();
                                 break;
                             case MANAGE_DATA:
+
                                 break;
                             case SITE_REPORTS:
                                 break;
@@ -159,13 +161,11 @@ public class ProjectPagerActivity extends ActionBarActivity
     }
 
     private void getCompanyData() {
-        Log.w(LOG, "############# getCompanyData................");
+        Log.w(LOG, "############# getCompanyData.............");
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.GET_COMPANY_DATA);
         w.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
 
-        if (projectListFragment != null)
-            projectListFragment.rotateLogo();
         progressBar.setVisibility(View.VISIBLE);
         WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
@@ -174,16 +174,12 @@ public class ProjectPagerActivity extends ActionBarActivity
                     @Override
                     public void run() {
                         progressBar.setVisibility(View.GONE);
+                        Log.e(LOG, "## getCompanyData responded...statusCode: " + r.getStatusCode());
                         if (!ErrorUtil.checkServerError(ctx,r)) {
                             return;
                         }
-
-                        if (projectListFragment != null)
-                            projectListFragment.stopRotatingLogo();
-                        Log.e(LOG, "## getCompanyData responded...statusCode: " + r.getStatusCode());
                         response = r;
                         buildPages();
-                        //cache company data
                         CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
@@ -202,7 +198,6 @@ public class ProjectPagerActivity extends ActionBarActivity
 
                             }
                         });
-
 
                     }
                 });
@@ -239,19 +234,6 @@ public class ProjectPagerActivity extends ActionBarActivity
             INVOICES = 6, HAPPY_LETTERS = 7, STATUS_NOTIFICATIONS = 8;
 
     Menu mMenu;
-
-    public void setRefreshActionButtonState(final boolean refreshing) {
-        if (mMenu != null) {
-            final MenuItem refreshItem = mMenu.findItem(R.id.action_refresh);
-            if (refreshItem != null) {
-                if (refreshing) {
-                    refreshItem.setActionView(R.layout.action_bar_progess);
-                } else {
-                    refreshItem.setActionView(null);
-                }
-            }
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -380,6 +362,8 @@ public class ProjectPagerActivity extends ActionBarActivity
         i.putExtra("project", project);
         i.putExtra("type", SiteTaskAndStatusAssignmentFragment.PROJECT_MANAGER);
         startActivityForResult(i, NEW_STATUS_EXPECTED);
+        mService.startSyncCachedRequests();
+
 
     }
     static final int NEW_STATUS_EXPECTED = 2937;
@@ -486,5 +470,52 @@ public class ProjectPagerActivity extends ActionBarActivity
     private ListView drawerListView;
     private String[] titles;
     private List<String> sTitles = new ArrayList<>();
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.w(LOG, "## onStart Bind to RequestSyncService and PhotoUploadService");
+        Intent intent = new Intent(this, RequestSyncService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e(LOG, "## onStop unBind from RequestSyncService and PhotoUploadService");
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
+
+    }
+
+
+
+    boolean mBound;
+    RequestSyncService mService;
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            Log.w(LOG, "## RequestSyncService ServiceConnection onServiceConnected");
+            RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+            mService.startSyncCachedRequests();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.w(LOG, "## RequestSyncService onServiceDisconnected");
+            mBound = false;
+        }
+    };
+
+
 
 }

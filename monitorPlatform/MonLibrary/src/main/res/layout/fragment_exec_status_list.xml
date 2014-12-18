@@ -1,19 +1,82 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/grey"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.com.boha.monitor.library.fragments.ExecProjectSiteStatusListFragment">
 
     <RelativeLayout
         android:id="@+id/EXEC_STX_top"
-        android:layout_width="wrap_content"
+        android:background="@color/white"
+        android:padding="@dimen/mon_padding"
+        android:layout_marginRight="@dimen/mon_padding"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <TextView
+            android:id="@+id/EXEC_STX_label"
+            style="@style/TextStyleGrey"
+            android:text="Site"
+            android:layout_marginLeft="@dimen/mon_padding"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/EXEC_STX_title"
+            style="@style/Title1TextStyleBlue"
+            android:text="Site Name Here"
+            android:layout_toRightOf="@id/EXEC_STX_label"
+            android:layout_marginLeft="@dimen/mon_padding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/EXEC_STX_camera"
+            android:src="@drawable/camera_a32"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/mon_wide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/EXEC_STX_photos"
+            style="@style/TextStyleBold"
+            android:textColor="@color/absa_red"
+            android:text="00"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/mon_padding"
+            android:layout_toLeftOf="@id/EXEC_STX_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
     </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/EXEC_STX_bennLayout"
+        android:layout_below="@id/EXEC_STX_top"
+        android:padding="@dimen/mon_padding"
+        android:layout_marginTop="@dimen/mon_divider_small"
+        android:layout_marginRight="@dimen/mon_padding"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/EXEC_STX_beneficiary"
+            style="@style/Title2TextStyleGreen"
+            android:text="Beneficiary name here"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
     <ListView
         android:id="@+id/EXEC_STX_list"
-        android:layout_below="@id/EXEC_STX_top"
+        android:background="@color/white"
+        android:layout_marginRight="@dimen/mon_padding"
+        android:dividerHeight="@dimen/mon_padding"
+        android:layout_below="@id/EXEC_STX_bennLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

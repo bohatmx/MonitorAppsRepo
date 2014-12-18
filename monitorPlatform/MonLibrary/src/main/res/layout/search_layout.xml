@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/beige_pale"
     android:id="@+id/SLT_searchLayout"
     android:layout_height="wrap_content">
 
@@ -31,7 +30,7 @@
 
         <EditText
             android:id="@+id/SLT_editSearch"
-            android:layout_marginLeft="@dimen/mon_wider"
+            android:layout_marginLeft="@dimen/mon_padding"
             android:layout_marginRight="@dimen/mon_wider"
             android:hint="Search"
             android:layout_width="match_parent"

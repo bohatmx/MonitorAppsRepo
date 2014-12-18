@@ -245,7 +245,7 @@ public class TimePickerDialog extends DialogFragment implements RadialPickerLayo
             }
         });
 
-        mDoneButton = (TextView) view.findViewById(R.id.done_button);
+        mDoneButton = (TextView) view.findViewById(R.id.CAM2_done_button);
         mDoneButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -51,6 +51,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:name="com.com.boha.monitor.library.activities.MonApp"
         android:theme="@style/ExecTheme" >
         <meta-data
             android:name="com.google.android.gms.version"
@@ -85,11 +86,25 @@
             android:name=".activities.ExecPagerActivity"
             android:label="@string/title_activity_exec_pager" />
         <activity
-            android:name="com.com.boha.monitor.library.MonitorMapActivity"
+            android:name="com.com.boha.monitor.library.activities.ImagePagerActivity"
             android:label="@string/title_activity_exec_pager" />
         <activity
-            android:name=".activities.ExecStatusReportActivity"
+            android:name="com.com.boha.monitor.library.activities.ImageActivity"
+            android:label="@string/title_activity_exec_pager" />
+        <activity
+            android:name="com.com.boha.monitor.library.activities.MonitorMapActivity"
+            android:label="@string/title_activity_exec_pager" />
+        <activity
+            android:name="com.com.boha.monitor.library.activities.ExecStatusReportActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:label="@string/title_activity_exec_status_report" >
+
+        </activity>
+        <activity
+            android:name="com.com.boha.monitor.library.activities.PictureRecyclerGridActivity"
+            >
+
         </activity>
     </application>
 

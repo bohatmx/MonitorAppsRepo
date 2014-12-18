@@ -53,7 +53,7 @@
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/done_button"
+            android:id="@+id/CAM2_done_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"

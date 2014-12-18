@@ -95,6 +95,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         imgSearch2 = (ImageView) view.findViewById(R.id.SLT_imgSearch2);
         editSearch = (EditText)view.findViewById(R.id.SLT_editSearch);
 
+
         editSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

@@ -3,7 +3,7 @@
     package="com.boha.monitor.operations" >
 
     <application
-        android:name="com.com.boha.monitor.library.MonApp"
+        android:name="com.com.boha.monitor.library.activities.MonApp"
         android:allowBackup="true"
         android:icon="@drawable/maono"
         android:label="@string/app_name"
@@ -37,7 +37,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.com.boha.monitor.library.ImagePagerActivity"
+            android:name="com.com.boha.monitor.library.activities.ImagePagerActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".OperationsPagerActivity"
@@ -45,40 +45,40 @@
             android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.com.boha.monitor.library.CameraActivity"
+            android:name="com.com.boha.monitor.library.activities.CameraActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity
-            android:name="com.com.boha.monitor.library.SitePagerActivity"
+            android:name="com.com.boha.monitor.library.activities.SitePagerActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.com.boha.monitor.library.ImageActivity"
+            android:name="com.com.boha.monitor.library.activities.ImageActivity"
             android:label="@string/title_activity_image" />
         <activity
-            android:name="com.com.boha.monitor.library.TaskAssignmentActivity"
+            android:name="com.com.boha.monitor.library.activities.TaskAssignmentActivity"
             android:label="@string/title_activity_task_assignment" />
         <activity
-            android:name="com.com.boha.monitor.library.MonitorMapActivity"
+            android:name="com.com.boha.monitor.library.activities.MonitorMapActivity"
             android:label="@string/title_activity_monitor_map"
-            android:parentActivityName="com.com.boha.monitor.library.ImageActivity" >
+            android:parentActivityName="com.com.boha.monitor.library.activities.ImageActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.com.boha.monitor.library.ImageActivity" />
+                android:value="com.com.boha.monitor.library.activities.ImageActivity" />
         </activity>
         <activity
-            android:name="com.com.boha.monitor.library.ClaimAndInvoicePagerActivity"
+            android:name="com.com.boha.monitor.library.activities.ClaimAndInvoicePagerActivity"
             android:parentActivityName=".OperationsPagerActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".OperationsPagerActivity" />
         </activity>
         <activity
-            android:name="com.com.boha.monitor.library.PictureActivity"
+            android:name="com.com.boha.monitor.library.activities.PictureActivity"
             android:configChanges="orientation|keyboardHidden" />
 
         <service android:name="com.com.boha.monitor.library.services.PhotoUploadService" />
 
-        <activity android:name="com.com.boha.monitor.library.SubTaskActivity" android:screenOrientation="portrait" />
-        <activity android:name="com.com.boha.monitor.library.SubTaskStatusAssignmentActivity" android:screenOrientation="portrait" />
+        <activity android:name="com.com.boha.monitor.library.activities.SubTaskActivity" android:screenOrientation="portrait" />
+        <activity android:name="com.com.boha.monitor.library.activities.SubTaskStatusAssignmentActivity" android:screenOrientation="portrait" />
     </application>
 
     <permission
