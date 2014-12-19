@@ -100,7 +100,6 @@ public class StaffAdapter extends ArrayAdapter<CompanyStaffDTO> {
         sb.append("monitor_images/company").append(SharedUtil.getCompany(ctx).getCompanyID());
         sb.append("/companyStaff/t").append(p.getCompanyStaffID()).append(".jpg");
 
-        System.out.println(sb.toString());
         ImageLoader.getInstance().displayImage(sb.toString(),item.photo, new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {

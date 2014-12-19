@@ -23,7 +23,6 @@
 
         <RelativeLayout
             android:id="@+id/PROJ_LIST_layoutx"
-            android:padding="@dimen/mon_divider"
             android:layout_below="@id/hero_layout"
             android:background="@color/beige_pale"
             android:layout_width="match_parent"
@@ -32,6 +31,7 @@
             <ImageView
                 android:id="@+id/PROJ_LIST_img"
                 android:src="@drawable/maono"
+                android:visibility="gone"
                 android:layout_width="32dp"
                 android:layout_height="32dp" />
 

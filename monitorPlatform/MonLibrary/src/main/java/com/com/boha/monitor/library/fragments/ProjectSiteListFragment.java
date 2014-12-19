@@ -407,6 +407,43 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         //mListener = null;
     }
 
+    public void setLocationConfirmed(ProjectSiteDTO ps) {
+        Log.e(LOG, "## confirmed location of " + ps.getProjectSiteName() + ", rebuild list");
+        List<ProjectSiteDTO> list = new ArrayList<>();
+        for (ProjectSiteDTO s: projectSiteList) {
+            if (ps.getProjectSiteID().intValue() == s.getProjectSiteID().intValue()) {
+                list.add(ps);
+            } else {
+                list.add(s);
+            }
+        }
+        projectSiteList = list;
+        projectSiteAdapter.notifyDataSetChanged();
+        //the confirmed location has to be cached...
+
+        CacheUtil.getCachedProjectData(ctx, ps.getProjectID(), new CacheUtil.CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO response) {
+                if (response != null) {
+                    project.setProjectSiteList(projectSiteList);
+                    response.setProjectList(new ArrayList<ProjectDTO>());
+                    response.getProjectList().add(project);
+                    CacheUtil.cacheProjectData(ctx, response, project.getProjectID(), null);
+                }
+            }
+
+            @Override
+            public void onDataCached() {
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+    }
+
 
     ProjectSiteDTO projectSite;
 

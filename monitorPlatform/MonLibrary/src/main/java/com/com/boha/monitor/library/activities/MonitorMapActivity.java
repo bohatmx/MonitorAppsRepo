@@ -20,10 +20,8 @@ import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.dto.TaskStatusDTO;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
-import com.com.boha.monitor.library.services.RequestCache;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
-import com.com.boha.monitor.library.util.RequestCacheUtil;
 import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebCheck;
@@ -356,12 +354,7 @@ public class MonitorMapActivity extends ActionBarActivity
         list.add(ctx.getString(R.string.directions));
         list.add(getString(R.string.status_report));
         list.add(getString(R.string.site_gallery));
-        if (projectSite != null) {
-            if (projectSite.getLocationConfirmed() == null
-                    && projectSite.getLatitude() != null) {
-                list.add(getString(R.string.confirm_gps));
-            }
-        }
+
         Util.showPopupBasicWithHeroImage(ctx, this, list, topLayout, ctx.getString(R.string.select_action), new Util.UtilPopupListener() {
             @Override
             public void onItemSelected(int index) {
@@ -371,11 +364,11 @@ public class MonitorMapActivity extends ActionBarActivity
                 if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.status_report))) {
                     Util.showToast(ctx, ctx.getString(R.string.under_cons));
                 }
-                if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.confirm_gps))) {
-                    confirmLocation();
-                }
+
                 if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.site_gallery))) {
-                    Util.showToast(ctx, ctx.getString(R.string.under_cons));
+                    Intent i = new Intent(ctx, PictureRecyclerGridActivity.class);
+                    i.putExtra("projectSite", projectSite);
+                    startActivity(i);
                 }
             }
         });
@@ -383,70 +376,7 @@ public class MonitorMapActivity extends ActionBarActivity
 
     }
 
-    private void confirmLocation() {
-        RequestDTO w = new RequestDTO(RequestDTO.CONFIRM_LOCATION);
-        w.setProjectSiteID(projectSite.getProjectSiteID());
-        w.setLatitude(projectSite.getLatitude());
-        w.setLongitude(projectSite.getLongitude());
-        w.setAccuracy(projectSite.getAccuracy());
 
-        progressBar.setVisibility(View.VISIBLE);
-        RequestCacheUtil.addRequest(ctx, w, new CacheUtil.CacheRequestListener() {
-            @Override
-            public void onDataCached() {
-                progressBar.setVisibility(View.GONE);
-                projectSite.setLocationConfirmed(1);
-                coordsConfirmed = true;
-                Util.showToast(ctx, getString(R.string.location_confirmed));
-            }
-
-            @Override
-            public void onRequestCacheReturned(RequestCache cache) {
-
-            }
-
-            @Override
-            public void onError() {
-
-            }
-        });
-
-
-//        WebSocketUtil.sendRequest(ctx,Statics.COMPANY_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
-//            @Override
-//            public void onMessage(final ResponseDTO response) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        progressBar.setVisibility(View.GONE);
-//                        if (!ErrorUtil.checkServerError(ctx,response)) {
-//                            return;
-//                        };
-//                        Log.d(LOG, "########## location confirmed, status code: " + response.getStatusCode());
-//                        projectSite.setLocationConfirmed(1);
-//                        coordsConfirmed = true;
-//                        Util.showToast(ctx, "Site location has been confirmed");
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onClose() {
-//
-//            }
-//
-//            @Override
-//            public void onError(final String message) {
-//                Log.e(LOG, "---- ERROR websocket - " + message);
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Util.showErrorToast(ctx,message);
-//                    }
-//                });
-//            }
-//        });
-    }
 
     private void startDirectionsMap(double lat, double lng) {
         Log.i(LOG, "startDirectionsMap ..........");
@@ -684,6 +614,12 @@ public class MonitorMapActivity extends ActionBarActivity
             setResult(RESULT_CANCELED);
         }
         finish();
+    }
+
+    @Override
+    public void onPause() {
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        super.onPause();
     }
 
 }

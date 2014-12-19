@@ -3,9 +3,7 @@ package com.com.boha.monitor.library.fragments;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -14,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
 import android.widget.Chronometer;
@@ -32,6 +29,8 @@ import com.com.boha.monitor.library.util.ErrorUtil;
 import com.com.boha.monitor.library.util.RequestCacheUtil;
 import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
+import com.com.boha.monitor.library.util.WebCheck;
+import com.com.boha.monitor.library.util.WebCheckResult;
 import com.com.boha.monitor.library.util.WebSocketUtil;
 
 import java.text.DecimalFormat;
@@ -46,7 +45,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
 
     public interface GPSScanFragmentListener {
         public void onStartScanRequested();
-
+        public void onLocationConfirmed(ProjectSiteDTO projectSite);
         public void onEndScanRequested();
         public void onMapRequested(ProjectSiteDTO projectSite);
 
@@ -150,26 +149,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
                     @Override
                     public void onAnimationEnded() {
                         if (projectSite.getAccuracy() == null) return;
-                        if (projectSite.getAccuracy() == seekBar.getProgress()
-                                || projectSite.getAccuracy() < seekBar.getProgress()) {
-
-                            AlertDialog.Builder dg = new AlertDialog.Builder(getActivity());
-                            dg.setTitle("Site Map")
-                                    .setMessage("Do you want to view the site on a map?")
-                                    .setPositiveButton(ctx.getString(R.string.yes), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            listener.onMapRequested(projectSite);
-                                        }
-                                    })
-                                    .setNegativeButton(ctx.getString(R.string.no), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            confirmLocation();
-                                        }
-                                    })
-                                    .show();
-                        }
+                        listener.onMapRequested(projectSite);
                     }
                 });
 
@@ -238,12 +218,43 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         w.setAccuracy(projectSite.getAccuracy());
 
 
-        RequestCacheUtil.addRequest(ctx, w, new CacheUtil.CacheRequestListener() {
+        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
+        if (wcr.isWifiConnected()) {
+            sendRequest(w);
+        } else {
+            addRequestToCache(w);
+        }
+    }
+
+    private void sendRequest(final RequestDTO request) {
+        WebSocketUtil.sendRequest(ctx,Statics.COMPANY_ENDPOINT,request, new WebSocketUtil.WebSocketListener() {
+            @Override
+            public void onMessage(ResponseDTO response) {
+                if (response.getStatusCode() > 0) {
+                    addRequestToCache(request);
+                }
+            }
+
+            @Override
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                addRequestToCache(request);
+            }
+        });
+    }
+    private void addRequestToCache(RequestDTO request) {
+        RequestCacheUtil.addRequest(ctx, request, new CacheUtil.CacheRequestListener() {
             @Override
             public void onDataCached() {
                 if (projectSite == null) return;
                 projectSite.setLocationConfirmed(1);
-                Util.showToast(ctx, getString(R.string.location_confirmed));
+                Log.e(LOG, "----onDataCached, onEndScanRequested - please stop scanning");
+                listener.onEndScanRequested();
+                listener.onLocationConfirmed(projectSite);
             }
 
             @Override
@@ -307,35 +318,6 @@ public class GPSScanFragment extends Fragment implements PageFragment {
        // logoAnimator.start();
         //flashAccuracy();
     }
-    public void flashAccuracy() {
-        Log.w(LOG, "++++++= flashAccuracy ..............");
-        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(txtAccuracy, "alpha", 0, 1);
-        objectAnimator.setRepeatMode(ObjectAnimator.REVERSE);
-        objectAnimator.setDuration(200);
-        objectAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-        objectAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                flashAccuracy();
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-        objectAnimator.start();
-    }
 
     private void sendGPSData() {
 
@@ -390,24 +372,15 @@ public class GPSScanFragment extends Fragment implements PageFragment {
 
         if (location.getAccuracy() == seekBar.getProgress()
                 || location.getAccuracy() < seekBar.getProgress()) {
-            listener.onEndScanRequested();
             isScanning = false;
             stopRotatingLogo();
             chronometer.stop();
             resetLogo();
             btnScan.setText(ctx.getString(R.string.start_scan));
-            //btnSave.setVisibility(View.VISIBLE);
             projectSite.setLatitude(location.getLatitude());
             projectSite.setLongitude(location.getLongitude());
             projectSite.setAccuracy(location.getAccuracy());
-            //Util.expand(btnSave,200,null);
-            Util.flashSeveralTimes(txtAccuracy,100,2,new Util.UtilAnimationListener() {
-                @Override
-                public void onAnimationEnded() {
-                    Util.showToast(ctx, "Tap the big RED number to confirm site location");
-                }
-            });
-            Log.d(LOG, "----------- onEndScanRequested - stopped scanning");
+            confirmLocation();
             return;
         }
         Util.flashSeveralTimes(hero,200,2, null);

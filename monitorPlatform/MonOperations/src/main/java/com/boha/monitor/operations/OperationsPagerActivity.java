@@ -141,13 +141,20 @@ public class OperationsPagerActivity extends ActionBarActivity
                         TextView tv = (TextView) view.findViewById(R.id.DI_txtTitle);
                         Log.w(LOG, "##### onItemClick, index: " + i + " title: " + tv.getText().toString());
                         mPager.setCurrentItem(i - 1, true);
+
                         mDrawerLayout.closeDrawers();
                     }
                 });
 
                 WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
                 if (wcr.isWifiConnected()) {
-                    getCompanyData();
+                    if (projectList == null || projectList.isEmpty()) {
+                        getCompanyData();
+                        return;
+                    }
+                    Log.w(LOG,"## starting RequestSyncService ...");
+                    Intent i = new Intent(getApplicationContext(), RequestSyncService.class);
+                    startService(i);
                 }
             }
 
@@ -166,6 +173,7 @@ public class OperationsPagerActivity extends ActionBarActivity
 
     private void getCompanyData() {
 
+        Log.e(LOG,"#### getCompanyData ....");
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.GET_COMPANY_DATA);
         w.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
@@ -1117,6 +1125,8 @@ public class OperationsPagerActivity extends ActionBarActivity
             }
             if (pf instanceof BeneficiaryListFragment) {
                 title = ctx.getString(R.string.bennie_list);
+                BeneficiaryListFragment blf = (BeneficiaryListFragment)pf;
+                blf.setProjectList(projectList);
             }
             if (pf instanceof EngineerListFragment) {
                 title = ctx.getString(R.string.engineer_list);

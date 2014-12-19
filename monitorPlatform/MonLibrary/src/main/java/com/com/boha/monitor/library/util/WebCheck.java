@@ -37,7 +37,7 @@ public class WebCheck {
 	    	Log.w(TAG, "###### WIFI CONNECTED on check");
     		result.setWifiConnected(true);
     	}else {
-    		Log.e(TAG, "@@@ WIFI NOT CONNECTED on check");
+    		Log.e(TAG, "------ WIFI NOT CONNECTED on check");
     		result.setWifiConnected(false);
     	}
 	    //
@@ -46,25 +46,25 @@ public class WebCheck {
                 Log.w(TAG, "###### MOBILE_NETWORK AVAILABLE on check");
                 result.setMobileAvailable(true);
             } else {
-                Log.d(TAG, "@@@ MOBILE_NETWORK NOT AVAILABLE on check");
+                Log.d(TAG, "------ MOBILE_NETWORK NOT AVAILABLE on check");
                 result.setMobileAvailable(false);
             }
             if (mobileInfo.isConnected()) {
                 Log.w(TAG, "###### MOBILE_NETWORK CONNECTED on check");
                 result.setMobileConnected(true);
             } else {
-                Log.d(TAG, "@@@ MOBILE_NETWORK NOT CONNECTED on check");
+                Log.d(TAG, "------ MOBILE_NETWORK NOT CONNECTED on check");
                 result.setMobileConnected(false);
             }
         } else {
-            Log.d(TAG, "@@@ MOBILE_NETWORK NOT AVAILABLE on check");
+            Log.d(TAG, "------ MOBILE_NETWORK NOT AVAILABLE on check");
             result.setMobileAvailable(false);
         }
 	    if (!result.isWifiConnected() && !result.isMobileConnected()) {
 	    	result.setNetworkUnavailable(true);
 	    }
 	    long end = System.currentTimeMillis();
-	    Log.d(TAG, "###### Network check completed in " + (end-start) + " ms");
+	    //Log.d(TAG, "###### Network check completed in " + (end-start) + " ms");
 	    return result;
 	    
 	}

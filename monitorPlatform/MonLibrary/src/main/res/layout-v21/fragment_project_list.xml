@@ -32,6 +32,7 @@
             <ImageView
                 android:id="@+id/PROJ_LIST_img"
                 android:src="@drawable/maono"
+                android:visibility="gone"
                 android:layout_width="32dp"
                 android:layout_height="32dp" />
 
@@ -52,7 +53,6 @@
             android:id="@+id/PROJ_LIST_layoutStatus"
             android:layout_below="@id/PROJ_LIST_layoutx"
             android:background="@color/beige_pale"
-            android:padding="@dimen/mon_padding"
             android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -95,11 +95,11 @@
     </RelativeLayout>
 
     <ListView
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/mon_padding"
         android:layout_below="@id/topTop"
         android:id="@android:id/list"
         android:background="@color/white"
-        android:dividerHeight="8dp"
+        android:dividerHeight="@dimen/mon_padding"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

@@ -44,6 +44,8 @@ import com.com.boha.monitor.library.util.ImageUtil;
 import com.com.boha.monitor.library.util.PMException;
 import com.com.boha.monitor.library.util.TextureRenderer;
 import com.com.boha.monitor.library.util.Util;
+import com.com.boha.monitor.library.util.WebCheck;
+import com.com.boha.monitor.library.util.WebCheckResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
@@ -121,7 +123,10 @@ public class PictureActivity extends ActionBarActivity implements
     @Override
     public void onResume() {
         Log.w(LOG, "***************** onResume - starting pending uploads, if any");
-        PhotoUploadService.uploadPendingPhotos(ctx);
+        WebCheckResult w = WebCheck.checkNetworkAvailability(ctx);
+        if (w.isWifiConnected()) {
+            PhotoUploadService.uploadPendingPhotos(ctx);
+        }
         super.onResume();
     }
 

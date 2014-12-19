@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -29,7 +28,6 @@ import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.ImportUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
-import com.com.boha.monitor.library.util.ToastUtil;
 import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebSocketUtil;
 import com.com.boha.monitor.library.util.bean.ImportException;
@@ -67,7 +65,6 @@ public class BeneficiaryImportFragment extends Fragment implements PageFragment 
     Spinner fileSpinner;
     Button btnImport;
     ListView list;
-    CheckBox chkAll;
     List<BeneficiaryDTO> beneficiaryList;
     List<File> files = new ArrayList<File>();
     ImageView image;
@@ -319,7 +316,7 @@ public class BeneficiaryImportFragment extends Fragment implements PageFragment 
         listener.onBeneficiariesImported(project);
     }
     private void sendData(List<BeneficiaryDTO> list) {
-        Log.e(LOG, "### totalPages: " + totalPages + " pageCnt: " + pageCnt + " list: " + list.size());
+        Log.e(LOG, "### sendData, totalPages: " + totalPages + " pageCnt: " + pageCnt + " list: " + list.size());
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.IMPORT_BENEFICIARIES);
         w.setBeneficiaryList(list);
@@ -385,6 +382,7 @@ public class BeneficiaryImportFragment extends Fragment implements PageFragment 
 
     TextView txtTotal;
     BeneficiaryImportAdapter adapter;
+
     static final String LOG = BeneficiaryImportFragment.class.getSimpleName();
     static final Locale loc = Locale.getDefault();
     static final SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm", loc);

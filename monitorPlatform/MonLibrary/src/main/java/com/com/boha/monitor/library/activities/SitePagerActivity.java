@@ -191,7 +191,12 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            getProjectData();
+            WebCheckResult w = WebCheck.checkNetworkAvailability(ctx);
+            if (w.isWifiConnected()) {
+                getProjectData();
+            } else {
+                Util.showToast(ctx,ctx.getString(R.string.connect_wifi));
+            }
             return true;
         }
         if (id == R.id.action_help) {
@@ -546,7 +551,11 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
     @Override
     public void onPhotoUploadServiceRequested() {
         Log.e(LOG,"**** onPhotoUploadServiceRequested");
-       pService.sendCachedPhotos();
+        WebCheckResult w = WebCheck.checkNetworkAvailability(ctx);
+        if (w.isWifiConnected()) {
+            pService.sendCachedPhotos();
+        }
+
     }
 
     @Override
@@ -586,7 +595,16 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
     }
 
     @Override
+    public void onLocationConfirmed(ProjectSiteDTO projectSite) {
+        Log.w(LOG,"## asking projectSiteListFragment to process confirmed location for site");
+        projectSiteListFragment.setLocationConfirmed(projectSite);
+        mPager.setCurrentItem(0,true);
+        Util.showToast(ctx,ctx.getString(R.string.location_confirmed));
+    }
+
+    @Override
     public void onEndScanRequested() {
+        Log.w(LOG,"## onEndScanRequested");
         stopPeriodicUpdates();
     }
 

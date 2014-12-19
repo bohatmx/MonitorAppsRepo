@@ -26,6 +26,7 @@
     <RelativeLayout
         android:id="@+id/AST_middle"
         android:layout_below="@id/AST_handle"
+        android:background="@color/beige_pale"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

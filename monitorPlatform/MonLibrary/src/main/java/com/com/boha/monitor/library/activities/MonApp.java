@@ -13,12 +13,10 @@ import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.utils.StorageUtils;
+import com.nostra13.universalimageloader.utils.L;
 
 import org.acra.ReportField;
 import org.acra.annotation.ReportsCrashes;
-
-import java.io.File;
 
 /**
  * Created by aubreyM on 2014/05/17.
@@ -41,7 +39,7 @@ public class MonApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(LOG, "############################ onCreate MonApp has started ---------------->");
+        Log.e(LOG, "############################ onCreate MonApp has started ---------------->");
 
 //        ACRA.init(this);
 //        CompanyDTO company = SharedUtil.getCompany(getApplicationContext());
@@ -51,18 +49,19 @@ public class MonApp extends Application {
 //        }
 //
 //        Log.e(LOG, "###### ACRA Crash Reporting has been initiated");
-        initializeVolley(getApplicationContext());
+ //       initializeVolley(getApplicationContext());
 
-        File cacheDir = StorageUtils.getCacheDirectory(this);
+        //File cacheDir = StorageUtils.getCacheDirectory(this);
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
                 .denyCacheImageMultipleSizesInMemory()
-                .memoryCache(new LruMemoryCache(4 * 1024 * 1024))
-                .memoryCacheSize(4 * 1024 * 1024)
+                .memoryCache(new LruMemoryCache(8 * 1024 * 1024))
                 .diskCacheSize(300 * 1024 * 1024)
-                .diskCacheFileCount(300)
-                .writeDebugLogs()
+                .diskCacheFileCount(1000)
                 .build();
-        com.nostra13.universalimageloader.core.ImageLoader.getInstance().init(config);
+        ImageLoader.getInstance().init(config);
+        L.writeDebugLogs(false);
+        L.writeLogs(false);
+
         Log.w(LOG, "###### ImageLoaderConfiguration has been initialised");
 
 

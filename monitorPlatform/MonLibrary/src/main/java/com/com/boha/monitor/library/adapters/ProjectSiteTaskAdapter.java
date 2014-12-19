@@ -12,6 +12,7 @@ import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dto.ProjectSiteTaskDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteTaskStatusDTO;
 import com.com.boha.monitor.library.util.Statics;
+import com.com.boha.monitor.library.util.Util;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -32,6 +33,7 @@ public class ProjectSiteTaskAdapter extends ArrayAdapter<ProjectSiteTaskDTO> {
     private Context ctx;
     private ProjectSiteTaskAdapterListener listener;
     private boolean locationConfirmed;
+    private Integer index;
 
 
     public ProjectSiteTaskAdapter(Context context, int textViewResourceId,
@@ -45,10 +47,11 @@ public class ProjectSiteTaskAdapter extends ArrayAdapter<ProjectSiteTaskDTO> {
     }
 
     public ProjectSiteTaskAdapter(Context context, int textViewResourceId,
-                                  List<ProjectSiteTaskDTO> list, boolean locationConfirmed, ProjectSiteTaskAdapterListener listener) {
+                                  List<ProjectSiteTaskDTO> list, boolean locationConfirmed, Integer index, ProjectSiteTaskAdapterListener listener) {
         super(context, textViewResourceId, list);
         this.mLayoutRes = textViewResourceId;
         mList = list;
+        this.index = index;
         this.listener = listener;
         this.locationConfirmed = locationConfirmed;
         ctx = context;
@@ -122,16 +125,16 @@ public class ProjectSiteTaskAdapter extends ArrayAdapter<ProjectSiteTaskDTO> {
                 int color = list.get(0).getTaskStatus().getStatusColor();
                 switch (color) {
                     case 1:
-                        item.txtColor.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xgreen_oval_small));
+                        item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval_small));
                         break;
                     case 2:
-                        item.txtColor.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
+                        item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
                         break;
                     case 3:
-                        item.txtColor.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
+                        item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
                         break;
                     default:
-                        item.txtColor.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xgrey_oval_small));
+                        item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xgrey_oval_small));
                         break;
                 }
 
@@ -139,7 +142,7 @@ public class ProjectSiteTaskAdapter extends ArrayAdapter<ProjectSiteTaskDTO> {
                 item.txtLastDate.setVisibility(View.GONE);
                 item.txtStatus.setVisibility(View.GONE);
                 item.txtStaff.setVisibility(View.GONE);
-                item.txtColor.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xgrey_oval_small));
+                item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xgrey_oval_small));
             }
         }
 
@@ -178,6 +181,11 @@ public class ProjectSiteTaskAdapter extends ArrayAdapter<ProjectSiteTaskDTO> {
 
         if (!locationConfirmed) {
             item.imgCamera.setVisibility(View.GONE);
+        }
+        if (index != null) {
+            if (index.intValue() == position) {
+                Util.flashSeveralTimes(item.imgCamera,200,6,null);
+            }
         }
 
         return (convertView);

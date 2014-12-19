@@ -2,7 +2,6 @@ package com.com.boha.monitor.library.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -126,7 +125,6 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> {
 
                 @Override
                 public void onLoadingFailed(String s, View view, FailReason failReason) {
-                    Log.e("ProjectSiteAdapter", "-------- onLoadingFailed, failReason: " + failReason.toString());
                     item.imgHero.setVisibility(View.GONE);
                 }
 
@@ -140,8 +138,6 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> {
                 }
             });
         } else {
-            //item.imgHero.setImageDrawable(ctx.getResources().getDrawable(R.drawable.house));
-            //System.out.println("----------------> used default photo" );
             item.imgHero.setVisibility(View.GONE);
         }
 

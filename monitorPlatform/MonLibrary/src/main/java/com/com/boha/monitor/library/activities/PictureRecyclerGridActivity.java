@@ -38,7 +38,7 @@ public class PictureRecyclerGridActivity extends ActionBarActivity {
 
         projectSite = (ProjectSiteDTO)getIntent().getSerializableExtra("projectSite");
         if (projectSite != null) {
-            title.setText("Site Progress Images" + ": " + projectSite.getBeneficiary().getFullName());
+            title.setText(getString(R.string.progress_images) + ": " + projectSite.getBeneficiary().getFullName());
             adapter = new PictureRecyclerAdapter(projectSite.getPhotoUploadList(), 1, ctx);
             list.setAdapter(adapter);
         }

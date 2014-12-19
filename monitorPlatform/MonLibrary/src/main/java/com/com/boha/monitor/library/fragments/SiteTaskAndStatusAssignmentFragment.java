@@ -139,7 +139,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
 
         Statics.setRobotoFontLight(ctx, txtTitle);
         if (projectSite != null) {
-            setList();
+            setList(null);
         }
 //
         getCachedData();
@@ -154,12 +154,11 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
         progressBar.setVisibility(View.GONE);
     }
 
-    boolean isHidden = false;
 
     public void setProjectSiteTaskList(List<ProjectSiteTaskDTO> projectSiteTaskList) {
         this.projectSiteTaskList = projectSiteTaskList;
         if (mListView != null) {
-            setList();
+            setList(null);
         }
     }
 
@@ -205,7 +204,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                             for (final ProjectSiteTaskDTO s : projectSiteTaskList) {
                                 if (s.getProjectSiteTaskID().intValue() == projectSiteTaskStatus.getProjectSiteTaskID().intValue()) {
                                     s.getProjectSiteTaskStatusList().add(0, projectSiteTaskStatus);
-                                    setList();
+                                    setList(Integer.parseInt("" + lastIndex));
                                     if (lastIndex == 1) {
                                         mListView.setSelection(0);
                                     } else
@@ -262,12 +261,11 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                 @Override
                 public void onDataCached() {
                     projectSiteTaskStatus = taskStatus;
-
                     projectSiteTask.setStatusDone(true);
                     for (final ProjectSiteTaskDTO s : projectSiteTaskList) {
                         if (s.getProjectSiteTaskID().intValue() == projectSiteTaskStatus.getProjectSiteTaskID().intValue()) {
                             s.getProjectSiteTaskStatusList().add(0, projectSiteTaskStatus);
-                            setList();
+                            setList(Integer.parseInt(""+lastIndex));
                             if (lastIndex == 1) {
                                 mListView.setSelection(0);
                             } else
@@ -410,43 +408,45 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
         }
     }
 
-    private void setList() {
+    private void setList(Integer index) {
         Log.d(LOG, "########## setList");
         Collections.sort(projectSiteTaskList);
         txtCount.setText("" + projectSiteTaskList.size());
         boolean locationConfirmed = false;
         if (projectSite.getLocationConfirmed() != null)
             locationConfirmed = true;
-        adapter = new ProjectSiteTaskAdapter(ctx, R.layout.task_item,
-                projectSiteTaskList, locationConfirmed, new ProjectSiteTaskAdapter.ProjectSiteTaskAdapterListener() {
-            @Override
-            public void onCameraRequested(ProjectSiteTaskDTO siteTask) {
-                mListener.onCameraRequested(siteTask, PhotoUploadDTO.TASK_IMAGE);
 
-            }
+            adapter = new ProjectSiteTaskAdapter(ctx, R.layout.task_item,
+                    projectSiteTaskList, locationConfirmed, index, new ProjectSiteTaskAdapter.ProjectSiteTaskAdapterListener() {
+                @Override
+                public void onCameraRequested(ProjectSiteTaskDTO siteTask) {
+                    mListener.onCameraRequested(siteTask, PhotoUploadDTO.TASK_IMAGE);
 
-            @Override
-            public void onDeleteRequested(ProjectSiteTaskDTO siteTask) {
+                }
 
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-                dialog.setMessage(ctx.getString(R.string.delete_task_text)
-                        + "\n\n" + siteTask.getTask().getTaskName())
-                        .setTitle(ctx.getString(R.string.delete))
-                        .setPositiveButton(ctx.getString(R.string.yes), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                @Override
+                public void onDeleteRequested(ProjectSiteTaskDTO siteTask) {
 
-                            }
-                        })
-                        .setNegativeButton(ctx.getString(R.string.no), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
-            }
-        });
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                    dialog.setMessage(ctx.getString(R.string.delete_task_text)
+                            + "\n\n" + siteTask.getTask().getTaskName())
+                            .setTitle(ctx.getString(R.string.delete))
+                            .setPositiveButton(ctx.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            })
+                            .setNegativeButton(ctx.getString(R.string.no), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
+                }
+            });
+
 
 
         getSummary();
@@ -470,7 +470,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                 }
                 task = projectSiteTask.getTask();
                 if (projectSiteTask.isStatusDone()) {
-                    Util.showToast(ctx, "Status already completed");
+                    Util.showToast(ctx, ctx.getString(R.string.status_completed));
                     return;
                 }
                 if (projectSiteTask.getTask().getSubTaskList() != null && !projectSiteTask.getTask().getSubTaskList().isEmpty()) {
@@ -744,27 +744,9 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
 
     private void showPictureReminderDialog() {
         if (getActivity() == null) return;
-        AlertDialog.Builder d = new AlertDialog.Builder(getActivity());
+        Util.showErrorToast(ctx, ctx.getString(R.string.rem_take_pic));
+        setList(Integer.parseInt(""+lastIndex));
 
-        d.setTitle(ctx.getString(R.string.reminder))
-                .setMessage(ctx.getString(R.string.pic_reminder))
-                .setPositiveButton(ctx.getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        mListener.onCameraRequested(projectSiteTask, PhotoUploadDTO.TASK_IMAGE);
-
-                    }
-                })
-                .setNegativeButton(ctx.getString(R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        Util.showErrorToast(ctx, ctx.getString(R.string.rem_take_pic));
-                    }
-                })
-                .setIcon(ctx.getResources().getDrawable(R.drawable.maono))
-                .show();
     }
 
     List<SubTaskStatusDTO> subTaskStatusList;

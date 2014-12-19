@@ -1,7 +1,5 @@
 package com.com.boha.monitor.library.fragments;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -12,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -83,7 +80,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                              Bundle savedInstanceState) {
         Log.w(LOG,"######### onCreateView... ");
 
-        view = inflater.inflate(R.layout.fragment_project, container, false);
+        view = inflater.inflate(R.layout.fragment_project_list, container, false);
         this.inflater = inflater;
         ctx = getActivity();
         //set fields
@@ -94,6 +91,8 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         imgSearch1 = (ImageView) view.findViewById(R.id.SLT_imgSearch1);
         imgSearch2 = (ImageView) view.findViewById(R.id.SLT_imgSearch2);
         editSearch = (EditText)view.findViewById(R.id.SLT_editSearch);
+
+        heroImage.setImageDrawable(Util.getRandomHeroImage(ctx));
 
 
         editSearch.addTextChangedListener(new TextWatcher() {
@@ -130,7 +129,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
         Bundle b = getArguments();
         if (b != null) {
-            Log.w(LOG,"######### onCreateView getArguments not null ...");
             ResponseDTO r = (ResponseDTO) b.getSerializable("response");
             type = b.getInt("type", PROJECT_TYPE);
             if (r.getCompany() != null) {
@@ -159,7 +157,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         Date lastReminder = SharedUtil.getReminderTime(ctx);
         Date now = new Date();
         long delta = now.getTime() - lastReminder.getTime();
-        if (delta > (TWO_HOUR)) {
+        if (delta > (ONE_DAY)) {
             Util.pretendFlash(txtLabel, 300, 5, new Util.UtilAnimationListener() {
                 @Override
                 public void onAnimationEnded() {
@@ -221,44 +219,8 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         super.onResume();
     }
     Integer statusCountInPeriod;
-    ObjectAnimator objectAnimator;
     ImageView heroImage;
     static final DecimalFormat df = new DecimalFormat("###,###,###,###");
-
-    public void stopRotatingLogo() {
-        if (objectAnimator != null)
-            objectAnimator.cancel();
-    }
-
-    public void rotateLogo() {
-        objectAnimator = ObjectAnimator.ofFloat(imgLogo, "rotation", 0.0f, 360f);
-        objectAnimator.setRepeatCount(ObjectAnimator.INFINITE);
-        objectAnimator.setDuration(200);
-        objectAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-        objectAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-
-        //objectAnimator.start();
-    }
 
     int lastIndex;
     private void setList() {
@@ -266,7 +228,8 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             Log.e(LOG,"-----------> projectList is null. Possible illegally called");
             return;
         }
-        Log.w(LOG, "## setting listView ...");
+        if (ctx == null) ctx = getActivity();
+        if (ctx == null) throw new UnsupportedOperationException("ctx is null, probably in some sort of illegalState");
         adapter = new ProjectAdapter(ctx, R.layout.project_item, projectList);
         mListView.setAdapter(adapter);
 
@@ -289,13 +252,11 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                 project = projectList.get(position);
                 lastIndex = position;
                 list = new ArrayList<>();
-                list.add("Site List");
-                list.add("Claims & Invoices");
-                list.add("Status Report");
-                list.add("Project Map");
-                list.add("Take a Picture");
-                list.add("Project Gallery");
-                list.add("Edit Project");
+                list.add(ctx.getString(R.string.site_list));
+                list.add(ctx.getString(R.string.claims_invoices));
+                list.add(ctx.getString(R.string.project_map));
+                list.add(ctx.getString(R.string.take_picture));
+                list.add(ctx.getString(R.string.edit_project));
 
                 View v = getActivity().getLayoutInflater().inflate(R.layout.hero_image,null);
                 TextView cap =(TextView)v.findViewById(R.id.HERO_caption);
@@ -322,19 +283,15 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                             case 1:
                                 mListener.onClaimsAndInvoicesRequested(project);
                                 break;
+
                             case 2:
-                                break;
-                            case 3:
                                 mListener.onMapRequested(project);
                                 break;
-                            case 4:
+                            case 3:
                                 mListener.onProjectPictureRequested(project);
                                 break;
-                            case 5:
-                                mListener.onGalleryRequested(project);
-                                break;
-                            case 6:
 
+                            case 4:
                                 mListener.onProjectEditDialogRequested(project);
                                 break;
                         }
@@ -360,10 +317,9 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             return;
         }
 
-        Log.w(LOG,"## setting totals ...have an issue?");
         try {
             if (txtProjectCount == null) {
-                Log.e(LOG, "--- txtProjectCount is NULL ????");
+                txtProjectCount.setText("0");
             } else {
                 txtProjectCount.setText("" + projectList.size());
             }

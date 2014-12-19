@@ -151,7 +151,7 @@ public class CacheUtil {
                         write(outputStream, json);
                         file = ctx.getFileStreamPath(JSON_REQUEST);
                         if (file != null) {
-                            Log.e(LOG, "......Request cache json written to disk,  - path: " + file.getAbsolutePath() +
+                            Log.e(LOG, "Request cache written, path: " + file.getAbsolutePath() +
                                     " - length: " + file.length());
                         }
                         break;
@@ -161,7 +161,7 @@ public class CacheUtil {
                         write(outputStream, json);
                         file = ctx.getFileStreamPath(JSON_PROJECT_DATA + projectID + ".json");
                         if (file != null) {
-                            Log.e(LOG, "......Project cache json written to disk,  - path: " + file.getAbsolutePath() +
+                            Log.e(LOG, "Project cache written, path: " + file.getAbsolutePath() +
                                     " - length: " + file.length());
                         }
                         break;
@@ -171,7 +171,7 @@ public class CacheUtil {
                         write(outputStream, json);
                         file = ctx.getFileStreamPath(JSON_SITE + projectSiteID + ".json");
                         if (file != null) {
-                            Log.e(LOG, "......Site cache json written to disk,  - path: " + file.getAbsolutePath() +
+                            Log.e(LOG, "Site cache written, path: " + file.getAbsolutePath() +
                                     " - length: " + file.length());
                         }
                         break;
@@ -181,7 +181,7 @@ public class CacheUtil {
                         write(outputStream, json);
                         file = ctx.getFileStreamPath(JSON_PHOTO);
                         if (file != null) {
-                            Log.e(LOG, "......Photo cache json written to disk,  - path: " + file.getAbsolutePath() +
+                            Log.e(LOG, "Photo cache written, path: " + file.getAbsolutePath() +
                                     " - length: " + file.length());
                         }
                         break;
@@ -191,7 +191,7 @@ public class CacheUtil {
                         write(outputStream, json);
                         file = ctx.getFileStreamPath(JSON_DATA);
                         if (file != null) {
-                            Log.e(LOG, "......Data cache json written to disk,  - path: " + file.getAbsolutePath() +
+                            Log.e(LOG, "Data cache written, path: " + file.getAbsolutePath() +
                                     " - length: " + file.length());
                         }
                         break;
@@ -201,7 +201,7 @@ public class CacheUtil {
                         write(outputStream, json);
                         file = ctx.getFileStreamPath(JSON_COUNTRIES);
                         if (file != null) {
-                            Log.e(LOG, "......Data cache json written to disk,  - path: " + file.getAbsolutePath() +
+                            Log.e(LOG, "Country cache written, path: " + file.getAbsolutePath() +
                                     " - length: " + file.length());
                         }
                         break;
@@ -259,22 +259,27 @@ public class CacheUtil {
                     case CACHE_PROJECT:
                         stream = ctx.openFileInput(JSON_PROJECT_DATA + projectID + ".json");
                         response = getData(stream);
+                        Log.i(LOG, "++ project cache retrieved");
                         break;
                     case CACHE_REQUEST:
                         stream = ctx.openFileInput(JSON_REQUEST);
                         response = getData(stream);
+                        Log.i(LOG, "++ request cache retrieved");
                         break;
                     case CACHE_PHOTOS:
                         stream = ctx.openFileInput(JSON_PHOTO);
                         response = getData(stream);
+                        Log.i(LOG, "++ photo cache retrieved");
                         break;
                     case CACHE_DATA:
                         stream = ctx.openFileInput(JSON_DATA);
                         response = getData(stream);
+                        Log.i(LOG, "++ company data cache retrieved");
                         break;
                     case CACHE_COUNTRIES:
                         stream = ctx.openFileInput(JSON_COUNTRIES);
                         response = getData(stream);
+                        Log.i(LOG, "++ country cache retrieved");
                         break;
 
                 }
@@ -299,10 +304,9 @@ public class CacheUtil {
         protected void onPostExecute(ResponseDTO v) {
             if (utilListener == null) return;
             if (v != null) {
-                Log.i(LOG, "$$$$$$$$$$$$ cached data retrieved");
                 utilListener.onFileDataDeserialized(v);
             } else {
-                Log.e(LOG, "------ No cache, util returns null response object");
+                Log.e(LOG, "-- No cache, util returns null response object, onError fired!");
                 utilListener.onError();
             }
 
@@ -325,14 +329,14 @@ public class CacheUtil {
 
                 stream = ctx.openFileInput(JSON_SITE + projectSiteID + ".json");
                 site = getData(stream);
-
+                Log.i(LOG, "++ site cache retrieved");
 
             } catch (FileNotFoundException e) {
-                Log.d(LOG, "############# cache file not found. not initialised yet. no problem");
+                Log.d(LOG, "## site cache file not found. not initialised yet. no problem");
 
 
             } catch (IOException e) {
-                Log.v(LOG, "------------ Failed to retrieve cache", e);
+                Log.v(LOG, "-- Failed to retrieve cache", e);
             }
 
             return site;
@@ -342,10 +346,9 @@ public class CacheUtil {
         protected void onPostExecute(ProjectSiteDTO result) {
             if (siteListener == null) return;
             if (result != null) {
-                Log.i(LOG, "$$$$$$$$$$$$ cached data retrieved");
                 siteListener.onSiteReturnedFromCache(result);
             } else {
-                Log.e(LOG, "------ No cache, util returns null site object");
+                Log.e(LOG, "-- No cache, util returns null site object");
                 siteListener.onError();
             }
 
@@ -367,13 +370,13 @@ public class CacheUtil {
             try {
                 stream = ctx.openFileInput(JSON_REQUEST);
                 cache = getData(stream);
-
+                Log.i(LOG, "++ request cache retrieved");
             } catch (FileNotFoundException e) {
-                Log.d(LOG, "############# cache file not found. not initialised yet. no problem, creating new cache");
+                Log.d(LOG, "## cache file not found. not initialised yet. no problem, creating new cache");
                 cache = new RequestCache();
 
             } catch (IOException e) {
-                Log.v(LOG, "------------ Failed to retrieve cache", e);
+                Log.v(LOG, "-- Failed to retrieve cache", e);
             }
 
             return cache;

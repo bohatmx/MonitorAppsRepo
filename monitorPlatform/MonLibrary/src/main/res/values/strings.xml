@@ -324,7 +324,7 @@
     <string name="file_error">Unable to create file for pending picture</string>
     <string name="tap_site">Tap the site icon on the map to confirm GPS coordinates</string>
     <string name="no_coords">Site has no location coordinates. Unable to put site on map.</string>
-    <string name="location_confirmed">Site location has been confirmed</string>
+    <string name="location_confirmed">Site location has been confirmed. Thank you!</string>
     <string name="connect_wifi">Please connect your device to WIFI. Data will be downloaded to your device.</string>
     <string name="cache_uploaded">Status and other data uploaded to office</string>
     <string name="no_networks">Network connections unavailable</string>
@@ -335,5 +335,9 @@
     <string name="green">Green</string>
     <string name="status_download_done">Site status data has been downloaded. You can now access the data without a network connection.</string>
     <string name="rem_take_pic">Please remember to take pictures!</string>
+    <string name="site_list">Site List</string>
+    <string name="edit_project">Edit Project</string>
+    <string name="status_completed">Status already completed</string>
+    <string name="progress_images">Progress Images</string>
 
 </resources>

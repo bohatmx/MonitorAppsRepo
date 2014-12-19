@@ -32,8 +32,6 @@ public class RequestCacheUtil {
                     cache = new RequestCache();
                 }
                 cache.getRequestCacheEntryList().add(e);
-
-                //
                 CacheUtil.cacheRequest(ctx, cache, new CacheUtil.CacheRequestListener() {
                     @Override
                     public void onDataCached() {

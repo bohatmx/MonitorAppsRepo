@@ -23,6 +23,7 @@ import com.com.boha.monitor.library.adapters.BeneficiaryAdapter;
 import com.com.boha.monitor.library.adapters.PopupListAdapter;
 import com.com.boha.monitor.library.dto.BeneficiaryDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
+import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.Statics;
@@ -60,10 +61,56 @@ public class BeneficiaryListFragment extends Fragment implements PageFragment {
         Log.d(LOG, "### onCreateView");
         view = inflater.inflate(R.layout.fragment_beneficiary_list, container, false);
         ctx = getActivity();
+        setFields();
+
+        if (savedInstanceState != null) {
+            Log.e(LOG, "## onCreateView, savedInstanceState not = null");
+            ResponseDTO r = (ResponseDTO) savedInstanceState.getSerializable("projectList");
+            projectList = r.getProjectList();
+
+            if (!projectList.isEmpty()) {
+                txtProjectName.setText(projectList.get(0).getProjectName());
+                beneficiaryList = projectList.get(0).getBeneficiaryList();
+                return view;
+            } else {
+                txtProjectName.setVisibility(View.GONE);
+            }
+        }
+        Bundle args = getArguments();
+        if (args != null) {
+            ResponseDTO r = (ResponseDTO) args.getSerializable("projectList");
+            projectList = r.getProjectList();
+            if (!projectList.isEmpty()) {
+                project = projectList.get(0);
+                txtProjectName.setText(project.getProjectName());
+                buildBeneficiaryList();
+                setList();
+            }else {
+                txtProjectName.setVisibility(View.GONE);
+            }
+        }
+
+
+
+        return view;
+    }
+private void buildBeneficiaryList() {
+    beneficiaryList = new ArrayList<>();
+    for (ProjectSiteDTO s: project.getProjectSiteList()) {
+        if (s.getBeneficiary() != null) {
+            beneficiaryList.add(s.getBeneficiary());
+        } else {
+            Log.w(LOG, "## Beneficiary is null. ignored. site: " + s.getProjectSiteName());
+        }
+    }
+
+}
+    private void setFields() {
         topView = view.findViewById(R.id.BC_top);
         hero = view.findViewById(R.id.BC_hero);
         topImage = (ImageView) view.findViewById(R.id.BC_hero);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
         mListView = (AbsListView) view.findViewById(R.id.BC_list);
         txtCount = (TextView) view.findViewById(R.id.BC_count);
         txtTitle = (TextView) view.findViewById(R.id.BC_title);
@@ -97,31 +144,10 @@ public class BeneficiaryListFragment extends Fragment implements PageFragment {
 
             }
         });
-
-        if (savedInstanceState != null) {
-            Log.e(LOG, "## onCreateView, savedInstanceState not = null");
-            ResponseDTO r = (ResponseDTO) savedInstanceState.getSerializable("projectList");
-            projectList = r.getProjectList();
-
-            txtProjectName.setText(projectList.get(0).getProjectName());
-            getBeneficiaryList(projectList.get(0).getProjectID());
-            return view;
-        }
-        Bundle args = getArguments();
-
-        if (args != null) {
-            ResponseDTO r = (ResponseDTO) args.getSerializable("projectList");
-            projectList = r.getProjectList();
-            if (!projectList.isEmpty()) {
-                txtProjectName.setText(projectList.get(0).getProjectName());
-                getBeneficiaryList(projectList.get(0).getProjectID());
-            }
-        }
-
         txtCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.flashSeveralTimes(txtCount, 100, 1, new Util.UtilAnimationListener() {
+                Util.flashOnce(txtCount, 100, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
                         if (project != null) {
@@ -137,9 +163,7 @@ public class BeneficiaryListFragment extends Fragment implements PageFragment {
             }
         });
 
-        return view;
     }
-
     public void expandTopView() {
        // Util.expand(topView, 500, null);
     }
@@ -195,7 +219,23 @@ public class BeneficiaryListFragment extends Fragment implements PageFragment {
         state.putSerializable("projectList", r);
         super.onSaveInstanceState(state);
     }
-
+    public void setProjectList(List<ProjectDTO> projectList) {
+        this.projectList = projectList;
+        if (!projectList.isEmpty()) {
+            project = projectList.get(0);
+            buildBeneficiaryList();
+            if (mListView != null) {
+                setList();
+            }
+        }
+    }
+    public void setProject(ProjectDTO project) {
+        this.project = project;
+        buildBeneficiaryList();
+        if (mListView != null) {
+            setList();
+        }
+    }
     PopupWindow benPopupWindow;
     private void setList() {
         if (beneficiaryList == null) beneficiaryList = new ArrayList<>();
