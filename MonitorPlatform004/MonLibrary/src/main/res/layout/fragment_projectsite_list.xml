@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp"
+    android:background="@color/grey"
+    tools:context="com.com.boha.monitor.library.fragments.ProjectSiteListFragment">
+
+    <RelativeLayout
+        android:id="@+id/SITE_LIST_TOP"
+        android:background="@color/beige_pale"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/search_layout" />
+
+    </RelativeLayout>
+
+    <ListView
+        android:background="@color/white"
+        android:id="@+id/SLT_list"
+        android:layout_below="@id/SITE_LIST_TOP"
+        android:layout_marginTop="8dp"
+        android:dividerHeight="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/SITE_LIST_siteCount"
+        android:text="00"
+        style="@style/RedCountBox"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/SITE_LIST_imgLogo"
+        android:src="@drawable/maono"
+        android:layout_margin="@dimen/mon_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

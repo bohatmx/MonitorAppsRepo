@@ -1,0 +1,177 @@
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/card_view"
+    android:padding="@dimen/mon_padding"
+    tools:cardCornerRadius="8dp">
+
+    <RelativeLayout
+        android:id="@+id/RPT_ITEM_topTop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/RPT_ITEM_top"
+            android:padding="@dimen/mon_padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/RPT_ITEM_task"
+                style="@style/Title3TextStyleBlack"
+                android:text="Task Name Here"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/RPT_ITEM_middle"
+            android:layout_width="match_parent"
+            android:layout_below="@id/RPT_ITEM_top"
+            android:layout_height="wrap_content">
+
+            <include layout="@layout/traffic_lights_small" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/RPT_ITEM_bottom"
+            android:layout_below="@id/RPT_ITEM_middle"
+            android:padding="@dimen/mon_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/RPT_ITEM_label"
+                style="@style/Title2TextStyleGrey"
+                android:text="@string/last_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RelativeLayout
+                android:id="@+id/RPT_ITEM_lastLayout"
+                android:layout_below="@id/RPT_ITEM_label"
+                android:layout_marginLeft="@dimen/mon_divider"
+                android:padding="@dimen/mon_margin"
+                android:layout_marginTop="@dimen/mon_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/RPT_ITEM_date"
+                    style="@style/TextStyleBlue"
+                    android:text="25 December 2091 13:30"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/RPT_ITEM_status"
+                    android:layout_below="@id/RPT_ITEM_date"
+                    style="@style/TextStyle"
+                    android:layout_marginTop="@dimen/mon_padding"
+                    android:text="Status Name here"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <RelativeLayout
+                    android:id="@+id/RPT_ITEM_updates"
+                    android:layout_below="@id/RPT_ITEM_status"
+                    android:layout_marginTop="@dimen/mon_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/RPT_ITEM_statusCount"
+                        style="@style/Title1TextStyleGrey"
+                        android:text="99"
+                        android:layout_marginRight="@dimen/mon_wider"
+                        android:layout_alignParentRight="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/RPT_ITEM_label2"
+                        style="@style/TextStyleGrey"
+                        android:layout_toLeftOf="@id/RPT_ITEM_statusCount"
+                        android:layout_marginRight="@dimen/mon_margin"
+                        android:text="@string/task_status_count"
+                        android:layout_centerVertical="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/RPT_ITEM_staffLayout"
+                    android:layout_below="@id/RPT_ITEM_updates"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/RPT_ITEM_staff"
+                        style="@style/Title2TextStyleBlue"
+                        android:text="Staff name here"
+                        android:layout_marginRight="@dimen/mon_wider"
+                        android:layout_alignParentRight="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/RPT_ITEM_label3"
+                        style="@style/TextStyleGrey"
+                        android:layout_toLeftOf="@id/RPT_ITEM_staff"
+                        android:layout_marginRight="@dimen/mon_margin"
+                        android:text="@string/staff"
+                        android:layout_centerVertical="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/RPT_ITEM_picLayout"
+                    android:layout_below="@id/RPT_ITEM_staffLayout"
+                    android:layout_marginTop="@dimen/mon_margin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/RPT_ITEM_photoCount"
+                        style="@style/Title1TextStyleRed"
+                        android:text="00"
+                        android:layout_marginRight="@dimen/mon_wider"
+                        android:layout_alignParentRight="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/RPT_ITEM_label4"
+                        style="@style/TextStyleGrey"
+                        android:layout_toLeftOf="@id/RPT_ITEM_photoCount"
+                        android:layout_marginRight="@dimen/mon_margin"
+                        android:text="Status Picture Updates"
+                        android:layout_centerVertical="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+
+
+
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/RPT_ITEM_color"
+            style="@style/GreyCircle"
+            android:layout_margin="@dimen/mon_margin"
+            android:text="@string/status"
+            android:layout_width="@dimen/mon_widest"
+            android:layout_height="@dimen/mon_widest" />
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="@dimen/mon_padding"
+    android:background="@color/grey"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/AST_handle"
+        android:padding="@dimen/mon_divider"
+        android:background="@color/beige_pale"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/AST_title2"
+            style="@style/Title3TextStyleBlack"
+            android:text="@string/site_status"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/AST_middle"
+        android:layout_below="@id/AST_handle"
+        android:background="@color/beige_pale"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include
+            layout="@layout/traffic_lights"
+            android:id="@+id/AST_lights" />
+
+        <RelativeLayout
+            android:id="@+id/AST_cameraLayout"
+            android:layout_below="@id/AST_lights"
+            android:background="@color/translucent_red"
+            android:padding="@dimen/mon_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/AST_camera"
+                android:src="@drawable/camera_a32"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                style="@style/TextStyleSmall"
+                android:layout_toRightOf="@id/AST_camera"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:text="@string/rem_take_pic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/AST_subs"
+        android:layout_below="@id/AST_middle"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/fragment_assign_site_subtasks" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_below="@id/AST_subs"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/AST_list"
+            android:dividerHeight="@dimen/mon_divider"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/AST_number"
+        style="@style/BlackCircle"
+        android:text="99"
+        android:layout_marginTop="@dimen/mon_margin"
+        android:layout_marginLeft="@dimen/mon_padding"
+        android:layout_alignParentLeft="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_margin="@dimen/mon_wide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>
