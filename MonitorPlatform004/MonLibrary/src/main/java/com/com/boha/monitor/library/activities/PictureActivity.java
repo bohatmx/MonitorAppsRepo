@@ -8,17 +8,13 @@ import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.location.Location;
 import android.media.ExifInterface;
 import android.media.effect.Effect;
 import android.media.effect.EffectContext;
-import android.media.effect.EffectFactory;
 import android.net.Uri;
-import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.opengl.GLUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -44,7 +40,6 @@ import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.services.PhotoUploadService;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.CacheVideoUtil;
-import com.com.boha.monitor.library.util.GLToolbox;
 import com.com.boha.monitor.library.util.ImageUtil;
 import com.com.boha.monitor.library.util.PMException;
 import com.com.boha.monitor.library.util.SharedUtil;
@@ -72,7 +67,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(LOG,"### onCreate");
+        Log.d(LOG, "### onCreate");
         ctx = getApplicationContext();
         setContentView(R.layout.camera);
         setFields();
@@ -182,12 +177,12 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     @Override
     public void onLocationChanged(Location location) {
         Log.d(LOG, "## onLocationChanged accuracy = " + location.getAccuracy());
-        if (location.getAccuracy() <= ACCURACY_THRESHOLD ) {
+        if (location.getAccuracy() <= ACCURACY_THRESHOLD) {
             this.location = location;
             mLocationClient.removeLocationUpdates(this);
             mLocationClient.disconnect();
             if (gpsListener != null) {
-                Log.w(LOG,"%%% location set, accuracy: " + location.getAccuracy());
+                Log.w(LOG, "%%% location set, accuracy: " + location.getAccuracy());
                 gpsListener.onAccurateCoordinatesFound(location);
             }
         }
@@ -196,6 +191,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     public interface GPSListener {
         public void onAccurateCoordinatesFound(Location loc);
     }
+
     GPSListener gpsListener;
 
     private void uploadPhotos() {
@@ -204,7 +200,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
             public void onAccurateCoordinatesFound(Location loc) {
                 switch (type) {
                     case PhotoUploadDTO.PROJECT_IMAGE:
-                        addProjectPicture(ctx, project, currentFullFile, currentThumbFile, loc, new CacheListener() {
+                        addProjectPicture(ctx, project, currentThumbFile, loc, new CacheListener() {
                             @Override
                             public void onCachingDone() {
                                 mService.uploadCachedPhotos();
@@ -212,7 +208,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                         });
                         break;
                     case PhotoUploadDTO.SITE_IMAGE:
-                        addSitePicture(ctx, projectSite, currentFullFile, currentThumbFile, loc, new CacheListener() {
+                        addSitePicture(ctx, projectSite, currentThumbFile, loc, new CacheListener() {
                             @Override
                             public void onCachingDone() {
                                 mService.uploadCachedPhotos();
@@ -220,7 +216,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                         });
                         break;
                     case PhotoUploadDTO.STAFF_IMAGE:
-                        addStaffPicture(ctx, companyStaff, currentFullFile, currentThumbFile, loc, new CacheListener() {
+                        addStaffPicture(ctx, companyStaff, currentThumbFile, loc, new CacheListener() {
                             @Override
                             public void onCachingDone() {
                                 mService.uploadCachedPhotos();
@@ -228,7 +224,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                         });
                         break;
                     case PhotoUploadDTO.TASK_IMAGE:
-                        addSiteTaskPicture(ctx, projectSiteTask, currentFullFile, currentThumbFile, loc, new CacheListener() {
+                        addSiteTaskPicture(ctx, projectSiteTask, currentThumbFile, loc, new CacheListener() {
                             @Override
                             public void onCachingDone() {
                                 mService.uploadCachedPhotos();
@@ -240,7 +236,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                 }
             }
         };
-        mLocationClient.requestLocationUpdates(mLocationRequest,this);
+        mLocationClient.requestLocationUpdates(mLocationRequest, this);
 
     }
 
@@ -282,12 +278,12 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         Log.i(LOG,
                 "+++ LocationClient onConnected() -  requestLocationUpdates ...");
         location = mLocationClient.getLastLocation();
-        mLocationClient.requestLocationUpdates(mLocationRequest,this);
+        mLocationClient.requestLocationUpdates(mLocationRequest, this);
     }
 
     @Override
     public void onDisconnected() {
-        Log.e(LOG,"--- onDisconnected");
+        Log.e(LOG, "--- onDisconnected");
     }
 
     @Override
@@ -505,49 +501,28 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                         BitmapFactory.Options options = new BitmapFactory.Options();
                         options.inSampleSize = 2;
                         Bitmap bm = BitmapFactory.decodeFile(photoFile.getAbsolutePath(), options);
-                        if (bm == null) {
-                            Log.e(LOG, "---> Bitmap is null, file length: " + photoFile.length());
-                        }
-                        getLog(bm, "Raw Camera");
-                        //get thumbnail for upload
+                        getLog(bm, "Raw Camera- sample size = 2");
                         Matrix matrixThumbnail = new Matrix();
                         matrixThumbnail.postScale(0.4f, 0.4f);
-                        //matrixThumbnail.postRotate(rotate);
                         Bitmap thumb = Bitmap.createBitmap
                                 (bm, 0, 0, bm.getWidth(),
                                         bm.getHeight(), matrixThumbnail, true);
                         getLog(thumb, "Thumb");
 
-                        //get resized "full" size for upload
-                        Matrix matrixF = new Matrix();
-                        matrixF.postScale(0.75f, 0.75f);
-                        //matrixF.postRotate(rotate);
-                        Bitmap fullBm = Bitmap.createBitmap
-                                (bm, 0, 0, bm.getWidth(),
-                                        bm.getHeight(), matrixF, true);
-
-                        getLog(fullBm, "Full");
                         //append date and gps coords to bitmap
                         //fullBm = ImageUtil.drawTextToBitmap(ctx,fullBm,location);
                         //thumb = ImageUtil.drawTextToBitmap(ctx,thumb,location);
 
-                        currentFullFile = ImageUtil.getFileFromBitmap(fullBm, "m" + System.currentTimeMillis() + ".jpg");
                         currentThumbFile = ImageUtil.getFileFromBitmap(thumb, "t" + System.currentTimeMillis() + ".jpg");
-                        bitmapForScreen = ImageUtil.getBitmapFromUri(ctx, Uri.fromFile(currentFullFile));
-
-                        Log.e(LOG, "## files created from camera bitmap");
+                        bitmapForScreen = ImageUtil.getBitmapFromUri(ctx, Uri.fromFile(currentThumbFile));
 
                         thumbUri = Uri.fromFile(currentThumbFile);
-                        fullUri = Uri.fromFile(currentFullFile);
                         //write exif data
-                        Util.writeLocationToExif(currentFullFile.getAbsolutePath(), location);
                         Util.writeLocationToExif(currentThumbFile.getAbsolutePath(), location);
-                        fullBm = null;
-                        thumb = null;
-                        bm = null;
-                        getFileLengths();
+
+                        Log.i(LOG, "## Thumbnail file length: " + currentThumbFile.length());
                     } catch (Exception e) {
-                        Log.e("pic", "Fuck it! unable to process bitmap", e);
+                        Log.e(LOG, "$&*%^$! Fuck it! unable to process bitmap", e);
                         return 9;
                     }
 
@@ -587,162 +562,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                 + bm.getRowBytes());
     }
 
-    private void getFileLengths() {
-        Log.i(LOG, "Thumbnail file length: " + currentThumbFile.length());
-        Log.i(LOG, "Full file length: " + currentFullFile.length());
 
-    }
-
-    private void initEffect() {
-        EffectFactory effectFactory = mEffectContext.getFactory();
-        if (mEffect != null) {
-            mEffect.release();
-        }
-        /**
-         * Initialize the correct effect based on the selected menu/action item
-         */
-        if (mCurrentEffect == R.id.none) {
-        } else if (mCurrentEffect == R.id.autofix) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_AUTOFIX);
-            mEffect.setParameter("scale", 0.5f);
-
-        } else if (mCurrentEffect == R.id.bw) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_BLACKWHITE);
-            mEffect.setParameter("black", .1f);
-            mEffect.setParameter("white", .7f);
-
-        } else if (mCurrentEffect == R.id.brightness) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_BRIGHTNESS);
-            mEffect.setParameter("brightness", 2.0f);
-
-        } else if (mCurrentEffect == R.id.contrast) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_CONTRAST);
-            mEffect.setParameter("contrast", 1.4f);
-
-        } else if (mCurrentEffect == R.id.crossprocess) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_CROSSPROCESS);
-
-        } else if (mCurrentEffect == R.id.documentary) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_DOCUMENTARY);
-
-        } else if (mCurrentEffect == R.id.duotone) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_DUOTONE);
-            mEffect.setParameter("first_color", Color.YELLOW);
-            mEffect.setParameter("second_color", Color.DKGRAY);
-
-        } else if (mCurrentEffect == R.id.filllight) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_FILLLIGHT);
-            mEffect.setParameter("strength", .8f);
-
-        } else if (mCurrentEffect == R.id.fisheye) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_FISHEYE);
-            mEffect.setParameter("scale", .5f);
-
-        } else if (mCurrentEffect == R.id.flipvert) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_FLIP);
-            mEffect.setParameter("vertical", true);
-
-        } else if (mCurrentEffect == R.id.fliphor) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_FLIP);
-            mEffect.setParameter("horizontal", true);
-
-        } else if (mCurrentEffect == R.id.grain) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_GRAIN);
-            mEffect.setParameter("strength", 1.0f);
-
-        } else if (mCurrentEffect == R.id.grayscale) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_GRAYSCALE);
-
-        } else if (mCurrentEffect == R.id.lomoish) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_LOMOISH);
-
-        } else if (mCurrentEffect == R.id.negative) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_NEGATIVE);
-
-        } else if (mCurrentEffect == R.id.posterize) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_POSTERIZE);
-
-        } else if (mCurrentEffect == R.id.rotate) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_ROTATE);
-            mEffect.setParameter("angle", 180);
-
-        } else if (mCurrentEffect == R.id.saturate) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_SATURATE);
-            mEffect.setParameter("scale", .5f);
-
-        } else if (mCurrentEffect == R.id.sepia) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_SEPIA);
-
-        } else if (mCurrentEffect == R.id.sharpen) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_SHARPEN);
-
-        } else if (mCurrentEffect == R.id.temperature) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_TEMPERATURE);
-            mEffect.setParameter("scale", .9f);
-
-        } else if (mCurrentEffect == R.id.tint) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_TINT);
-            mEffect.setParameter("tint", Color.MAGENTA);
-
-        } else if (mCurrentEffect == R.id.vignette) {
-            mEffect = effectFactory.createEffect(
-                    EffectFactory.EFFECT_VIGNETTE);
-            mEffect.setParameter("scale", .5f);
-
-        } else {
-        }
-    }
-
-    private void applyEffect() {
-        mEffect.apply(mTextures[0], mImageWidth, mImageHeight, mTextures[1]);
-    }
-
-    private void renderResult() {
-        if (mCurrentEffect != R.id.none) {
-            // if no effect is chosen, just render the original bitmap
-            mTexRenderer.renderTexture(mTextures[1]);
-        } else {
-            // render the result of applyEffect()
-            mTexRenderer.renderTexture(mTextures[0]);
-        }
-    }
-
-    private void loadTextures() {
-        // Generate textures
-        GLES20.glGenTextures(2, mTextures, 0);
-        mImageWidth = bitmapForScreen.getWidth();
-        mImageHeight = bitmapForScreen.getHeight();
-        mTexRenderer.updateTextureSize(mImageWidth, mImageHeight);
-
-        // Upload to texture
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextures[0]);
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmapForScreen, 0);
-
-        // Set texture parameters
-        GLToolbox.initTexParams();
-    }
 
     boolean mBound;
     PhotoUploadService mService;
@@ -806,14 +626,13 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
      *
      * @param context
      * @param site
-     * @param fullPicture
      * @param thumb
      */
     public void addSitePicture(final Context context, final ProjectSiteDTO site,
-                               final File fullPicture, final File thumb,
+                               final File thumb,
                                Location location, final CacheListener listener) {
         Log.w(LOG, "**** addSitePicture .......");
-        final PhotoUploadDTO dto = getObject(context, fullPicture, thumb, location);
+        final PhotoUploadDTO dto = getObject(context, thumb, location);
         dto.setProjectID(site.getProjectID());
         dto.setProjectSiteID(site.getProjectSiteID());
         dto.setPictureType(PhotoUploadDTO.SITE_IMAGE);
@@ -857,11 +676,12 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     private interface CacheListener {
         public void onCachingDone();
     }
+
     public void addSiteTaskPicture(final Context context, final ProjectSiteTaskDTO siteTask,
-                                   final File fullPicture, final File thumb,
+                                   final File thumb,
                                    Location location, final CacheListener listener) {
         Log.w(LOG, "**** addSiteTaskPicture");
-        final PhotoUploadDTO dto = getObject(context, fullPicture, thumb, location);
+        final PhotoUploadDTO dto = getObject(context, thumb, location);
         dto.setProjectID(siteTask.getProjectID());
         dto.setProjectSiteID(siteTask.getProjectSiteID());
         dto.setProjectSiteTaskID(siteTask.getProjectSiteTaskID());
@@ -904,10 +724,10 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     }
 
     public void addProjectPicture(final Context context,
-                                  final ProjectDTO project, final File fullPicture, final File thumb,
+                                  final ProjectDTO project, final File thumb,
                                   Location location, final CacheListener listener) {
         Log.w(LOG, "**** addProjectPicture");
-        final PhotoUploadDTO dto = getObject(context, fullPicture, thumb, location);
+        final PhotoUploadDTO dto = getObject(context, thumb, location);
         dto.setProjectID(project.getProjectID());
         dto.setPictureType(PhotoUploadDTO.PROJECT_IMAGE);
 
@@ -946,12 +766,13 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         });
     }
 
-    private PhotoUploadDTO getObject(Context context, final File fullPicture, final File thumb,
+    private PhotoUploadDTO getObject(Context context, final File thumb,
                                      Location location) {
         PhotoUploadDTO dto = new PhotoUploadDTO();
         dto.setCompanyID(SharedUtil.getCompany(context).getCompanyID());
         dto.setThumbFilePath(thumb.getAbsolutePath());
-        dto.setImageFilePath(fullPicture.getAbsolutePath());
+        //dto.setImageFilePath(fullPicture.getAbsolutePath());
+        dto.setThumbFlag(1);
         dto.setDateTaken(new Date());
         dto.setLatitude(location.getLatitude());
         dto.setLongitude(location.getLongitude());
@@ -965,13 +786,12 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
      *
      * @param context
      * @param staff
-     * @param fullPicture
      * @param thumb
      */
     public void addStaffPicture(final Context context, final CompanyStaffDTO staff,
-                                final File fullPicture, final File thumb,
+                                final File thumb,
                                 Location location, final CacheListener listener) {
-        final PhotoUploadDTO dto = getObject(context, fullPicture, thumb, location);
+        final PhotoUploadDTO dto = getObject(context, thumb, location);
         dto.setCompanyStaffID(staff.getCompanyStaffID());
         dto.setPictureType(PhotoUploadDTO.STAFF_IMAGE);
         CacheUtil.getCachedPhotos(context, new CacheUtil.CacheUtilListener() {

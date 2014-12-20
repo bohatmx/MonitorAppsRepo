@@ -223,6 +223,12 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         projectSiteList = list;
         setList();
     }
+
+    public void refresh(ProjectDTO project) {
+        this.project = project;
+        projectSiteList = project.getProjectSiteList();
+        setList();
+    }
     private void setList() {
         Log.i(LOG, "## setList");
         txtCount.setText("" + projectSiteList.size());
@@ -251,10 +257,10 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
             }
         });
         mListener.onPhotoUploadServiceRequested();
+
     }
 
     private void showPopup() {
-        Log.d(LOG,"### showPopup");
         list = new ArrayList<>();
         list.add(ctx.getString(R.string.sitestatus));
         if (projectSite.getLocationConfirmed() != null) {
@@ -517,6 +523,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         public void onSiteOnMapRequested(ProjectSiteDTO projectSite, int index);
 
         public void onNewStatusDone(int count);
+
         public void onPhotoUploadServiceRequested();
     }
 

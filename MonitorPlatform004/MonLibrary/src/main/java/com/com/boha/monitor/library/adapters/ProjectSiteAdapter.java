@@ -155,7 +155,7 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> {
         if (p.getBeneficiary() != null) {
             item.txtBen.setText(p.getBeneficiary().getFullName());
         } else {
-
+            item.txtBen.setVisibility(View.GONE);
         }
         if (p.getLocationConfirmed() == null) {
             item.imgConfirmed.setVisibility(View.GONE);
@@ -168,14 +168,17 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> {
         int index = 0;
         boolean b1 = false,b2 = false,b3 = false,b4 = false,b5 = false,
                 b6 = false,b7 = false,b8 = false,b9 = false,b10 = false;
-        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
+        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx, true);
 
         if (p.getPhotoUploadList() != null && !p.getPhotoUploadList().isEmpty() && wcr.isWifiConnected()) {
             item.imageScroller.setVisibility(View.VISIBLE);
             item.imgHero.setVisibility(View.GONE);
-
             for (final PhotoUploadDTO d : p.getPhotoUploadList()) {
+                if (d.getThumbFlag() == null) {
+                    continue;
+                }
                 final String uri = Statics.IMAGE_URL + d.getUri();
+                //Log.i("ProjectSiteAdapter","## scroll uri: " + uri);
                 switch (index) {
                     case 0:
                         ImageLoader.getInstance().displayImage(uri, item.img1);
@@ -321,7 +324,6 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> {
             item.img10.setVisibility(View.GONE);
             item.date10.setVisibility(View.GONE);
         }
-
 
         if (p.getPhotoUploadList() != null && wcr.isWifiConnected()) {
             if (p.getPhotoUploadList().size() < 3 && p.getPhotoUploadList().size() > 0) {

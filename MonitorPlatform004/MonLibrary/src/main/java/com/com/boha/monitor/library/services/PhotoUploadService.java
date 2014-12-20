@@ -36,9 +36,14 @@ public class PhotoUploadService extends IntentService {
             public void onFileDataDeserialized(ResponseDTO response) {
                 Log.e(LOG, "##### cached photo list returned: " + response.getPhotoCache().getPhotoUploadList().size());
                 list = response.getPhotoCache().getPhotoUploadList();
+                if (list.isEmpty()) {
+                    Log.w(LOG,"--- no cached photos for download");
+                    return;
+                }
+                getLog(response.getPhotoCache());
                 webCheckResult = WebCheck.checkNetworkAvailability(getApplicationContext());
                 if (!webCheckResult.isWifiConnected()) {
-                    Log.e(LOG,"## uploadCachedPhotos exiting. no wifi connected");
+                    Log.e(LOG,"--- uploadCachedPhotos exiting. no wifi connected");
                     return;
                 }
                 onHandleIntent(null);
@@ -60,10 +65,19 @@ public class PhotoUploadService extends IntentService {
         StringBuilder sb = new StringBuilder();
         sb.append("## Photos currently in the cache: ")
                 .append(cache.getPhotoUploadList().size()).append("\n");
-//        for (PhotoUploadDTO p : cache.getPhotoUploadList()) {
-//            sb.append("+++ ").append(p.getDateTaken().toString()).append(" lat: ").append(p.getLatitude());
-//            sb.append(" lng: ").append(p.getLatitude()).append(" acc: ").append(p.getAccuracy()).append("\n");
-//        }
+        for (PhotoUploadDTO p : cache.getPhotoUploadList()) {
+            sb.append("+++ ").append(p.getDateTaken().toString()).append(" lat: ").append(p.getLatitude());
+            sb.append(" lng: ").append(p.getLatitude()).append(" acc: ").append(p.getAccuracy());
+            if (p.getDateThumbUploaded() != null)
+                sb.append(" ").append(p.getDateThumbUploaded().toString());
+            else
+                sb.append(" NOT yet UPLOADED");
+            if (p.getThumbFlag() != null) {
+                sb.append("  isThumb: true\n");
+            } else {
+                sb.append("  isFullSize: true\n");
+            }
+        }
         Log.w(LOG, sb.toString());
     }
 

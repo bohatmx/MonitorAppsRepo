@@ -1047,7 +1047,7 @@ public class Util {
         sOut = sOut + Integer.toString((int) coord) + "/1,";   // 105/1,59/1,
         coord = (coord % 1) * 60000;             // .259258 * 60000 = 15555
         sOut = sOut + Integer.toString((int) coord) + "/1000";   // 105/1,59/1,15555/1000
-        Log.i(LOG, "decimalToDMS coord: " + coord + " converted to: " + sOut);
+       // Log.i(LOG, "decimalToDMS coord: " + coord + " converted to: " + sOut);
         return sOut;
     }
 

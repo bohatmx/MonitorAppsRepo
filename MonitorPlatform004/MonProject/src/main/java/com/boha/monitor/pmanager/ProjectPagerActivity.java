@@ -20,7 +20,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.com.boha.monitor.library.activities.ClaimAndInvoicePagerActivity;
@@ -39,6 +38,7 @@ import com.com.boha.monitor.library.fragments.PageFragment;
 import com.com.boha.monitor.library.fragments.ProjectListFragment;
 import com.com.boha.monitor.library.fragments.SiteTaskAndStatusAssignmentFragment;
 import com.com.boha.monitor.library.fragments.StatusReportFragment;
+import com.com.boha.monitor.library.services.PhotoUploadService;
 import com.com.boha.monitor.library.services.RequestSyncService;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
@@ -115,7 +115,7 @@ public class ProjectPagerActivity extends ActionBarActivity
 
             @Override
             public void onError() {
-
+                getCompanyData();
             }
         });
     }
@@ -148,13 +148,8 @@ public class ProjectPagerActivity extends ActionBarActivity
 
                             @Override
                             public void onDataCached() {
-                                if (mService != null) {
-                                    try {
-                                        //mService.startSyncCachedRequests();
-                                    } catch (Exception e) {
-                                        Log.e(LOG, "startSyncCachedRequests failed", e);
-                                    }
-                                }
+                                Intent i = new Intent(ctx, PhotoUploadService.class);
+                                startService(i);
                             }
 
                             @Override
@@ -260,7 +255,6 @@ public class ProjectPagerActivity extends ActionBarActivity
 
     ProjectListFragment projectListFragment;
     StatusReportFragment statusReportFragment;
-
     PagerAdapter adapter;
     ViewPager mPager;
     Context ctx;
@@ -419,9 +413,6 @@ public class ProjectPagerActivity extends ActionBarActivity
     }
 
     private List<PageFragment> pageFragmentList;
-    private ListView drawerListView;
-    private String[] titles;
-    private List<String> sTitles = new ArrayList<>();
 
     @Override
     protected void onStart() {

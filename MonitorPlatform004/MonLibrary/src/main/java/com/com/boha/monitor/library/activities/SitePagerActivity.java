@@ -126,14 +126,13 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //setRefreshActionButtonState(false);
                         progressBar.setVisibility(View.GONE);
                         if (!ErrorUtil.checkServerError(ctx, response)) {
                             return;
                         }
                         project = response.getProjectList().get(0);
 
-                        Log.i(LOG, "----- returned project data, photos: " + project.getPhotoUploadList().size());
+                        Log.i(LOG, "getProjectData returned data OK");
                         buildPages();
                         CacheUtil.cacheProjectData(ctx, response,  project.getProjectID(), new CacheUtil.CacheUtilListener() {
                             @Override
@@ -376,20 +375,23 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
     }
 
     private void buildPages() {
+        if (pageFragmentList == null) {
+            pageFragmentList = new ArrayList<>();
+            projectSiteListFragment = new ProjectSiteListFragment();
+            Bundle data1 = new Bundle();
+            data1.putSerializable("project", project);
+            data1.putInt("index", selectedSiteIndex);
+            projectSiteListFragment.setArguments(data1);
 
-        pageFragmentList = new ArrayList<>();
-        projectSiteListFragment = new ProjectSiteListFragment();
-        Bundle data1 = new Bundle();
-        data1.putSerializable("project", project);
-        data1.putInt("index", selectedSiteIndex);
-        projectSiteListFragment.setArguments(data1);
+            gpsScanFragment = new GPSScanFragment();
 
-        gpsScanFragment = new GPSScanFragment();
+            pageFragmentList.add(projectSiteListFragment);
+            pageFragmentList.add(gpsScanFragment);
 
-        pageFragmentList.add(projectSiteListFragment);
-        pageFragmentList.add(gpsScanFragment);
-
-        initializeAdapter();
+            initializeAdapter();
+        } else {
+            projectSiteListFragment.refresh(project);
+        }
 
 
     }
@@ -549,6 +551,7 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
         }
 
     }
+
 
     @Override
     public void onActivityResult(int reqCode, int res, Intent data) {
