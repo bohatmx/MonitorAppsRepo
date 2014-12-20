@@ -127,7 +127,9 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     @Override
     public void onResume() {
         super.onResume();
-        mLocationClient.requestLocationUpdates(mLocationRequest,this);
+        if (mLocationClient.isConnected()) {
+            mLocationClient.requestLocationUpdates(mLocationRequest, this);
+        }
 
     }
 
@@ -258,12 +260,10 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     @Override
     public void onStop() {
         super.onStop();
-        Log.d(LOG,
-                "#################### onStop");
+
         if (mLocationClient != null) {
-            // After disconnect() is called, the client is considered "dead".
             mLocationClient.disconnect();
-            Log.e("map", "### onStop - locationClient disconnecting ");
+            Log.e(LOG, "### onStop - locationClient disconnecting ");
         }
         Log.e(LOG, "## onStop unBind from RequestSyncService");
         if (mBound) {
@@ -280,14 +280,14 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(LOG,
-                "### ---> LocationClient onConnected() -  >> ");
+                "+++ LocationClient onConnected() -  requestLocationUpdates ...");
         location = mLocationClient.getLastLocation();
         mLocationClient.requestLocationUpdates(mLocationRequest,this);
     }
 
     @Override
     public void onDisconnected() {
-
+        Log.e(LOG,"--- onDisconnected");
     }
 
     @Override
@@ -360,6 +360,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                 Util.showErrorToast(ctx, getString(R.string.file_error));
                 return;
             }
+
             if (photoFile != null) {
                 Log.w(LOG, "dispatchTakePictureIntent - start pic intent");
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
@@ -811,7 +812,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     public void addSitePicture(final Context context, final ProjectSiteDTO site,
                                final File fullPicture, final File thumb,
                                Location location, final CacheListener listener) {
-        Log.w(LOG, "**** addSitePicture .........");
+        Log.w(LOG, "**** addSitePicture .......");
         final PhotoUploadDTO dto = getObject(context, fullPicture, thumb, location);
         dto.setProjectID(site.getProjectID());
         dto.setProjectSiteID(site.getProjectSiteID());

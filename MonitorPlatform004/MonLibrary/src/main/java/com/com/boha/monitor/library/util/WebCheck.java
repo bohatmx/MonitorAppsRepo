@@ -26,10 +26,10 @@ public class WebCheck {
 	    NetworkInfo mobileInfo = connectivity.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 	    WebCheckResult result = new WebCheckResult();
 	    if (wifiInfo.isAvailable()) {
-	    	Log.w(TAG, "###### WIFI AVAILABLE on check");
+	    	//Log.w(TAG, "###### WIFI AVAILABLE on check");
 	    	result.setWifiAvailable(true);
 	    } else {
-	    	Log.e(TAG, "###### WIFI NOT AVAILABLE on check");
+	    	//Log.e(TAG, "###### WIFI NOT AVAILABLE on check");
 	    	result.setWifiAvailable(false);
 	    }
 	    
@@ -43,10 +43,10 @@ public class WebCheck {
 	    //
         if (mobileInfo != null) {
             if (mobileInfo.isAvailable()) {
-                Log.w(TAG, "###### MOBILE_NETWORK AVAILABLE on check");
+                //Log.w(TAG, "###### MOBILE_NETWORK AVAILABLE on check");
                 result.setMobileAvailable(true);
             } else {
-                Log.d(TAG, "------ MOBILE_NETWORK NOT AVAILABLE on check");
+                //Log.d(TAG, "------ MOBILE_NETWORK NOT AVAILABLE on check");
                 result.setMobileAvailable(false);
             }
             if (mobileInfo.isConnected()) {
@@ -64,7 +64,6 @@ public class WebCheck {
 	    	result.setNetworkUnavailable(true);
 	    }
 	    long end = System.currentTimeMillis();
-	    //Log.d(TAG, "###### Network check completed in " + (end-start) + " ms");
 	    return result;
 	    
 	}

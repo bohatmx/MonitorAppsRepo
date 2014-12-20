@@ -258,6 +258,11 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                 actionsWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        if (mListener == null) {
+                            actionsWindow.dismiss();
+                            return;
+                        }
+
                         switch (position) {
                             case 0:
                                 mListener.onProjectSitesRequested(project);

@@ -124,6 +124,7 @@ public class Util {
         pop.setAdapter(new PopupListAdapter(ctx, R.layout.xxsimple_spinner_item,
                 list, false));
         pop.setAnchorView(anchorView);
+        pop.setHorizontalOffset(72);
         pop.setModal(true);
         pop.setWidth(c.intValue());
         pop.setOnItemClickListener(new AdapterView.OnItemClickListener() {

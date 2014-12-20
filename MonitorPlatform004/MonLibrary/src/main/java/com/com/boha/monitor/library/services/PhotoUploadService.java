@@ -29,18 +29,18 @@ public class PhotoUploadService extends IntentService {
         super("PhotoUploadService");
     }
     public void uploadCachedPhotos() {
-        webCheckResult = WebCheck.checkNetworkAvailability(getApplicationContext());
-        if (!webCheckResult.isWifiConnected()) {
-            Log.w(LOG,"## uploadCachedPhotos exiting. no wifi connected");
-            return;
-        }
-        Log.e(LOG, "#### uploadCachedPhotos, getting cached photos - will start uploads");
+
+        Log.d(LOG, "#### uploadCachedPhotos, getting cached photos - will start uploads if wifi is up");
         CacheUtil.getCachedData(getApplicationContext(), CacheUtil.CACHE_PHOTOS, new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
                 Log.e(LOG, "##### cached photo list returned: " + response.getPhotoCache().getPhotoUploadList().size());
-                getLog(response.getPhotoCache());
                 list = response.getPhotoCache().getPhotoUploadList();
+                webCheckResult = WebCheck.checkNetworkAvailability(getApplicationContext());
+                if (!webCheckResult.isWifiConnected()) {
+                    Log.e(LOG,"## uploadCachedPhotos exiting. no wifi connected");
+                    return;
+                }
                 onHandleIntent(null);
             }
 
@@ -58,18 +58,19 @@ public class PhotoUploadService extends IntentService {
 
     private static void getLog(PhotoCache cache) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Photos currently in the cache: ")
+        sb.append("## Photos currently in the cache: ")
                 .append(cache.getPhotoUploadList().size()).append("\n");
-        for (PhotoUploadDTO p : cache.getPhotoUploadList()) {
-            sb.append("+++ ").append(p.getDateTaken().toString()).append(" lat: ").append(p.getLatitude());
-            sb.append(" lng: ").append(p.getLatitude()).append(" acc: ").append(p.getAccuracy()).append("\n");
-        }
-        Log.d(LOG, sb.toString());
+//        for (PhotoUploadDTO p : cache.getPhotoUploadList()) {
+//            sb.append("+++ ").append(p.getDateTaken().toString()).append(" lat: ").append(p.getLatitude());
+//            sb.append(" lng: ").append(p.getLatitude()).append(" acc: ").append(p.getAccuracy()).append("\n");
+//        }
+        Log.w(LOG, sb.toString());
     }
 
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.w(LOG,"## onHandleIntent");
         if (list == null) {
             uploadCachedPhotos();
             return;
@@ -97,7 +98,8 @@ public class PhotoUploadService extends IntentService {
         }
         if (index == list.size()) {
             index = 0;
-            controlFullPictureUploads();
+            //TODO - upload full size images when required
+            //controlFullPictureUploads();
         }
 
 

@@ -229,59 +229,70 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         Collections.sort(projectSiteList);
 
         projectSiteAdapter = new ProjectSiteAdapter(ctx, R.layout.site_item,
-                projectSiteList);
+                projectSiteList, new ProjectSiteAdapter.ProjectSiteListener() {
+            @Override
+            public void onProjectSiteClicked(ProjectSiteDTO site, int index) {
+                projectSite = site;
+                lastIndex = index;
+                showPopup();
+            }
+        });
         mListView.setAdapter(projectSiteAdapter);
         mListView.setSelection(lastIndex);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(LOG,"######## mListView onItemClick: " + position);
                 if (null != mListener) {
                     lastIndex = position;
                     projectSite = projectSiteList.get(position);
-                    //
-                    list = new ArrayList<>();
-                    list.add(ctx.getString(R.string.sitestatus));
-                    if (projectSite.getLocationConfirmed() != null) {
-                        list.add(ctx.getString(R.string.take_picture));
-                        list.add(ctx.getString(R.string.site_gallery));
-                        list.add(ctx.getString(R.string.site_on_map));
-                    } else {
-                        list.add(ctx.getString(R.string.get_gps));
-                    }
-                    list.add(ctx.getString(R.string.edit_site));
-
-                    Util.showPopupBasicWithHeroImage(ctx,getActivity(),list,heroImage,ctx.getString(R.string.select_action), new Util.UtilPopupListener() {
-                        @Override
-                        public void onItemSelected(int index) {
-                            if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.sitestatus))) {
-                                mListener.onProjectSiteTasksRequested(projectSite, lastIndex);
-                            }
-                            if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.take_picture))) {
-                                mListener.onCameraRequested(projectSite, lastIndex);
-                            }
-                            if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.site_gallery))) {
-                                mListener.onGalleryRequested(projectSite, lastIndex);
-                            }
-                            if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.site_on_map))) {
-                                mListener.onSiteOnMapRequested(projectSite, lastIndex);
-                            }
-                            if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.get_gps))) {
-                                mListener.onGPSRequested(projectSite, lastIndex);
-                            }
-                            if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.edit_site))) {
-                                mListener.onProjectSiteEditRequested(projectSite, lastIndex);
-                            }
-
-                        }
-                    });
-
-
+                    showPopup();
                 }
             }
         });
         mListener.onPhotoUploadServiceRequested();
     }
 
+    private void showPopup() {
+        Log.d(LOG,"### showPopup");
+        list = new ArrayList<>();
+        list.add(ctx.getString(R.string.sitestatus));
+        if (projectSite.getLocationConfirmed() != null) {
+            list.add(ctx.getString(R.string.take_picture));
+            list.add(ctx.getString(R.string.site_gallery));
+            list.add(ctx.getString(R.string.site_on_map));
+        } else {
+            list.add(ctx.getString(R.string.get_gps));
+        }
+        list.add(ctx.getString(R.string.edit_site));
+
+        Util.showPopupBasicWithHeroImage(ctx,getActivity(),list,heroImage,ctx.getString(R.string.select_action), new Util.UtilPopupListener() {
+            @Override
+            public void onItemSelected(int index) {
+                if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.sitestatus))) {
+                    mListener.onProjectSiteTasksRequested(projectSite, lastIndex);
+                }
+                if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.take_picture))) {
+                    mListener.onCameraRequested(projectSite, lastIndex);
+                }
+                if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.site_gallery))) {
+                    mListener.onGalleryRequested(projectSite, lastIndex);
+                }
+                if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.site_on_map))) {
+                    mListener.onSiteOnMapRequested(projectSite, lastIndex);
+                }
+                if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.get_gps))) {
+                    mListener.onGPSRequested(projectSite, lastIndex);
+                }
+                if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.edit_site))) {
+                    mListener.onProjectSiteEditRequested(projectSite, lastIndex);
+                }
+
+            }
+        });
+
+
+    }
 
     int index;
     List<String> list;
