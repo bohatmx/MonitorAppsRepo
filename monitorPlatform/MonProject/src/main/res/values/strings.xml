@@ -8,5 +8,6 @@
     <string name="select_email">Select Email Account</string>
     <string name="wifi_not_available">WIFI is not available. Please try when yo have WIFI connected</string>
     <string name="connect_wifi">Please ensure that your device is connected to WIFI. Data will be downloaded to the device</string>
+    <string name="project_mgr">ProjectMgr</string>
 
 </resources>

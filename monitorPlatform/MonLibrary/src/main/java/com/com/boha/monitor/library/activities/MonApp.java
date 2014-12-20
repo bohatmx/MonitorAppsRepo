@@ -39,7 +39,15 @@ public class MonApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.e(LOG, "############################ onCreate MonApp has started ---------------->");
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n\n\n#######################################\n");
+        sb.append("#######################################\n");
+        sb.append("###\n");
+        sb.append("###  Monitor App has started\n");
+        sb.append("###\n");
+        sb.append("#######################################\n\n");
+
+        Log.d(LOG, sb.toString());
 
 //        ACRA.init(this);
 //        CompanyDTO company = SharedUtil.getCompany(getApplicationContext());

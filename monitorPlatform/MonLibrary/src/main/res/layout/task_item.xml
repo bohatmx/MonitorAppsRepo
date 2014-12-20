@@ -14,6 +14,7 @@
         <RelativeLayout
             android:id="@+id/TSK_topA"
             android:layout_margin="@dimen/mon_divider"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -28,7 +29,7 @@
         <RelativeLayout
             android:id="@+id/TSK_top"
             android:layout_below="@id/TSK_topA"
-            android:padding="@dimen/mon_padding"
+            android:padding="@dimen/mon_margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -154,6 +155,7 @@
                 <ImageView
                     android:id="@+id/TSK_camera"
                     android:src="@drawable/camera_a32"
+                    android:visibility="gone"
                     android:layout_toRightOf="@id/TSK_staff"
                     android:layout_marginLeft="@dimen/mon_margin"
                     android:layout_marginRight="@dimen/mon_padding"

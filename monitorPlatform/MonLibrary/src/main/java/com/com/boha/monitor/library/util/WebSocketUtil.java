@@ -159,6 +159,8 @@ public class WebSocketUtil {
         try {
             try {
                 content = new String(bb.array());
+                end = System.currentTimeMillis();
+                Log.d(LOG, "### parseData finished, elapsed: " + Util.getElapsed(start, end) + " seconds");
                 ResponseDTO response = gson.fromJson(content, ResponseDTO.class);
                 if (response.getStatusCode() == 0) {
                     webSocketListener.onMessage(response);
@@ -184,8 +186,7 @@ public class WebSocketUtil {
                 Log.e(LOG, "-- Content from server failed. Response content is null");
                 webSocketListener.onError("Content from server failed. Response is null");
             }
-            end = System.currentTimeMillis();
-            Log.d(LOG, "### parseData finished, elapsed: " + Util.getElapsed(start, end) + " seconds");
+
         } catch (Exception e) {
             Log.e(LOG, "parseData Failed", e);
             webSocketListener.onError("Failed to unpack server response");

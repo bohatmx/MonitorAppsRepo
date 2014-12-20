@@ -1,7 +1,9 @@
 package com.boha.monitor.pmanager;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -18,11 +20,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.com.boha.monitor.library.activities.ClaimAndInvoicePagerActivity;
 import com.com.boha.monitor.library.activities.ImagePagerActivity;
@@ -31,10 +30,8 @@ import com.com.boha.monitor.library.activities.PictureActivity;
 import com.com.boha.monitor.library.activities.SitePagerActivity;
 import com.com.boha.monitor.library.adapters.DrawerAdapter;
 import com.com.boha.monitor.library.dialogs.ProjectDialog;
-import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
-import com.com.boha.monitor.library.dto.ProjectSiteTaskStatusDTO;
 import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
@@ -69,83 +66,46 @@ public class ProjectPagerActivity extends ActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.drawer);
+        setContentView(R.layout.activity_project_pager);
         ctx = getApplicationContext();
         inflater = getLayoutInflater();
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mPager = (ViewPager) findViewById(R.id.pager);
+        mPager = (ViewPager) findViewById(R.id.TIT_pager);
+        if (mPager == null) throw new UnsupportedOperationException("Fucking pager is null");
         PagerTitleStrip strip = (PagerTitleStrip) findViewById(R.id.pager_title_strip);
         strip.setVisibility(View.GONE);
-        progressBar = (ProgressBar)findViewById(R.id.progressBar);
-        drawerListView = (ListView) findViewById(R.id.left_drawer);
-        titles = getResources().getStringArray(R.array.action_items);
-        setDrawerList();
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+        getCachedCompanyData();
         setTitle(SharedUtil.getCompany(ctx).getCompanyName());
         CompanyStaffDTO staff = SharedUtil.getCompanyStaff(ctx);
         getSupportActionBar().setSubtitle(staff.getFullName());
 
     }
 
-    private void setDrawerList() {
+    private void getCachedCompanyData() {
         CacheUtil.getCachedData(getApplicationContext(), CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO r) {
-                CompanyDTO company = new CompanyDTO();
                 if (r != null) {
                     if (r.getCompany() != null) {
                         response = r;
-                        company = r.getCompany();
                         buildPages();
                     } else {
                         getCompanyData();
                     }
                 }
-
-                for (String s : titles) {
-                    sTitles.add(s);
-                }
-                mDrawerAdapter = new DrawerAdapter(getApplicationContext(), R.layout.drawer_item, sTitles, company);
-                View v = inflater.inflate(R.layout.hero_image, null);
-                ImageView img = (ImageView)v.findViewById(R.id.HERO_image);
-                img.setImageDrawable(Util.getRandomHeroImage(ctx));
-                TextView txt = (TextView)v.findViewById(R.id.HERO_caption);
-                txt.setText(ctx.getString(R.string.projects));
-                drawerListView.addHeaderView(v);
-                drawerListView.setAdapter(mDrawerAdapter);
-                drawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                        switch (i) {
-                            case PROJECTS:
-
-                                mPager.setCurrentItem(0, true);
-                                mDrawerLayout.closeDrawers();
-                                break;
-                            case STAFF:
-                                mPager.setCurrentItem(1, true);
-                                mDrawerLayout.closeDrawers();
-                                break;
-                            case MANAGE_DATA:
-
-                                break;
-                            case SITE_REPORTS:
-                                break;
-                            case BENEFICIARIES:
-                                break;
-                            case PROJECT_MAPS:
-                                break;
-                            case INVOICES:
-                                break;
-                            case HAPPY_LETTERS:
-                                break;
-                            case STATUS_NOTIFICATIONS:
-                                break;
+                WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
+                if (wcr.isWifiConnected()) {
+                    Log.w(LOG, "## starting RequestSyncService ...");
+                    mService.startSyncCachedRequests();
+                    Log.d(LOG,"## waiting a couple of seconds for RequestSyncService to sing and dance");
+                    Util.pretendFlash(progressBar, 1000, 2, new Util.UtilAnimationListener() {
+                        @Override
+                        public void onAnimationEnded() {
+                            getCompanyData();
                         }
-                    }
-                });
-
-
+                    });
+                }
             }
 
             @Override
@@ -175,7 +135,7 @@ public class ProjectPagerActivity extends ActionBarActivity
                     public void run() {
                         progressBar.setVisibility(View.GONE);
                         Log.e(LOG, "## getCompanyData responded...statusCode: " + r.getStatusCode());
-                        if (!ErrorUtil.checkServerError(ctx,r)) {
+                        if (!ErrorUtil.checkServerError(ctx, r)) {
                             return;
                         }
                         response = r;
@@ -188,9 +148,13 @@ public class ProjectPagerActivity extends ActionBarActivity
 
                             @Override
                             public void onDataCached() {
-                                Log.i(LOG, "** companyData cached, about to start requestSyncService....");
-                               Intent i = new Intent(getApplicationContext(),RequestSyncService.class);
-                               startService(i);
+                                if (mService != null) {
+                                    try {
+                                        //mService.startSyncCachedRequests();
+                                    } catch (Exception e) {
+                                        Log.e(LOG, "startSyncCachedRequests failed", e);
+                                    }
+                                }
                             }
 
                             @Override
@@ -227,12 +191,6 @@ public class ProjectPagerActivity extends ActionBarActivity
         });
     }
 
-    List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList;
-
-    public static final int PROJECTS = 0,
-            STAFF = 1, MANAGE_DATA = 2, SITE_REPORTS = 3, BENEFICIARIES = 4, PROJECT_MAPS = 5,
-            INVOICES = 6, HAPPY_LETTERS = 7, STATUS_NOTIFICATIONS = 8;
-
     Menu mMenu;
 
     @Override
@@ -253,7 +211,7 @@ public class ProjectPagerActivity extends ActionBarActivity
         if (id == R.id.action_refresh) {
             WebCheckResult r = WebCheck.checkNetworkAvailability(ctx);
             if (!r.isWifiConnected()) {
-                Util.showToast(ctx,getString(R.string.wifi_not_available));
+                Util.showToast(ctx, getString(R.string.wifi_not_available));
                 return true;
             }
             getCompanyData();
@@ -269,45 +227,34 @@ public class ProjectPagerActivity extends ActionBarActivity
 
 
     private void buildPages() {
-        if (pageFragmentList == null) {
-            pageFragmentList = new ArrayList<>();
-            projectListFragment = new ProjectListFragment();
-            Bundle data1 = new Bundle();
-            data1.putSerializable("response", response);
-            data1.putInt("type", ProjectListFragment.PROJECT_TYPE);
-            projectListFragment.setArguments(data1);
+        pageFragmentList = new ArrayList<>();
+        projectListFragment = ProjectListFragment.newInstance(response);
+        statusReportFragment = StatusReportFragment.newInstance(response);
 
-            statusReportFragment = new StatusReportFragment();
-            statusReportFragment.setArguments(data1);
+        pageFragmentList.add(projectListFragment);
+        pageFragmentList.add(statusReportFragment);
 
-
-            pageFragmentList.add(projectListFragment);
-            pageFragmentList.add(statusReportFragment);
-
-            adapter = new PagerAdapter(getSupportFragmentManager());
-            mPager.setAdapter(adapter);
-            mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageSelected(int arg0) {
-                    currentPageIndex = arg0;
-                    if (pageFragmentList.get(currentPageIndex) instanceof StatusReportFragment) {
-                        statusReportFragment.getProjectStatus();
-                    }
+        adapter = new PagerAdapter(getSupportFragmentManager());
+        mPager.setAdapter(adapter);
+        mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageSelected(int arg0) {
+                currentPageIndex = arg0;
+                if (pageFragmentList.get(currentPageIndex) instanceof StatusReportFragment) {
+                    statusReportFragment.getProjectStatus();
                 }
+            }
 
-                @Override
-                public void onPageScrolled(int arg0, float arg1, int arg2) {
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
 
-                }
+            }
 
-                @Override
-                public void onPageScrollStateChanged(int arg0) {
-                }
-            });
-        } else {
-            //refresh pages
-            projectListFragment.refreshData(response);
-        }
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+            }
+        });
+
 
     }
 
@@ -362,11 +309,16 @@ public class ProjectPagerActivity extends ActionBarActivity
         i.putExtra("project", project);
         i.putExtra("type", SiteTaskAndStatusAssignmentFragment.PROJECT_MANAGER);
         startActivityForResult(i, NEW_STATUS_EXPECTED);
-        mService.startSyncCachedRequests();
+        WebCheckResult w = WebCheck.checkNetworkAvailability(ctx);
+        if (w.isWifiConnected()) {
+            mService.startSyncCachedRequests();
+        }
 
 
     }
+
     static final int NEW_STATUS_EXPECTED = 2937;
+
     @Override
     public void onProjectPictureRequested(ProjectDTO project) {
         Intent i = new Intent(this, PictureActivity.class);
@@ -413,7 +365,7 @@ public class ProjectPagerActivity extends ActionBarActivity
         }
         if (requestCode == NEW_STATUS_EXPECTED) {
             if (resultCode == RESULT_OK) {
-                int count = data.getIntExtra("newStatusDone",0);
+                int count = data.getIntExtra("newStatusDone", 0);
                 projectListFragment.updateStatusCount(count);
             }
         }
@@ -493,7 +445,6 @@ public class ProjectPagerActivity extends ActionBarActivity
     }
 
 
-
     boolean mBound;
     RequestSyncService mService;
 
@@ -516,6 +467,24 @@ public class ProjectPagerActivity extends ActionBarActivity
         }
     };
 
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder d = new AlertDialog.Builder(this);
+        d.setTitle(getString(R.string.confirm_exit))
+                .setMessage(getString(R.string.exit_question))
+                .setPositiveButton(ctx.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setNegativeButton(ctx.getString(R.string.no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
+                    }
+                })
+                .show();
+    }
 
 }

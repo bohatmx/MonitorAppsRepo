@@ -43,6 +43,14 @@
             android:name="com.com.boha.monitor.library.camera.CameraLollipopActivity"
             android:label="@string/title_activity_camera2" >
         </activity>
+        <activity
+            android:name="com.com.boha.monitor.library.activities.PictureMakerActivity"
+            android:label="@string/title_activity_picture_maker" >
+        </activity>
+        <activity
+            android:name="com.com.boha.monitor.library.activities.PictureActivity"
+            android:label="@string/title_activity_picture" >
+        </activity>
     </application>
 
 </manifest>

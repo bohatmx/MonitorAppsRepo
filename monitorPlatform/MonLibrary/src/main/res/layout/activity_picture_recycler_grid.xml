@@ -15,8 +15,7 @@
             android:id="@+id/RCV_title"
             android:layout_marginLeft="@dimen/mon_divider"
             android:text="PlaceHolder Title"
-            style="@style/Title3TextStyleBlue"
-
+            style="@style/TextStyleBlue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </RelativeLayout>

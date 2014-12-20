@@ -1,8 +1,10 @@
 package com.com.boha.monitor.library.activities;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,6 +22,7 @@ import android.opengl.GLUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -29,7 +32,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
@@ -37,56 +39,57 @@ import com.com.boha.monitor.library.dto.ProjectSiteTaskDTO;
 import com.com.boha.monitor.library.dto.VideoClipContainer;
 import com.com.boha.monitor.library.dto.VideoClipDTO;
 import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
+import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.services.PhotoUploadService;
+import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.CacheVideoUtil;
 import com.com.boha.monitor.library.util.GLToolbox;
 import com.com.boha.monitor.library.util.ImageUtil;
 import com.com.boha.monitor.library.util.PMException;
+import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.TextureRenderer;
 import com.com.boha.monitor.library.util.Util;
-import com.com.boha.monitor.library.util.WebCheck;
-import com.com.boha.monitor.library.util.WebCheckResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-
+import com.boha.monitor.R;
 import org.acra.ACRA;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * Created by aubreyM on 2014/04/21.
  */
-public class PictureActivity extends ActionBarActivity implements
-        LocationListener, GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
+public class PictureActivity extends ActionBarActivity implements LocationListener,
+        GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
     LocationRequest mLocationRequest;
     LocationClient mLocationClient;
-    LocationListener activity;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(LOG,"### onCreate");
         ctx = getApplicationContext();
-        activity = this;
         setContentView(R.layout.camera);
         setFields();
 
         mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(2000);
+        mLocationRequest.setInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setFastestInterval(500);
 
         mLocationClient = new LocationClient(getApplicationContext(), this,
                 this);
 
         //get objects
         if (savedInstanceState != null) {
-            Log.e(LOG,"##### savedInstanceState is LOADED");
-            type = savedInstanceState.getInt("type",0);
-            projectSite = (ProjectSiteDTO)savedInstanceState.getSerializable("projectSite");
-            project = (ProjectDTO)savedInstanceState.getSerializable("project");
+            Log.e(LOG, "##### savedInstanceState is LOADED");
+            type = savedInstanceState.getInt("type", 0);
+            projectSite = (ProjectSiteDTO) savedInstanceState.getSerializable("projectSite");
+            project = (ProjectDTO) savedInstanceState.getSerializable("project");
             String path = savedInstanceState.getString("photoFile");
             if (path != null) {
                 photoFile = new File(path);
@@ -98,7 +101,7 @@ public class PictureActivity extends ActionBarActivity implements
             projectSiteTask = (ProjectSiteTaskDTO) getIntent().getSerializableExtra("projectSiteTask");
             companyStaff = (CompanyStaffDTO) getIntent().getSerializableExtra("companyStaff");
         }
-        Log.e(LOG, "###### type: " + type);
+        Log.e(LOG, "### picture type: " + type);
 
         if (savedInstanceState != null) {
             String path = savedInstanceState.getString("filePath");
@@ -122,16 +125,14 @@ public class PictureActivity extends ActionBarActivity implements
 
     @Override
     public void onResume() {
-        Log.w(LOG, "***************** onResume - starting pending uploads, if any");
-        WebCheckResult w = WebCheck.checkNetworkAvailability(ctx);
-        if (w.isWifiConnected()) {
-            PhotoUploadService.uploadPendingPhotos(ctx);
-        }
         super.onResume();
+        mLocationClient.requestLocationUpdates(mLocationRequest,this);
+
     }
 
 
     ImageView imgCamera;
+
     private void setFields() {
         image = (ImageView) findViewById(R.id.CAM_image);
         imgCamera = (ImageView) findViewById(R.id.CAM_imgCamera);
@@ -153,13 +154,13 @@ public class PictureActivity extends ActionBarActivity implements
     @Override
     public void onActivityResult(final int requestCode, final int resultCode,
                                  final Intent data) {
-        Log.e(LOG,"##### onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
+        Log.e(LOG, "##### onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
         switch (requestCode) {
             case CAPTURE_IMAGE:
                 if (resultCode == Activity.RESULT_OK) {
                     if (resultCode == Activity.RESULT_OK) {
                         if (photoFile != null)
-                        Log.e(LOG,"++++++ hopefully photo file has a length: " + photoFile.length());
+                            Log.e(LOG, "++++++ hopefully photo file has a length: " + photoFile.length());
                         new PhotoTask().execute();
                     }
                     pictureChanged = true;
@@ -175,81 +176,106 @@ public class PictureActivity extends ActionBarActivity implements
         }
     }
 
-    private void uploadPhotos() {
-        Log.e(LOG, "..........starting service to upload photos ........ ");
-
-        switch (type) {
-            case PhotoUploadDTO.PROJECT_IMAGE:
-                PhotoUploadService.uploadProjectPicture(ctx, project, currentFullFile, currentThumbFile,location);
-                break;
-            case PhotoUploadDTO.SITE_IMAGE:
-                PhotoUploadService.uploadSitePicture(ctx, projectSite, currentFullFile, currentThumbFile,location);
-                break;
-            case PhotoUploadDTO.STAFF_IMAGE:
-                PhotoUploadService.uploadStaffPicture(ctx, companyStaff, currentFullFile, currentThumbFile,location);
-                break;
-            case PhotoUploadDTO.TASK_IMAGE:
-                PhotoUploadService.uploadSiteTaskPicture(ctx, projectSiteTask, currentFullFile, currentThumbFile,location);
-                break;
-            default:
-                PhotoUploadService.uploadPendingPhotos(ctx);
-                break;
-
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(LOG, "## onLocationChanged accuracy = " + location.getAccuracy());
+        if (location.getAccuracy() <= ACCURACY_THRESHOLD ) {
+            this.location = location;
+            mLocationClient.removeLocationUpdates(this);
+            mLocationClient.disconnect();
+            if (gpsListener != null) {
+                Log.w(LOG,"%%% location set, accuracy: " + location.getAccuracy());
+                gpsListener.onAccurateCoordinatesFound(location);
+            }
         }
-        isUploaded = true;
+    }
+
+    public interface GPSListener {
+        public void onAccurateCoordinatesFound(Location loc);
+    }
+    GPSListener gpsListener;
+
+    private void uploadPhotos() {
+        gpsListener = new GPSListener() {
+            @Override
+            public void onAccurateCoordinatesFound(Location loc) {
+                switch (type) {
+                    case PhotoUploadDTO.PROJECT_IMAGE:
+                        addProjectPicture(ctx, project, currentFullFile, currentThumbFile, loc, new CacheListener() {
+                            @Override
+                            public void onCachingDone() {
+                                mService.uploadCachedPhotos();
+                            }
+                        });
+                        break;
+                    case PhotoUploadDTO.SITE_IMAGE:
+                        addSitePicture(ctx, projectSite, currentFullFile, currentThumbFile, loc, new CacheListener() {
+                            @Override
+                            public void onCachingDone() {
+                                mService.uploadCachedPhotos();
+                            }
+                        });
+                        break;
+                    case PhotoUploadDTO.STAFF_IMAGE:
+                        addStaffPicture(ctx, companyStaff, currentFullFile, currentThumbFile, loc, new CacheListener() {
+                            @Override
+                            public void onCachingDone() {
+                                mService.uploadCachedPhotos();
+                            }
+                        });
+                        break;
+                    case PhotoUploadDTO.TASK_IMAGE:
+                        addSiteTaskPicture(ctx, projectSiteTask, currentFullFile, currentThumbFile, loc, new CacheListener() {
+                            @Override
+                            public void onCachingDone() {
+                                mService.uploadCachedPhotos();
+                            }
+                        });
+                        break;
+
+
+                }
+            }
+        };
+        mLocationClient.requestLocationUpdates(mLocationRequest,this);
 
     }
 
     @Override
     public void onStart() {
-        super.onStart();
+        Log.i(LOG,
+                "## onStart - locationClient connecting ... ");
         if (mLocationClient != null) {
             mLocationClient.connect();
-            Log.i(LOG,
-                    "#################### onStart - locationClient connecting ... ");
         }
-
+        Log.i(LOG, "## onStart Bind to PhotoUploadService");
+        Intent intent = new Intent(this, PhotoUploadService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        super.onStart();
     }
 
     @Override
     public void onStop() {
+        super.onStop();
         Log.d(LOG,
                 "#################### onStop");
         if (mLocationClient != null) {
-            if (mLocationClient.isConnected()) {
-                stopPeriodicUpdates();
-            }
             // After disconnect() is called, the client is considered "dead".
             mLocationClient.disconnect();
-            Log.e("map", "### onStop - locationClient disconnected: "
-                    + mLocationClient.isConnected());
+            Log.e("map", "### onStop - locationClient disconnecting ");
         }
-        super.onStop();
-    }
-    private void stopPeriodicUpdates() {
-        mLocationClient.removeLocationUpdates(this);
-        Log.e(LOG,
-                "#################### stopPeriodicUpdates - removeLocationUpdates");
-    }
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.w(LOG,"############## onLocationChanged ...");
-        if (this.location == null) {
-           this.location = location;
-        } else {
-            Log.w(LOG, "Old Location lat: " + this.location.getLatitude() +
-                    " long: " + this.location.getLongitude() + " - accuracy: " + this.location.getAccuracy());
-            if (location.getAccuracy() == ACCURAY_THRESHOLD || location.getAccuracy() < ACCURAY_THRESHOLD) {
-                this.location = location;
-                mLocationClient.removeLocationUpdates(this);
-            }
+        Log.e(LOG, "## onStop unBind from RequestSyncService");
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
         }
-        Log.e(LOG, "++Location has changed to lat: " + location.getLatitude() +
-                " long: " + location.getLongitude() + " - accuracy: " + location.getAccuracy());
+
     }
 
+
     Location location;
-    static final float ACCURAY_THRESHOLD = 10;
+    static final float ACCURACY_THRESHOLD = 10;
+
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(LOG,
@@ -330,18 +356,11 @@ public class PictureActivity extends ActionBarActivity implements
                 photoFile = createImageFile();
             } catch (IOException ex) {
                 Log.e(LOG, "Fuck!", ex);
-                Util.showErrorToast(ctx,getString(R.string.file_error));
+                Util.showErrorToast(ctx, getString(R.string.file_error));
                 return;
             }
             if (photoFile != null) {
                 Log.w(LOG, "dispatchTakePictureIntent - start pic intent");
-
-                if (mLocationClient.isConnected()) {
-                    Log.w(LOG,"## requesting mLocationClient updates before picture taken");
-                    mLocationClient.requestLocationUpdates(mLocationRequest, this);
-                } else {
-                    mLocationClient.connect();
-                }
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                         Uri.fromFile(photoFile));
                 startActivityForResult(takePictureIntent, CAPTURE_IMAGE);
@@ -422,6 +441,7 @@ public class PictureActivity extends ActionBarActivity implements
         }
         finish();
     }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -429,14 +449,15 @@ public class PictureActivity extends ActionBarActivity implements
         // Checks the orientation of the screen
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
         }
     }
+
     @Override
     public void onSaveInstanceState(Bundle b) {
-        Log.e(LOG,"############################## onSaveInstanceState");
-        b.putInt("type",type);
+        Log.e(LOG, "############################## onSaveInstanceState");
+        b.putInt("type", type);
         if (currentFullFile != null) {
             b.putString("filePath", currentFullFile.getAbsolutePath());
             b.putString("thumbPath", currentThumbFile.getAbsolutePath());
@@ -464,7 +485,7 @@ public class PictureActivity extends ActionBarActivity implements
             pictureChanged = false;
             ExifInterface exif = null;
             if (photoFile == null || photoFile.length() == 0) {
-                Log.e(LOG,"----- photoFile is null or length 0, exiting");
+                Log.e(LOG, "----- photoFile is null or length 0, exiting");
                 return 99;
             }
             fileUri = Uri.fromFile(photoFile);
@@ -483,10 +504,10 @@ public class PictureActivity extends ActionBarActivity implements
                         options.inSampleSize = 2;
                         Bitmap bm = BitmapFactory.decodeFile(photoFile.getAbsolutePath(), options);
                         if (bm == null) {
-                            Log.e(LOG,"---> Bitmap is null, file length: " + photoFile.length());
+                            Log.e(LOG, "---> Bitmap is null, file length: " + photoFile.length());
                         }
                         getLog(bm, "Raw Camera");
-                          //get thumbnail for upload
+                        //get thumbnail for upload
                         Matrix matrixThumbnail = new Matrix();
                         matrixThumbnail.postScale(0.4f, 0.4f);
                         //matrixThumbnail.postRotate(rotate);
@@ -510,15 +531,15 @@ public class PictureActivity extends ActionBarActivity implements
 
                         currentFullFile = ImageUtil.getFileFromBitmap(fullBm, "m" + System.currentTimeMillis() + ".jpg");
                         currentThumbFile = ImageUtil.getFileFromBitmap(thumb, "t" + System.currentTimeMillis() + ".jpg");
-                        bitmapForScreen = ImageUtil.getBitmapFromUri(ctx,Uri.fromFile(currentFullFile));
+                        bitmapForScreen = ImageUtil.getBitmapFromUri(ctx, Uri.fromFile(currentFullFile));
 
                         Log.e(LOG, "## files created from camera bitmap");
 
                         thumbUri = Uri.fromFile(currentThumbFile);
                         fullUri = Uri.fromFile(currentFullFile);
                         //write exif data
-                        Util.writeLocationToExif(currentFullFile.getAbsolutePath(),location);
-                        Util.writeLocationToExif(currentThumbFile.getAbsolutePath(),location);
+                        Util.writeLocationToExif(currentFullFile.getAbsolutePath(), location);
+                        Util.writeLocationToExif(currentThumbFile.getAbsolutePath(), location);
                         fullBm = null;
                         thumb = null;
                         bm = null;
@@ -548,11 +569,6 @@ public class PictureActivity extends ActionBarActivity implements
                 try {
                     image.setImageBitmap(bitmapForScreen);
                     uploadPhotos();
-//                    if (bitmapForScreen.getWidth() > bitmapForScreen.getHeight()) {
-//                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-//                    } else {
-//                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -726,6 +742,29 @@ public class PictureActivity extends ActionBarActivity implements
         GLToolbox.initTexParams();
     }
 
+    boolean mBound;
+    PhotoUploadService mService;
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            Log.w(LOG, "## PhotoUploadService ServiceConnection onServiceConnected");
+            PhotoUploadService.LocalBinder binder = (PhotoUploadService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+            mService.uploadCachedPhotos();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.w(LOG, "## PhotoUploadService onServiceDisconnected");
+            mBound = false;
+        }
+    };
+
+
     String mCurrentPhotoPath;
     ProjectDTO project;
     ProjectSiteDTO projectSite;
@@ -759,5 +798,213 @@ public class PictureActivity extends ActionBarActivity implements
     public static final int CAPTURE_IMAGE = 9908;
 
     Bitmap bitmapForScreen;
+
+    /**
+     * Upload site picture
+     *
+     * @param context
+     * @param site
+     * @param fullPicture
+     * @param thumb
+     */
+    public void addSitePicture(final Context context, final ProjectSiteDTO site,
+                               final File fullPicture, final File thumb,
+                               Location location, final CacheListener listener) {
+        Log.w(LOG, "**** addSitePicture .........");
+        final PhotoUploadDTO dto = getObject(context, fullPicture, thumb, location);
+        dto.setProjectID(site.getProjectID());
+        dto.setProjectSiteID(site.getProjectSiteID());
+        dto.setPictureType(PhotoUploadDTO.SITE_IMAGE);
+        dto.setAccuracy(location.getAccuracy());
+        Log.w(LOG, "**** addPhotoToCache starting ... file: " + dto.getThumbFilePath());
+        CacheUtil.getCachedPhotos(context, new CacheUtil.CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO response) {
+                response.getPhotoCache().getPhotoUploadList().add(dto);
+                Log.w(LOG, "**** ...about to cache photos: " + response.getPhotoCache().getPhotoUploadList().size());
+                CacheUtil.cacheData(context, response, CacheUtil.CACHE_PHOTOS, new CacheUtil.CacheUtilListener() {
+                    @Override
+                    public void onFileDataDeserialized(ResponseDTO response) {
+
+                    }
+
+                    @Override
+                    public void onDataCached() {
+                        listener.onCachingDone();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onDataCached() {
+            }
+
+            @Override
+            public void onError() {
+                Log.e(LOG, "Cache ERROR of some kind!");
+            }
+        });
+    }
+
+    private interface CacheListener {
+        public void onCachingDone();
+    }
+    public void addSiteTaskPicture(final Context context, final ProjectSiteTaskDTO siteTask,
+                                   final File fullPicture, final File thumb,
+                                   Location location, final CacheListener listener) {
+        Log.w(LOG, "**** addSiteTaskPicture");
+        final PhotoUploadDTO dto = getObject(context, fullPicture, thumb, location);
+        dto.setProjectID(siteTask.getProjectID());
+        dto.setProjectSiteID(siteTask.getProjectSiteID());
+        dto.setProjectSiteTaskID(siteTask.getProjectSiteTaskID());
+        dto.setPictureType(PhotoUploadDTO.TASK_IMAGE);
+        dto.setAccuracy(location.getAccuracy());
+        CacheUtil.getCachedPhotos(context, new CacheUtil.CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO response) {
+                response.getPhotoCache().getPhotoUploadList().add(dto);
+                Log.w(LOG, "**** ...about to cache photos: " + response.getPhotoCache().getPhotoUploadList().size());
+                CacheUtil.cacheData(context, response, CacheUtil.CACHE_PHOTOS, new CacheUtil.CacheUtilListener() {
+                    @Override
+                    public void onFileDataDeserialized(ResponseDTO response) {
+
+                    }
+
+                    @Override
+                    public void onDataCached() {
+                        listener.onCachingDone();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onDataCached() {
+            }
+
+            @Override
+            public void onError() {
+                Log.e(LOG, "Cache ERROR of some kind!");
+            }
+        });
+
+    }
+
+    public void addProjectPicture(final Context context,
+                                  final ProjectDTO project, final File fullPicture, final File thumb,
+                                  Location location, final CacheListener listener) {
+        Log.w(LOG, "**** addProjectPicture");
+        final PhotoUploadDTO dto = getObject(context, fullPicture, thumb, location);
+        dto.setProjectID(project.getProjectID());
+        dto.setPictureType(PhotoUploadDTO.PROJECT_IMAGE);
+
+        CacheUtil.getCachedPhotos(context, new CacheUtil.CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO response) {
+                response.getPhotoCache().getPhotoUploadList().add(dto);
+                Log.w(LOG, "**** ...about to cache photos: " + response.getPhotoCache().getPhotoUploadList().size());
+                CacheUtil.cacheData(context, response, CacheUtil.CACHE_PHOTOS, new CacheUtil.CacheUtilListener() {
+                    @Override
+                    public void onFileDataDeserialized(ResponseDTO response) {
+
+                    }
+
+                    @Override
+                    public void onDataCached() {
+                        listener.onCachingDone();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onDataCached() {
+            }
+
+            @Override
+            public void onError() {
+                Log.e(LOG, "Cache ERROR of some kind!");
+            }
+        });
+    }
+
+    private PhotoUploadDTO getObject(Context context, final File fullPicture, final File thumb,
+                                     Location location) {
+        PhotoUploadDTO dto = new PhotoUploadDTO();
+        dto.setCompanyID(SharedUtil.getCompany(context).getCompanyID());
+        dto.setThumbFilePath(thumb.getAbsolutePath());
+        dto.setImageFilePath(fullPicture.getAbsolutePath());
+        dto.setDateTaken(new Date());
+        dto.setLatitude(location.getLatitude());
+        dto.setLongitude(location.getLongitude());
+        dto.setAccuracy(location.getAccuracy());
+        dto.setTime(new Date().getTime());
+        return dto;
+    }
+
+    /**
+     * Upload staff picture
+     *
+     * @param context
+     * @param staff
+     * @param fullPicture
+     * @param thumb
+     */
+    public void addStaffPicture(final Context context, final CompanyStaffDTO staff,
+                                final File fullPicture, final File thumb,
+                                Location location, final CacheListener listener) {
+        final PhotoUploadDTO dto = getObject(context, fullPicture, thumb, location);
+        dto.setCompanyStaffID(staff.getCompanyStaffID());
+        dto.setPictureType(PhotoUploadDTO.STAFF_IMAGE);
+        CacheUtil.getCachedPhotos(context, new CacheUtil.CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO response) {
+                response.getPhotoCache().getPhotoUploadList().add(dto);
+                Log.w(LOG, "**** ...about to cache photos: " + response.getPhotoCache().getPhotoUploadList().size());
+                CacheUtil.cacheData(context, response, CacheUtil.CACHE_PHOTOS, new CacheUtil.CacheUtilListener() {
+                    @Override
+                    public void onFileDataDeserialized(ResponseDTO response) {
+
+                    }
+
+                    @Override
+                    public void onDataCached() {
+                        listener.onCachingDone();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onDataCached() {
+            }
+
+            @Override
+            public void onError() {
+                Log.e(LOG, "Cache ERROR of some kind!");
+            }
+        });
+    }
 
 }

@@ -248,7 +248,7 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
         if (!mLocationClient.isConnected()) {
             mLocationClient.connect();
         }
-        LocationRequest lr = new LocationRequest();
+        LocationRequest lr = LocationRequest.create();
         lr.setFastestInterval(1000);
         lr.setInterval(2000);
         lr.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -486,15 +486,7 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
 
         selectedSiteIndex = index;
         this.projectSite = projectSite;
-        Intent i;
-//        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP ||
-//                Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-//            i = new Intent(this, CameraLollipopActivity.class);
-//        } else {
-//             i = new Intent(this, PictureActivity.class);
-//        }
-
-        i = new Intent(this, PictureActivity.class);
+        Intent i = new Intent(this, PictureActivity.class);
         i.putExtra("projectSite", projectSite);
         i.putExtra("type", PhotoUploadDTO.SITE_IMAGE);
         startActivityForResult(i, SITE_PICTURE_REQUEST);
@@ -553,7 +545,7 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
         Log.e(LOG,"**** onPhotoUploadServiceRequested");
         WebCheckResult w = WebCheck.checkNetworkAvailability(ctx);
         if (w.isWifiConnected()) {
-            pService.sendCachedPhotos();
+            pService.uploadCachedPhotos();
         }
 
     }

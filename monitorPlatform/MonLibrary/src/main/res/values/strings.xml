@@ -61,7 +61,7 @@
     <string name="error_server_comms">Problem communicating with the server. Please try again or contact mgGolf support</string>
     <string name="error_duplicate">Attempting to put duplicate data in database, ignored</string>
     <string name="welcome_aboard">Welcome Aboard! Thanks for signing up!</string>
-    <string name="app_name">Monitor</string>
+    <string name="app_name">Operations</string>
     <string name="change_item">Change this item</string>
     <string name="remove_item">Remove this item</string>
     <string name="delete">Delete</string>
@@ -339,5 +339,11 @@
     <string name="edit_project">Edit Project</string>
     <string name="status_completed">Status already completed</string>
     <string name="progress_images">Progress Images</string>
+    <string name="site_not_found">"Site not found in list: "</string>
+    <string name="wifi_not_connected">WIFI not connected. Please connect to WIFI so that data can be downloaded to your device</string>
+    <string name="confirm_exit">Confirm Exit</string>
+    <string name="exit_question">Do you want to exit the app?</string>
+    <string name="title_activity_picture_maker">PictureMakerActivity</string>
+    <string name="title_activity_picture">PictureActivity</string>
 
 </resources>

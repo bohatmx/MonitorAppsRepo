@@ -97,7 +97,7 @@
     <ListView
         android:layout_marginTop="8dp"
         android:layout_below="@id/topTop"
-        android:id="@android:id/list"
+        android:id="@+id/PROJ_LIST_list"
         android:background="@color/white"
         android:dividerHeight="8dp"
         android:layout_width="match_parent"

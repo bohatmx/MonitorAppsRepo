@@ -87,7 +87,7 @@ public class ExecPagerActivity extends ActionBarActivity implements
         CompanyStaffDTO staff = SharedUtil.getCompanyStaff(ctx);
         getSupportActionBar().setSubtitle(staff.getFullName());
         //
-        // PhotoUploadService.uploadPendingPhotos(ctx);
+        // PhotoUploadService.uploadCachedPhotos(ctx);
     }
 
     private void setDrawerList() {
@@ -163,8 +163,7 @@ public class ExecPagerActivity extends ActionBarActivity implements
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.GET_EXEC_COMPANY_DATA);
         w.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
-        if (projectListFragment != null)
-            projectListFragment.rotateLogo();
+
         progressBar.setVisibility(View.VISIBLE);
         WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
@@ -177,8 +176,7 @@ public class ExecPagerActivity extends ActionBarActivity implements
                             return;
                         }
 
-                        if (projectListFragment != null)
-                            projectListFragment.stopRotatingLogo();
+
                         Log.e(LOG, "## getCompanyData responded...statusCode: " + r.getStatusCode());
                         response = r;
                         buildPages();

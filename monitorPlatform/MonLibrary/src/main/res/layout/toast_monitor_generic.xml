@@ -18,6 +18,7 @@
     <RelativeLayout
         android:layout_below="@id/MONTOAST_top"
         android:padding="@dimen/mon_wide"
+        android:background="@color/beige_pale"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

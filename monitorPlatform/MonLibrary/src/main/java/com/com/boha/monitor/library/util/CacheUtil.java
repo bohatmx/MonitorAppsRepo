@@ -109,6 +109,13 @@ public class CacheUtil {
         new CacheRetrieveTask().execute();
     }
 
+    public static void getCachedPhotos(Context context, CacheUtilListener cacheUtilListener) {
+        dataType = CACHE_PHOTOS;
+        utilListener = cacheUtilListener;
+        ctx = context;
+        new CacheRetrieveTask().execute();
+    }
+
     public static void getCachedRequests(Context context, CacheRequestListener listener) {
         dataType = CACHE_REQUEST;
         cacheListener = listener;
@@ -306,7 +313,7 @@ public class CacheUtil {
             if (v != null) {
                 utilListener.onFileDataDeserialized(v);
             } else {
-                Log.e(LOG, "-- No cache, util returns null response object, onError fired!");
+                Log.e(LOG, "-- onPostExecute, util returns null response object, onError fired!");
                 utilListener.onError();
             }
 

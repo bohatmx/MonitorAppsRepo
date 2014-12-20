@@ -48,7 +48,13 @@ public class StatusReportFragment extends Fragment implements PageFragment {
 
     }
 
-
+    public static StatusReportFragment newInstance(ResponseDTO r) {
+        StatusReportFragment fragment = new StatusReportFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("response", r);
+        fragment.setArguments(args);
+        return fragment;
+    }
     private StatusReportListener mListener;
 
     public StatusReportFragment() {

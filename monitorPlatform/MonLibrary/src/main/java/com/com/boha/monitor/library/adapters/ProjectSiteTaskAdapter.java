@@ -12,7 +12,6 @@ import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dto.ProjectSiteTaskDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteTaskStatusDTO;
 import com.com.boha.monitor.library.util.Statics;
-import com.com.boha.monitor.library.util.Util;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -32,8 +31,6 @@ public class ProjectSiteTaskAdapter extends ArrayAdapter<ProjectSiteTaskDTO> {
     private List<ProjectSiteTaskDTO> mList;
     private Context ctx;
     private ProjectSiteTaskAdapterListener listener;
-    private boolean locationConfirmed;
-    private Integer index;
 
 
     public ProjectSiteTaskAdapter(Context context, int textViewResourceId,
@@ -47,13 +44,11 @@ public class ProjectSiteTaskAdapter extends ArrayAdapter<ProjectSiteTaskDTO> {
     }
 
     public ProjectSiteTaskAdapter(Context context, int textViewResourceId,
-                                  List<ProjectSiteTaskDTO> list, boolean locationConfirmed, Integer index, ProjectSiteTaskAdapterListener listener) {
+                                  List<ProjectSiteTaskDTO> list, ProjectSiteTaskAdapterListener listener) {
         super(context, textViewResourceId, list);
         this.mLayoutRes = textViewResourceId;
         mList = list;
-        this.index = index;
         this.listener = listener;
-        this.locationConfirmed = locationConfirmed;
         ctx = context;
         this.mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -150,43 +145,6 @@ public class ProjectSiteTaskAdapter extends ArrayAdapter<ProjectSiteTaskDTO> {
         Statics.setRobotoFontRegular(ctx, item.txtName);
         Statics.setRobotoFontBold(ctx, item.txtStatusCount);
         Statics.setRobotoFontRegular(ctx, item.txtLastDate);
-
-
-        if (listener == null) {
-            item.imgCamera.setVisibility(View.GONE);
-            item.imgDelete.setVisibility(View.GONE);
-        } else {
-            item.imgCamera.setVisibility(View.VISIBLE);
-            item.imgDelete.setVisibility(View.VISIBLE);
-            item.imgCamera.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onCameraRequested(p);
-                }
-            });
-            item.imgDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onDeleteRequested(p);
-                }
-            });
-            item.cameraLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (locationConfirmed)
-                        listener.onCameraRequested(p);
-                }
-            });
-        }
-
-        if (!locationConfirmed) {
-            item.imgCamera.setVisibility(View.GONE);
-        }
-        if (index != null) {
-            if (index.intValue() == position) {
-                Util.flashSeveralTimes(item.imgCamera,200,6,null);
-            }
-        }
 
         return (convertView);
     }

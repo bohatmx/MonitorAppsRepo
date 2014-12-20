@@ -46,7 +46,6 @@ import com.com.boha.monitor.library.dto.ProjectSiteTaskDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteTaskStatusDTO;
 import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
 import com.com.boha.monitor.library.fragments.PageFragment;
-import com.com.boha.monitor.library.services.PhotoUploadService;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Util;
 
@@ -683,7 +682,7 @@ public class CameraFragment extends Fragment implements PageFragment {
                     p.setLongitude(location.getLongitude());
                 }
 
-                PhotoUploadService.addPhotoToCache(getActivity(), p);
+                //PhotoUploadService.addPhotoToCache(getActivity(), p);
                 listener.onPictureCaptured(fullFile, thumbFile);
 
             }

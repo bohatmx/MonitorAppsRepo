@@ -30,17 +30,46 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <include layout="@layout/traffic_lights" />
+        <include
+            layout="@layout/traffic_lights"
+            android:id="@+id/AST_lights" />
+
+        <RelativeLayout
+            android:id="@+id/AST_cameraLayout"
+            android:layout_below="@id/AST_lights"
+            android:background="@color/translucent_red"
+            android:padding="@dimen/mon_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/AST_camera"
+                android:src="@drawable/camera_a32"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                style="@style/TextStyleSmall"
+                android:layout_toRightOf="@id/AST_camera"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:text="@string/rem_take_pic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/AST_subs"
         android:layout_below="@id/AST_middle"
         android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <include layout="@layout/fragment_assign_site_subtasks"/>
-        </RelativeLayout>
+
+        <include layout="@layout/fragment_assign_site_subtasks" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_below="@id/AST_subs"

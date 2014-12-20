@@ -74,7 +74,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
     private ProjectSiteTaskListener mListener;
     private ListView mListView;
     private ListAdapter mAdapter;
-    View trafficView;
+    View trafficView, cameraLayout;
 
     public SiteTaskAndStatusAssignmentFragment() {
     }
@@ -115,8 +115,20 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
             projectSite = (ProjectSiteDTO) b.getSerializable("projectSite");
             projectSiteTaskList = projectSite.getProjectSiteTaskList();
         }
+        setFields();
+        if (projectSite != null) {
+            setList();
+        }
+//
+        getCachedData();
+        return view;
+    }
+
+    private void setFields() {
         handle = view.findViewById(R.id.AST_handle);
         trafficLayout = view.findViewById(R.id.TRAFF_main);
+        cameraLayout = view.findViewById(R.id.AST_cameraLayout);
+        cameraLayout.setVisibility(View.GONE);
         txtCount = (TextView) view.findViewById(R.id.AST_number);
         mListView = (ListView) view.findViewById(R.id.AST_list);
         txtTitle = (TextView) view.findViewById(R.id.AST_title2);
@@ -130,6 +142,19 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
         tred = (TextView) view.findViewById(R.id.TRAFF_red);
         tot = (TextView) view.findViewById(R.id.TRAFF_count);
 
+        cameraLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.flashOnce(cameraLayout, 100, new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        mListener.onCameraRequested(projectSiteTask, PhotoUploadDTO.SITE_IMAGE);
+                        closeCameraLayout();
+                    }
+                });
+            }
+        });
+
         txtCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,27 +163,20 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
         });
 
         Statics.setRobotoFontLight(ctx, txtTitle);
-        if (projectSite != null) {
-            setList(null);
-        }
-//
-        getCachedData();
-        return view;
     }
 
-    public void setBusy() {
-        progressBar.setVisibility(View.VISIBLE);
+    private void openCameraLayout() {
+        Util.expand(cameraLayout, 500, null);
     }
 
-    public void setNotBusy() {
-        progressBar.setVisibility(View.GONE);
+    private void closeCameraLayout() {
+        Util.collapse(cameraLayout, 100, null);
     }
-
 
     public void setProjectSiteTaskList(List<ProjectSiteTaskDTO> projectSiteTaskList) {
         this.projectSiteTaskList = projectSiteTaskList;
         if (mListView != null) {
-            setList(null);
+            setList();
         }
     }
 
@@ -204,7 +222,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                             for (final ProjectSiteTaskDTO s : projectSiteTaskList) {
                                 if (s.getProjectSiteTaskID().intValue() == projectSiteTaskStatus.getProjectSiteTaskID().intValue()) {
                                     s.getProjectSiteTaskStatusList().add(0, projectSiteTaskStatus);
-                                    setList(Integer.parseInt("" + lastIndex));
+                                    setList();
                                     if (lastIndex == 1) {
                                         mListView.setSelection(0);
                                     } else
@@ -232,7 +250,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                                 });
 
                             } else {
-                                showPictureReminderDialog();
+                                openCameraLayout();
                             }
                             mListener.onProjectSiteTaskStatusAdded(projectSiteTaskStatus);
 
@@ -265,7 +283,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                     for (final ProjectSiteTaskDTO s : projectSiteTaskList) {
                         if (s.getProjectSiteTaskID().intValue() == projectSiteTaskStatus.getProjectSiteTaskID().intValue()) {
                             s.getProjectSiteTaskStatusList().add(0, projectSiteTaskStatus);
-                            setList(Integer.parseInt(""+lastIndex));
+                            setList();
                             if (lastIndex == 1) {
                                 mListView.setSelection(0);
                             } else
@@ -292,7 +310,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                         });
 
                     } else {
-                        showPictureReminderDialog();
+                        openCameraLayout();
                     }
                     if (mListener != null)
                         mListener.onProjectSiteTaskStatusAdded(projectSiteTaskStatus);
@@ -408,50 +426,45 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
         }
     }
 
-    private void setList(Integer index) {
+    private void setList() {
         Log.d(LOG, "########## setList");
         Collections.sort(projectSiteTaskList);
         txtCount.setText("" + projectSiteTaskList.size());
-        boolean locationConfirmed = false;
-        if (projectSite.getLocationConfirmed() != null)
-            locationConfirmed = true;
 
-            adapter = new ProjectSiteTaskAdapter(ctx, R.layout.task_item,
-                    projectSiteTaskList, locationConfirmed, index, new ProjectSiteTaskAdapter.ProjectSiteTaskAdapterListener() {
-                @Override
-                public void onCameraRequested(ProjectSiteTaskDTO siteTask) {
-                    mListener.onCameraRequested(siteTask, PhotoUploadDTO.TASK_IMAGE);
+        adapter = new ProjectSiteTaskAdapter(ctx, R.layout.task_item,
+                projectSiteTaskList, new ProjectSiteTaskAdapter.ProjectSiteTaskAdapterListener() {
+            @Override
+            public void onCameraRequested(ProjectSiteTaskDTO siteTask) {
+                mListener.onCameraRequested(siteTask, PhotoUploadDTO.TASK_IMAGE);
 
-                }
+            }
 
-                @Override
-                public void onDeleteRequested(ProjectSiteTaskDTO siteTask) {
+            @Override
+            public void onDeleteRequested(ProjectSiteTaskDTO siteTask) {
 
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
-                    dialog.setMessage(ctx.getString(R.string.delete_task_text)
-                            + "\n\n" + siteTask.getTask().getTaskName())
-                            .setTitle(ctx.getString(R.string.delete))
-                            .setPositiveButton(ctx.getString(R.string.yes), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                dialog.setMessage(ctx.getString(R.string.delete_task_text)
+                        + "\n\n" + siteTask.getTask().getTaskName())
+                        .setTitle(ctx.getString(R.string.delete))
+                        .setPositiveButton(ctx.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-                                }
-                            })
-                            .setNegativeButton(ctx.getString(R.string.no), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            })
-                            .show();
-                }
-            });
-
+                            }
+                        })
+                        .setNegativeButton(ctx.getString(R.string.no), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        });
 
 
         getSummary();
         tot.setText("" + (greens + yellows + reds));
-        View v = inflater.inflate(R.layout.hero_image, null);
         if (mListView.getHeaderViewsCount() == 0) {
             mListView.addHeaderView(Util.getHeroView(ctx, ctx.getString(R.string.task_status)));
         }
@@ -461,7 +474,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(LOG, "##### setOnItemClickListener, position: " + position);
                 lastIndex = position;
-
+                closeCameraLayout();
                 int index = position - 1;
                 if (index < 0) {
                     projectSiteTask = projectSiteTaskList.get(0);
@@ -724,12 +737,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                                 Util.explode(mListView, 300, new Util.UtilAnimationListener() {
                                     @Override
                                     public void onAnimationEnded() {
-                                        try {
-                                            Thread.sleep(1000);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                        showPictureReminderDialog();
+                                        openCameraLayout();
                                     }
                                 });
                             }
@@ -739,13 +747,6 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                 });
             }
         });
-
-    }
-
-    private void showPictureReminderDialog() {
-        if (getActivity() == null) return;
-        Util.showErrorToast(ctx, ctx.getString(R.string.rem_take_pic));
-        setList(Integer.parseInt(""+lastIndex));
 
     }
 

@@ -24,8 +24,8 @@ import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteTaskDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
+import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
-import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
 
 import java.text.DecimalFormat;
@@ -48,11 +48,19 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     private ProjectListListener mListener;
     private ListView mListView;
     private TextView txtProjectCount, txtStatusCount, txtLabel;
+    ListPopupWindow actionsWindow;
+    List<String> list;
+    static final String LOG = ProjectListFragment.class.getSimpleName();
+    ProjectDTO project;
+    int statusCount;
+    TextView txtName;
+
 
     public static ProjectListFragment newInstance(ResponseDTO r) {
         ProjectListFragment fragment = new ProjectListFragment();
         Bundle args = new Bundle();
         args.putSerializable("response", r);
+        args.putInt("type", ProjectListFragment.PROJECT_TYPE);
         fragment.setArguments(args);
         return fragment;
     }
@@ -72,61 +80,18 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e(LOG, "$$ onCreate, savedInstanceState: " + savedInstanceState);
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.w(LOG,"######### onCreateView... ");
-
+        Log.w(LOG, "######### onCreateView... ");
         view = inflater.inflate(R.layout.fragment_project_list, container, false);
         this.inflater = inflater;
         ctx = getActivity();
-        //set fields
-        topView = view.findViewById(R.id.topTop);
-        imgLogo = (ImageView) view.findViewById(R.id.PROJ_LIST_img);
-        txtStatusCount = (TextView) view.findViewById(R.id.HERO_P_statusCount);
-        heroImage = (ImageView)view.findViewById(R.id.HERO_P_image);
-        imgSearch1 = (ImageView) view.findViewById(R.id.SLT_imgSearch1);
-        imgSearch2 = (ImageView) view.findViewById(R.id.SLT_imgSearch2);
-        editSearch = (EditText)view.findViewById(R.id.SLT_editSearch);
-
-        heroImage.setImageDrawable(Util.getRandomHeroImage(ctx));
-
-
-        editSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                Log.e(LOG,"#### search text afterTextChanged");
-                search();
-            }
-        });
-
-
-        imgSearch1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                search();
-            }
-        });
-        imgSearch2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                search();
-            }
-        });
-
+        setFields();
         Bundle b = getArguments();
         if (b != null) {
             ResponseDTO r = (ResponseDTO) b.getSerializable("response");
@@ -134,23 +99,8 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             if (r.getCompany() != null) {
                 projectList = r.getCompany().getProjectList();
                 statusCountInPeriod = r.getStatusCountInPeriod();
-            } else {
-                Log.e(LOG,"-----------------> ERROR company from getArguments is null");
-            }
-            switch (type) {
-                case OPERATIONS_TYPE:
-                    break;
-                case PROJECT_TYPE:
-                    heroImage.setImageDrawable(ctx.getResources().getDrawable(R.drawable.banner_construction11));
-                    break;
             }
         }
-
-        txtProjectCount = (TextView) view.findViewById(R.id.PROJ_LIST_projectCount);
-        mListView = (ListView) view.findViewById(android.R.id.list);
-        txtLabel = (TextView) view.findViewById(R.id.PROJ_LIST_label);
-        Statics.setRobotoFontLight(ctx, txtLabel);
-
         setTotals();
         setList();
 
@@ -184,26 +134,51 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             project.setStatusCount(project.getStatusCount() + count);
         }
         setList();
+
+        CacheUtil.getCachedData(ctx,CacheUtil.CACHE_DATA,new CacheUtil.CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO response) {
+                if (response != null) {
+                    response.getCompany().setProjectList(projectList);
+                    response.setStatusCountInPeriod(statusCountInPeriod);
+                    //write data back
+                    CacheUtil.cacheData(ctx,response,CacheUtil.CACHE_DATA, null);
+                }
+            }
+
+            @Override
+            public void onDataCached() {
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
     }
+
     public void refreshData(ResponseDTO resp) {
-        Log.e(LOG,"##### refreshing data, projectList from host, count: " + resp.getStatusCountInPeriod());
+        Log.e(LOG, "##### refreshing data, projectList from host, count: " + resp.getStatusCountInPeriod());
         projectList = resp.getCompany().getProjectList();
         statusCountInPeriod = resp.getStatusCountInPeriod();
         setTotals();
         setList();
     }
-    static final long ONE_DAY = 1000*60*60*60*24, TWO_HOUR = 1000*60*60*2;
+
+    static final long ONE_DAY = 1000 * 60 * 60 * 60 * 24, TWO_HOUR = 1000 * 60 * 60 * 2;
 
     @Override
     public void onSaveInstanceState(Bundle b) {
         super.onSaveInstanceState(b);
     }
+
     private void search() {
         if (editSearch.getText().toString().isEmpty()) {
             return;
         }
         int index = 0;
-        for (ProjectDTO site: projectList) {
+        for (ProjectDTO site : projectList) {
             if (site.getProjectName().contains(editSearch.getText().toString())) {
                 break;
             }
@@ -213,23 +188,30 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         mListView.setSelection(index);
 
     }
+
     @Override
     public void onResume() {
-        Log.e(LOG,"######### onResume");
         super.onResume();
     }
+
     Integer statusCountInPeriod;
     ImageView heroImage;
     static final DecimalFormat df = new DecimalFormat("###,###,###,###");
 
     int lastIndex;
+
     private void setList() {
         if (projectList == null) {
-            Log.e(LOG,"-----------> projectList is null. Possible illegally called");
+            Log.e(LOG, "-----------> projectList is null. Possible illegally called");
             return;
         }
-        if (ctx == null) ctx = getActivity();
-        if (ctx == null) throw new UnsupportedOperationException("ctx is null, probably in some sort of illegalState");
+        if (ctx == null) {
+            ctx = getActivity();
+        }
+
+        if (ctx == null) {
+            throw new UnsupportedOperationException("ctx is null, probably in some sort of illegalState");
+        }
         adapter = new ProjectAdapter(ctx, R.layout.project_item, projectList);
         mListView.setAdapter(adapter);
 
@@ -258,17 +240,17 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                 list.add(ctx.getString(R.string.take_picture));
                 list.add(ctx.getString(R.string.edit_project));
 
-                View v = getActivity().getLayoutInflater().inflate(R.layout.hero_image,null);
-                TextView cap =(TextView)v.findViewById(R.id.HERO_caption);
+                View v = getActivity().getLayoutInflater().inflate(R.layout.hero_image, null);
+                TextView cap = (TextView) v.findViewById(R.id.HERO_caption);
                 cap.setText(ctx.getString(R.string.select_action));
-                ImageView img = (ImageView)v.findViewById(R.id.HERO_image);
+                ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
                 img.setImageDrawable(Util.getRandomHeroImage(ctx));
 
                 actionsWindow = new ListPopupWindow(getActivity());
                 actionsWindow.setPromptView(v);
                 actionsWindow.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
                 actionsWindow.setAdapter(new PopupListAdapter(ctx,
-                        R.layout.xxsimple_spinner_item, list,false));
+                        R.layout.xxsimple_spinner_item, list, false));
                 actionsWindow.setAnchorView(txtProjectCount);
                 actionsWindow.setWidth(600);
                 actionsWindow.setHorizontalOffset(100);
@@ -304,16 +286,58 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         mListView.setSelection(lastIndex);
     }
 
-    ListPopupWindow actionsWindow;
-    List<String> list;
-    static final String LOG = ProjectListFragment.class.getSimpleName();
-    ProjectDTO project;
-    int statusCount;
-    TextView txtName;
+
+    private void setFields() {
+        //set fields
+        topView = view.findViewById(R.id.topTop);
+        imgLogo = (ImageView) view.findViewById(R.id.PROJ_LIST_img);
+        txtStatusCount = (TextView) view.findViewById(R.id.HERO_P_statusCount);
+        heroImage = (ImageView) view.findViewById(R.id.HERO_P_image);
+        imgSearch1 = (ImageView) view.findViewById(R.id.SLT_imgSearch1);
+        imgSearch2 = (ImageView) view.findViewById(R.id.SLT_imgSearch2);
+        editSearch = (EditText) view.findViewById(R.id.SLT_editSearch);
+        txtProjectCount = (TextView) view.findViewById(R.id.PROJ_LIST_projectCount);
+        mListView = (ListView) view.findViewById(R.id.PROJ_LIST_list);
+        //random hero
+        heroImage.setImageDrawable(Util.getRandomHeroImage(ctx));
+
+        editSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.e(LOG, "#### search text afterTextChanged");
+                search();
+            }
+        });
+
+
+        imgSearch1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                search();
+            }
+        });
+        imgSearch2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                search();
+            }
+        });
+
+    }
 
     public void setTotals() {
         if (projectList == null) {
-            Log.e(LOG,"-----------------------> projectList is null");
+            Log.e(LOG, "-----> projectList is null");
             return;
         }
 
@@ -324,7 +348,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                 txtProjectCount.setText("" + projectList.size());
             }
         } catch (Exception e) {
-            Log.e(LOG, "--- ran aground ...");
+            Log.e(LOG, "--- ran aground ...", e);
         }
         statusCount = 0;
         for (ProjectDTO p : projectList) {
@@ -419,6 +443,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         public void onMapRequested(ProjectDTO project);
 
         public void onClaimsAndInvoicesRequested(ProjectDTO project);
+
         public void onStatusReportRequested();
     }
 

@@ -1,8 +1,13 @@
 package com.boha.monitor.operations;
 
+import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -148,13 +153,14 @@ public class OperationsPagerActivity extends ActionBarActivity
 
                 WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
                 if (wcr.isWifiConnected()) {
-                    if (projectList == null || projectList.isEmpty()) {
-                        getCompanyData();
-                        return;
-                    }
-                    Log.w(LOG,"## starting RequestSyncService ...");
-                    Intent i = new Intent(getApplicationContext(), RequestSyncService.class);
-                    startService(i);
+                    Log.w(LOG, "## RequestSyncService.startSyncCachedRequests ...from operations pager");
+                    mService.startSyncCachedRequests();
+                    Util.pretendFlash(progressBar,1000,2,new Util.UtilAnimationListener() {
+                        @Override
+                        public void onAnimationEnded() {
+                            getCompanyData();
+                        }
+                    });
                 }
             }
 
@@ -236,10 +242,6 @@ public class OperationsPagerActivity extends ActionBarActivity
             }
         });
     }
-
-    public static final int PROJECTS = 0,
-            STAFF = 1, CLIENTS = 2, TASK_STATUS = 3, BENEFICIARIES = 4, PROJECT_STATUS = 5,
-            TASKS = 6, ENGINEERS = 7;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -461,8 +463,7 @@ public class OperationsPagerActivity extends ActionBarActivity
             return true;
         }
         if (id == R.id.action_gallery) {
-            Intent i = new Intent(this, ImagePagerActivity.class);
-            startActivity(i);
+            Util.showErrorToast(ctx, ctx.getString(R.string.under_cons));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -1147,5 +1148,68 @@ public class OperationsPagerActivity extends ActionBarActivity
     private ListView drawerListView;
     private String[] titles;
     private List<String> sTitles = new ArrayList<>();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.w(LOG, "## onStart Bind to RequestSyncService");
+        Intent intent = new Intent(this, RequestSyncService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e(LOG, "## onStop unBind from RequestSyncService");
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
+
+    }
+
+
+    boolean mBound;
+    RequestSyncService mService;
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            Log.w(LOG, "## RequestSyncService ServiceConnection onServiceConnected");
+            RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+            mService.startSyncCachedRequests();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.w(LOG, "## RequestSyncService onServiceDisconnected");
+            mBound = false;
+        }
+    };
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder d = new AlertDialog.Builder(this);
+        d.setTitle(getString(R.string.confirm_exit))
+                .setMessage(getString(R.string.exit_question))
+                .setPositiveButton(ctx.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setNegativeButton(ctx.getString(R.string.no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+    }
 
 }

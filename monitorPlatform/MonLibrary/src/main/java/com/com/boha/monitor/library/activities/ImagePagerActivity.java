@@ -23,7 +23,6 @@ import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.fragments.ImageFragment;
-import com.com.boha.monitor.library.fragments.ImageGridFragment;
 import com.com.boha.monitor.library.fragments.PageFragment;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;

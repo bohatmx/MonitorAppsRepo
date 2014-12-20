@@ -149,13 +149,19 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
             return;
         }
         int index = 0;
+        boolean found = false;
         for (ProjectSiteDTO site : project.getProjectSiteList()) {
             if (site.getProjectSiteName().contains(editSearch.getText().toString())) {
+                found = true;
                 break;
             }
             index++;
         }
-        mListView.setSelection(index);
+        if (found) {
+            mListView.setSelection(index);
+        } else {
+            Util.showToast(ctx, ctx.getString(R.string.site_not_found) + " " + editSearch.getText().toString());
+        }
 
     }
 

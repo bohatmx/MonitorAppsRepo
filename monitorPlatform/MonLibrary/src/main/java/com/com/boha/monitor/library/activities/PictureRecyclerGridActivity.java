@@ -38,11 +38,14 @@ public class PictureRecyclerGridActivity extends ActionBarActivity {
 
         projectSite = (ProjectSiteDTO)getIntent().getSerializableExtra("projectSite");
         if (projectSite != null) {
-            title.setText(getString(R.string.progress_images) + ": " + projectSite.getBeneficiary().getFullName());
+            if (projectSite.getBeneficiary() != null) {
+                title.setText(projectSite.getProjectSiteName() + ": " + projectSite.getBeneficiary().getFullName());
+            } else {
+                title.setText(projectSite.getProjectSiteName());
+            }
             adapter = new PictureRecyclerAdapter(projectSite.getPhotoUploadList(), 1, ctx);
             list.setAdapter(adapter);
         }
-
         setTitle(SharedUtil.getCompany(ctx).getCompanyName());
         CompanyStaffDTO staff = SharedUtil.getCompanyStaff(ctx);
         getSupportActionBar().setSubtitle(staff.getFullName());
@@ -52,7 +55,6 @@ public class PictureRecyclerGridActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_picture_recycler_grid, menu);
         return true;
     }

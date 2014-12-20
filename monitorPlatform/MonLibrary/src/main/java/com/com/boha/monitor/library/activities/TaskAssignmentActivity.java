@@ -24,21 +24,22 @@ import static com.com.boha.monitor.library.util.Util.showErrorToast;
 import static com.com.boha.monitor.library.util.Util.showToast;
 
 public class TaskAssignmentActivity extends ActionBarActivity implements
-        SiteTaskAndStatusAssignmentFragment.ProjectSiteTaskListener{
+        SiteTaskAndStatusAssignmentFragment.ProjectSiteTaskListener {
 
     Context ctx;
     ProjectSiteDTO site;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_task_assignment);
         ctx = getApplicationContext();
-         site = (ProjectSiteDTO)getIntent()
+        site = (ProjectSiteDTO) getIntent()
                 .getSerializableExtra("projectSite");
         int type = getIntent().getIntExtra("type", SiteTaskAndStatusAssignmentFragment.OPERATIONS);
 
-         taf = (SiteTaskAndStatusAssignmentFragment)
+        taf = (SiteTaskAndStatusAssignmentFragment)
                 getSupportFragmentManager().findFragmentById(R.id.fragment);
         taf.setProjectSite(site, type);
         setTitle(site.getProjectSiteName());
@@ -47,6 +48,7 @@ public class TaskAssignmentActivity extends ActionBarActivity implements
     }
 
     SiteTaskAndStatusAssignmentFragment taf;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.task_assignment, menu);
@@ -66,8 +68,8 @@ public class TaskAssignmentActivity extends ActionBarActivity implements
             return true;
         }
         if (id == R.id.action_camera) {
-            Intent i = new Intent(this,PictureActivity.class);
-            i.putExtra("projectSite",site);
+            Intent i = new Intent(this, PictureActivity.class);
+            i.putExtra("projectSite", site);
             i.putExtra("type", PhotoUploadDTO.SITE_IMAGE);
             startActivity(i);
         }
@@ -81,11 +83,12 @@ public class TaskAssignmentActivity extends ActionBarActivity implements
 
     @Override
     public void onProjectSiteTaskAdded(ProjectSiteTaskDTO task) {
-        Log.w(LOG,"## onProjectSiteTaskAdded " + task.getTask().getTaskName());
+        Log.w(LOG, "## onProjectSiteTaskAdded " + task.getTask().getTaskName());
         projectSiteTaskList.add(task);
     }
 
     List<ProjectSiteTaskDTO> projectSiteTaskList = new ArrayList<>();
+
     @Override
     public void onProjectSiteTaskDeleted() {
 
@@ -93,18 +96,20 @@ public class TaskAssignmentActivity extends ActionBarActivity implements
 
     @Override
     public void onSubTaskListRequested(ProjectSiteTaskDTO task, ProjectSiteTaskStatusDTO taskStatus) {
-        if (task == null) throw new UnsupportedOperationException("##onSubTaskListRequested, ProjectSiteTaskDTO is null");
+        if (task == null)
+            throw new UnsupportedOperationException("##onSubTaskListRequested, ProjectSiteTaskDTO is null");
         Intent i = new Intent(ctx, SubTaskStatusAssignmentActivity.class);
         task.setProjectSiteName(site.getProjectSiteName());
         task.setProjectName(site.getProjectName());
         i.putExtra("projectSiteTask", task);
-        i.putExtra("projectSiteTaskStatus",taskStatus);
-        startActivityForResult(i,SUBTASK_ASSIGNMENT);
+        i.putExtra("projectSiteTaskStatus", taskStatus);
+        startActivityForResult(i, SUBTASK_ASSIGNMENT);
     }
 
     static final int SUBTASK_ASSIGNMENT = 11413;
+
     @Override
-    public void onActivityResult(int reqCode,int resCode, Intent data) {
+    public void onActivityResult(int reqCode, int resCode, Intent data) {
         switch (reqCode) {
             case SUBTASK_ASSIGNMENT:
                 if (resCode == RESULT_OK) {
@@ -114,6 +119,7 @@ public class TaskAssignmentActivity extends ActionBarActivity implements
                 break;
         }
     }
+
     @Override
     public void onStatusDialogRequested(ProjectSiteDTO projectSite, ProjectSiteTaskDTO siteTask) {
         StatusDialog d = new StatusDialog();
@@ -137,7 +143,7 @@ public class TaskAssignmentActivity extends ActionBarActivity implements
                 });
             }
         });
-        d.show(getFragmentManager(),"DIAG_STATUS");
+        d.show(getFragmentManager(), "DIAG_STATUS");
     }
 
     @Override
@@ -149,24 +155,18 @@ public class TaskAssignmentActivity extends ActionBarActivity implements
     }
 
     List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList = new ArrayList<>();
+
     @Override
     public void onCameraRequested(ProjectSiteTaskDTO siteTask, int type) {
-        Intent i;
-//        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP ||
-//                Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-//            i = new Intent(this, CameraLollipopActivity.class);
-//        } else {
-//            i = new Intent(this, PictureActivity.class);
-//        }
-
-        i = new Intent(this, PictureActivity.class);
-        i.putExtra("type", type);
+        Intent i = new Intent(this, PictureActivity.class);
+        i.putExtra("type", PhotoUploadDTO.TASK_IMAGE);
         i.putExtra("projectSiteTask", siteTask);
         startActivityForResult(i, TASK_PICTURE_REQUIRED);
     }
 
     static final int TASK_PICTURE_REQUIRED = 9582;
     private Menu mMenu;
+
     public void setRefreshActionButtonState(final boolean refreshing) {
         if (mMenu != null) {
             final MenuItem refreshItem = mMenu.findItem(R.id.action_help);
@@ -191,5 +191,12 @@ public class TaskAssignmentActivity extends ActionBarActivity implements
         setResult(RESULT_OK, i);
         finish();
     }
-static final String LOG = TaskAssignmentActivity.class.getSimpleName();
+
+    @Override
+    public void onPause() {
+        overridePendingTransition(com.boha.monitor.library.R.anim.slide_in_left, com.boha.monitor.library.R.anim.slide_out_right);
+        super.onPause();
+    }
+
+    static final String LOG = TaskAssignmentActivity.class.getSimpleName();
 }
