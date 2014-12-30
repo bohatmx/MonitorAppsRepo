@@ -246,7 +246,7 @@ public class ImageActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_camera) {
-            Intent i = new Intent(this,PictureMakerActivity.class);
+            Intent i = new Intent(this,PictureActivity.class);
             if (projectSite != null) {
                 i.putExtra("type", PhotoUploadDTO.SITE_IMAGE);
                 i.putExtra("projectSite",projectSite);

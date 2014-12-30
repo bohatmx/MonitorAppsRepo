@@ -1,8 +1,11 @@
 package com.com.boha.monitor.library.activities;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -10,12 +13,14 @@ import android.view.MenuItem;
 
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dialogs.StatusDialog;
+import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteTaskDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteTaskStatusDTO;
 import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.fragments.SiteTaskAndStatusAssignmentFragment;
+import com.com.boha.monitor.library.services.RequestSyncService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +33,7 @@ public class TaskAssignmentActivity extends ActionBarActivity implements
 
     Context ctx;
     ProjectSiteDTO site;
+    CompanyDTO company;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,16 +44,17 @@ public class TaskAssignmentActivity extends ActionBarActivity implements
         site = (ProjectSiteDTO) getIntent()
                 .getSerializableExtra("projectSite");
         int type = getIntent().getIntExtra("type", SiteTaskAndStatusAssignmentFragment.OPERATIONS);
+        company = (CompanyDTO)getIntent().getSerializableExtra("company");
 
-        taf = (SiteTaskAndStatusAssignmentFragment)
+        siteTaskAndStatusAssignmentFragment = (SiteTaskAndStatusAssignmentFragment)
                 getSupportFragmentManager().findFragmentById(R.id.fragment);
-        taf.setProjectSite(site, type);
+        siteTaskAndStatusAssignmentFragment.setProjectSite(site, type);
         setTitle(site.getProjectSiteName());
         getSupportActionBar().setSubtitle(site.getProjectName());
-        taf.setProjectSiteTaskList(site.getProjectSiteTaskList());
+        siteTaskAndStatusAssignmentFragment.setProjectSiteTaskList(site.getProjectSiteTaskList());
     }
 
-    SiteTaskAndStatusAssignmentFragment taf;
+    SiteTaskAndStatusAssignmentFragment siteTaskAndStatusAssignmentFragment;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -60,7 +67,7 @@ public class TaskAssignmentActivity extends ActionBarActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_add) {
-            taf.popupTaskList();
+            siteTaskAndStatusAssignmentFragment.popupTaskList();
             return true;
         }
         if (id == R.id.action_help) {
@@ -81,6 +88,15 @@ public class TaskAssignmentActivity extends ActionBarActivity implements
 
     }
 
+    @Override
+    public void onSubTaskStatusAssignmentRequested(ProjectSiteTaskDTO task) {
+        Intent w = new Intent(this, SubTaskStatusAssignmentActivity.class);
+        w.putExtra("projectSiteTask", task);
+        w.putExtra("projectSite", site);
+        startActivityForResult(w, SUBTASK_STATUS_ASSIGNMENT_REQUESTED);
+    }
+
+    static final int SUBTASK_STATUS_ASSIGNMENT_REQUESTED = 8133;
     @Override
     public void onProjectSiteTaskAdded(ProjectSiteTaskDTO task) {
         Log.w(LOG, "## onProjectSiteTaskAdded " + task.getTask().getTaskName());
@@ -110,11 +126,13 @@ public class TaskAssignmentActivity extends ActionBarActivity implements
 
     @Override
     public void onActivityResult(int reqCode, int resCode, Intent data) {
+        Log.w(LOG,"+++ onActivityResult reqCode: " + reqCode + " resCode: " + resCode);
         switch (reqCode) {
-            case SUBTASK_ASSIGNMENT:
+            case SUBTASK_STATUS_ASSIGNMENT_REQUESTED:
                 if (resCode == RESULT_OK) {
-                    //TODO - what is in the intent, to update something??
-                    taf.setProjectSiteTaskList(site.getProjectSiteTaskList());
+                    ResponseDTO resp = (ResponseDTO) data.getSerializableExtra("response");
+                    ProjectSiteTaskStatusDTO status = (ProjectSiteTaskStatusDTO)data.getSerializableExtra("status");
+                    siteTaskAndStatusAssignmentFragment.updateList(resp.getSubTaskStatusList(), status);
                 }
                 break;
         }
@@ -129,7 +147,6 @@ public class TaskAssignmentActivity extends ActionBarActivity implements
         d.setListener(new StatusDialog.StatusDialogListener() {
             @Override
             public void onStatusAdded(ProjectSiteTaskStatusDTO taskStatus) {
-                taf.updateList(taskStatus);
             }
 
             @Override
@@ -167,19 +184,6 @@ public class TaskAssignmentActivity extends ActionBarActivity implements
     static final int TASK_PICTURE_REQUIRED = 9582;
     private Menu mMenu;
 
-    public void setRefreshActionButtonState(final boolean refreshing) {
-        if (mMenu != null) {
-            final MenuItem refreshItem = mMenu.findItem(R.id.action_help);
-            if (refreshItem != null) {
-                if (refreshing) {
-                    refreshItem.setActionView(R.layout.action_bar_progess);
-                } else {
-                    refreshItem.setActionView(null);
-                }
-            }
-        }
-    }
-
     @Override
     public void onBackPressed() {
         ResponseDTO r = new ResponseDTO();
@@ -197,6 +201,72 @@ public class TaskAssignmentActivity extends ActionBarActivity implements
         overridePendingTransition(com.boha.monitor.library.R.anim.slide_in_left, com.boha.monitor.library.R.anim.slide_out_right);
         super.onPause();
     }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.w(LOG, "## onStart Bind to RequestSyncService");
+        Intent intent = new Intent(this, RequestSyncService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e(LOG, "## onStop unBind from RequestSyncService");
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
+
+    }
+    @Override
+    protected void onDestroy() {
+        super.onStop();
+        Log.e(LOG, "## onDestroy - nulling everything!");
+        mService = null;
+        ctx = null;
+        mConnection = null;
+
+
+    }
+
+    boolean mBound;
+    RequestSyncService mService;
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            Log.w(LOG, "## DownloadService: ServiceConnection onServiceConnected");
+            RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+            mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
+                @Override
+                public void onTasksSynced(int goodResponses, int badResponses) {
+                    Log.i(LOG,"%%% onTasksSynced good: " + goodResponses + " bad: " + badResponses);
+                }
+
+                @Override
+                public void onError(String message) {
+
+                }
+            });
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.w(LOG, "## RequestSyncService onServiceDisconnected");
+            mBound = false;
+        }
+    };
+
+
 
     static final String LOG = TaskAssignmentActivity.class.getSimpleName();
 }

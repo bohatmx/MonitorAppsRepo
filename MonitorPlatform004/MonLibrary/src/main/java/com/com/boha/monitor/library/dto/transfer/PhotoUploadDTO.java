@@ -26,9 +26,11 @@ public class PhotoUploadDTO implements Serializable{
     private Float accuracy;
     String projectName, projectSiteName, projectSiteTask, uri;
     private boolean isFullPicture;
-    private String imageFilePath, thumbFilePath;
+    private String imageFilePath;
     private double latitude, longitude;
     private long time;
+    private String thumbFilePath;
+
 
     public Float getAccuracy() {
         return accuracy;

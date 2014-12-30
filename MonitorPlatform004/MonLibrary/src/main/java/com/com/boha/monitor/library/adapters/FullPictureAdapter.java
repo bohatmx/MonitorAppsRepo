@@ -23,7 +23,7 @@ import java.util.Locale;
 /**
  * Created by aubreyM on 14/12/17.
  */
-public class PictureRecyclerAdapter extends RecyclerView.Adapter<PictureRecyclerAdapter.PhotoViewHolder> {
+public class FullPictureAdapter extends RecyclerView.Adapter<FullPictureAdapter.PhotoViewHolder> {
 
     public interface PictureListener {
         public void onPictureClicked(int position);
@@ -33,8 +33,8 @@ public class PictureRecyclerAdapter extends RecyclerView.Adapter<PictureRecycler
     private Context ctx;
     private int rowLayout;
 
-    public PictureRecyclerAdapter(List<PhotoUploadDTO> photos, int rowLayout,
-                                  Context context, PictureListener listener) {
+    public FullPictureAdapter(List<PhotoUploadDTO> photos, int rowLayout,
+                              Context context, PictureListener listener) {
         this.photoList = photos;
         this.rowLayout = rowLayout;
         this.ctx = context;
@@ -43,7 +43,7 @@ public class PictureRecyclerAdapter extends RecyclerView.Adapter<PictureRecycler
 
     @Override
     public PhotoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.photo_item, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.full_photo_item, parent, false);
         return new PhotoViewHolder(v);
     }
 
@@ -51,8 +51,8 @@ public class PictureRecyclerAdapter extends RecyclerView.Adapter<PictureRecycler
     public void onBindViewHolder(final PhotoViewHolder holder, final int position) {
 
         PhotoUploadDTO p = photoList.get(position);
-        int num = photoList.size() - (position);
-        holder.number.setText("" + num);
+
+        holder.number.setText("" + p.getIndex());
         holder.caption.setVisibility(View.GONE);
         holder.date.setText(sdf.format(p.getDateTaken()));
         holder.position = position;
@@ -96,7 +96,7 @@ public class PictureRecyclerAdapter extends RecyclerView.Adapter<PictureRecycler
     }
 
     static final Locale loc = Locale.getDefault();
-    static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", loc);
+    static final SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm", loc);
 
     public class PhotoViewHolder extends RecyclerView.ViewHolder  {
         protected ImageView image;
@@ -114,5 +114,5 @@ public class PictureRecyclerAdapter extends RecyclerView.Adapter<PictureRecycler
 
     }
 
-    static final String LOG = PictureRecyclerAdapter.class.getSimpleName();
+    static final String LOG = FullPictureAdapter.class.getSimpleName();
 }

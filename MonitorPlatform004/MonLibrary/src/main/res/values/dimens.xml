@@ -17,6 +17,8 @@
     <dimen name="mon_hero_height_medium_lite">140dp</dimen>
     <dimen name="mon_hero_height_medium">160dp</dimen>
     <dimen name="mon_hero_height_large">210dp</dimen>
+    <dimen name="mon_picture_large">360dp</dimen>
+    <dimen name="mon_picture_larger">460dp</dimen>
     <dimen name="done_label_size">14sp</dimen>
     <dimen name="date_picker_component_width">270dip</dimen>
     <dimen name="date_picker_header_height">30dip</dimen>

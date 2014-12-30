@@ -345,5 +345,11 @@
     <string name="exit_question">Do you want to exit the app?</string>
     <string name="title_activity_picture_maker">PictureMakerActivity</string>
     <string name="title_activity_picture">PictureActivity</string>
+    <string name="finding_gps">Getting GPS coordinates, wait just a second!</string>
+    <string name="site_pics">Site Pictures</string>
+    <string name="start_pic_rep">Start Picture Report</string>
+    <string name="pic_saved">Report picture has been saved. Get the next one!</string>
+    <string name="gps_complete">GPS coordinates done. Tap camera to begin.</string>
+    <string name="title_activity_full_photo">FullPhotoActivity</string>
 
 </resources>

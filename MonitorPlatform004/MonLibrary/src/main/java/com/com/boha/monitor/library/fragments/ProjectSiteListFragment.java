@@ -22,6 +22,8 @@ import android.widget.TextView;
 
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.adapters.ProjectSiteAdapter;
+import com.com.boha.monitor.library.adapters.ProjectSiteLocalAdapter;
+import com.com.boha.monitor.library.adapters.SiteAdapterInterface;
 import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteTaskDTO;
@@ -32,8 +34,12 @@ import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
 import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
+import com.com.boha.monitor.library.util.WebCheck;
+import com.com.boha.monitor.library.util.WebCheckResult;
 import com.com.boha.monitor.library.util.WebSocketUtil;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -76,7 +82,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_projectsite, container, false);
+        view = inflater.inflate(R.layout.fragment_projectsite_list, container, false);
         Log.i(LOG, "------------- onCreateView");
         ctx = getActivity();
         Bundle b = getArguments();
@@ -208,6 +214,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
     }
 
     List<ProjectSiteDTO> projectSiteList;
+    ProjectSiteLocalAdapter projectSiteLocalAdapter;
 
     public void updateSiteLocation(ProjectSiteDTO site) {
         Log.e(LOG, "updateSiteLocation site location confirmed: " + site.getLocationConfirmed());
@@ -233,33 +240,57 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         Log.i(LOG, "## setList");
         txtCount.setText("" + projectSiteList.size());
         Collections.sort(projectSiteList);
+        long x = ImageLoader.getInstance().getDiskCache().getDirectory().listFiles().length;
+        File file = ImageLoader.getInstance().getDiskCache().getDirectory();
+        Log.d(LOG,"%%%%%%%% ImageLoader getDiskCache files: " + file.length());
+        final WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
+        if (!wcr.isWifiConnected()) {
+            projectSiteAdapter = new ProjectSiteAdapter(ctx, R.layout.site_item,
+                    projectSiteList, wcr, new ProjectSiteAdapter.ProjectSiteListener() {
+                @Override
+                public void onProjectSiteClicked(ProjectSiteDTO site, int index) {
+                    projectSite = site;
+                    lastIndex = index;
+                    showPopup();
+                }
+            });
+            setActualList(projectSiteAdapter);
 
-        projectSiteAdapter = new ProjectSiteAdapter(ctx, R.layout.site_item,
-                projectSiteList, new ProjectSiteAdapter.ProjectSiteListener() {
-            @Override
-            public void onProjectSiteClicked(ProjectSiteDTO site, int index) {
-                projectSite = site;
-                lastIndex = index;
-                showPopup();
-            }
-        });
-        mListView.setAdapter(projectSiteAdapter);
+        } else {
+            projectSiteAdapter = new ProjectSiteAdapter(ctx, R.layout.site_item,
+                    projectSiteList, wcr, new ProjectSiteAdapter.ProjectSiteListener() {
+                @Override
+                public void onProjectSiteClicked(ProjectSiteDTO site, int index) {
+                    projectSite = site;
+                    lastIndex = index;
+                    showPopup();
+                }
+            });
+            setActualList(projectSiteAdapter);
+
+        }
+
+
+
+    }
+
+    private void setActualList(SiteAdapterInterface adapterInterface) {
+        mListView.setAdapter((android.widget.ListAdapter) adapterInterface);
         mListView.setSelection(lastIndex);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(LOG,"######## mListView onItemClick: " + position);
+
                 if (null != mListener) {
                     lastIndex = position;
                     projectSite = projectSiteList.get(position);
+                    Log.d(LOG,"######## mListView onItemClick, projectSiteID: " + projectSite.getProjectSiteID());
                     showPopup();
                 }
             }
         });
-        mListener.onPhotoUploadServiceRequested();
 
     }
-
     private void showPopup() {
         list = new ArrayList<>();
         list.add(ctx.getString(R.string.sitestatus));
@@ -300,8 +331,9 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
 
     }
 
+
     int index;
-    List<String> list;
+    List<String> list, currentSessionPhotos;
     ListPopupWindow actionsWindow;
     int newStatusJustDone;
 
@@ -340,14 +372,19 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         mListener.onNewStatusDone(newStatusJustDone);
     }
 
-    public void refreshPhotoList(ProjectSiteDTO site) {
 
-        Log.i(LOG, "###### refreshPhotoList");
-        if (projectSite == null) throw new UnsupportedOperationException("ProjectSiteDTO is null");
+    public void refreshPhotoList(List<String> list) {
+        Log.i(LOG, "################### refreshPhotoList");
+        currentSessionPhotos = list;
+        Log.i(LOG, "refreshPhotoList, currentSessionPhotos: " + currentSessionPhotos.size());
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.GET_SITE_IMAGES);
-        w.setProjectSiteID(site.getProjectSiteID());
+        w.setProjectSiteID(projectSite.getProjectSiteID());
 
+        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
+        if (!wcr.isWifiConnected()) {
+            return;
+        }
         WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO response) {
@@ -357,6 +394,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
                         if (!ErrorUtil.checkServerError(ctx, response)) {
                             return;
                         }
+                        Log.i(LOG, "################### refreshPhotoList response ok");
                         projectSite.setPhotoUploadList(response.getPhotoUploadList());
 
                         setList();

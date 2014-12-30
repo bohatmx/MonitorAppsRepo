@@ -154,7 +154,17 @@ public class OperationsPagerActivity extends ActionBarActivity
                 WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
                 if (wcr.isWifiConnected()) {
                     Log.w(LOG, "## RequestSyncService.startSyncCachedRequests ...from operations pager");
-                    mService.startSyncCachedRequests();
+                    mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
+                        @Override
+                        public void onTasksSynced(int goodResponses, int badResponses) {
+                            Log.w(LOG,"@@ cached requests done, good: "+ goodResponses + " bad: " + badResponses);
+                        }
+
+                        @Override
+                        public void onError(String message) {
+
+                        }
+                    });
                     Util.pretendFlash(progressBar,1000,2,new Util.UtilAnimationListener() {
                         @Override
                         public void onAnimationEnded() {
@@ -1178,11 +1188,27 @@ public class OperationsPagerActivity extends ActionBarActivity
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
-            Log.w(LOG, "## RequestSyncService ServiceConnection onServiceConnected");
+            Log.w(LOG, "## RequestSyncService ServiceConnection: onServiceConnected");
             RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
             mService = binder.getService();
             mBound = true;
-            mService.startSyncCachedRequests();
+            mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
+                @Override
+                public void onTasksSynced(int goodResponses, int badResponses) {
+                    Log.w(LOG,"@@ cached requests done, good: "+ goodResponses + " bad: " + badResponses);
+                }
+
+                @Override
+                public void onError(String message) {
+
+                }
+            });
+            Util.pretendFlash(progressBar,1000,2,new Util.UtilAnimationListener() {
+                @Override
+                public void onAnimationEnded() {
+                    getCompanyData();
+                }
+            });
         }
 
         @Override

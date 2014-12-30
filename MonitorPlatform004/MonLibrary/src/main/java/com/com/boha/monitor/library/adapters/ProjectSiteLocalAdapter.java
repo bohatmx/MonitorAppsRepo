@@ -1,6 +1,7 @@
 package com.com.boha.monitor.library.adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +18,13 @@ import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.WebCheckResult;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements SiteAdapterInterface {
+public class ProjectSiteLocalAdapter extends ArrayAdapter<ProjectSiteDTO> implements SiteAdapterInterface {
 
     private final LayoutInflater mInflater;
     private final int mLayoutRes;
@@ -36,10 +38,10 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
 
     ProjectSiteListener listener;
 
-    public ProjectSiteAdapter(Context context, int textViewResourceId,
-                              List<ProjectSiteDTO> list,
-                              WebCheckResult wcr,
-                              ProjectSiteListener listener) {
+    public ProjectSiteLocalAdapter(Context context, int textViewResourceId,
+                                   List<ProjectSiteDTO> list,
+                                   WebCheckResult wcr,
+                                   ProjectSiteListener listener) {
         super(context, textViewResourceId, list);
         this.mLayoutRes = textViewResourceId;
         mList = list;
@@ -168,20 +170,40 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
         Statics.setRobotoFontLight(ctx, item.txtName);
         //manage scroll view images
         hideScrollImages(item);
-        int index = 0;
+        int index = 0, countNoFile = 0;
         boolean b1 = false, b2 = false, b3 = false, b4 = false, b5 = false,
                 b6 = false, b7 = false, b8 = false, b9 = false, b10 = false;
-
         if (p.getPhotoUploadList() != null
                 && !p.getPhotoUploadList().isEmpty()) {
             item.imageScroller.setVisibility(View.VISIBLE);
+            item.imageLayout.setVisibility(View.VISIBLE);
             item.imgHero.setVisibility(View.GONE);
+
+
             for (final PhotoUploadDTO d : p.getPhotoUploadList()) {
-                final String uri = Statics.IMAGE_URL + d.getUri();
+                if (d.getThumbFilePath() == null) {
+                    index++;
+                    countNoFile++;
+                    if (index == 10) {
+                        break;
+                    }
+                    continue;
+                }
+                final File f = new File(d.getThumbFilePath());
+                if (!f.exists()) {
+                    index++;
+                    countNoFile++;
+                    if (index == 10) {
+                        break;
+                    }
+                    continue;
+                }
                 switch (index) {
                     case 0:
-                        setImage(d, item.img1);
+                        ImageLoader.getInstance().displayImage(
+                                Uri.fromFile(f).toString(), item.img1);
                         item.date1.setText(sdf.format(d.getDateTaken()));
+
                         item.img1.setVisibility(View.VISIBLE);
                         item.num1.setText("1");
                         item.num1.setVisibility(View.VISIBLE);
@@ -190,9 +212,9 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
                         b1 = true;
                         break;
                     case 1:
-                        setImage(d, item.img2);
+                        ImageLoader.getInstance().displayImage(
+                                Uri.fromFile(f).toString(), item.img2);
                         item.date2.setText(sdf.format(d.getDateTaken()));
-
                         item.img2.setVisibility(View.VISIBLE);
                         item.num2.setText("2");
                         item.num2.setVisibility(View.VISIBLE);
@@ -201,9 +223,9 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
                         b2 = true;
                         break;
                     case 2:
-                        setImage(d, item.img3);
+                        ImageLoader.getInstance().displayImage(
+                                Uri.fromFile(f).toString(), item.img3);
                         item.date3.setText(sdf.format(d.getDateTaken()));
-
                         item.img3.setVisibility(View.VISIBLE);
                         item.num3.setText("3");
                         item.num3.setVisibility(View.VISIBLE);
@@ -211,7 +233,8 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
                         b3 = true;
                         break;
                     case 3:
-                        setImage(d, item.img4);
+                        ImageLoader.getInstance().displayImage(
+                                Uri.fromFile(f).toString(), item.img4);
                         item.date4.setText(sdf.format(d.getDateTaken()));
                         item.img4.setVisibility(View.VISIBLE);
                         item.num4.setText("4");
@@ -220,7 +243,8 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
                         b4 = true;
                         break;
                     case 4:
-                        ImageLoader.getInstance().displayImage(uri, item.img5);
+                        ImageLoader.getInstance().displayImage(
+                                Uri.fromFile(f).toString(), item.img5);
                         item.date5.setText(sdf.format(d.getDateTaken()));
                         item.img5.setVisibility(View.VISIBLE);
                         item.num5.setText("5");
@@ -229,7 +253,8 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
                         b5 = true;
                         break;
                     case 5:
-                        setImage(d, item.img6);
+                        ImageLoader.getInstance().displayImage(
+                                Uri.fromFile(f).toString(), item.img6);
                         item.date6.setText(sdf.format(d.getDateTaken()));
                         item.img6.setVisibility(View.VISIBLE);
                         item.num6.setText("6");
@@ -238,17 +263,18 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
                         b6 = true;
                         break;
                     case 6:
-                        setImage(d, item.img7);
+                        ImageLoader.getInstance().displayImage(
+                                Uri.fromFile(f).toString(), item.img7);
                         item.date7.setText(sdf.format(d.getDateTaken()));
                         item.img7.setVisibility(View.VISIBLE);
                         item.num7.setText("7");
                         item.num7.setVisibility(View.VISIBLE);
                         item.date7.setVisibility(View.VISIBLE);
-
                         b7 = true;
                         break;
                     case 7:
-                        setImage(d, item.img8);
+                        ImageLoader.getInstance().displayImage(
+                                Uri.fromFile(f).toString(), item.img8);
                         item.date8.setText(sdf.format(d.getDateTaken()));
                         item.img8.setVisibility(View.VISIBLE);
                         item.num8.setText("8");
@@ -257,7 +283,8 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
                         b8 = true;
                         break;
                     case 8:
-                        setImage(d, item.img9);
+                        ImageLoader.getInstance().displayImage(
+                                Uri.fromFile(f).toString(), item.img9);
                         item.date9.setText(sdf.format(d.getDateTaken()));
                         item.img9.setVisibility(View.VISIBLE);
                         item.num9.setText("9");
@@ -266,7 +293,8 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
                         b9 = true;
                         break;
                     case 9:
-                        setImage(d, item.img10);
+                        ImageLoader.getInstance().displayImage(
+                                Uri.fromFile(f).toString(), item.img10);
                         item.date10.setText(sdf.format(d.getDateTaken()));
                         item.img10.setVisibility(View.VISIBLE);
                         item.num10.setText("10");
@@ -281,9 +309,9 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
                 }
             }
         } else {
-            hideScrollImages(item);
             item.imageScroller.setVisibility(View.GONE);
             item.imgHero.setVisibility(View.GONE);
+            item.imageLayout.setVisibility(View.GONE);
         }
 
         if (!b1) {
@@ -327,22 +355,10 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
             item.date10.setVisibility(View.GONE);
         }
 
-        if (p.getPhotoUploadList() != null && wcr.isWifiConnected()) {
-            if (p.getPhotoUploadList().size() == 1) {
-                hideScrollImages(item);
-                item.imageScroller.setVisibility(View.GONE);
-                item.imgHero.setVisibility(View.VISIBLE);
-                final String uri = Statics.IMAGE_URL + p.getPhotoUploadList().get(0).getUri();
-                ImageLoader.getInstance().displayImage(uri, item.imgHero);
-
-            }
-        }
-        if (!wcr.isWifiConnected()) {
+        if (countNoFile == 10) {
             hideScrollImages(item);
             item.imageScroller.setVisibility(View.GONE);
-            item.imgHero.setVisibility(View.GONE);
         }
-
         if (p.getLastStatus() != null) {
             item.txtLastStatus.setText(p.getLastStatus().getTaskStatus().getTaskStatusName());
             item.txtTaskName.setText(p.getLastStatus().getTask().getTaskName());
@@ -432,9 +448,13 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
         return (convertView);
     }
 
-    private void setImage(final PhotoUploadDTO dto, final ImageView image) {
-        final String uri = Statics.IMAGE_URL + dto.getUri();
-        ImageLoader.getInstance().displayImage(uri, image);
+
+    private void doScroller(ViewHolderItem item, int index, File f, PhotoUploadDTO d) {
+        boolean b1 = false, b2 = false, b3 = false, b4 = false, b5 = false,
+                b6 = false, b7 = false, b8 = false, b9 = false, b10 = false;
+
+
+
     }
 
     private void hideScrollImages(ViewHolderItem item) {
@@ -459,7 +479,8 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
         item.num8.setVisibility(View.GONE);
         item.num9.setVisibility(View.GONE);
         item.num10.setVisibility(View.GONE);
-
+        item.imageLayout.setVisibility(View.GONE);
+        item.imageScroller.setVisibility(View.GONE);
     }
 
     static final Locale x = Locale.getDefault();

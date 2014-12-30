@@ -11,9 +11,11 @@ import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.PhotoCache;
 import com.com.boha.monitor.library.util.PictureUtil;
+import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebCheck;
 import com.com.boha.monitor.library.util.WebCheckResult;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -69,19 +71,16 @@ public class PhotoUploadService extends IntentService {
             sb.append("+++ ").append(p.getDateTaken().toString()).append(" lat: ").append(p.getLatitude());
             sb.append(" lng: ").append(p.getLatitude()).append(" acc: ").append(p.getAccuracy());
             if (p.getDateThumbUploaded() != null)
-                sb.append(" ").append(p.getDateThumbUploaded().toString());
+                sb.append(" ").append(sdf.format(p.getDateThumbUploaded())).append("\n");
             else
-                sb.append(" NOT yet UPLOADED");
-            if (p.getThumbFlag() != null) {
-                sb.append("  isThumb: true\n");
-            } else {
-                sb.append("  isFullSize: true\n");
-            }
+                sb.append(" NOT UPLOADED\n");
+
         }
         Log.w(LOG, sb.toString());
     }
 
 
+    static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.w(LOG,"## onHandleIntent");
@@ -108,12 +107,36 @@ public class PhotoUploadService extends IntentService {
             } else {
                 index++;
                 controlThumbUploads();
+                return;
             }
         }
         if (index == list.size()) {
-            index = 0;
-            //TODO - upload full size images when required
-            //controlFullPictureUploads();
+            PhotoCache pc = new PhotoCache();
+            for (PhotoUploadDTO photo: list) {
+                if (photo.getDateThumbUploaded() == null) {
+                    pc.getPhotoUploadList().add(photo);
+                }
+            }
+            Log.w(LOG,"&&& cleaning cache right up! photos still pending: " + pc.getPhotoUploadList().size());
+            ResponseDTO r = new ResponseDTO();
+            r.setPhotoCache(pc);
+
+            CacheUtil.cacheData(getApplicationContext(),r,CacheUtil.CACHE_PHOTOS, new CacheUtil.CacheUtilListener() {
+                @Override
+                public void onFileDataDeserialized(ResponseDTO response) {
+
+                }
+
+                @Override
+                public void onDataCached() {
+                    Log.i(LOG, "## cleaned up photo cache OK");
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
         }
 
 
@@ -151,7 +174,7 @@ public class PhotoUploadService extends IntentService {
     }
 
     private void executeThumbUpload(final PhotoUploadDTO dto) {
-        Log.d(LOG, "*** executeThumbUpload, file: " + dto.getThumbFilePath());
+        Log.d(LOG, "** executeThumbUpload, projectSiteID: " + dto.getProjectSiteID());
         dto.setFullPicture(false);
         if (dto.getPictureType() == 0) dto.setPictureType(PhotoUploadDTO.PROJECT_IMAGE);
         final long start = System.currentTimeMillis();
@@ -159,7 +182,7 @@ public class PhotoUploadService extends IntentService {
             @Override
             public void onPhotoUploaded() {
                 long end = System.currentTimeMillis();
-                Log.i(LOG, "---- thumbnail uploaded, elapsed: " + (end - start) + " ms");
+                Log.i(LOG, "---- thumbnail uploaded, elapsed: " + Util.getElapsed(start,end) + " seconds");
                 dto.setDateThumbUploaded(new Date());
                 saveCache();
                 index++;

@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListPopupWindow;
 import android.widget.ListView;
@@ -57,6 +56,8 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
     public interface ProjectSiteTaskListener {
         public void onTaskClicked(ProjectSiteTaskDTO task);
 
+        public void onSubTaskStatusAssignmentRequested(ProjectSiteTaskDTO task);
+
         public void onProjectSiteTaskAdded(ProjectSiteTaskDTO task);
 
         public void onProjectSiteTaskDeleted();
@@ -96,7 +97,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
     View subTasksLayout;
 
     public void setProjectSite(ProjectSiteDTO projectSite, int type) {
-        Log.d(LOG, "########## setProjectSite");
+        Log.d(LOG, "########## setProjectSite: " + projectSite.getProjectSiteID() + " name: " + projectSite.getProjectSiteName());
         this.projectSite = projectSite;
         this.staffType = type;
         //setList();
@@ -205,76 +206,8 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                 rotateTotal(txtCount);
                 break;
         }
-        WebCheckResult ww = WebCheck.checkNetworkAvailability(ctx);
-        if (ww.isWifiConnected()) {
-            WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
-                @Override
-                public void onMessage(final ResponseDTO response) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            stopRotatingTotal();
-                            if (!ErrorUtil.checkServerError(ctx, response)) {
-                                return;
-                            }
-                            projectSiteTaskStatus = response.getProjectSiteTaskStatusList().get(0);
-                            projectSiteTask.setStatusDone(true);
-                            for (final ProjectSiteTaskDTO s : projectSiteTaskList) {
-                                if (s.getProjectSiteTaskID().intValue() == projectSiteTaskStatus.getProjectSiteTaskID().intValue()) {
-                                    s.getProjectSiteTaskStatusList().add(0, projectSiteTaskStatus);
-                                    setList();
-                                    if (lastIndex == 1) {
-                                        mListView.setSelection(0);
-                                    } else
-                                        mListView.setSelection(lastIndex);
-
-                                }
-                            }
-                            //check for subtasks
-                            if (hasSubTasks) {
-                                setSubTaskFields();
-                                setSubList();
-                                subTasksLayout.setVisibility(View.VISIBLE);
-                                Util.explode(subTasksLayout, 1000, new Util.UtilAnimationListener() {
-                                    @Override
-                                    public void onAnimationEnded() {
-                                        Util.shrink(trafficLayout, 500, new Util.UtilAnimationListener() {
-                                            @Override
-                                            public void onAnimationEnded() {
-                                                trafficLayout.setVisibility(View.GONE);
-                                                txtTitle.setVisibility(View.GONE);
-                                                txtCount.setVisibility(View.GONE);
-                                            }
-                                        });
-                                    }
-                                });
-
-                            } else {
-                                openCameraLayout();
-                            }
-                            mListener.onProjectSiteTaskStatusAdded(projectSiteTaskStatus);
-
-                        }
-                    });
-                }
-
-                @Override
-                public void onClose() {
-
-                }
-
-                @Override
-                public void onError(final String message) {
-                    Log.e(LOG, "---- ERROR websocket - " + message);
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Util.showErrorToast(ctx, message);
-                        }
-                    });
-                }
-            });
-        } else {
+        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
+        if (!wcr.isWifiConnected()) {
             RequestCacheUtil.addRequest(ctx, w, new CacheUtil.CacheRequestListener() {
                 @Override
                 public void onDataCached() {
@@ -291,27 +224,9 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
 
                         }
                     }
-                    if (hasSubTasks) {
-                        setSubTaskFields();
-                        setSubList();
-                        subTasksLayout.setVisibility(View.VISIBLE);
-                        Util.explode(subTasksLayout, 1000, new Util.UtilAnimationListener() {
-                            @Override
-                            public void onAnimationEnded() {
-                                Util.shrink(trafficLayout, 500, new Util.UtilAnimationListener() {
-                                    @Override
-                                    public void onAnimationEnded() {
-                                        trafficLayout.setVisibility(View.GONE);
-                                        txtTitle.setVisibility(View.GONE);
-                                        txtCount.setVisibility(View.GONE);
-                                    }
-                                });
-                            }
-                        });
 
-                    } else {
-                        openCameraLayout();
-                    }
+                    openCameraLayout();
+
                     if (mListener != null)
                         mListener.onProjectSiteTaskStatusAdded(projectSiteTaskStatus);
                 }
@@ -326,8 +241,51 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
 
                 }
             });
+        } else {
+            WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+                @Override
+                public void onMessage(final ResponseDTO response) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!ErrorUtil.checkServerError(ctx, response)) {
+                                return;
+                            }
+                            projectSiteTaskStatus = response.getProjectSiteTaskStatusList().get(0);
+                            projectSiteTask.setStatusDone(true);
+                            for (final ProjectSiteTaskDTO s : projectSiteTaskList) {
+                                if (s.getProjectSiteTaskID().intValue() == projectSiteTaskStatus.getProjectSiteTaskID().intValue()) {
+                                    s.getProjectSiteTaskStatusList().add(0, projectSiteTaskStatus);
+                                    setList();
+                                    if (lastIndex == 1) {
+                                        mListView.setSelection(0);
+                                    } else
+                                        mListView.setSelection(lastIndex);
 
+                                }
+                            }
+
+                            openCameraLayout();
+
+                            if (mListener != null)
+                                mListener.onProjectSiteTaskStatusAdded(projectSiteTaskStatus);
+                        }
+                    });
+                }
+
+                @Override
+                public void onClose() {
+
+                }
+
+                @Override
+                public void onError(String message) {
+
+                }
+            });
         }
+
+
     }
 
     private void sendTask() {
@@ -488,8 +446,8 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                 }
                 if (projectSiteTask.getTask().getSubTaskList() != null && !projectSiteTask.getTask().getSubTaskList().isEmpty()) {
                     hasSubTasks = true;
-                } else {
-                    hasSubTasks = false;
+                    mListener.onSubTaskStatusAssignmentRequested(projectSiteTask);
+                    return;
                 }
                 type = TASK;
                 showPopup();
@@ -567,7 +525,6 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                         sendTaskStatus();
                         break;
                     case SUBTASK:
-                        sendSubTaskStatus();
                         break;
                 }
                 actionsWindow.dismiss();
@@ -581,14 +538,16 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
     TaskStatusDTO taskStatus;
     ProjectSiteTaskStatusDTO projectSiteTaskStatus;
 
-    public void updateList(ProjectSiteTaskStatusDTO taskStatus) {
-        for (ProjectSiteTaskDTO task : projectSiteTaskList) {
-            if (task.getProjectSiteTaskID().intValue() == taskStatus.getProjectSiteTaskID().intValue()) {
-                task.getProjectSiteTaskStatusList().add(0, taskStatus);
-                adapter.notifyDataSetChanged();
-                mListView.setSelection(lastIndex);
-            }
+    public void updateList(List<SubTaskStatusDTO> subTaskStatusList, ProjectSiteTaskStatusDTO status) {
+        Log.d(LOG, "## updateList, subTaskStatus: " + subTaskStatusList.size());
+        projectSiteTask.setStatusDone(true);
+        if (projectSiteTask.getProjectSiteTaskStatusList() == null)
+            projectSiteTask.setProjectSiteTaskStatusList(new ArrayList<ProjectSiteTaskStatusDTO>());
+        if (status != null) {
+            projectSiteTask.getProjectSiteTaskStatusList().add(status);
         }
+        adapter.notifyDataSetChanged();
+        mListView.setSelection(lastIndex);
     }
 
     private void deleteTask(ProjectSiteTaskDTO siteTask) {
@@ -709,196 +668,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
     List<ProjectSiteTaskDTO> projectSiteTaskList;
     ProjectSiteTaskAdapter adapter;
     TextView subTxtTaskName, subTxtCount, subTxtTitle;
-    ListView subList;
 
-    private void setSubTaskFields() {
-        type = SUBTASK;
-        subTxtTaskName = (TextView) view.findViewById(R.id.SUBSTAT_taskName);
-        subTxtCount = (TextView) view.findViewById(R.id.SUBSTAT_number);
-        subTxtTitle = (TextView) view.findViewById(R.id.SUBSTAT_title2);
-        subList = (ListView) view.findViewById(R.id.SUBSTAT_list);
-
-        Statics.setRobotoFontLight(ctx, subTxtTaskName);
-        Statics.setRobotoFontLight(ctx, subTxtTitle);
-
-        subTxtCount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Util.shrink(subTasksLayout, 500, new Util.UtilAnimationListener() {
-                    @Override
-                    public void onAnimationEnded() {
-                        subTasksLayout.setVisibility(View.GONE);
-                        trafficLayout.setVisibility(View.VISIBLE);
-                        Util.explode(trafficLayout, 500, new Util.UtilAnimationListener() {
-                            @Override
-                            public void onAnimationEnded() {
-                                txtTitle.setVisibility(View.VISIBLE);
-                                txtCount.setVisibility(View.VISIBLE);
-                                Util.explode(mListView, 300, new Util.UtilAnimationListener() {
-                                    @Override
-                                    public void onAnimationEnded() {
-                                        openCameraLayout();
-                                    }
-                                });
-                            }
-                        });
-
-                    }
-                });
-            }
-        });
-
-    }
-
-    List<SubTaskStatusDTO> subTaskStatusList;
-    List<SubTaskDTO> subTaskList;
-
-    private void setSubList() {
-        subTaskList = projectSiteTask.getTask().getSubTaskList();
-        subTxtCount.setText("" + subTaskList.size());
-        subTxtTaskName.setText(projectSiteTask.getTask().getTaskName());
-        if (projectSiteTaskStatus != null) {
-            switch (projectSiteTaskStatus.getTaskStatus().getStatusColor()) {
-                case TaskStatusDTO.STATUS_COLOR_GREEN:
-                    subTxtCount.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xgreen_oval));
-                    break;
-                case TaskStatusDTO.STATUS_COLOR_RED:
-                    subTxtCount.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xred_oval));
-                    break;
-                case TaskStatusDTO.STATUS_COLOR_YELLOW:
-                    subTxtCount.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xorange_oval));
-                    break;
-            }
-        }
-        subTaskStatusList = projectSiteTaskStatus.getSubTaskStatusList();
-        if (subTaskStatusList == null) {
-            subTaskStatusList = new ArrayList<>();
-        }
-        //build out list
-        for (SubTaskDTO subTask : subTaskList) {
-            boolean found = false;
-            for (SubTaskStatusDTO subStatus : subTaskStatusList) {
-                if (subTask.getSubTaskID().intValue() == subStatus.getSubTaskID().intValue()) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                SubTaskStatusDTO ss = new SubTaskStatusDTO();
-                ss.setSubTaskID(subTask.getSubTaskID());
-                ss.setSubTaskName(subTask.getSubTaskName());
-                ss.setProjectSiteTaskStatusID(projectSiteTaskStatus.getProjectSiteTaskStatusID());
-                subTaskStatusList.add(ss);
-            }
-
-        }
-        View v = inflater.inflate(R.layout.hero_image, null);
-        if (subList.getHeaderViewsCount() == 0) {
-            ImageView image = (ImageView) v.findViewById(R.id.HERO_image);
-            TextView caption = (TextView) v.findViewById(R.id.HERO_caption);
-            image.setImageDrawable(Util.getRandomHeroImage(ctx));
-            caption.setText(ctx.getString(R.string.subtask_status));
-            subList.addHeaderView(v);
-        }
-        subAdapter = new SubTaskStatusAdapter(ctx, R.layout.subtask_status_item, subTaskStatusList);
-        subList.setAdapter(subAdapter);
-        subList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                lastSubIndex = position - 1;
-                subTask = subTaskList.get(position - 1);
-                type = SUBTASK;
-                showPopup();
-            }
-        });
-    }
-
-    SubTaskStatusDTO subTaskStatus;
-
-    private void sendSubTaskStatus() {
-        Log.w(LOG, "############## sending subtaskStatus");
-        RequestDTO w = new RequestDTO(RequestDTO.ADD_SUBTASK_STATUS);
-        final SubTaskStatusDTO s = new SubTaskStatusDTO();
-        s.setProjectSiteTaskStatusID(projectSiteTaskStatus.getProjectSiteTaskStatusID());
-        s.setSubTaskID(subTask.getSubTaskID());
-        s.setCompanyStaffID(SharedUtil.getCompanyStaff(ctx).getCompanyStaffID());
-        s.setTaskStatus(taskStatus);
-
-        w.setSubTaskStatus(s);
-
-        WebCheckResult r = WebCheck.checkNetworkAvailability(ctx);
-        if (!r.isWifiConnected()) {
-            RequestCacheUtil.addRequest(ctx, w, new CacheUtil.CacheRequestListener() {
-                @Override
-                public void onDataCached() {
-                    subTaskStatus = s;
-                    for (SubTaskStatusDTO ss : subTaskStatusList) {
-                        if (subTaskStatus.getSubTaskID().intValue() == ss.getSubTaskID().intValue()) {
-                            ss.setTaskStatus(subTaskStatus.getTaskStatus());
-                            ss.setStatusDate(subTaskStatus.getStatusDate());
-                            ss.setStaffName(subTaskStatus.getStaffName());
-                            subAdapter.notifyDataSetChanged();
-                            break;
-                        }
-                    }
-
-                }
-
-                @Override
-                public void onRequestCacheReturned(RequestCache cache) {
-
-                }
-
-                @Override
-                public void onError() {
-
-                }
-            });
-        } else {
-            WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
-                @Override
-                public void onMessage(final ResponseDTO response) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!ErrorUtil.checkServerError(ctx, response)) {
-                                return;
-                            }
-                            subTaskStatus = response.getSubTaskStatusList().get(0);
-                            for (SubTaskStatusDTO ss : subTaskStatusList) {
-                                if (subTaskStatus.getSubTaskID().intValue() == ss.getSubTaskID().intValue()) {
-                                    ss.setTaskStatus(subTaskStatus.getTaskStatus());
-                                    ss.setStatusDate(subTaskStatus.getStatusDate());
-                                    ss.setStaffName(subTaskStatus.getStaffName());
-                                    subAdapter.notifyDataSetChanged();
-                                    break;
-                                }
-                            }
-
-                        }
-                    });
-                }
-
-                @Override
-                public void onClose() {
-
-                }
-
-                @Override
-                public void onError(final String message) {
-                    Log.e(LOG, "---- ERROR websocket - " + message);
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Util.showErrorToast(ctx, message);
-                        }
-                    });
-                }
-            });
-        }
-    }
-
-    int lastSubIndex;
     int type;
     static final int SUBTASK = 2, TASK = 1;
     SubTaskStatusAdapter subAdapter;

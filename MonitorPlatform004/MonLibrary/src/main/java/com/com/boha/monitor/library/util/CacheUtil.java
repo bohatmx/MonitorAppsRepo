@@ -58,6 +58,7 @@ public class CacheUtil {
     static ResponseDTO response;
     static ProjectSiteDTO projectSite;
     static Integer projectSiteID;
+    static SessionPhoto sessionPhoto;
     static Context ctx;
     static RequestCache requestCache;
     static final String JSON_DATA = "data.json", JSON_COUNTRIES = "countries.json",
@@ -101,6 +102,7 @@ public class CacheUtil {
         ctx = context;
         new CacheTask().execute();
     }
+
 
     public static void getCachedData(Context context, int type, CacheUtilListener cacheUtilListener) {
         dataType = type;
@@ -151,6 +153,7 @@ public class CacheUtil {
             FileOutputStream outputStream;
             try {
                 switch (dataType) {
+
                     case CACHE_REQUEST:
                         Log.w(LOG, "## before caching request file, list: " + requestCache.getRequestCacheEntryList().size());
                         json = gson.toJson(requestCache);
@@ -189,7 +192,7 @@ public class CacheUtil {
                         file = ctx.getFileStreamPath(JSON_PHOTO);
                         if (file != null) {
                             Log.e(LOG, "Photo cache written, path: " + file.getAbsolutePath() +
-                                    " - length: " + file.length());
+                                    " - length: " + file.length() + " photos: " + response.getPhotoUploadList().size());
                         }
                         break;
                     case CACHE_DATA:
@@ -259,10 +262,11 @@ public class CacheUtil {
 
         @Override
         protected ResponseDTO doInBackground(Void... voids) {
-            ResponseDTO response = null;
+            ResponseDTO response = new ResponseDTO();
             FileInputStream stream;
             try {
                 switch (dataType) {
+
                     case CACHE_PROJECT:
                         stream = ctx.openFileInput(JSON_PROJECT_DATA + projectID + ".json");
                         response = getData(stream);
@@ -290,18 +294,21 @@ public class CacheUtil {
                         break;
 
                 }
+                response.setStatusCode(0);
 
             } catch (FileNotFoundException e) {
-                Log.d(LOG, "############# cache file not found. not initialised yet. no problem, creating responseDTO");
+                Log.d(LOG, "############# cache file not found. not initialised yet. no problem, type = " + dataType);
                 if (dataType == CACHE_PHOTOS) {
-                    response = new ResponseDTO();
                     PhotoCache pc = new PhotoCache();
                     pc.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
                     response.setPhotoCache(pc);
                 }
+                Log.d(LOG,"#### doInBackground - returning a new response object, type = " + dataType);
+                return response;
 
             } catch (IOException e) {
                 Log.v(LOG, "------------ Failed to retrieve cache", e);
+                response.setStatusCode(9);
             }
 
             return response;
@@ -309,6 +316,7 @@ public class CacheUtil {
 
         @Override
         protected void onPostExecute(ResponseDTO v) {
+            Log.d(LOG,"### onPostExecute response should never be null, type = " + dataType);
             if (utilListener == null) return;
             if (v != null) {
                 utilListener.onFileDataDeserialized(v);
@@ -426,4 +434,6 @@ public class CacheUtil {
 
     static final String LOG = "CacheUtil";
     static final Gson gson = new Gson();
+
+
 }

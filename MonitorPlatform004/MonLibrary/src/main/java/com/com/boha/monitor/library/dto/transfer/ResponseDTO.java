@@ -35,6 +35,7 @@ import com.com.boha.monitor.library.dto.TaskDTO;
 import com.com.boha.monitor.library.dto.TaskStatusDTO;
 import com.com.boha.monitor.library.dto.TownshipDTO;
 import com.com.boha.monitor.library.util.PhotoCache;
+import com.com.boha.monitor.library.util.SessionPhoto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public class ResponseDTO implements Serializable {
     private String message, sessionID, GCMRegistrationID,fileString;
     private List<String> taskImageFileNameList;
     private List<BankDTO> bankList;
+    private List<SessionPhoto> sessionPhotoList = new ArrayList<>();
     private List<SubTaskStatusDTO> subTaskStatusList;
     private List<SubTaskDTO> subTaskList;
     private List<String> siteImageFileNameList;
@@ -86,6 +88,14 @@ public class ResponseDTO implements Serializable {
     //
     private CompanyDTO company;
     private CompanyStaffDTO companyStaff;
+
+    public List<SessionPhoto> getSessionPhotoList() {
+        return sessionPhotoList;
+    }
+
+    public void setSessionPhotoList(List<SessionPhoto> sessionPhotoList) {
+        this.sessionPhotoList = sessionPhotoList;
+    }
 
     public Integer getGoodCount() {
         return goodCount;

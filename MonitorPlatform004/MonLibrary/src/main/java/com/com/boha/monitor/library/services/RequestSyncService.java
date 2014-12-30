@@ -88,6 +88,7 @@ public class RequestSyncService extends IntentService {
                         e.setDateUploaded(new Date());
                     }
                     cleanupCache();
+                    requestSyncListener.onTasksSynced(response.getGoodCount(),response.getBadCount());
                 }
 
                 @Override
@@ -97,7 +98,7 @@ public class RequestSyncService extends IntentService {
 
                 @Override
                 public void onError(String message) {
-
+                    requestSyncListener.onError(message);
                 }
             });
         } else {
@@ -136,8 +137,15 @@ public class RequestSyncService extends IntentService {
         return mBinder;
     }
     private final IBinder mBinder = new LocalBinder();
-    public void startSyncCachedRequests() {
+    public void startSyncCachedRequests(RequestSyncListener rsl) {
+        requestSyncListener = rsl;
         onHandleIntent(null);
     }
 
+
+    public interface RequestSyncListener {
+        public void onTasksSynced(int goodResponses, int badResponses);
+        public void onError(String message);
+    }
+    RequestSyncListener requestSyncListener;
 }

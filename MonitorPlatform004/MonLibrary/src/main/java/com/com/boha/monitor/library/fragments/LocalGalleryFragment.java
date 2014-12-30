@@ -33,7 +33,7 @@ public class LocalGalleryFragment extends Fragment implements PageFragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_picture_recycler_grid, container, false);
-        list = (RecyclerView) view.findViewById(R.id.RCV_list);
+        list = (RecyclerView) view.findViewById(R.id.FI_recyclerView);
         title = (TextView) view.findViewById(R.id.RCV_title);
         ctx = getActivity();
 

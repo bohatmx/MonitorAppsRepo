@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dialogs.ProjectSiteDialog;
+import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
@@ -57,20 +58,22 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
     static final int NUM_ITEMS = 2;
     GPSScanFragment gpsScanFragment;
     ProgressBar progressBar;
+    CompanyDTO company;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_site_pager);
         ctx = getApplicationContext();
+
         mPager = (ViewPager) findViewById(R.id.SITE_pager);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         mPager.setOffscreenPageLimit(NUM_ITEMS - 1);
         PagerTitleStrip strip = (PagerTitleStrip) findViewById(R.id.pager_title_strip);
         strip.setVisibility(View.GONE);
-
         //
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
+        company = (CompanyDTO) getIntent().getSerializableExtra("company");
         type = getIntent().getIntExtra("type", SiteTaskAndStatusAssignmentFragment.OPERATIONS);
 
         setTitle(ctx.getString(R.string.project_sites));
@@ -85,21 +88,14 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
         CacheUtil.getCachedProjectData(ctx, project.getProjectID(), new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
-                if (response != null) {
-                    if (response.getProjectList() != null && !response.getProjectList().isEmpty()) {
-                        project = response.getProjectList().get(0);
-                        buildPages();
-                        return;
-                    } else {
-                        if (r.isWifiConnected()) {
-                            getProjectData();
-                        } else {
-                            Util.showErrorToast(ctx,getString(R.string.connect_wifi));
-                            return;
-                        }
-
-                    }
+                if (response.getProjectList() != null && !response.getProjectList().isEmpty()) {
+                    project = response.getProjectList().get(0);
+                    buildPages();
                 }
+                if (r.isWifiConnected()) {
+                    getProjectData();
+                }
+
             }
 
             @Override
@@ -109,7 +105,11 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
 
             @Override
             public void onError() {
-                getProjectData();
+                if (r.isWifiConnected()) {
+                    getProjectData();
+                } else {
+                    Util.showErrorToast(ctx,getString(R.string.connect_wifi));
+                }
             }
         });
     }
@@ -131,10 +131,9 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
                             return;
                         }
                         project = response.getProjectList().get(0);
-
-                        Log.i(LOG, "getProjectData returned data OK");
+                        Log.i(LOG, "getProjectData returned data OK....");
                         buildPages();
-                        CacheUtil.cacheProjectData(ctx, response,  project.getProjectID(), new CacheUtil.CacheUtilListener() {
+                        CacheUtil.cacheProjectData(ctx, response, project.getProjectID(), new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
 
@@ -194,7 +193,7 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
             if (w.isWifiConnected()) {
                 getProjectData();
             } else {
-                Util.showToast(ctx,ctx.getString(R.string.connect_wifi));
+                Util.showToast(ctx, ctx.getString(R.string.connect_wifi));
             }
             return true;
         }
@@ -247,13 +246,14 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
         if (!mLocationClient.isConnected()) {
             mLocationClient.connect();
         }
-        LocationRequest lr = LocationRequest.create();
-        lr.setFastestInterval(1000);
-        lr.setInterval(2000);
-        lr.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mCurrentLocation = mLocationClient.getLastLocation();
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setFastestInterval(1000);
 
         try {
-            mLocationClient.requestLocationUpdates(lr, this);
+            mLocationClient.requestLocationUpdates(mLocationRequest, this);
         } catch (IllegalStateException e) {
             Log.e(LOG, "---- mLocationClient.requestLocationUpdates ILLEGAL STATE", e);
         }
@@ -299,7 +299,10 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
         }
         super.onStop();
     }
-    /** Defines callbacks for service binding, passed to bindService() */
+
+    /**
+     * Defines callbacks for service binding, passed to bindService()
+     */
     private ServiceConnection pConnection = new ServiceConnection() {
 
         @Override
@@ -321,7 +324,6 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
 
     boolean pBound;
     PhotoUploadService pService;
-    private Location location;
 
     @Override
     public void onLocationChanged(Location loc) {
@@ -329,29 +331,28 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
         Log.w(LOG, "### Location changed, lat: "
                 + loc.getLatitude() + " lng: "
                 + loc.getLongitude()
-                + " -- accuracy: " + loc.getAccuracy());
-
-        latitude = loc.getLatitude();
-        longitude = loc.getLongitude();
+                + " -- acc: " + loc.getAccuracy());
         mCurrentLocation = loc;
         if (gpsScanFragment != null) {
             gpsScanFragment.setLocation(loc);
         }
+        if (loc.getAccuracy() <= ACCURACY_THRESHOLD) {
+            location = loc;
+            mLocationClient.removeLocationUpdates(this);
+            Log.e(LOG, "+++ best accuracy found: " + location.getAccuracy());
+        }
 
     }
+
+    Location location;
+    LocationRequest mLocationRequest;
+    static final int ACCURACY_THRESHOLD = 10;
 
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(LOG,
                 "### ---> PlayServices onConnected() - gotta start something! >>");
-        mCurrentLocation = mLocationClient.getLastLocation();
-        if (mCurrentLocation != null) {
-            latitude = mCurrentLocation.getLatitude();
-            longitude = mCurrentLocation.getLongitude();
-            onLocationChanged(mCurrentLocation);
-        } else {
-            Log.e(LOG, "$$$$ mCurrentLocation is NULL");
-        }
+        location = mLocationClient.getLastLocation();
     }
 
     @Override
@@ -375,11 +376,11 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
     }
 
     private void buildPages() {
-        if (pageFragmentList == null) {
             pageFragmentList = new ArrayList<>();
             projectSiteListFragment = new ProjectSiteListFragment();
             Bundle data1 = new Bundle();
             data1.putSerializable("project", project);
+            data1.putSerializable("company", company);
             data1.putInt("index", selectedSiteIndex);
             projectSiteListFragment.setArguments(data1);
 
@@ -389,10 +390,6 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
             pageFragmentList.add(gpsScanFragment);
 
             initializeAdapter();
-        } else {
-            projectSiteListFragment.refresh(project);
-        }
-
 
     }
 
@@ -479,6 +476,7 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
         this.projectSite = projectSite;
         Intent i = new Intent(this, TaskAssignmentActivity.class);
         i.putExtra("projectSite", projectSite);
+        i.putExtra("company",company);
         i.putExtra("type", type);
         startActivityForResult(i, SITE_TASK_REQUEST);
     }
@@ -486,6 +484,7 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
     @Override
     public void onCameraRequested(ProjectSiteDTO projectSite, int index) {
 
+        Log.w(LOG, "%%% onCameraRequested siteID: " + projectSite.getProjectSiteID() + " index: " + index);
         selectedSiteIndex = index;
         this.projectSite = projectSite;
         Intent i = new Intent(this, PictureActivity.class);
@@ -511,7 +510,7 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
         Log.w(LOG, "------ onPhotoListUpdated site photos: " + projectSite.getPhotoUploadList().size());
         photosLoaded = true;
         selectedSiteIndex = index;
-        this.projectSite = projectSite;
+        this.projectSite.getPhotoUploadList().addAll(0, projectSite.getPhotoUploadList());
 
     }
 
@@ -531,12 +530,13 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
 
     @Override
     public void onSiteOnMapRequested(ProjectSiteDTO projectSite, int index) {
-        Intent i = new Intent(this,MonitorMapActivity.class);
+        Intent i = new Intent(this, MonitorMapActivity.class);
         i.putExtra("projectSite", projectSite);
         startActivity(i);
     }
 
     int newStatusDone;
+
     @Override
     public void onNewStatusDone(int count) {
         newStatusDone += count;
@@ -544,7 +544,7 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
 
     @Override
     public void onPhotoUploadServiceRequested() {
-        Log.e(LOG,"**** onPhotoUploadServiceRequested");
+        Log.e(LOG, "**** onPhotoUploadServiceRequested");
         WebCheckResult w = WebCheck.checkNetworkAvailability(ctx);
         if (w.isWifiConnected()) {
             pService.uploadCachedPhotos();
@@ -565,8 +565,11 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
                 }
                 break;
             case SITE_PICTURE_REQUEST:
+                Log.i(LOG, "################### onActivityResult SITE_PICTURE_REQUEST");
                 if (res == RESULT_OK) {
-                    projectSiteListFragment.refreshPhotoList(projectSite);
+                    ResponseDTO r = (ResponseDTO)data.getSerializableExtra("response");
+                    Log.w(LOG,"## refresh list with new local photos: " + r.getSiteImageFileNameList());
+                    projectSiteListFragment.refreshPhotoList(r.getSiteImageFileNameList());
                 }
                 break;
             case SITE_TASK_REQUEST:
@@ -591,15 +594,15 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
 
     @Override
     public void onLocationConfirmed(ProjectSiteDTO projectSite) {
-        Log.w(LOG,"## asking projectSiteListFragment to process confirmed location for site");
+        Log.w(LOG, "## asking projectSiteListFragment to process confirmed location for site");
         projectSiteListFragment.setLocationConfirmed(projectSite);
-        mPager.setCurrentItem(0,true);
-        Util.showToast(ctx,ctx.getString(R.string.location_confirmed));
+        mPager.setCurrentItem(0, true);
+        Util.showToast(ctx, ctx.getString(R.string.location_confirmed));
     }
 
     @Override
     public void onEndScanRequested() {
-        Log.w(LOG,"## onEndScanRequested");
+        Log.w(LOG, "## onEndScanRequested");
         stopPeriodicUpdates();
     }
 
@@ -662,8 +665,8 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
             return;
         }
         Intent i = new Intent();
-        i.putExtra("newStatusDone",newStatusDone);
-        setResult(RESULT_OK,i);
+        i.putExtra("newStatusDone", newStatusDone);
+        setResult(RESULT_OK, i);
 
         finish();
     }

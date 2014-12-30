@@ -77,7 +77,7 @@ public class WebSocketUtil {
 
         } catch (WebsocketNotConnectedException e) {
                 Log.e(LOG, "Problems with web socket", e);
-                webSocketListener.onError("Problem starting server socket communications\n");
+                //webSocketListener.onError("Problem starting server socket communications\n");
 
         } catch (URISyntaxException e) {
             Log.e(LOG, "Problems with web socket", e);
@@ -99,7 +99,7 @@ public class WebSocketUtil {
             public void onMessage(String response) {
                 TimerUtil.killTimer();
                 end = System.currentTimeMillis();
-                Log.i(LOG, "### onMessage returning socket sessionID, length: " + response.length() + " elapsed: " + Util.getElapsed(start, end) + " seconds"
+                Log.i(LOG, "### onMessage returning websocket sessionID, length: " + response.length() + " elapsed: " + Util.getElapsed(start, end) + " seconds"
                         + "\n" + response);
                 try {
                     ResponseDTO r = gson.fromJson(response, ResponseDTO.class);

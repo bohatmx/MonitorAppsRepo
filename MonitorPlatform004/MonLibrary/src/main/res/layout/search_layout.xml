@@ -9,7 +9,7 @@
         android:src="@drawable/banner_construction11"
         android:scaleType="centerCrop"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/mon_hero_height_small" />
+        android:layout_height="@dimen/mon_widest" />
 
     <RelativeLayout
         android:id="@+id/SLT_bottomLayout"

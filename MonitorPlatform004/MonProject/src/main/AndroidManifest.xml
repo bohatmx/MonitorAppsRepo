@@ -4,6 +4,7 @@
 
     <application
         android:allowBackup="true"
+        android:label="@string/project_mgr"
         android:name="com.com.boha.monitor.library.activities.MonApp"
         android:icon="@drawable/ic_launcher"
         android:theme="@style/ProjectManagerTheme">
@@ -32,9 +33,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.com.boha.monitor.library.activities.CameraActivity"
-            android:label="@string/title_activity_image" />
+
         <activity
             android:name="com.com.boha.monitor.library.activities.ImageActivity"
             android:label="@string/title_activity_image" />
@@ -65,9 +64,7 @@
         <activity
             android:name="com.com.boha.monitor.library.activities.PictureActivity"
             android:configChanges="keyboardHidden|orientation"></activity>
-        <activity
-            android:name="com.com.boha.monitor.library.activities.ImagePagerActivity"
-            android:screenOrientation="portrait"></activity>
+
         <activity
             android:name="com.com.boha.monitor.library.activities.ClaimAndInvoicePagerActivity"
             android:screenOrientation="portrait"></activity>

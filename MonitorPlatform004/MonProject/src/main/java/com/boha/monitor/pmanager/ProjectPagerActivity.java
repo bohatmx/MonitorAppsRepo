@@ -29,6 +29,7 @@ import com.com.boha.monitor.library.activities.PictureRecyclerGridActivity;
 import com.com.boha.monitor.library.activities.SitePagerActivity;
 import com.com.boha.monitor.library.adapters.DrawerAdapter;
 import com.com.boha.monitor.library.dialogs.ProjectDialog;
+import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
@@ -83,49 +84,49 @@ public class ProjectPagerActivity extends ActionBarActivity
     }
 
     private void getCachedCompanyData() {
-        CacheUtil.getCachedData(getApplicationContext(), CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
-            @Override
-            public void onFileDataDeserialized(ResponseDTO r) {
-                if (r != null) {
-                    if (r.getCompany() != null) {
-                        response = r;
-                        buildPages();
-                    } else {
+        final WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
+            CacheUtil.getCachedData(getApplicationContext(), CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
+
+                @Override
+                public void onFileDataDeserialized(ResponseDTO r) {
+                    if (r != null) {
+                        if (r.getCompany() != null) {
+                            company = r.getCompany();
+                            response = r;
+                            buildPages();
+                        } else {
+                            Util.showErrorToast(ctx, ctx.getString(R.string.wifi_not_available));
+                            return;
+                        }
+                    }
+                    if (wcr.isWifiConnected()) {
+                        getCompanyData();
+                    }
+
+                }
+
+                @Override
+                public void onDataCached() {
+
+                }
+
+                @Override
+                public void onError() {
+                    if (wcr.isWifiConnected()) {
                         getCompanyData();
                     }
                 }
-                WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
-                if (wcr.isWifiConnected()) {
-                    Log.w(LOG, "## starting RequestSyncService ...");
-                    mService.startSyncCachedRequests();
-                    Log.d(LOG,"## waiting a couple of seconds for RequestSyncService to sing and dance");
-                    Util.pretendFlash(progressBar, 1000, 2, new Util.UtilAnimationListener() {
-                        @Override
-                        public void onAnimationEnded() {
-                            getCompanyData();
-                        }
-                    });
-                }
-            }
+            });
 
-            @Override
-            public void onDataCached() {
-
-            }
-
-            @Override
-            public void onError() {
-                getCompanyData();
-            }
-        });
     }
 
+    private CompanyDTO company;
+
     private void getCompanyData() {
-        Log.w(LOG, "############# getCompanyData.............");
+        Log.w(LOG, "############# getCompanyData..........");
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.GET_COMPANY_DATA);
         w.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
-
         progressBar.setVisibility(View.VISIBLE);
         WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
@@ -138,6 +139,7 @@ public class ProjectPagerActivity extends ActionBarActivity
                         if (!ErrorUtil.checkServerError(ctx, r)) {
                             return;
                         }
+                        company = r.getCompany();
                         response = r;
                         buildPages();
                         CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
@@ -157,6 +159,9 @@ public class ProjectPagerActivity extends ActionBarActivity
 
                             }
                         });
+                        Intent i = new Intent(getApplicationContext(), PhotoUploadService.class);
+                        startService(i);
+
 
                     }
                 });
@@ -301,11 +306,23 @@ public class ProjectPagerActivity extends ActionBarActivity
 
         Intent i = new Intent(this, SitePagerActivity.class);
         i.putExtra("project", project);
+        i.putExtra("company", company);
         i.putExtra("type", SiteTaskAndStatusAssignmentFragment.PROJECT_MANAGER);
         startActivityForResult(i, NEW_STATUS_EXPECTED);
+
         WebCheckResult w = WebCheck.checkNetworkAvailability(ctx);
         if (w.isWifiConnected()) {
-            mService.startSyncCachedRequests();
+            mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
+                @Override
+                public void onTasksSynced(int goodResponses, int badResponses) {
+                    Log.i(LOG,"** cached requests sync, good: " + goodResponses + " bad: " + badResponses);
+                }
+
+                @Override
+                public void onError(String message) {
+                    Log.e(LOG,message);
+                }
+            });
         }
 
 
@@ -325,7 +342,7 @@ public class ProjectPagerActivity extends ActionBarActivity
     public void onGalleryRequested(ProjectDTO project) {
         Intent i = new Intent(this, PictureRecyclerGridActivity.class);
         i.putExtra("project", project);
-      //  i.putExtra("type", ImagePagerActivity.PROJECT);
+        //  i.putExtra("type", ImagePagerActivity.PROJECT);
         startActivity(i);
     }
 
@@ -448,7 +465,17 @@ public class ProjectPagerActivity extends ActionBarActivity
             RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
             mService = binder.getService();
             mBound = true;
-            mService.startSyncCachedRequests();
+            mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
+                @Override
+                public void onTasksSynced(int goodResponses, int badResponses) {
+                    Log.i(LOG,"** cached requests sync, good: " + goodResponses + " bad: " + badResponses);
+                }
+
+                @Override
+                public void onError(String message) {
+                    Log.e(LOG,message);
+                }
+            });
         }
 
         @Override

@@ -1,0 +1,34 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.com.boha.monitor.library.activities.FullPhotoActivity">
+
+
+    <ImageView
+        android:id="@+id/FI_image"
+        android:src="@drawable/house"
+        android:scaleType="centerCrop"
+        android:layout_width="600dp"
+        android:layout_height="600dp" />
+
+    <TextView
+        android:id="@+id/FI_number"
+        style="@style/RedCircle"
+        android:text="33"
+        android:layout_margin="@dimen/mon_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/FI_date"
+        android:text="Wednesday, 24 December 2099 19:39"
+        style="@style/TextStyleSmall"
+        android:textColor="@color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/mon_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

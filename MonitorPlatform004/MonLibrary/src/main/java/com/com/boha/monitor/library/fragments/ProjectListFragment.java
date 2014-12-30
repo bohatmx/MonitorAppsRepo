@@ -87,7 +87,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.w(LOG, "######### onCreateView... ");
+        Log.w(LOG, "######### onCreateView...");
         view = inflater.inflate(R.layout.fragment_project_list, container, false);
         this.inflater = inflater;
         ctx = getActivity();
@@ -99,6 +99,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             if (r.getCompany() != null) {
                 projectList = r.getCompany().getProjectList();
                 statusCountInPeriod = r.getStatusCountInPeriod();
+                Log.w(LOG,"*** statusCountInPeriod: " + statusCountInPeriod);
             }
         }
         setTotals();

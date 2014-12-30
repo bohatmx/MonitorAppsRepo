@@ -13,7 +13,6 @@ public class Statics {
      * REMOTE URL - bohamaker back end - production
      */
     //
-
 //    public static final String WEBSOCKET_URL = "ws://bohamaker.com:51490/mwp/";
 //    public static final String URL = "http://bohamaker.com:51490/mwp/";
 //    public static final String IMAGE_URL = "http://bohamaker.com:51490/";
