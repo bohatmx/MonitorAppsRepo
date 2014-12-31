@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
-import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.services.RequestCache;
 import com.google.gson.Gson;
@@ -18,7 +17,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -52,7 +50,7 @@ public class CacheUtil {
     static CacheRequestListener cacheListener;
     static CacheSiteListener siteListener;
     public static final int CACHE_DATA = 1, CACHE_COUNTRIES = 3, CACHE_SITE = 7,
-            CACHE_PHOTOS = 4, CACHE_PROJECT = 5, CACHE_REQUEST = 6;
+            CACHE_PROJECT = 5, CACHE_REQUEST = 6;
     static int dataType;
     static Integer projectID;
     static ResponseDTO response;
@@ -62,7 +60,7 @@ public class CacheUtil {
     static Context ctx;
     static RequestCache requestCache;
     static final String JSON_DATA = "data.json", JSON_COUNTRIES = "countries.json",
-            JSON_PROJECT_DATA = "project_data", JSON_PHOTO = "photos.json",
+            JSON_PROJECT_DATA = "project_data",
             JSON_REQUEST = "requestCache.json", JSON_SITE = "site";
 
 
@@ -111,12 +109,7 @@ public class CacheUtil {
         new CacheRetrieveTask().execute();
     }
 
-    public static void getCachedPhotos(Context context, CacheUtilListener cacheUtilListener) {
-        dataType = CACHE_PHOTOS;
-        utilListener = cacheUtilListener;
-        ctx = context;
-        new CacheRetrieveTask().execute();
-    }
+
 
     public static void getCachedRequests(Context context, CacheRequestListener listener) {
         dataType = CACHE_REQUEST;
@@ -185,16 +178,7 @@ public class CacheUtil {
                                     " - length: " + file.length());
                         }
                         break;
-                    case CACHE_PHOTOS:
-                        json = gson.toJson(response);
-                        outputStream = ctx.openFileOutput(JSON_PHOTO, Context.MODE_PRIVATE);
-                        write(outputStream, json);
-                        file = ctx.getFileStreamPath(JSON_PHOTO);
-                        if (file != null) {
-                            Log.e(LOG, "Photo cache written, path: " + file.getAbsolutePath() +
-                                    " - length: " + file.length() + " photos: " + response.getPhotoUploadList().size());
-                        }
-                        break;
+
                     case CACHE_DATA:
                         json = gson.toJson(response);
                         outputStream = ctx.openFileOutput(JSON_DATA, Context.MODE_PRIVATE);
@@ -277,11 +261,7 @@ public class CacheUtil {
                         response = getData(stream);
                         Log.i(LOG, "++ request cache retrieved");
                         break;
-                    case CACHE_PHOTOS:
-                        stream = ctx.openFileInput(JSON_PHOTO);
-                        response = getData(stream);
-                        Log.i(LOG, "++ photo cache retrieved");
-                        break;
+
                     case CACHE_DATA:
                         stream = ctx.openFileInput(JSON_DATA);
                         response = getData(stream);
@@ -297,12 +277,7 @@ public class CacheUtil {
                 response.setStatusCode(0);
 
             } catch (FileNotFoundException e) {
-                Log.d(LOG, "############# cache file not found. not initialised yet. no problem, type = " + dataType);
-                if (dataType == CACHE_PHOTOS) {
-                    PhotoCache pc = new PhotoCache();
-                    pc.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
-                    response.setPhotoCache(pc);
-                }
+                Log.w(LOG, "############# cache file not found. not initialised yet. no problem, type = " + dataType);
                 Log.d(LOG,"#### doInBackground - returning a new response object, type = " + dataType);
                 return response;
 
@@ -432,7 +407,7 @@ public class CacheUtil {
 
     }
 
-    static final String LOG = "CacheUtil";
+    static final String LOG = CacheUtil.class.getSimpleName();
     static final Gson gson = new Gson();
 
 

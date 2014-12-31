@@ -25,12 +25,19 @@ public class PhotoUploadDTO implements Serializable{
     private List<String> tags;
     private Float accuracy;
     String projectName, projectSiteName, projectSiteTask, uri;
-    private boolean isFullPicture;
+    private boolean isFullPicture,isStaffPicture;
     private String imageFilePath;
     private double latitude, longitude;
     private long time;
     private String thumbFilePath;
 
+    public boolean isStaffPicture() {
+        return isStaffPicture;
+    }
+
+    public void setStaffPicture(boolean isStaffPicture) {
+        this.isStaffPicture = isStaffPicture;
+    }
 
     public Float getAccuracy() {
         return accuracy;

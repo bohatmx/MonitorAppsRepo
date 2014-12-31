@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
@@ -42,10 +43,10 @@ import com.com.boha.monitor.library.dto.VideoClipDTO;
 import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.services.PhotoUploadService;
-import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.CacheVideoUtil;
 import com.com.boha.monitor.library.util.ImageUtil;
 import com.com.boha.monitor.library.util.PMException;
+import com.com.boha.monitor.library.util.PhotoCacheUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Util;
 import com.google.android.gms.common.ConnectionResult;
@@ -85,11 +86,8 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         inflater = getLayoutInflater();
         setContentView(R.layout.camera);
         setFields();
-
-
         mLocationClient = new LocationClient(getApplicationContext(), this,
                 this);
-
         //get objects
         if (savedInstanceState != null) {
             Log.e(LOG, "##### savedInstanceState is LOADED");
@@ -97,6 +95,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
             projectSite = (ProjectSiteDTO) savedInstanceState.getSerializable("projectSite");
             project = (ProjectDTO) savedInstanceState.getSerializable("project");
             String path = savedInstanceState.getString("photoFile");
+
             if (path != null) {
                 photoFile = new File(path);
             }
@@ -115,6 +114,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
             projectSiteTask = (ProjectSiteTaskDTO) getIntent().getSerializableExtra("projectSiteTask");
             companyStaff = (CompanyStaffDTO) getIntent().getSerializableExtra("companyStaff");
         }
+
         setTitle(getString(R.string.site_pics));
         if (projectSite != null)
             getSupportActionBar().setSubtitle(projectSite.getProjectSiteName());
@@ -207,6 +207,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     public void onActivityResult(final int requestCode, final int resultCode,
                                  final Intent data) {
         Log.e(LOG, "##### onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         switch (requestCode) {
             case CAPTURE_IMAGE:
                 if (resultCode == Activity.RESULT_OK) {
@@ -257,7 +258,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                 addProjectPicture(project, currentThumbFile, location, new CacheListener() {
                     @Override
                     public void onCachingDone() {
-                        mService.uploadCachedPhotos();
+                        mService.uploadCachedPhotos(null);
                     }
                 });
                 break;
@@ -265,7 +266,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                 addSitePicture(projectSite, currentThumbFile, location, new CacheListener() {
                     @Override
                     public void onCachingDone() {
-                        mService.uploadCachedPhotos();
+                        mService.uploadCachedPhotos(null);
                     }
                 });
                 break;
@@ -273,7 +274,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                 addStaffPicture(companyStaff, currentThumbFile, location, new CacheListener() {
                     @Override
                     public void onCachingDone() {
-                        mService.uploadCachedPhotos();
+                        mService.uploadCachedPhotos(null);
                     }
                 });
                 break;
@@ -281,7 +282,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                 addSiteTaskPicture(projectSiteTask, currentThumbFile, location, new CacheListener() {
                     @Override
                     public void onCachingDone() {
-                        mService.uploadCachedPhotos();
+                        mService.uploadCachedPhotos(null);
                     }
                 });
                 break;
@@ -296,7 +297,9 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         Log.i(LOG,
                 "## onStart - locationClient connecting ... ");
         if (mLocationClient != null) {
-            mLocationClient.connect();
+            if (location == null) {
+                mLocationClient.connect();
+            }
         }
         Log.i(LOG, "## onStart Bind to PhotoUploadService");
         Intent intent = new Intent(this, PhotoUploadService.class);
@@ -312,7 +315,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
             mLocationClient.disconnect();
             Log.e(LOG, "### onStop - locationClient disconnecting ");
         }
-        Log.e(LOG, "## onStop unBind from RequestSyncService");
+        Log.e(LOG, "## onStop unBind from PhotoUploadService");
         if (mBound) {
             unbindService(mConnection);
             mBound = false;
@@ -332,7 +335,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setFastestInterval(500);
 
         location = mLocationClient.getLastLocation();
         mLocationClient.requestLocationUpdates(mLocationRequest, this);
@@ -362,19 +365,6 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                 f = ImageUtil.getFileFromUri(ctx, uri);
                 clip.setFilePath(f.getAbsolutePath());
                 clip.setLength(f.length());
-//                if (tournament != null) {
-//                    clip.setTournamentID(tournament.getTournamentID());
-//                    clip.setTournamentName(tournament.getTourneyName());
-//                }
-//                if (golfGroup != null) {
-//                    clip.setGolfGroupID(golfGroup.getGolfGroupID());
-//                    clip.setGolfGroupName(golfGroup.getGolfGroupName());
-//                }
-//                if (vcc == null) {
-//                    vcc = new VideoClipContainer();
-//                }
-//                vcc.getVideoClips().add(0, clip);
-//                CacheVideoUtil.cacheVideo(ctx, vcc);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -426,21 +416,41 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
 
     private File createImageFile() throws IOException {
         // Create an image file name
+
         String imageFileName = "pic" + System.currentTimeMillis();
-        File storageDir;
+        switch (type) {
+            case PhotoUploadDTO.PROJECT_IMAGE:
+                imageFileName = "project" + project.getProjectName();
+                break;
+            case PhotoUploadDTO.SITE_IMAGE:
+                imageFileName = projectSite.getProjectName()+"-"+projectSite.getProjectSiteName();
+                break;
+            case PhotoUploadDTO.STAFF_IMAGE:
+                imageFileName = companyStaff.getFullName();
+                break;
+            case PhotoUploadDTO.TASK_IMAGE:
+                imageFileName = projectSiteTask.getProjectName()+"-"+projectSiteTask.getProjectSiteName()+"_"+projectSiteTask.getTask().getTaskName();
+                break;
+        }
+        imageFileName = imageFileName + "-" + System.currentTimeMillis();
+        File root;
         if (Util.hasStorage(true)) {
             Log.i(LOG, "###### get file from getExternalStoragePublicDirectory");
-            storageDir = Environment.getExternalStoragePublicDirectory(
+            root = Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_PICTURES);
         } else {
             Log.i(LOG, "###### get file from getDataDirectory");
-            storageDir = Environment.getDataDirectory();
+            root = Environment.getDataDirectory();
+        }
+        File pics = new File(root,"monitor_app");
+        if (!pics.exists()) {
+            pics.mkdir();
         }
 
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
-                storageDir      /* directory */
+                pics      /* directory */
         );
 
         // Save a file: path for use with ACTION_VIEW intents
@@ -676,7 +686,12 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
             PhotoUploadService.LocalBinder binder = (PhotoUploadService.LocalBinder) service;
             mService = binder.getService();
             mBound = true;
-            mService.uploadCachedPhotos();
+            mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+                @Override
+                public void onUploadsComplete(int count) {
+                    Log.w(LOG,"$$$ onUploadsComplete, list: " + count);
+                }
+            });
         }
 
         @Override
@@ -721,38 +736,24 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         dto.setProjectSiteID(site.getProjectSiteID());
         dto.setPictureType(PhotoUploadDTO.SITE_IMAGE);
         dto.setAccuracy(location.getAccuracy());
+        dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
         Log.w(LOG, "**** addPhotoToCache starting ... file: " + dto.getThumbFilePath());
-        CacheUtil.getCachedPhotos(ctx, new CacheUtil.CacheUtilListener() {
+        PhotoCacheUtil.cachePhoto(ctx, dto, new PhotoCacheUtil.PhotoCacheListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
-                response.getPhotoCache().getPhotoUploadList().add(dto);
-                Log.w(LOG, "**** ...about to cache photos: " + response.getPhotoCache().getPhotoUploadList().size());
-                CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_PHOTOS, new CacheUtil.CacheUtilListener() {
-                    @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
-
-                    }
-
-                    @Override
-                    public void onDataCached() {
-                        listener.onCachingDone();
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
 
             }
 
             @Override
             public void onDataCached() {
+                Log.w(LOG, "### photo has been cached");
+                listener.onCachingDone();
+
             }
 
             @Override
             public void onError() {
-                Log.e(LOG, "Cache ERROR of some kind!");
+                Toast.makeText(ctx, "Unable to cache photo. Please insert an SD card", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -771,37 +772,22 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         dto.setProjectSiteTaskID(siteTask.getProjectSiteTaskID());
         dto.setPictureType(PhotoUploadDTO.TASK_IMAGE);
         dto.setAccuracy(location.getAccuracy());
-        CacheUtil.getCachedPhotos(ctx, new CacheUtil.CacheUtilListener() {
+        dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
+        PhotoCacheUtil.cachePhoto(ctx,dto, new PhotoCacheUtil.PhotoCacheListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
-                response.getPhotoCache().getPhotoUploadList().add(dto);
-                Log.w(LOG, "**** ...about to cache photos: " + response.getPhotoCache().getPhotoUploadList().size());
-                CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_PHOTOS, new CacheUtil.CacheUtilListener() {
-                    @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
-
-                    }
-
-                    @Override
-                    public void onDataCached() {
-                        listener.onCachingDone();
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
 
             }
 
             @Override
             public void onDataCached() {
+                Log.w(LOG,"### photo has been cached");
+                listener.onCachingDone();
             }
 
             @Override
             public void onError() {
-                Log.e(LOG, "Cache ERROR of some kind!");
+                Toast.makeText(ctx,"Unable to cache photo. Please insert an SD card", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -814,38 +800,23 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         final PhotoUploadDTO dto = getObject(thumb, location);
         dto.setProjectID(project.getProjectID());
         dto.setPictureType(PhotoUploadDTO.PROJECT_IMAGE);
+        dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
 
-        CacheUtil.getCachedPhotos(ctx, new CacheUtil.CacheUtilListener() {
+        PhotoCacheUtil.cachePhoto(ctx, dto, new PhotoCacheUtil.PhotoCacheListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
-                response.getPhotoCache().getPhotoUploadList().add(dto);
-                Log.w(LOG, "**** ...about to cache photos: " + response.getPhotoCache().getPhotoUploadList().size());
-                CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_PHOTOS, new CacheUtil.CacheUtilListener() {
-                    @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
-
-                    }
-
-                    @Override
-                    public void onDataCached() {
-                        listener.onCachingDone();
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
 
             }
 
             @Override
             public void onDataCached() {
+                Log.w(LOG, "### photo has been cached");
+                listener.onCachingDone();
             }
 
             @Override
             public void onError() {
-                Log.e(LOG, "Cache ERROR of some kind!");
+                Toast.makeText(ctx, "Unable to cache photo. Please insert an SD card", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -872,37 +843,23 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         final PhotoUploadDTO dto = getObject(thumb, location);
         dto.setCompanyStaffID(staff.getCompanyStaffID());
         dto.setPictureType(PhotoUploadDTO.STAFF_IMAGE);
-        CacheUtil.getCachedPhotos(ctx, new CacheUtil.CacheUtilListener() {
+        dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
+        dto.setStaffPicture(true);
+        PhotoCacheUtil.cachePhoto(ctx, dto, new PhotoCacheUtil.PhotoCacheListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
-                response.getPhotoCache().getPhotoUploadList().add(dto);
-                Log.w(LOG, "**** ...about to cache photos: " + response.getPhotoCache().getPhotoUploadList().size());
-                CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_PHOTOS, new CacheUtil.CacheUtilListener() {
-                    @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
-
-                    }
-
-                    @Override
-                    public void onDataCached() {
-                        listener.onCachingDone();
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
 
             }
 
             @Override
             public void onDataCached() {
+                Log.w(LOG, "### photo has been cached :)");
+                listener.onCachingDone();
             }
 
             @Override
             public void onError() {
-                Log.e(LOG, "Cache ERROR of some kind!");
+                Toast.makeText(ctx, "Unable to cache photo. Please insert an SD card", Toast.LENGTH_LONG).show();
             }
         });
     }

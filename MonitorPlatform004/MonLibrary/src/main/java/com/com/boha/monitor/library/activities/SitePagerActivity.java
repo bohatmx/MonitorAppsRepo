@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dialogs.ProjectSiteDialog;
@@ -79,9 +80,14 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
         setTitle(ctx.getString(R.string.project_sites));
         getSupportActionBar().setSubtitle(project.getProjectName());
         mLocationClient = new LocationClient(ctx, this, this);
+        startPhotoService();
         getCachedProjectData();
     }
 
+    private void startPhotoService() {
+        Intent i = new Intent(this,PhotoUploadService.class);
+        startService(i);
+    }
     private void getCachedProjectData() {
         //check network
         final WebCheckResult r = WebCheck.checkNetworkAvailability(ctx);
@@ -191,7 +197,18 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
         if (id == R.id.action_refresh) {
             WebCheckResult w = WebCheck.checkNetworkAvailability(ctx);
             if (w.isWifiConnected()) {
-                getProjectData();
+                if (pBound == true) {
+                    Toast.makeText(ctx,"Uploading cached photos, please wait.",Toast.LENGTH_LONG).show();
+                    pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+                        @Override
+                        public void onUploadsComplete(int count) {
+                            getProjectData();
+                        }
+                    });
+                } else {
+                    getProjectData();
+                }
+
             } else {
                 Util.showToast(ctx, ctx.getString(R.string.connect_wifi));
             }
@@ -547,7 +564,12 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
         Log.e(LOG, "**** onPhotoUploadServiceRequested");
         WebCheckResult w = WebCheck.checkNetworkAvailability(ctx);
         if (w.isWifiConnected()) {
-            pService.uploadCachedPhotos();
+            pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+                @Override
+                public void onUploadsComplete(int count) {
+                    Log.w(LOG,"+++ onUploadsComplete count: " + count);
+                }
+            });
         }
 
     }
@@ -671,18 +693,9 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
         finish();
     }
 
-    public void setRefreshActionButtonState(final boolean refreshing) {
-        if (mMenu != null) {
-            final MenuItem refreshItem = mMenu.findItem(R.id.action_refresh);
-            if (refreshItem != null) {
-                if (refreshing) {
-                    refreshItem.setActionView(R.layout.action_bar_progess);
-                } else {
-                    refreshItem.setActionView(null);
-                }
-            }
-        }
-    }
+
+
+
 
     int selectedSiteIndex;
     ProjectSiteDTO projectSite;

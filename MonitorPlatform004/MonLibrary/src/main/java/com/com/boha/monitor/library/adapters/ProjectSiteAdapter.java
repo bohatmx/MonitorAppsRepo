@@ -281,9 +281,9 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
                 }
             }
         } else {
-            hideScrollImages(item);
-            item.imageScroller.setVisibility(View.GONE);
-            item.imgHero.setVisibility(View.GONE);
+//            hideScrollImages(item);
+//            item.imageScroller.setVisibility(View.GONE);
+//            item.imgHero.setVisibility(View.GONE);
         }
 
         if (!b1) {
@@ -327,7 +327,7 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
             item.date10.setVisibility(View.GONE);
         }
 
-        if (p.getPhotoUploadList() != null && wcr.isWifiConnected()) {
+        if (p.getPhotoUploadList() != null ) {
             if (p.getPhotoUploadList().size() == 1) {
                 hideScrollImages(item);
                 item.imageScroller.setVisibility(View.GONE);
@@ -337,11 +337,11 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
 
             }
         }
-        if (!wcr.isWifiConnected()) {
-            hideScrollImages(item);
-            item.imageScroller.setVisibility(View.GONE);
-            item.imgHero.setVisibility(View.GONE);
-        }
+//        if (!wcr.isWifiConnected()) {
+//            hideScrollImages(item);
+//            item.imageScroller.setVisibility(View.GONE);
+//            item.imgHero.setVisibility(View.GONE);
+//        }
 
         if (p.getLastStatus() != null) {
             item.txtLastStatus.setText(p.getLastStatus().getTaskStatus().getTaskStatusName());

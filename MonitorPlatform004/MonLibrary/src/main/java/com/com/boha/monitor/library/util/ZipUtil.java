@@ -118,9 +118,9 @@ public class ZipUtil {
     }
     static final DecimalFormat df = new DecimalFormat("###,###,###,###,###,###,###,##0.00");
     public static void unpack(ByteBuffer bb, WebSocketUtil.WebSocketListener listener) throws ZipException {
-        //notify utilListener
+        //notify photoCacheListener
         ResponseDTO response = unpackBytes(bb);
-        Log.e(LOG, "##### unpack - telling utilListener that response object is ready after unpack");
+        Log.e(LOG, "##### unpack - telling photoCacheListener that response object is ready after unpack");
         listener.onMessage(response);
     }
 

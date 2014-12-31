@@ -42,6 +42,7 @@
 
         <activity
             android:name="com.com.boha.monitor.library.activities.PictureActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_picture" >
         </activity>
         <activity
