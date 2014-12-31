@@ -18,11 +18,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 /**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- * <p/>
+ * Manages the uploading of photos from a list held in cache. Uploads each photo
+ * and notifies any activity bound to it on completion. Otherwise these cached photos
+ * are uploaded in a silent process not visible to the user.
+ *
+ * It may be started by a startService call or may be bound to an activity via the
+ * IBinder interface.
+ *
+ * Entry points: onHandleIntent, uploadCachedPhotos
  */
 public class PhotoUploadService extends IntentService {
 

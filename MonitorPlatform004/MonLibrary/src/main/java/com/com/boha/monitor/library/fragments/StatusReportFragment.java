@@ -47,6 +47,7 @@ public class StatusReportFragment extends Fragment implements PageFragment {
 
     public interface StatusReportListener {
         public void onBusy();
+
         public void onNotBusy();
     }
 
@@ -87,6 +88,7 @@ public class StatusReportFragment extends Fragment implements PageFragment {
     List<ProjectDTO> projectList;
     ListPopupWindow popupWindow;
     ProgressBar progressBar;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -155,16 +157,7 @@ public class StatusReportFragment extends Fragment implements PageFragment {
         Statics.setRobotoFontLight(ctx, btnEnd);
         Statics.setRobotoFontLight(ctx, btnStart);
         Statics.setRobotoFontLight(ctx, txtTitle);
-
-        Calendar cal = GregorianCalendar.getInstance();
-        endDate = new Date();
-        for (int i = 0; i < 7; i++) {
-            cal.roll(Calendar.DAY_OF_YEAR, false);
-        }
-        isStartDate = true;
-        setDates(cal);
-        isStartDate = false;
-        setDates(cal);
+        setDates();
 
         btnEnd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,13 +197,13 @@ public class StatusReportFragment extends Fragment implements PageFragment {
 
     }
 
-    boolean  isStartDate;
+    boolean isStartDate;
     List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList;
 
     private void getProjectStatus() {
-        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
+        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx, true);
         if (!wcr.isWifiConnected()) {
-            Toast.makeText(ctx,ctx.getString(R.string.wifi_not_connected),Toast.LENGTH_SHORT).show();
+            Toast.makeText(ctx, ctx.getString(R.string.wifi_not_connected), Toast.LENGTH_SHORT).show();
             return;
         }
         final long start = System.currentTimeMillis();
@@ -313,7 +306,7 @@ public class StatusReportFragment extends Fragment implements PageFragment {
                 if (wcr.isWifiConnected()) {
                     getProjectStatus();
                 } else {
-                    Toast.makeText(ctx,ctx.getString(R.string.connect_wifi),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctx, ctx.getString(R.string.connect_wifi), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -367,9 +360,13 @@ public class StatusReportFragment extends Fragment implements PageFragment {
                         calendar.set(Calendar.MONTH, mMonth);
                         calendar.set(Calendar.DAY_OF_MONTH, mDay);
 
-                       setDates(calendar);
-
-
+                        if (isStartDate) {
+                            startDate = calendar.getTime();
+                        } else {
+                            endDate = calendar.getTime();
+                        }
+                        setDates();
+                        Util.flashSeveralTimes(txtCount, 200, 2, null );
                     }
 
 
@@ -387,23 +384,38 @@ public class StatusReportFragment extends Fragment implements PageFragment {
 
 
     }
-private void setDates(Calendar calendar) {
-    if (isStartDate) {
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        startDate = calendar.getTime();
-        btnStart.setText(sdf.format(startDate));
-    } else {
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        calendar.set(Calendar.MILLISECOND, 0);
-        endDate = calendar.getTime();
-        btnEnd.setText(sdf.format(endDate));
+
+    private void setDates() {
+        Calendar calendar = GregorianCalendar.getInstance(Locale.getDefault());
+        if (startDate == null) {
+            calendar.roll(Calendar.WEEK_OF_YEAR, false);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            startDate = calendar.getTime();
+        }
+        if (endDate == null) {
+            calendar = GregorianCalendar.getInstance(Locale.getDefault());
+            endDate = calendar.getTime();
+        }
+        if (isStartDate) {
+            calendar.setTime(startDate);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            startDate = calendar.getTime();
+            btnStart.setText(sdf.format(startDate));
+        } else {
+            calendar.setTime(endDate);
+            calendar.set(Calendar.HOUR_OF_DAY, 23);
+            calendar.set(Calendar.MINUTE, 59);
+            calendar.set(Calendar.SECOND, 59);
+            calendar.set(Calendar.MILLISECOND, 0);
+            endDate = calendar.getTime();
+            btnEnd.setText(sdf.format(endDate));
+        }
     }
-}
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

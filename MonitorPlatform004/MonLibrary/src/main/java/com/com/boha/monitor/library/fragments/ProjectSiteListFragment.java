@@ -1,7 +1,5 @@
 package com.com.boha.monitor.library.fragments;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -12,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -39,19 +36,18 @@ import com.com.boha.monitor.library.util.WebCheckResult;
 import com.com.boha.monitor.library.util.WebSocketUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 /**
- * A fragment representing a taskStatusList of Items.
- * <project/>
- * Large screen devices (such as tablets) are supported by replacing the ListView
- * with a GridView.
- * <project/>
- * Activities containing this fragment MUST implement the ProjectSiteListListener
- * interface.
+ * Manages a list of project sites. Provides facility to select a site
+ * and perform a set of actions: status, take picture, put on map etc.
+ * Hosted by: SitePagerActivity - this activity
+ * must implement the ProjectSiteListListener interface. SitePagerActivity thus listens
+ * to requests from this fragment and performs appropriate actions such as starting another activity.
+ * e.g. the PictureActivity, MonitorMapActivty, TaskAssignmentActivity etc.
+ *
+ * Entry points: onCreateView, setProject
  */
 public class ProjectSiteListFragment extends Fragment implements PageFragment {
 
@@ -73,7 +69,6 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
     int lastIndex;
     View view, topView;
     ImageView imgLogo;
-    ObjectAnimator objectAnimator;
     ImageView imgSearch1, imgSearch2, heroImage;
     EditText editSearch;
 
@@ -87,7 +82,6 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         ctx = getActivity();
         Bundle b = getArguments();
         if (b != null) {
-
             project = (ProjectDTO) b.getSerializable("project");
             lastIndex = b.getInt("index", 0);
             Log.e(LOG, "++++ onCreateView getting project object from getArguments: status count: " + project.getStatusCount());
@@ -171,41 +165,6 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
 
     }
 
-    public void rotateLogo() {
-        imgLogo.setVisibility(View.VISIBLE);
-        objectAnimator = ObjectAnimator.ofFloat(imgLogo, "rotation", 0.0f, 360f);
-        objectAnimator.setRepeatCount(ObjectAnimator.INFINITE);
-        objectAnimator.setDuration(200);
-        objectAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-        objectAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-        objectAnimator.start();
-    }
-
-    public void stopRotatingLogo() {
-        imgLogo.setVisibility(View.GONE);
-        objectAnimator.cancel();
-    }
-
     public void setProject(ProjectDTO project) {
         this.project = project;
         Collections.sort(project.getProjectSiteList());
@@ -241,8 +200,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         txtCount.setText("" + projectSiteList.size());
         Collections.sort(projectSiteList);
         long x = ImageLoader.getInstance().getDiskCache().getDirectory().listFiles().length;
-        File file = ImageLoader.getInstance().getDiskCache().getDirectory();
-        Log.d(LOG,"%%%%%%%% ImageLoader getDiskCache files: " + file.length());
+        Log.d(LOG,"%%%%%%%% ImageLoader getDiskCache files: " + x);
         final WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
         if (!wcr.isWifiConnected()) {
             projectSiteAdapter = new ProjectSiteAdapter(ctx, R.layout.site_item,

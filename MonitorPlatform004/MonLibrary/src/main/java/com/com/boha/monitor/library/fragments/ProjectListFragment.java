@@ -34,13 +34,13 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * A fragment representing a taskStatusList of Items.
- * <project />
- * Large screen devices (such as tablets) are supported by replacing the ListView
- * with a GridView.
- * <project />
- * Activities containing this fragment MUST implement the ProjectListListener
- * interface.
+ * Manages a list of projects. Provides facility to select a project
+ * and ask the host activity to take responsibility for listing the
+ * sites that belong in the project.
+ * Hosted by: ProjectPagerActivity, OperationsPagerActivity - these activities
+ * must implement the ProjectListListener interface.
+ *
+ * Entry points: onCreaView
  */
 public class ProjectListFragment extends Fragment implements PageFragment {
 
@@ -202,17 +202,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     int lastIndex;
 
     private void setList() {
-        if (projectList == null) {
-            Log.e(LOG, "-----------> projectList is null. Possible illegally called");
-            return;
-        }
-        if (ctx == null) {
-            ctx = getActivity();
-        }
 
-        if (ctx == null) {
-            throw new UnsupportedOperationException("ctx is null, probably in some sort of illegalState");
-        }
         adapter = new ProjectAdapter(ctx, R.layout.project_item, projectList);
         mListView.setAdapter(adapter);
 

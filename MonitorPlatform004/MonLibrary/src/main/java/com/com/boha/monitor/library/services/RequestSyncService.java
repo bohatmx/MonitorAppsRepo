@@ -17,12 +17,21 @@ import com.com.boha.monitor.library.util.WebSocketUtilForRequests;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 /**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- * <p/>
- * Actions that do not need immediate response will be handled periodically and sent to the server
+ * Manages the uploading of offline requests from a list held in cache. Uploads all
+ * cached requests in a single batch. Cloud server returns number of good and bad
+ * responses. These requests are cached on the device when wifi is not connected. These
+ * requests typically are generated from SiteTaskAndStatusAssignmentFragment,
+ * SubTaskStatusAssignmentFragment
+ *
+ * Typically these requests would be status and location related and the user does not
+ * need to view individual responses.
+ *
+ * It may be started by a startService call or may be bound to an activity via the
+ * IBinder interface. When bound, uses RequestSyncListener to communicate with the binding
+ * activity
+ *
+ * Entry points: onHandleIntent, startSyncCachedRequests (when bound to activity)
  */
 public class RequestSyncService extends IntentService {
 
