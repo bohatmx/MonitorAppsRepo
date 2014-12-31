@@ -337,11 +337,11 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
 
             }
         }
-//        if (!wcr.isWifiConnected()) {
-//            hideScrollImages(item);
-//            item.imageScroller.setVisibility(View.GONE);
-//            item.imgHero.setVisibility(View.GONE);
-//        }
+        if (p.getPhotoUploadList() != null && p.getPhotoUploadList().isEmpty()) {
+            hideScrollImages(item);
+            item.imageScroller.setVisibility(View.GONE);
+            item.imgHero.setVisibility(View.GONE);
+        }
 
         if (p.getLastStatus() != null) {
             item.txtLastStatus.setText(p.getLastStatus().getTaskStatus().getTaskStatusName());
