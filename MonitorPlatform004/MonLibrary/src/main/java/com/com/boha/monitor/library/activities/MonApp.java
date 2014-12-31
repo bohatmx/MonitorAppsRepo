@@ -15,7 +15,6 @@ import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.utils.L;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 
@@ -72,7 +71,7 @@ public class MonApp extends Application {
                         .cacheOnDisk(true)
                         .showImageOnFail(getApplicationContext().getResources().getDrawable(R.drawable.under_construction))
                         .showImageOnLoading(getApplicationContext().getResources().getDrawable(R.drawable.under_construction))
-                        .displayer(new FadeInBitmapDisplayer(500))
+                        //.displayer(new FadeInBitmapDisplayer(500))
                         .build();
 
         File cacheDir = StorageUtils.getCacheDirectory(this, true);

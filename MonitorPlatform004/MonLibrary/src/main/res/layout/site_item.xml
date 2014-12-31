@@ -475,6 +475,7 @@
             android:layout_marginTop="@dimen/mon_padding"
             android:layout_marginRight="@dimen/mon_wider"
             android:layout_marginBottom="@dimen/mon_margin"
+            android:visibility="gone"
             android:layout_alignLeft="@id/SITE_layout"
             android:layout_below="@id/SITE_layout">
 

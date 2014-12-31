@@ -140,7 +140,7 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
         }
 
         final ProjectSiteDTO p = mList.get(position);
-        item.txtName.setText(p.getProjectSiteName());
+        item.txtName.setText(ctx.getString(R.string.site) + ": " + p.getProjectSiteName());
         item.txtNumber.setText("" + (position + 1));
 
         if (p.getAccuracy() == null) {

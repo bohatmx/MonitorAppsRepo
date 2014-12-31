@@ -85,38 +85,38 @@ public class ProjectPagerActivity extends ActionBarActivity
 
     private void getCachedCompanyData() {
         final WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
-            CacheUtil.getCachedData(getApplicationContext(), CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
+        CacheUtil.getCachedData(getApplicationContext(), CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
 
-                @Override
-                public void onFileDataDeserialized(ResponseDTO r) {
-                    if (r != null) {
-                        if (r.getCompany() != null) {
-                            company = r.getCompany();
-                            response = r;
-                            buildPages();
-                        } else {
-                            Util.showErrorToast(ctx, ctx.getString(R.string.wifi_not_available));
-                            return;
-                        }
-                    }
-                    if (wcr.isWifiConnected()) {
-                        getCompanyData();
-                    }
-
-                }
-
-                @Override
-                public void onDataCached() {
-
-                }
-
-                @Override
-                public void onError() {
-                    if (wcr.isWifiConnected()) {
-                        getCompanyData();
+            @Override
+            public void onFileDataDeserialized(ResponseDTO r) {
+                if (r != null) {
+                    if (r.getCompany() != null) {
+                        company = r.getCompany();
+                        response = r;
+                        buildPages();
+                    } else {
+                        Util.showErrorToast(ctx, ctx.getString(R.string.wifi_not_available));
+                        return;
                     }
                 }
-            });
+                if (wcr.isWifiConnected()) {
+                    getCompanyData();
+                }
+
+            }
+
+            @Override
+            public void onDataCached() {
+
+            }
+
+            @Override
+            public void onError() {
+                if (wcr.isWifiConnected()) {
+                    getCompanyData();
+                }
+            }
+        });
 
     }
 
@@ -241,7 +241,7 @@ public class ProjectPagerActivity extends ActionBarActivity
             public void onPageSelected(int arg0) {
                 currentPageIndex = arg0;
                 if (pageFragmentList.get(currentPageIndex) instanceof StatusReportFragment) {
-                    statusReportFragment.getProjectStatus();
+                    statusReportFragment.getCachedStatus();
                 }
             }
 
@@ -315,12 +315,12 @@ public class ProjectPagerActivity extends ActionBarActivity
             mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
                 @Override
                 public void onTasksSynced(int goodResponses, int badResponses) {
-                    Log.i(LOG,"** cached requests sync, good: " + goodResponses + " bad: " + badResponses);
+                    Log.i(LOG, "** cached requests sync, good: " + goodResponses + " bad: " + badResponses);
                 }
 
                 @Override
                 public void onError(String message) {
-                    Log.e(LOG,message);
+                    Log.e(LOG, message);
                 }
             });
         }
@@ -380,6 +380,16 @@ public class ProjectPagerActivity extends ActionBarActivity
                 projectListFragment.updateStatusCount(count);
             }
         }
+    }
+
+    @Override
+    public void onBusy() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onNotBusy() {
+        progressBar.setVisibility(View.GONE);
     }
 
     private class PagerAdapter extends FragmentStatePagerAdapter {
@@ -468,12 +478,12 @@ public class ProjectPagerActivity extends ActionBarActivity
             mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
                 @Override
                 public void onTasksSynced(int goodResponses, int badResponses) {
-                    Log.i(LOG,"** cached requests sync, good: " + goodResponses + " bad: " + badResponses);
+                    Log.i(LOG, "** cached requests sync, good: " + goodResponses + " bad: " + badResponses);
                 }
 
                 @Override
                 public void onError(String message) {
-                    Log.e(LOG,message);
+                    Log.e(LOG, message);
                 }
             });
         }

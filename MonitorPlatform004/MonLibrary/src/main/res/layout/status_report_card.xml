@@ -32,11 +32,11 @@
 
                 <TextView
                     android:id="@+id/SRC_txtTask"
-                    style="@style/TextStyleBlue"
+                    style="@style/TextStyle"
                     android:text="Task Name"
                     android:layout_toRightOf="@id/SRC_txtColor"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="@dimen/mon_margin"
+                    android:layout_marginLeft="@dimen/mon_padding"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </RelativeLayout>
@@ -51,15 +51,15 @@
                     android:id="@+id/SRC_txtStatus"
                     style="@style/Title3TextStyleBlack"
                     android:text="Status here"
-                    android:layout_marginLeft="@dimen/mon_widest"
+                    android:layout_marginLeft="@dimen/mon_wider"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 <TextView
                     android:id="@+id/SRC_txtDate"
-                    style="@style/TextStyleRedSmall"
+                    style="@style/TextStyleBoldBlueSmall"
                     android:layout_below="@id/SRC_txtStatus"
                     android:text="Tuesday, 14 Decemeber 2014"
-                    android:layout_marginLeft="@dimen/mon_widest"
+                    android:layout_marginLeft="@dimen/mon_wider"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </RelativeLayout>
@@ -67,6 +67,7 @@
             <RelativeLayout
                 android:id="@+id/SRC_staffLayout"
                 android:layout_below="@id/SRC_statusLayout"
+                android:layout_marginTop="@dimen/mon_padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -74,7 +75,7 @@
                     android:id="@+id/SRC_txtStaff"
                     style="@style/TextStyleSmall"
                     android:text="Staff name here"
-                    android:layout_marginLeft="@dimen/mon_widest"
+                    android:layout_marginLeft="@dimen/mon_wider"
                     android:layout_centerVertical="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />

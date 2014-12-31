@@ -48,4 +48,13 @@ public class StatusReportActivity extends ActionBarActivity implements StatusRep
         super.onPause();
     }
 
+    @Override
+    public void onBusy() {
+
+    }
+
+    @Override
+    public void onNotBusy() {
+
+    }
 }

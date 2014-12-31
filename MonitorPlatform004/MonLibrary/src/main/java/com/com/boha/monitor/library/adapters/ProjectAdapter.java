@@ -47,6 +47,7 @@ public class ProjectAdapter extends ArrayAdapter<ProjectDTO> {
         TextView txtSiteCount, txtImageCount;
         TextView txtNumber, txtDesc, txtClient;
         ImageView imgCamera, imgMap, imgDocs;
+        View statusCountView;
     }
 
     @Override
@@ -55,6 +56,8 @@ public class ProjectAdapter extends ArrayAdapter<ProjectDTO> {
         if (convertView == null) {
             convertView = mInflater.inflate(mLayoutRes, null);
             item = new ViewHolderItem();
+            item.statusCountView = convertView.findViewById(R.id.PROJ_statusLayout);
+
             item.txtName = (TextView) convertView
                     .findViewById(R.id.PROJ_txtName);
             item.txtClient = (TextView) convertView
@@ -80,6 +83,7 @@ public class ProjectAdapter extends ArrayAdapter<ProjectDTO> {
             item = (ViewHolderItem) convertView.getTag();
         }
 
+        item.statusCountView.setVisibility(View.GONE);
         final ProjectDTO p = mList.get(position);
         item.txtName.setText(p.getProjectName());
         item.txtClient.setText(p.getClientName());
@@ -101,16 +105,16 @@ public class ProjectAdapter extends ArrayAdapter<ProjectDTO> {
         if (p.getLastStatus() != null) {
             switch (p.getLastStatus().getTaskStatus().getStatusColor()) {
                 case TaskStatusDTO.STATUS_COLOR_RED:
-                    item.txtSiteCount.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xred_oval));
-                    item.txtStatusCount.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xred_oval));
+                    item.txtSiteCount.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval));
+                    item.txtStatusCount.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval));
                     break;
                 case TaskStatusDTO.STATUS_COLOR_GREEN:
-                    item.txtSiteCount.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xgreen_oval));
-                    item.txtStatusCount.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xgreen_oval));
+                    item.txtSiteCount.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval));
+                    item.txtStatusCount.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval));
                     break;
                 case TaskStatusDTO.STATUS_COLOR_YELLOW:
-                    item.txtSiteCount.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xorange_oval));
-                    item.txtStatusCount.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xorange_oval));
+                    item.txtSiteCount.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval));
+                    item.txtStatusCount.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval));
                     break;
             }
         }

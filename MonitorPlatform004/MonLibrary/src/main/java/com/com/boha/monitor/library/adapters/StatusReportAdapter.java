@@ -76,19 +76,19 @@ public class StatusReportAdapter extends ArrayAdapter<ProjectSiteTaskStatusDTO> 
         }
         switch (p.getTaskStatus().getStatusColor()) {
             case TaskStatusDTO.STATUS_COLOR_GREEN:
-                item.txtColor.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xgreen_oval_small));
+                item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval_small));
+                item.txtColor.setText("G");
                 break;
             case TaskStatusDTO.STATUS_COLOR_RED:
-                item.txtColor.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
+                item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
+                item.txtColor.setText("R");
                 break;
             case TaskStatusDTO.STATUS_COLOR_YELLOW:
-                item.txtColor.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
+                item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
+                item.txtColor.setText("Y");
                 break;
         }
 
-
-        Statics.setRobotoFontBold(ctx,item.txtDate);
-        Statics.setRobotoFontLight(ctx, item.txtStatus);
         Statics.setRobotoFontLight(ctx, item.txtTaskName);
         Statics.setRobotoFontLight(ctx, item.txtStaff);
 

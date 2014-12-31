@@ -351,5 +351,6 @@
     <string name="pic_saved">Report picture has been saved. Get the next one!</string>
     <string name="gps_complete">GPS coordinates done. Tap camera to begin.</string>
     <string name="title_activity_full_photo">FullPhotoActivity</string>
+    <string name="site">Site</string>
 
 </resources>

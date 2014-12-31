@@ -50,7 +50,7 @@ public class CacheUtil {
     static CacheRequestListener cacheListener;
     static CacheSiteListener siteListener;
     public static final int CACHE_DATA = 1, CACHE_COUNTRIES = 3, CACHE_SITE = 7,
-            CACHE_PROJECT = 5, CACHE_REQUEST = 6;
+            CACHE_PROJECT = 5, CACHE_REQUEST = 6, CACHE_PROJECT_STATUS = 4;
     static int dataType;
     static Integer projectID;
     static ResponseDTO response;
@@ -60,7 +60,7 @@ public class CacheUtil {
     static Context ctx;
     static RequestCache requestCache;
     static final String JSON_DATA = "data.json", JSON_COUNTRIES = "countries.json",
-            JSON_PROJECT_DATA = "project_data",
+            JSON_PROJECT_DATA = "project_data", JSON_PROJECT_STATUS = "project_status",
             JSON_REQUEST = "requestCache.json", JSON_SITE = "site";
 
 
@@ -83,6 +83,15 @@ public class CacheUtil {
 
     public static void cacheProjectData(Context context, ResponseDTO r, Integer pID, CacheUtilListener cacheUtilListener) {
         dataType = CACHE_PROJECT;
+        response = r;
+        response.setLastCacheDate(new Date());
+        utilListener = cacheUtilListener;
+        projectID = pID;
+        ctx = context;
+        new CacheTask().execute();
+    }
+    public static void cacheProjectStatus(Context context, ResponseDTO r, Integer pID, CacheUtilListener cacheUtilListener) {
+        dataType = CACHE_PROJECT_STATUS;
         response = r;
         response.setLastCacheDate(new Date());
         utilListener = cacheUtilListener;
@@ -127,6 +136,15 @@ public class CacheUtil {
         new CacheRetrieveTask().execute();
     }
 
+    public static void getCachedProjectStatus(Context context, Integer id, CacheUtilListener cacheUtilListener) {
+        Log.d(LOG, "################ getting cached project status ..................");
+        dataType = CACHE_PROJECT_STATUS;
+        utilListener = cacheUtilListener;
+        ctx = context;
+        projectID = id;
+        new CacheRetrieveTask().execute();
+    }
+
     public static void getCachedSiteData(Context context, Integer id, CacheSiteListener l) {
         Log.d(LOG, "################ getting cached site data ..................");
         dataType = CACHE_SITE;
@@ -165,6 +183,16 @@ public class CacheUtil {
                         file = ctx.getFileStreamPath(JSON_PROJECT_DATA + projectID + ".json");
                         if (file != null) {
                             Log.e(LOG, "Project cache written, path: " + file.getAbsolutePath() +
+                                    " - length: " + file.length());
+                        }
+                        break;
+                    case CACHE_PROJECT_STATUS:
+                        json = gson.toJson(response);
+                        outputStream = ctx.openFileOutput(JSON_PROJECT_STATUS + projectID + ".json", Context.MODE_PRIVATE);
+                        write(outputStream, json);
+                        file = ctx.getFileStreamPath(JSON_PROJECT_STATUS + projectID + ".json");
+                        if (file != null) {
+                            Log.e(LOG, "Project status cache written, path: " + file.getAbsolutePath() +
                                     " - length: " + file.length());
                         }
                         break;
@@ -255,6 +283,11 @@ public class CacheUtil {
                         stream = ctx.openFileInput(JSON_PROJECT_DATA + projectID + ".json");
                         response = getData(stream);
                         Log.i(LOG, "++ project cache retrieved");
+                        break;
+                    case CACHE_PROJECT_STATUS:
+                        stream = ctx.openFileInput(JSON_PROJECT_STATUS + projectID + ".json");
+                        response = getData(stream);
+                        Log.i(LOG, "++ project status cache retrieved");
                         break;
                     case CACHE_REQUEST:
                         stream = ctx.openFileInput(JSON_REQUEST);
