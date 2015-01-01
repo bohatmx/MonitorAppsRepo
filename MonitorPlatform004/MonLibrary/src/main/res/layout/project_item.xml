@@ -107,7 +107,7 @@
             android:id="@+id/PROJ_statusLayout"
             android:layout_marginTop="@dimen/mon_padding"
             android:layout_marginRight="24dp"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_alignLeft="@id/PROJ_layout"
             android:layout_below="@id/PROJ_layout">
 

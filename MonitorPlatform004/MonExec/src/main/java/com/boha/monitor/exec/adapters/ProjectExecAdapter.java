@@ -1,4 +1,4 @@
-package com.com.boha.monitor.library.adapters;
+package com.boha.monitor.exec.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class ProjectAdapter extends ArrayAdapter<ProjectDTO> {
+public class ProjectExecAdapter extends ArrayAdapter<ProjectDTO> {
 
 
     private final LayoutInflater mInflater;
@@ -28,8 +28,8 @@ public class ProjectAdapter extends ArrayAdapter<ProjectDTO> {
     private List<ProjectDTO> mList;
     private Context ctx;
 
-    public ProjectAdapter(Context context, int textViewResourceId,
-                          List<ProjectDTO> list
+    public ProjectExecAdapter(Context context, int textViewResourceId,
+                              List<ProjectDTO> list
     ) {
         super(context, textViewResourceId, list);
         this.mLayoutRes = textViewResourceId;
@@ -47,7 +47,6 @@ public class ProjectAdapter extends ArrayAdapter<ProjectDTO> {
         TextView txtSiteCount, txtImageCount;
         TextView txtNumber, txtDesc, txtClient;
         ImageView imgCamera, imgMap, imgDocs;
-        View statusCountView;
     }
 
     @Override
@@ -56,8 +55,6 @@ public class ProjectAdapter extends ArrayAdapter<ProjectDTO> {
         if (convertView == null) {
             convertView = mInflater.inflate(mLayoutRes, null);
             item = new ViewHolderItem();
-            item.statusCountView = convertView.findViewById(R.id.PROJ_statusLayout);
-
             item.txtName = (TextView) convertView
                     .findViewById(R.id.PROJ_txtName);
             item.txtClient = (TextView) convertView
@@ -83,7 +80,6 @@ public class ProjectAdapter extends ArrayAdapter<ProjectDTO> {
             item = (ViewHolderItem) convertView.getTag();
         }
 
-        //item.statusCountView.setVisibility(View.GONE);
         final ProjectDTO p = mList.get(position);
         item.txtName.setText(p.getProjectName());
         item.txtClient.setText(p.getClientName());
@@ -102,6 +98,9 @@ public class ProjectAdapter extends ArrayAdapter<ProjectDTO> {
             item.txtStatusCount.setText("0");
         else
             item.txtStatusCount.setText("" + p.getStatusCount());
+        if (p.getProjectSiteTaskStatusList() != null && !p.getProjectSiteTaskStatusList().isEmpty()) {
+            p.setLastStatus(p.getProjectSiteTaskStatusList().get(0));
+        }
         if (p.getLastStatus() != null) {
             switch (p.getLastStatus().getTaskStatus().getStatusColor()) {
                 case TaskStatusDTO.STATUS_COLOR_RED:

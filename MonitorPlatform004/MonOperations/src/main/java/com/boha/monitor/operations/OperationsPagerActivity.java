@@ -80,7 +80,7 @@ import java.util.List;
 
 
 public class OperationsPagerActivity extends ActionBarActivity
-        implements ProjectListFragment.ProjectListListener,
+        implements
         StaffListFragment.CompanyStaffListListener,
         TaskStatusListFragment.TaskStatusListListener,
         ProjectStatusTypeListFragment.ProjectStatusTypeListListener,
@@ -579,86 +579,8 @@ public class OperationsPagerActivity extends ActionBarActivity
     ResponseDTO response;
     int currentPageIndex;
 
-    @Override
-    public void onProjectClicked(ProjectDTO project) {
 
-
-    }
-
-    @Override
-    public void onProjectEditDialogRequested(ProjectDTO project) {
-        ProjectDialog pd = new ProjectDialog();
-        pd.setAction(ProjectDTO.ACTION_UPDATE);
-        pd.setContext(ctx);
-        pd.setProject(project);
-        pd.setListener(new ProjectDialog.ProjectDialogListener() {
-            @Override
-            public void onProjectAdded(final ProjectDTO project) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        projectListFragment.addProject(project);
-                    }
-                });
-            }
-
-            @Override
-            public void onProjectUpdated(ProjectDTO project) {
-
-            }
-
-            @Override
-            public void onError(String message) {
-
-            }
-        });
-        pd.show(getFragmentManager(), "PDIAG");
-    }
-
-    @Override
-    public void onProjectSitesRequested(ProjectDTO project) {
-
-        Intent i = new Intent(this, ProjectSitePagerActivity.class);
-        i.putExtra("project", project);
-        i.putExtra("type", SiteTaskAndStatusAssignmentFragment.OPERATIONS);
-        startActivityForResult(i, NEW_STATUS_EXPECTED);
-
-    }
     static final int NEW_STATUS_EXPECTED = 2936;
-    @Override
-    public void onProjectPictureRequested(ProjectDTO project) {
-        Intent i = new Intent(this, PictureActivity.class);
-        i.putExtra("type", PhotoUploadDTO.PROJECT_IMAGE);
-        i.putExtra("project", project);
-        startActivity(i);
-    }
-
-    @Override
-    public void onGalleryRequested(ProjectDTO project) {
-        Intent i = new Intent(this, PictureRecyclerGridActivity.class);
-        i.putExtra("project", project);
-        //i.putExtra("type", ImagePagerActivity.PROJECT);
-        startActivity(i);
-    }
-
-    @Override
-    public void onMapRequested(ProjectDTO project) {
-        Intent i = new Intent(this, MonitorMapActivity.class);
-        i.putExtra("project", project);
-        startActivity(i);
-    }
-
-    @Override
-    public void onClaimsAndInvoicesRequested(ProjectDTO project) {
-        Intent i = new Intent(this, ClaimAndInvoicePagerActivity.class);
-        i.putExtra("project", project);
-        startActivity(i);
-    }
-
-    @Override
-    public void onStatusReportRequested() {
-
-    }
 
     @Override
     public void onCompanyStaffClicked(CompanyStaffDTO companyStaff) {
