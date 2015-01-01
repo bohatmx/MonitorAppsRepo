@@ -70,11 +70,11 @@ implements ContractorClaimFragment.ContractorClaimFragmentListener,
 
     private void getCachedProjectData() {
         setRefreshActionButtonState(true);
-        contractorClaimFragment.rotateLogo();
+        contractorClaimFragment.setBusy();
         CacheUtil.getCachedProjectData(ctx,project.getProjectID(),new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
-                contractorClaimFragment.stopRotatingLogo();
+                contractorClaimFragment.setNotBusy();
                 if (response != null) {
                     if (response.getProjectList() != null && !response.getProjectList().isEmpty()) {
                         project = response.getProjectList().get(0);
@@ -101,7 +101,7 @@ implements ContractorClaimFragment.ContractorClaimFragmentListener,
         w.setProjectID(project.getProjectID());
 
         setRefreshActionButtonState(true);
-        contractorClaimFragment.rotateLogo();
+        contractorClaimFragment.setBusy();
         WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO response) {
@@ -109,7 +109,7 @@ implements ContractorClaimFragment.ContractorClaimFragmentListener,
                     @Override
                     public void run() {
                         setRefreshActionButtonState(false);
-                        contractorClaimFragment.stopRotatingLogo();
+                        contractorClaimFragment.setNotBusy();
                         if (!ErrorUtil.checkServerError(ctx,response)) {
                             return;
                         }
@@ -302,11 +302,11 @@ implements ContractorClaimFragment.ContractorClaimFragmentListener,
     List<TaskDTO> taskList;
     static final String LOG = ClaimAndInvoicePagerActivity.class.getSimpleName();
     private void getCachedCompanyData() {
-        contractorClaimFragment.rotateLogo();
+        contractorClaimFragment.setBusy();
         CacheUtil.getCachedData(ctx, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
-                contractorClaimFragment.stopRotatingLogo();
+                contractorClaimFragment.setNotBusy();
                 if (response != null) {
                     Log.d(LOG, "CacheUtil.CACHE_DATA cached response ok...............");
                     if (response.getCompany() == null || response.getCompany().getTaskList() == null) {
@@ -339,7 +339,7 @@ implements ContractorClaimFragment.ContractorClaimFragmentListener,
         RequestDTO w = new RequestDTO(RequestDTO.GET_COMPANY_DATA);
         w.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
         setRefreshActionButtonState(true);
-        contractorClaimFragment.rotateLogo();
+        contractorClaimFragment.setBusy();
         WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO response) {
@@ -347,7 +347,7 @@ implements ContractorClaimFragment.ContractorClaimFragmentListener,
                     @Override
                     public void run() {
                         setRefreshActionButtonState(false);
-                        contractorClaimFragment.stopRotatingLogo();
+                        contractorClaimFragment.setNotBusy();
                         if (!ErrorUtil.checkServerError(ctx, response)) {
                             return;
                         }

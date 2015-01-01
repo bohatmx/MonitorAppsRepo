@@ -85,6 +85,11 @@ public class PhotoCacheUtil {
                     for (PhotoUploadDTO ps: uploadedList) {
                         if (ps.getThumbFilePath().equalsIgnoreCase(p.getThumbFilePath())) {
                             p.setDateUploaded(new Date());
+                            File f = new File(ps.getThumbFilePath());
+                            if (f.exists()) {
+                                boolean del = f.delete();
+                                Log.w(LOG, "### about to delete image file: " + ps.getThumbFilePath() + " - " + del);
+                            }
                         }
                     }
                 }

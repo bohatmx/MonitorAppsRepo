@@ -9,7 +9,7 @@ import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.fragments.StatusReportFragment;
 
-public class StatusReportActivity extends ActionBarActivity implements StatusReportFragment.StatusReportListener{
+public class StatusReportActivity extends ActionBarActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,13 +48,5 @@ public class StatusReportActivity extends ActionBarActivity implements StatusRep
         super.onPause();
     }
 
-    @Override
-    public void onBusy() {
 
-    }
-
-    @Override
-    public void onNotBusy() {
-
-    }
 }

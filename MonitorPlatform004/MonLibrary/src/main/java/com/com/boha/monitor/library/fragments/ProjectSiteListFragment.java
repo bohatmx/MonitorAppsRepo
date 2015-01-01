@@ -42,8 +42,8 @@ import java.util.List;
 /**
  * Manages a list of project sites. Provides facility to select a site
  * and perform a set of actions: status, take picture, put on map etc.
- * Hosted by: SitePagerActivity - this activity
- * must implement the ProjectSiteListListener interface. SitePagerActivity thus listens
+ * Hosted by: ProjectSitePagerActivity - this activity
+ * must implement the ProjectSiteListListener interface. ProjectSitePagerActivity thus listens
  * to requests from this fragment and performs appropriate actions such as starting another activity.
  * e.g. the PictureActivity, MonitorMapActivty, TaskAssignmentActivity etc.
  *
@@ -68,7 +68,6 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
     TextView txtCount, txtName;
     int lastIndex;
     View view, topView;
-    ImageView imgLogo;
     ImageView imgSearch1, imgSearch2, heroImage;
     EditText editSearch;
 
@@ -91,7 +90,6 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
             Log.e(LOG, "++++ lastIndex in savedInstanceState: " + lastIndex);
         }
         txtCount = (TextView) view.findViewById(R.id.SITE_LIST_siteCount);
-        imgLogo = (ImageView) view.findViewById(R.id.SITE_LIST_imgLogo);
         topView = view.findViewById(R.id.SITE_LIST_TOP);
 
         imgSearch1 = (ImageView) view.findViewById(R.id.SLT_imgSearch1);
@@ -99,11 +97,6 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         editSearch = (EditText) view.findViewById(R.id.SLT_editSearch);
         heroImage = (ImageView) view.findViewById(R.id.SLT_heroImage);
         heroImage.setImageDrawable(Util.getRandomHeroImage(ctx));
-
-        View v = view.findViewById(R.id.SLT_searchLayout);
-
-        Util.expand(v, 1000, null);
-
         editSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -134,7 +127,6 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
             }
         });
 
-        imgLogo.setVisibility(View.GONE);
         mListView = (AbsListView) view.findViewById(R.id.SLT_list);
         Statics.setRobotoFontLight(ctx, txtCount);
         if (project.getProjectSiteList() != null && !project.getProjectSiteList().isEmpty()) {
@@ -261,7 +253,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         }
         list.add(ctx.getString(R.string.edit_site));
 
-        Util.showPopupBasicWithHeroImage(ctx,getActivity(),list,heroImage,ctx.getString(R.string.select_action), new Util.UtilPopupListener() {
+        Util.showPopupBasicWithHeroImage(ctx,getActivity(),list,topView,ctx.getString(R.string.select_action), new Util.UtilPopupListener() {
             @Override
             public void onItemSelected(int index) {
                 if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.sitestatus))) {

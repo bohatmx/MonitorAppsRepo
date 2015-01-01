@@ -289,7 +289,7 @@
     <string name="stop_scan">Stop GPS Scan</string>
     <string name="confirm_gps">Confirm GPS Location</string>
     <string name="site_map">Site Location Map</string>
-    <string name="project_map">Project Site Map</string>
+    <string name="project_map">Project Map</string>
     <string name="site_gallery">Site Update Gallery</string>
     <string name="status_rept">Status Report</string>
     <string name="title_activity_sub_task">SubTaskActivity</string>
@@ -352,5 +352,11 @@
     <string name="gps_complete">GPS coordinates done. Tap camera to begin.</string>
     <string name="title_activity_full_photo">FullPhotoActivity</string>
     <string name="site">Site</string>
+    <string name="title_activity_tab_test">TabTestActivity</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="uploading_photos">Uploading cached photos, please wait.</string>
+    <string name="photo_error">Unable to cache photo. Please insert an SD card</string>
 
 </resources>

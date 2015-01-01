@@ -27,7 +27,7 @@
                 android:id="@+id/CCX_title"
                 style="@style/Title2TextStyleGrey"
                 android:textColor="@color/blue"
-                android:layout_marginTop="@dimen/mon_wider"
+                android:layout_marginTop="64dp"
                 android:layout_marginLeft="@dimen/mon_padding"
                 android:text="@string/contractor_claim"
                 android:layout_width="wrap_content"
@@ -38,7 +38,6 @@
             android:id="@+id/CCX_middle"
             android:layout_below="@id/CCX_top"
             android:background="@color/white"
-            android:padding="@dimen/mon_padding"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -67,23 +66,44 @@
                 style="@style/Title2TextStyleGreen"
                 android:text="@string/select_task"
                 android:layout_marginLeft="@dimen/mon_margin"
-                android:layout_marginTop="@dimen/mon_margin"
+                android:layout_marginTop="@dimen/mon_padding"
                 android:layout_below="@id/CCX_engineerSpinner"
-                android:layout_marginBottom="@dimen/mon_margin"
+                android:layout_marginBottom="@dimen/mon_padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-            <Button
-                android:id="@+id/CCX_btnDate"
-                style="@style/ButtonNavyBlue"
+
+            <LinearLayout
                 android:layout_below="@id/CCX_taskSpinner"
-                android:text="@string/enter_date"
+                android:orientation="horizontal"
+                android:padding="@dimen/mon_padding"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/CCX_btnDate"
+                    style="@style/ButtonNavyBlue"
+                    android:layout_weight="1"
+                    android:text="@string/enter_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_width="@dimen/mon_padding"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:id="@+id/CCX_btnSave"
+                    style="@style/ButtonRed"
+                    android:text="@string/save"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
 
 
         </RelativeLayout>
     </RelativeLayout>
-
 
 
     <RelativeLayout
@@ -128,20 +148,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <Button
-        android:id="@+id/CCX_btnSave"
-        style="@style/ButtonRed"
-        android:text="@string/save"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="@dimen/mon_wider"
-        android:layout_marginRight="@dimen/mon_padding"
-        android:layout_width="@dimen/mon_hero_height_small"
-        android:layout_height="wrap_content" />
 
-    <ImageView
-        android:src="@drawable/maono"
-        android:id="@+id/CCX_logo"
-        android:layout_alignParentLeft="true"
+    <ProgressBar
+        android:id="@+id/CCX_progressBar"
+        android:layout_alignParentRight="true"
         android:layout_margin="@dimen/mon_margin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

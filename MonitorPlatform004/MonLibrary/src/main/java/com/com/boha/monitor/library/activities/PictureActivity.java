@@ -753,7 +753,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
 
             @Override
             public void onError() {
-                Toast.makeText(ctx, "Unable to cache photo. Please insert an SD card", Toast.LENGTH_LONG).show();
+                Util.showErrorToast(ctx, getString(R.string.photo_error));
             }
         });
     }
@@ -787,7 +787,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
 
             @Override
             public void onError() {
-                Toast.makeText(ctx,"Unable to cache photo. Please insert an SD card", Toast.LENGTH_LONG).show();
+                Util.showErrorToast(ctx, getString(R.string.photo_error));
             }
         });
 
@@ -816,7 +816,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
 
             @Override
             public void onError() {
-                Toast.makeText(ctx, "Unable to cache photo. Please insert an SD card", Toast.LENGTH_LONG).show();
+                Util.showErrorToast(ctx, getString(R.string.photo_error));
             }
         });
     }
@@ -859,7 +859,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
 
             @Override
             public void onError() {
-                Toast.makeText(ctx, "Unable to cache photo. Please insert an SD card", Toast.LENGTH_LONG).show();
+                Util.showErrorToast(ctx, getString(R.string.photo_error));
             }
         });
     }

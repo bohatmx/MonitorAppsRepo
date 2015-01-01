@@ -2,6 +2,7 @@ package com.com.boha.monitor.library.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -18,11 +19,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
+import com.com.boha.monitor.library.activities.ClaimAndInvoicePagerActivity;
+import com.com.boha.monitor.library.activities.MonitorMapActivity;
+import com.com.boha.monitor.library.activities.PictureActivity;
+import com.com.boha.monitor.library.activities.ProjectSitePagerActivity;
 import com.com.boha.monitor.library.adapters.PopupListAdapter;
 import com.com.boha.monitor.library.adapters.ProjectAdapter;
+import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteTaskDTO;
+import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
@@ -45,11 +52,9 @@ import java.util.List;
 public class ProjectListFragment extends Fragment implements PageFragment {
 
 
-    private ProjectListListener mListener;
     private ListView mListView;
     private TextView txtProjectCount, txtStatusCount, txtLabel;
-    ListPopupWindow actionsWindow;
-    List<String> list;
+
     static final String LOG = ProjectListFragment.class.getSimpleName();
     ProjectDTO project;
     int statusCount;
@@ -200,7 +205,21 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     static final DecimalFormat df = new DecimalFormat("###,###,###,###");
 
     int lastIndex;
-
+    private void startSitePager(ProjectDTO project) {
+        Intent i = new Intent(getActivity(), ProjectSitePagerActivity.class);
+        CompanyDTO company = new CompanyDTO();
+        company.setCompanyID(SharedUtil.getCompany(getActivity()).getCompanyID());
+        i.putExtra("project", project);
+        i.putExtra("company", company);
+        i.putExtra("type", SiteTaskAndStatusAssignmentFragment.PROJECT_MANAGER);
+        Log.e(LOG, "* about to start ProjectSitePagerActivity ...something goes over the cliff here ...");
+        //startActivityForResult(i, NEW_STATUS_EXPECTED);
+        try {
+            startActivity(i);
+        }catch (Exception e) {
+            Log.e(LOG,"FUCK!!!!", e);
+        }
+    }
     private void setList() {
 
         adapter = new ProjectAdapter(ctx, R.layout.project_item, projectList);
@@ -212,77 +231,88 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             txtStatusCount.setText("0");
         }
 
-        txtStatusCount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onStatusReportRequested();
-            }
-        });
+
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 project = projectList.get(position);
                 lastIndex = position;
-                list = new ArrayList<>();
-                list.add(ctx.getString(R.string.site_list));
-                list.add(ctx.getString(R.string.claims_invoices));
-                list.add(ctx.getString(R.string.project_map));
-                list.add(ctx.getString(R.string.take_picture));
-                list.add(ctx.getString(R.string.edit_project));
+                //startSitePager(project);
+                showPopup();
 
-                View v = getActivity().getLayoutInflater().inflate(R.layout.hero_image, null);
-                TextView cap = (TextView) v.findViewById(R.id.HERO_caption);
-                cap.setText(ctx.getString(R.string.select_action));
-                ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
-                img.setImageDrawable(Util.getRandomHeroImage(ctx));
 
-                actionsWindow = new ListPopupWindow(getActivity());
-                actionsWindow.setPromptView(v);
-                actionsWindow.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
-                actionsWindow.setAdapter(new PopupListAdapter(ctx,
-                        R.layout.xxsimple_spinner_item, list, false));
-                actionsWindow.setAnchorView(txtProjectCount);
-                actionsWindow.setWidth(600);
-                actionsWindow.setHorizontalOffset(100);
-                actionsWindow.setModal(true);
-                actionsWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        if (mListener == null) {
-                            actionsWindow.dismiss();
-                            return;
-                        }
-
-                        switch (position) {
-                            case 0:
-                                mListener.onProjectSitesRequested(project);
-                                break;
-                            case 1:
-                                mListener.onClaimsAndInvoicesRequested(project);
-                                break;
-
-                            case 2:
-                                mListener.onMapRequested(project);
-                                break;
-                            case 3:
-                                mListener.onProjectPictureRequested(project);
-                                break;
-
-                            case 4:
-                                mListener.onProjectEditDialogRequested(project);
-                                break;
-                        }
-                        actionsWindow.dismiss();
-                    }
-                });
-                actionsWindow.show();
             }
         });
         mListView.setSelection(lastIndex);
     }
 
+    ListPopupWindow actionsWindow;
+    List<String> list;
+    private void showPopup() {
+//        View v = getActivity().getLayoutInflater().inflate(R.layout.popup_project_actions, null);
+//        PopupWindow pw = new PopupWindow(v);
+//        pw.showAsDropDown(txtProjectCount);
+        list = new ArrayList<>();
+        list.add(ctx.getString(com.boha.monitor.library.R.string.site_list));
+        list.add(ctx.getString(com.boha.monitor.library.R.string.claims_invoices));
+        list.add(ctx.getString(com.boha.monitor.library.R.string.project_map));
+        list.add(ctx.getString(com.boha.monitor.library.R.string.take_picture));
 
+        View v = getActivity().getLayoutInflater().inflate(com.boha.monitor.library.R.layout.hero_image, null);
+        TextView cap = (TextView) v.findViewById(com.boha.monitor.library.R.id.HERO_caption);
+        cap.setText(ctx.getString(com.boha.monitor.library.R.string.select_action));
+        ImageView img = (ImageView) v.findViewById(com.boha.monitor.library.R.id.HERO_image);
+        img.setImageDrawable(Util.getRandomHeroImage(ctx));
+
+        actionsWindow = new ListPopupWindow(getActivity());
+        actionsWindow.setPromptView(v);
+        actionsWindow.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
+        actionsWindow.setAdapter(new PopupListAdapter(ctx,
+                com.boha.monitor.library.R.layout.xxsimple_spinner_item, list, false));
+        actionsWindow.setAnchorView(txtProjectCount);
+        actionsWindow.setWidth(600);
+        actionsWindow.setHorizontalOffset(100);
+        actionsWindow.setModal(true);
+        actionsWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        Log.e(LOG,"Yeaaah! position: " + position);
+                        Intent i = new Intent(ctx, ProjectSitePagerActivity.class);
+                        CompanyDTO company = new CompanyDTO();
+                        company.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
+                        i.putExtra("project",project);
+                        i.putExtra("company", company);
+                        i.putExtra("type", SiteTaskAndStatusAssignmentFragment.PROJECT_MANAGER);
+                        startActivity(i);
+                        break;
+                    case 1:
+                        Log.e(LOG,"Yeaaah! position: " + position);
+                        Intent i2 = new Intent(ctx, ClaimAndInvoicePagerActivity.class);
+                        i2.putExtra("project", project);
+                        startActivity(i2);
+                        break;
+                    case 2:
+                        Log.e(LOG,"Yeaaah! position: " + position);
+                        Intent i3 = new Intent(ctx, MonitorMapActivity.class);
+                        i3.putExtra("project", project);
+                        startActivity(i3);
+                        break;
+                    case 3:
+                        Log.e(LOG,"Yeaaah! position: " + position);
+                        Intent i4 = new Intent(ctx, PictureActivity.class);
+                        i4.putExtra("project", project);
+                        i4.putExtra("type", PhotoUploadDTO.PROJECT_IMAGE);
+                        startActivity(i4);
+                        break;
+                }
+                actionsWindow.dismiss();
+            }
+        });
+        actionsWindow.show();
+    }
     private void setFields() {
         //set fields
         topView = view.findViewById(R.id.topTop);
@@ -370,18 +400,12 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mListener = (ProjectListListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement ProjectListListener");
-        }
+
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
 
@@ -415,33 +439,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         }
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow logoAnimator interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <project>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface ProjectListListener {
-        public void onProjectClicked(ProjectDTO project);
-
-        public void onProjectEditDialogRequested(ProjectDTO project);
-
-        public void onProjectSitesRequested(ProjectDTO project);
-
-        public void onProjectPictureRequested(ProjectDTO project);
-
-        public void onGalleryRequested(ProjectDTO project);
-
-        public void onMapRequested(ProjectDTO project);
-
-        public void onClaimsAndInvoicesRequested(ProjectDTO project);
-
-        public void onStatusReportRequested();
-    }
 
     private List<ProjectDTO> projectList;
     private ProjectAdapter adapter;

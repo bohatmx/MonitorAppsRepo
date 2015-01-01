@@ -54,11 +54,7 @@
             android:name=".ProjectPagerActivity"
             android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="portrait"></activity>
-        <activity
-            android:name="com.com.boha.monitor.library.activities.SitePagerActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:parentActivityName=".ProjectPagerActivity" />
+
         <activity android:name="com.com.boha.monitor.library.activities.PictureRecyclerGridActivity"
             android:screenOrientation="portrait"/>
         <activity

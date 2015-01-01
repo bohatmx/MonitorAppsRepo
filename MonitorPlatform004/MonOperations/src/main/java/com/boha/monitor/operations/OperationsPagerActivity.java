@@ -33,7 +33,7 @@ import com.com.boha.monitor.library.activities.ClaimAndInvoicePagerActivity;
 import com.com.boha.monitor.library.activities.MonitorMapActivity;
 import com.com.boha.monitor.library.activities.PictureActivity;
 import com.com.boha.monitor.library.activities.PictureRecyclerGridActivity;
-import com.com.boha.monitor.library.activities.SitePagerActivity;
+import com.com.boha.monitor.library.activities.ProjectSitePagerActivity;
 import com.com.boha.monitor.library.activities.StaffActivity;
 import com.com.boha.monitor.library.activities.SubTaskActivity;
 import com.com.boha.monitor.library.adapters.DrawerAdapter;
@@ -618,7 +618,7 @@ public class OperationsPagerActivity extends ActionBarActivity
     @Override
     public void onProjectSitesRequested(ProjectDTO project) {
 
-        Intent i = new Intent(this, SitePagerActivity.class);
+        Intent i = new Intent(this, ProjectSitePagerActivity.class);
         i.putExtra("project", project);
         i.putExtra("type", SiteTaskAndStatusAssignmentFragment.OPERATIONS);
         startActivityForResult(i, NEW_STATUS_EXPECTED);

@@ -13,7 +13,13 @@ import com.com.boha.monitor.library.util.ErrorUtil;
 import com.com.boha.monitor.library.util.WebCheck;
 import com.com.boha.monitor.library.util.WebCheckResult;
 import com.com.boha.monitor.library.util.WebSocketUtilForRequests;
+import com.google.gson.Gson;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,35 +48,48 @@ public class RequestSyncService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.e(LOG, "### RequestSyncService onHandleIntent");
-        CacheUtil.getCachedRequests(getApplicationContext(), new CacheUtil.CacheRequestListener() {
-            @Override
-            public void onDataCached() {
-
+        FileInputStream stream;
+        try {
+            stream = getApplicationContext().openFileInput("requestCache.json");
+            String json = getStringFromInputStream(stream);
+            RequestCache cache = gson.fromJson(json, RequestCache.class);
+            if (cache != null) {
+                requestCache = cache;
+                Log.i(LOG, "++ RequestCache returned from disk, entries: "
+                        + requestCache.getRequestCacheEntryList().size());
+                print();
+                controlRequestUpload();
+            } else {
+                Log.e(LOG, "-- requestCache is null");
             }
+            Log.i(LOG, "++ request cache retrieved");
+        } catch (Exception e) {
 
-            @Override
-            public void onRequestCacheReturned(RequestCache cache) {
-                if (cache != null) {
-                    requestCache = cache;
-                    Log.i(LOG, "++ RequestCache returned from disk, entries: "
-                            + requestCache.getRequestCacheEntryList().size());
-                    print();
-                    controlRequestUpload();
-                } else {
-                    Log.e(LOG, "-- requestCache is null");
-                }
-            }
-
-            @Override
-            public void onError() {
-                Log.e(LOG, "## Problem with getting RequestCache, may be first time through");
-            }
-        });
-
+        }
     }
 
     int currentIndex;
+    static final Gson gson = new Gson();
+    private static String getStringFromInputStream(InputStream is) throws IOException {
 
+        BufferedReader br = null;
+        StringBuilder sb = new StringBuilder();
+        String line;
+        try {
+            br = new BufferedReader(new InputStreamReader(is));
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+
+        } finally {
+            if (br != null) {
+                br.close();
+            }
+        }
+        String json = sb.toString();
+        return json;
+
+    }
     private void controlRequestUpload() {
         WebCheckResult r = WebCheck.checkNetworkAvailability(getApplicationContext());
         if (r.isWifiConnected()) {

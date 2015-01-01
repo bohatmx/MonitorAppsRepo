@@ -6,12 +6,20 @@
     android:background="@color/grey"
     android:layout_height="match_parent">
 
+    <RelativeLayout
+        android:id="@+id/STATLST_handle"
+        android:layout_width="match_parent"
+        android:layout_height="1dp">
+
+        </RelativeLayout>
+
     <ImageView
         android:id="@+id/STATLST_heroImage"
         android:src="@drawable/under_construction"
+        android:layout_below="@id/STATLST_handle"
         android:scaleType="centerCrop"
         android:layout_width="match_parent"
-        android:layout_height="90dp" />
+        android:layout_height="@dimen/mon_hero_height_small" />
 
     <RelativeLayout
         android:id="@+id/STATLST_top"
@@ -54,7 +62,6 @@
                 android:id="@+id/STATLST_startDate"
                 android:text="Start Date"
                 style="@style/TextStyleSmall"
-                android:textColor="@color/white"
                 android:layout_below="@id/label1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -78,7 +85,6 @@
                 android:id="@+id/STATLST_endDate"
                 android:text="End Date"
                 style="@style/TextStyleSmall"
-                android:textColor="@color/white"
                 android:layout_below="@id/label2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -110,18 +116,12 @@
         android:text="999"
         style="@style/RedCircle"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="@dimen/mon_widest"
         android:elevation="4dp"
         android:layout_marginRight="@dimen/mon_margin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <ImageView
-        android:src="@drawable/maono"
-        android:layout_margin="@dimen/mon_padding"
-        android:layout_width="wrap_content"
-        android:id="@+id/STATLST_logo"
-        android:layout_height="wrap_content" />
     <TextView
         android:id="@+id/STATLST_txtEmpty"
         android:text="No status updates found"
@@ -130,6 +130,12 @@
         android:layout_marginLeft="@dimen/mon_padding"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ProgressBar
+        android:id="@+id/STATLST_progress"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/mon_margin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 </RelativeLayout>

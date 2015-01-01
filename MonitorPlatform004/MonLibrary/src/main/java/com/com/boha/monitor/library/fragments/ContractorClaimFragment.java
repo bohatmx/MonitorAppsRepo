@@ -1,7 +1,5 @@
 package com.com.boha.monitor.library.fragments;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -10,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -18,6 +15,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListPopupWindow;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
@@ -33,7 +31,6 @@ import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.ErrorUtil;
 import com.com.boha.monitor.library.util.Statics;
-import com.com.boha.monitor.library.util.ToastUtil;
 import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebSocketUtil;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -78,8 +75,7 @@ public class ContractorClaimFragment extends Fragment implements PageFragment {
     TextView txtProject;
     ContractorClaimDTO contractorClaim;
     ProjectSiteSelectionAdapter adapter;
-    ImageView imgLogo;
-    ObjectAnimator objectAnimator;
+    ProgressBar progressBar;
     static final Locale locale = Locale.getDefault();
     static final SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd MMMM yyyy", locale);
 
@@ -329,8 +325,7 @@ public class ContractorClaimFragment extends Fragment implements PageFragment {
         middleView = view.findViewById(R.id.CCX_middle);
         topView = view.findViewById(R.id.CCX_topTop);
         imgMore = (ImageView) view.findViewById(R.id.CCX_imgMore);
-        imgLogo = (ImageView) view.findViewById(R.id.CCX_logo);
-        imgLogo.setVisibility(View.GONE);
+        progressBar = (ProgressBar) view.findViewById(R.id.CCX_progressBar);
         txtCount = (TextView) view.findViewById(R.id.CCX_siteCount);
         txtProject = (TextView) view.findViewById(R.id.CCX_projectName);
         txtEngineerName = (TextView) view.findViewById(R.id.CCX_engineerSpinner);
@@ -434,44 +429,12 @@ public class ContractorClaimFragment extends Fragment implements PageFragment {
 
     }
 
-    public void rotateLogo() {
-        imgLogo.setVisibility(View.VISIBLE);
-        objectAnimator = ObjectAnimator.ofFloat(imgLogo, "rotation", 0.0f, 360f);
-        objectAnimator.setRepeatCount(ObjectAnimator.INFINITE);
-        objectAnimator.setDuration(200);
-        objectAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-        objectAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-        objectAnimator.start();
+    public void setBusy() {
+        progressBar.setVisibility(View.VISIBLE);
     }
-
-    public void stopRotatingLogo() {
-        imgLogo.setVisibility(View.GONE);
-        objectAnimator.cancel();
+    public void setNotBusy() {
+        progressBar.setVisibility(View.GONE);
     }
-
-
-    boolean isListOpen;
-
     private void setList() {
         adapter = new ProjectSiteSelectionAdapter(ctx, R.layout.project_site_item_select,
                 siteList, new ProjectSiteSelectionAdapter.ProjectSiteSelectionAdapterListener() {

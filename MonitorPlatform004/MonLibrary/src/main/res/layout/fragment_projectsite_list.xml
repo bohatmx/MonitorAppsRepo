@@ -32,16 +32,12 @@
         style="@style/RedCountBox"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="@dimen/mon_wider"
+        android:layout_marginRight="@dimen/mon_margin"
         android:layout_centerVertical="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <ImageView
-        android:id="@+id/SITE_LIST_imgLogo"
-        android:src="@drawable/maono"
-        android:layout_margin="@dimen/mon_margin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+
 
 </RelativeLayout>

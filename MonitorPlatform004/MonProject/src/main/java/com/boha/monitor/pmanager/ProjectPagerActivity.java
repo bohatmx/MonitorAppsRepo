@@ -13,31 +13,22 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListPopupWindow;
 import android.widget.ProgressBar;
 
-import com.com.boha.monitor.library.activities.ClaimAndInvoicePagerActivity;
-import com.com.boha.monitor.library.activities.MonitorMapActivity;
-import com.com.boha.monitor.library.activities.PictureActivity;
 import com.com.boha.monitor.library.activities.PictureRecyclerGridActivity;
-import com.com.boha.monitor.library.activities.SitePagerActivity;
-import com.com.boha.monitor.library.adapters.DrawerAdapter;
-import com.com.boha.monitor.library.dialogs.ProjectDialog;
 import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
-import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.fragments.PageFragment;
 import com.com.boha.monitor.library.fragments.ProjectListFragment;
-import com.com.boha.monitor.library.fragments.SiteTaskAndStatusAssignmentFragment;
 import com.com.boha.monitor.library.fragments.StatusReportFragment;
 import com.com.boha.monitor.library.services.PhotoUploadService;
 import com.com.boha.monitor.library.services.RequestSyncService;
@@ -55,12 +46,8 @@ import java.util.List;
 
 
 public class ProjectPagerActivity extends ActionBarActivity
-        implements ProjectListFragment.ProjectListListener,
-        StatusReportFragment.StatusReportListener {
-
-    private DrawerLayout mDrawerLayout;
-    private DrawerAdapter mDrawerAdapter;
-    private LayoutInflater inflater;
+         {
+    View handle;
     ProgressBar progressBar;
     static final String LOG = ProjectPagerActivity.class.getSimpleName();
 
@@ -69,7 +56,7 @@ public class ProjectPagerActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_pager);
         ctx = getApplicationContext();
-        inflater = getLayoutInflater();
+        handle = findViewById(R.id.TIT_handle);
         mPager = (ViewPager) findViewById(R.id.TIT_pager);
         if (mPager == null) throw new UnsupportedOperationException("Fucking pager is null");
         PagerTitleStrip strip = (PagerTitleStrip) findViewById(R.id.pager_title_strip);
@@ -265,106 +252,10 @@ public class ProjectPagerActivity extends ActionBarActivity
     Context ctx;
     ResponseDTO response;
     int currentPageIndex;
-
-    @Override
-    public void onProjectClicked(ProjectDTO project) {
-
-    }
-
-    @Override
-    public void onProjectEditDialogRequested(ProjectDTO project) {
-        ProjectDialog pd = new ProjectDialog();
-        pd.setAction(ProjectDTO.ACTION_UPDATE);
-        pd.setContext(ctx);
-        pd.setProject(project);
-        pd.setListener(new ProjectDialog.ProjectDialogListener() {
-            @Override
-            public void onProjectAdded(final ProjectDTO project) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        projectListFragment.addProject(project);
-                    }
-                });
-            }
-
-            @Override
-            public void onProjectUpdated(ProjectDTO project) {
-
-            }
-
-            @Override
-            public void onError(String message) {
-
-            }
-        });
-        pd.show(getFragmentManager(), "PDIAG");
-    }
-
-    @Override
-    public void onProjectSitesRequested(ProjectDTO project) {
-
-        Intent i = new Intent(this, SitePagerActivity.class);
-        i.putExtra("project", project);
-        i.putExtra("company", company);
-        i.putExtra("type", SiteTaskAndStatusAssignmentFragment.PROJECT_MANAGER);
-        startActivityForResult(i, NEW_STATUS_EXPECTED);
-
-        WebCheckResult w = WebCheck.checkNetworkAvailability(ctx);
-        if (w.isWifiConnected()) {
-            mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
-                @Override
-                public void onTasksSynced(int goodResponses, int badResponses) {
-                    Log.i(LOG, "** cached requests sync, good: " + goodResponses + " bad: " + badResponses);
-                }
-
-                @Override
-                public void onError(String message) {
-                    Log.e(LOG, message);
-                }
-            });
-        }
-
-
-    }
-
+    ProjectDTO project;
+    ListPopupWindow actionsWindow;
+    List<String> list;
     static final int NEW_STATUS_EXPECTED = 2937;
-
-    @Override
-    public void onProjectPictureRequested(ProjectDTO project) {
-        Intent i = new Intent(this, PictureActivity.class);
-        i.putExtra("type", PhotoUploadDTO.PROJECT_IMAGE);
-        i.putExtra("project", project);
-        startActivity(i);
-    }
-
-    @Override
-    public void onGalleryRequested(ProjectDTO project) {
-        Intent i = new Intent(this, PictureRecyclerGridActivity.class);
-        i.putExtra("project", project);
-        //  i.putExtra("type", ImagePagerActivity.PROJECT);
-        startActivity(i);
-    }
-
-    @Override
-    public void onMapRequested(ProjectDTO project) {
-        Intent i = new Intent(this, MonitorMapActivity.class);
-        i.putExtra("project", project);
-        startActivity(i);
-    }
-
-    @Override
-    public void onClaimsAndInvoicesRequested(ProjectDTO project) {
-        Intent i = new Intent(this, ClaimAndInvoicePagerActivity.class);
-        i.putExtra("project", project);
-        startActivity(i);
-    }
-
-    @Override
-    public void onStatusReportRequested() {
-        mPager.setCurrentItem(1, true);
-    }
-
     static final int PICTURE_REQUESTED = 9133;
 
     @Override
@@ -380,16 +271,6 @@ public class ProjectPagerActivity extends ActionBarActivity
                 projectListFragment.updateStatusCount(count);
             }
         }
-    }
-
-    @Override
-    public void onBusy() {
-        progressBar.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onNotBusy() {
-        progressBar.setVisibility(View.GONE);
     }
 
     private class PagerAdapter extends FragmentStatePagerAdapter {

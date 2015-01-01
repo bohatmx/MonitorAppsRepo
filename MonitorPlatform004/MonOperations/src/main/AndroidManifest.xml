@@ -48,7 +48,7 @@
             android:name="com.com.boha.monitor.library.activities.CameraActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity
-            android:name="com.com.boha.monitor.library.activities.SitePagerActivity"
+            android:name="com.com.boha.monitor.library.activities.ProjectSitePagerActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.com.boha.monitor.library.activities.ImageActivity"

@@ -51,7 +51,7 @@ import java.util.List;
 import static com.com.boha.monitor.library.util.Util.showErrorToast;
 import static com.com.boha.monitor.library.util.Util.showToast;
 
-public class SitePagerActivity extends ActionBarActivity implements com.google.android.gms.location.LocationListener,
+public class ProjectSitePagerActivity extends ActionBarActivity implements com.google.android.gms.location.LocationListener,
         GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener,
         ProjectSiteListFragment.ProjectSiteListListener, GPSScanFragment.GPSScanFragmentListener {
@@ -64,6 +64,7 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.w(LOG,"##### onCreate ...........");
         setContentView(R.layout.activity_site_pager);
         ctx = getApplicationContext();
 
@@ -72,7 +73,7 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
         mPager.setOffscreenPageLimit(NUM_ITEMS - 1);
         PagerTitleStrip strip = (PagerTitleStrip) findViewById(R.id.pager_title_strip);
         strip.setVisibility(View.GONE);
-        //
+
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
         company = (CompanyDTO) getIntent().getSerializableExtra("company");
         type = getIntent().getIntExtra("type", SiteTaskAndStatusAssignmentFragment.OPERATIONS);
@@ -80,6 +81,7 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
         setTitle(ctx.getString(R.string.project_sites));
         getSupportActionBar().setSubtitle(project.getProjectName());
         mLocationClient = new LocationClient(ctx, this, this);
+        Log.e(LOG,"### about to start photo service");
         startPhotoService();
         getCachedProjectData();
     }
@@ -97,9 +99,12 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
                 if (response.getProjectList() != null && !response.getProjectList().isEmpty()) {
                     project = response.getProjectList().get(0);
                     buildPages();
-                }
-                if (r.isWifiConnected()) {
-                    getProjectData();
+                } else {
+                    if (r.isWifiConnected()) {
+                        getProjectData();
+                    } else {
+                        Util.showToast(ctx, ctx.getString(R.string.connect_wifi));
+                    }
                 }
 
             }
@@ -198,7 +203,7 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
             WebCheckResult w = WebCheck.checkNetworkAvailability(ctx);
             if (w.isWifiConnected()) {
                 if (pBound == true) {
-                    Toast.makeText(ctx,"Uploading cached photos, please wait.",Toast.LENGTH_LONG).show();
+                    Util.showToast(ctx, getString(R.string.uploading_photos));
                     pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
                         @Override
                         public void onUploadsComplete(int count) {
@@ -711,7 +716,7 @@ public class SitePagerActivity extends ActionBarActivity implements com.google.a
     PagerAdapter adapter;
     ProjectDTO project;
     LocationClient mLocationClient;
-    static final String LOG = SitePagerActivity.class.getSimpleName();
+    static final String LOG = ProjectSitePagerActivity.class.getSimpleName();
     static final int SITE_PICTURE_REQUEST = 113,
             SITE_TASK_REQUEST = 114;
 

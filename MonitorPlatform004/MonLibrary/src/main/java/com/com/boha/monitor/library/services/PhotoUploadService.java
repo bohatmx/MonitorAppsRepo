@@ -14,18 +14,20 @@ import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebCheck;
 import com.com.boha.monitor.library.util.WebCheckResult;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 /**
  * Manages the uploading of photos from a list held in cache. Uploads each photo
  * and notifies any activity bound to it on completion. Otherwise these cached photos
  * are uploaded in a silent process not visible to the user.
- *
+ * <p/>
  * It may be started by a startService call or may be bound to an activity via the
  * IBinder interface.
- *
+ * <p/>
  * Entry points: onHandleIntent, uploadCachedPhotos
  */
 public class PhotoUploadService extends IntentService {
@@ -150,6 +152,7 @@ public class PhotoUploadService extends IntentService {
                 Log.i(LOG, "---- thumbnail uploaded, elapsed: " + Util.getElapsed(start, end) + " seconds");
                 dto.setDateThumbUploaded(new Date());
                 uploadedList.add(dto);
+
                 index++;
                 controlThumbUploads();
             }
