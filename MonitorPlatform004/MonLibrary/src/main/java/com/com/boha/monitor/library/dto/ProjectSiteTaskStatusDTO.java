@@ -157,10 +157,10 @@ public class ProjectSiteTaskStatusDTO implements Serializable, Comparable<Projec
     @Override
     public int compareTo(ProjectSiteTaskStatusDTO another) {
         if (this.statusDate.before(another.statusDate)) {
-            return -1;
+            return 1;
         }
         if (this.statusDate.after(another.statusDate)) {
-            return 1;
+            return -1;
         }
         return 0;
     }

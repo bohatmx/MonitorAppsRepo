@@ -82,7 +82,6 @@ public class ExecProjectGridFragment extends Fragment implements PageFragment{
                 project = projectList.get(position);
                 //setup list for pop
                 final List<String> list = new ArrayList<String>();
-                list.add(ctx.getString(R.string.site_list));
                 list.add(ctx.getString(R.string.quick_status));
                 list.add(ctx.getString(R.string.claims_invoices));
                 list.add(ctx.getString(R.string.status_reports));
@@ -95,15 +94,13 @@ public class ExecProjectGridFragment extends Fragment implements PageFragment{
                 actionsWindow.setAdapter(new PopupListAdapter(ctx,
                         com.boha.monitor.library.R.layout.xxsimple_spinner_item, list,false));
                 actionsWindow.setAnchorView(txtTitle);
-                actionsWindow.setWidth(300);
+                actionsWindow.setWidth(400);
                 actionsWindow.setHorizontalOffset(100);
                 actionsWindow.setModal(true);
                 actionsWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        if (list.get(position).equalsIgnoreCase(ctx.getString(R.string.site_list))) {
 
-                        }
                         if (list.get(position).equalsIgnoreCase(ctx.getString(R.string.claims_invoices))) {
 
                         }

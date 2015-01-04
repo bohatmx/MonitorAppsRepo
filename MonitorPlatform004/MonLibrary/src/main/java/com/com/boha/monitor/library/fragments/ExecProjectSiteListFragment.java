@@ -96,6 +96,9 @@ public class ExecProjectSiteListFragment extends Fragment {
         return view;
     }
 
+    private void getProjectData() {
+
+    }
     private void search() {
         if (editSearch.getText().toString().isEmpty()) {
             return;

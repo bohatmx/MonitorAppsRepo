@@ -65,7 +65,7 @@
             android:name="com.com.boha.monitor.library.activities.ClaimAndInvoicePagerActivity"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name="com.com.boha.monitor.library.activities.StatusReportActivity"
+            android:name="com.com.boha.monitor.library.activities.SiteStatusReportActivity"
             android:label="@string/title_activity_status_report"></activity>
         <activity
             android:name="com.com.boha.monitor.library.activities.SubTaskActivity"

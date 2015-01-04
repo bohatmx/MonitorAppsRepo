@@ -331,12 +331,13 @@ public class SubTaskStatusAssignmentFragment extends Fragment {
     }
 
     private void sendSubTaskStatus() {
-        Log.w(LOG, "##### sending subtaskStatus");
+        Log.w(LOG, "##### sending subtaskStatus to cloud");
         RequestDTO w = new RequestDTO(RequestDTO.ADD_SUBTASK_STATUS);
         final SubTaskStatusDTO s = new SubTaskStatusDTO();
         s.setSubTaskID(subTask.getSubTaskID());
         s.setCompanyStaffID(SharedUtil.getCompanyStaff(ctx).getCompanyStaffID());
         s.setTaskStatus(taskStatus);
+        s.setProjectSiteTaskID(task.getProjectSiteTaskID());
         w.setSubTaskStatus(s);
 
 

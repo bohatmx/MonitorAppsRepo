@@ -86,8 +86,7 @@ public class ExecPagerActivity extends ActionBarActivity implements
         setTitle(SharedUtil.getCompany(ctx).getCompanyName());
         CompanyStaffDTO staff = SharedUtil.getCompanyStaff(ctx);
         getSupportActionBar().setSubtitle(staff.getFullName());
-        //
-        // PhotoUploadService.uploadCachedPhotos(ctx);
+
     }
 
     private void setDrawerList() {
@@ -235,25 +234,11 @@ public class ExecPagerActivity extends ActionBarActivity implements
             STAFF = 1, CLIENTS = 2, OVERALL_STATUS = 3, BENEFICIARIES = 4, PROJECT_MAPS = 5,
             INVOICES = 6, HAPPY_LETTERS = 7, STATUS_NOTIFICATIONS = 8;
 
-    Menu mMenu;
 
-    public void setRefreshActionButtonState(final boolean refreshing) {
-        if (mMenu != null) {
-            final MenuItem refreshItem = mMenu.findItem(R.id.action_refresh);
-            if (refreshItem != null) {
-                if (refreshing) {
-                    refreshItem.setActionView(R.layout.action_bar_progess);
-                } else {
-                    refreshItem.setActionView(null);
-                }
-            }
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_exec_pager, menu);
-        mMenu = menu;
         return true;
     }
 
@@ -285,6 +270,7 @@ public class ExecPagerActivity extends ActionBarActivity implements
     ExecProjectGridFragment execProjectGridFragment;
 
     private void buildPages() {
+
         if (pageFragmentList == null) {
             pageFragmentList = new ArrayList<>();
             execProjectGridFragment = new ExecProjectGridFragment();
@@ -294,7 +280,6 @@ public class ExecPagerActivity extends ActionBarActivity implements
 
             statusReportFragment = new StatusReportFragment();
             statusReportFragment.setArguments(data1);
-
 
             pageFragmentList.add(execProjectGridFragment);
             pageFragmentList.add(statusReportFragment);

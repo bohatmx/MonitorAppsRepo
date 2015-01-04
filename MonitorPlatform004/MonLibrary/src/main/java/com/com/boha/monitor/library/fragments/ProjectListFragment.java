@@ -238,7 +238,10 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 project = projectList.get(position);
                 lastIndex = position;
-                //startSitePager(project);
+                if (project.getProjectSiteList() == null || project.getProjectSiteList().isEmpty()) {
+                    Util.showErrorToast(ctx, "Project has no sites defined. Please add the sites.");
+                    return;
+                }
                 showPopup();
 
 
@@ -250,9 +253,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     ListPopupWindow actionsWindow;
     List<String> list;
     private void showPopup() {
-//        View v = getActivity().getLayoutInflater().inflate(R.layout.popup_project_actions, null);
-//        PopupWindow pw = new PopupWindow(v);
-//        pw.showAsDropDown(txtProjectCount);
+
         list = new ArrayList<>();
         list.add(ctx.getString(com.boha.monitor.library.R.string.site_list));
         list.add(ctx.getString(com.boha.monitor.library.R.string.claims_invoices));

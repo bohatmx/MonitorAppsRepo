@@ -18,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dialogs.ProjectSiteDialog;
@@ -99,12 +98,11 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
                 if (response.getProjectList() != null && !response.getProjectList().isEmpty()) {
                     project = response.getProjectList().get(0);
                     buildPages();
+                }
+                if (r.isWifiConnected()) {
+                    getProjectData();
                 } else {
-                    if (r.isWifiConnected()) {
-                        getProjectData();
-                    } else {
-                        Util.showToast(ctx, ctx.getString(R.string.connect_wifi));
-                    }
+                    Util.showToast(ctx, ctx.getString(R.string.connect_wifi));
                 }
 
             }
@@ -292,7 +290,11 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
                     "#################### onStart - locationClient connecting ... ");
         }
         Intent intent2 = new Intent(this, PhotoUploadService.class);
-        bindService(intent2, pConnection, Context.BIND_AUTO_CREATE);
+        try {
+            bindService(intent2, pConnection, Context.BIND_AUTO_CREATE);
+        }catch (Exception e) {
+            Log.e(LOG,"## problem with binding service", e);
+        }
 
     }
 
@@ -398,6 +400,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
     }
 
     private void buildPages() {
+
             pageFragmentList = new ArrayList<>();
             projectSiteListFragment = new ProjectSiteListFragment();
             Bundle data1 = new Bundle();
@@ -538,7 +541,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
 
     @Override
     public void onStatusListRequested(ProjectSiteDTO projectSite, int index) {
-        Intent i = new Intent(this, StatusReportActivity.class);
+        Intent i = new Intent(this, SiteStatusReportActivity.class);
         i.putExtra("projectSite", projectSite);
         startActivity(i);
     }

@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
@@ -27,6 +28,7 @@ public class PictureRecyclerGridActivity extends ActionBarActivity {
     RecyclerView list;
     TextView title;
     Context ctx;
+    Button btnStatusRpt;
     ProjectSiteDTO projectSite;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,8 @@ public class PictureRecyclerGridActivity extends ActionBarActivity {
         setContentView(R.layout.activity_picture_recycler_grid);
         list = (RecyclerView) findViewById(R.id.FI_recyclerView);
         title = (TextView) findViewById(R.id.RCV_title);
+        btnStatusRpt = (Button) findViewById(R.id.RCV_btnStatusReport);
+
 
         list.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         list.setItemAnimator(new DefaultItemAnimator());
@@ -59,6 +63,19 @@ public class PictureRecyclerGridActivity extends ActionBarActivity {
             });
             list.setAdapter(adapter);
         }
+        btnStatusRpt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i;
+                if (projectSite != null) {
+                    i = new Intent(ctx, SiteStatusReportActivity.class);
+                    i.putExtra("projectSite", projectSite);
+                    startActivity(i);
+                }
+
+
+            }
+        });
         setTitle(SharedUtil.getCompany(ctx).getCompanyName());
         CompanyStaffDTO staff = SharedUtil.getCompanyStaff(ctx);
         getSupportActionBar().setSubtitle(staff.getFullName());
@@ -125,7 +142,10 @@ public class PictureRecyclerGridActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_status) {
+            Intent i = new Intent(ctx, SiteStatusReportActivity.class);
+            i.putExtra("projectSite", projectSite);
+            startActivity(i);
             return true;
         }
 

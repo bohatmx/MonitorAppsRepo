@@ -261,6 +261,13 @@ public class CacheUtil {
                     cacheListener.onDataCached();
                 }
             }
+            if (siteListener != null) {
+                if (v > 0) {
+                    siteListener.onError();
+                } else {
+                    siteListener.onDataCached();
+                }
+            }
         }
     }
 

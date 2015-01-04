@@ -6,6 +6,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
@@ -56,7 +57,9 @@ public class StatusSyncService extends IntentService {
     private void controlRequests() {
         if (index == projectSiteList.size()) {
             end = System.currentTimeMillis();
-            Log.e(LOG, "########## StatusSyncService completed, elapsed: " + Util.getElapsed(start, end) + " seconds");
+            Log.e(LOG, "########## StatusSyncService completed, elapsed: "
+                    + Util.getElapsed(start, end) + " seconds, sites sync'd: " + index);
+            statusSyncServiceListener.onStatusSyncComplete("" + index + " " + getString(R.string.site_syncd));
             return;
         }
         if (index < projectSiteList.size()) {
@@ -70,8 +73,26 @@ public class StatusSyncService extends IntentService {
         WebSocketUtil.sendRequest(getApplicationContext(), Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(ResponseDTO response) {
+
                 if (response.getStatusCode() == 0) {
-                    CacheUtil.cacheSiteData(getApplicationContext(),response.getProjectSiteList().get(0), null);
+                    final ProjectSiteDTO ss = response.getProjectSiteList().get(0);
+                    Log.i(LOG,"*** onMessage GET_SITE_STATUS status: " + response.getStatusCode() + " site: " + ss.getProjectSiteName());
+                    CacheUtil.cacheSiteData(getApplicationContext(),ss, new CacheUtil.CacheSiteListener() {
+                        @Override
+                        public void onSiteReturnedFromCache(ProjectSiteDTO site) {
+
+                        }
+
+                        @Override
+                        public void onDataCached() {
+                            statusSyncServiceListener.onSiteSyncComplete(ss, index + 1);
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+                    });
                     index++;
                     controlRequests();
                 }
@@ -91,6 +112,7 @@ public class StatusSyncService extends IntentService {
     int index;
     ProjectDTO project;
     List<ProjectSiteDTO> projectSiteList;
+    StatusSyncServiceListener statusSyncServiceListener;
     static final String LOG = StatusSyncService.class.getSimpleName();
     public class LocalBinder extends Binder {
         public StatusSyncService getService() {
@@ -106,8 +128,13 @@ public class StatusSyncService extends IntentService {
     public int getSitesCompleted() {
         return index;
     }
-    public void startSyncService(Intent intent) {
+    public void startSyncService(Intent intent, StatusSyncServiceListener listener) {
+        statusSyncServiceListener = listener;
         onHandleIntent(intent);
     }
 
+    public interface StatusSyncServiceListener {
+        public void onStatusSyncComplete(String message);
+        public void onSiteSyncComplete(ProjectSiteDTO site, int count);
+    }
 }

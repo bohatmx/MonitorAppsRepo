@@ -23,13 +23,15 @@ public class ProjectDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer projectID,siteCount, statusCount, invoiceCount,
             contractorClaimCount, beneficiaryCount,
-            photoCount;
+            photoCount,subTaskStatusCount;
+
     private ProjectSiteTaskStatusDTO lastStatus;
     private String projectName, clientName;
     private String description;
     private long dateRegistered;
     private Integer completeFlag;
     private Integer companyID, clientID;
+
     private List<ProjectSiteDTO> projectSiteList = new ArrayList<>();
     private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
     private List<BeneficiaryDTO> beneficiaryList = new ArrayList<>();
@@ -37,7 +39,16 @@ public class ProjectDTO implements Serializable {
     private List<TaskPriceDTO> taskPriceList;
     private List<ContractorClaimDTO> contractorClaimList = new ArrayList<>();
     private List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList;
+    private List<SubTaskStatusDTO> subTaskStatusList;
     public ProjectDTO() {
+    }
+
+    public List<SubTaskStatusDTO> getSubTaskStatusList() {
+        return subTaskStatusList;
+    }
+
+    public void setSubTaskStatusList(List<SubTaskStatusDTO> subTaskStatusList) {
+        this.subTaskStatusList = subTaskStatusList;
     }
 
     public List<TaskPriceDTO> getTaskPriceList() {
@@ -46,6 +57,14 @@ public class ProjectDTO implements Serializable {
 
     public void setTaskPriceList(List<TaskPriceDTO> taskPriceList) {
         this.taskPriceList = taskPriceList;
+    }
+
+    public Integer getSubTaskStatusCount() {
+        return subTaskStatusCount;
+    }
+
+    public void setSubTaskStatusCount(Integer subTaskStatusCount) {
+        this.subTaskStatusCount = subTaskStatusCount;
     }
 
     public List<ProjectSiteTaskStatusDTO> getProjectSiteTaskStatusList() {

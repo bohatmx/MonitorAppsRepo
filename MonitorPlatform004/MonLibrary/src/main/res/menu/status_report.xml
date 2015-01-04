@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.com.boha.monitor.library.activities.StatusReportActivity" >
+    tools:context="com.com.boha.monitor.library.activities.SiteStatusReportActivity" >
     <item android:id="@+id/action_camera"
         android:title="@string/take_pic"
         android:icon="@drawable/camera_a32"

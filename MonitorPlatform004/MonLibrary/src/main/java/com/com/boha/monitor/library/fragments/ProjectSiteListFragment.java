@@ -2,6 +2,7 @@ package com.com.boha.monitor.library.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -18,6 +19,7 @@ import android.widget.ListPopupWindow;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
+import com.com.boha.monitor.library.activities.SiteStatusReportActivity;
 import com.com.boha.monitor.library.adapters.ProjectSiteAdapter;
 import com.com.boha.monitor.library.adapters.ProjectSiteLocalAdapter;
 import com.com.boha.monitor.library.adapters.SiteAdapterInterface;
@@ -151,6 +153,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         }
         if (found) {
             mListView.setSelection(index);
+            lastIndex = index;
         } else {
             Util.showToast(ctx, ctx.getString(R.string.site_not_found) + " " + editSearch.getText().toString());
         }
@@ -161,6 +164,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         this.project = project;
         Collections.sort(project.getProjectSiteList());
         projectSiteAdapter.notifyDataSetChanged();
+        mListView.setSelection(lastIndex);
 
     }
 
@@ -185,7 +189,8 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
     public void refresh(ProjectDTO project) {
         this.project = project;
         projectSiteList = project.getProjectSiteList();
-        setList();
+        projectSiteAdapter.notifyDataSetChanged();
+        mListView.setSelection(lastIndex);
     }
     private void setList() {
         Log.i(LOG, "## setList");
@@ -251,9 +256,10 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         } else {
             list.add(ctx.getString(R.string.get_gps));
         }
-        list.add(ctx.getString(R.string.edit_site));
+        list.add(ctx.getString(R.string.status_report));
 
-        Util.showPopupBasicWithHeroImage(ctx,getActivity(),list,topView,ctx.getString(R.string.select_action), new Util.UtilPopupListener() {
+        Util.showPopupBasicWithHeroImage(ctx,getActivity(),list,topView,ctx.getString(R.string.site_colon)
+                + projectSite.getProjectSiteName(), new Util.UtilPopupListener() {
             @Override
             public void onItemSelected(int index) {
                 if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.sitestatus))) {
@@ -271,8 +277,10 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
                 if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.get_gps))) {
                     mListener.onGPSRequested(projectSite, lastIndex);
                 }
-                if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.edit_site))) {
-                    mListener.onProjectSiteEditRequested(projectSite, lastIndex);
+                if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.status_report))) {
+                    Intent i = new Intent(ctx, SiteStatusReportActivity.class);
+                    i.putExtra("projectSite",projectSite);
+                    startActivity(i);
                 }
 
             }

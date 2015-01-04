@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
+import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.google.gson.Gson;
 
 import java.util.Calendar;
@@ -25,6 +27,8 @@ public class SharedUtil {
             COMPANY_JSON = "company",
             GCM_REGISTRATION_ID = "gcm",
             SESSION_ID = "sessionID",
+            SITE_LOCATION = "siteLocation",
+
             LOG = "SharedUtil",
             REMINDER_TIME = "reminderTime",
             APP_VERSION = "appVersion";
@@ -160,6 +164,32 @@ public class SharedUtil {
 
         }
         return co;
+    }
+
+    public static void saveSiteLocation(Context ctx, ProjectSiteDTO dto, Location loc) {
+        SiteLocation sl = new SiteLocation();
+        sl.setAccuracy(loc.getAccuracy());
+        sl.setLatitude(loc.getLatitude());
+        sl.setLongitude(loc.getLongitude());
+        sl.setProjectSiteID(dto.getProjectSiteID());
+        sl.setDateTaken(new Date());
+
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putString(SITE_LOCATION, gson.toJson(sl));
+        ed.commit();
+        Log.e("SharedUtil", "%%%%% Location, site: " + dto.getProjectSiteName() + " saved in SharedPreferences");
+    }
+
+    public static SiteLocation getSiteLocation(Context ctx) {
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        String s = sp.getString(SITE_LOCATION, null);
+        if (s == null) {
+            return null;
+        }
+        return gson.fromJson(s,SiteLocation.class);
     }
     /**
      * @return Application's version code from the {@code PackageManager}.

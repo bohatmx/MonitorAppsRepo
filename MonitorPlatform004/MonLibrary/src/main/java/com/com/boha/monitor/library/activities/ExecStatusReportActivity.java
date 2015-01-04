@@ -25,6 +25,7 @@ import com.com.boha.monitor.library.fragments.ExecProjectSiteListFragment;
 import com.com.boha.monitor.library.fragments.ExecProjectSiteStatusListFragment;
 import com.com.boha.monitor.library.services.StatusSyncService;
 import com.com.boha.monitor.library.util.CacheUtil;
+import com.com.boha.monitor.library.util.ErrorUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
@@ -79,8 +80,72 @@ public class ExecStatusReportActivity extends ActionBarActivity
         CompanyStaffDTO staff = SharedUtil.getCompanyStaff(ctx);
         getSupportActionBar().setSubtitle(staff.getFullName());
         Statics.setRobotoFontLight(ctx,txtProject);
+
+        getCachedProjectData();
     }
 
+    private void getProjectData() {
+        RequestDTO w = new RequestDTO(RequestDTO.GET_PROJECT_SITES);
+        w.setProjectID(project.getProjectID());
+
+        WebSocketUtil.sendRequest(ctx,Statics.COMPANY_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
+            @Override
+            public void onMessage(final ResponseDTO response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!ErrorUtil.checkServerError(ctx,response)) {
+                            return;
+                        }
+                        project.setProjectSiteList(response.getProjectSiteList());
+                        execProjectSiteListFragment.setProject(project);
+                    }
+                });
+            }
+
+            @Override
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+
+            }
+        });
+    }
+    private void getCachedProjectData() {
+
+        CacheUtil.getCachedProjectData(ctx, project.getProjectID(), new CacheUtil.CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO response) {
+                if (response != null) {
+                    if (!response.getProjectList().isEmpty()) {
+                        project = response.getProjectList().get(0);
+                        execProjectSiteListFragment.setProject(project);
+                    }
+                }
+
+                WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
+                if (wcr.isWifiConnected()) {
+                    getProjectData();
+                } else {
+                    Util.showToast(ctx,ctx.getString(R.string.connect_wifi));
+                }
+            }
+
+            @Override
+            public void onDataCached() {
+
+            }
+
+            @Override
+            public void onError() {
+                getProjectData();
+            }
+        });
+
+    }
     ProjectSiteDTO projectSite;
     ExecProjectSiteListFragment execProjectSiteListFragment;
     ExecProjectSiteStatusListFragment execProjectSiteStatusListFragment;
@@ -128,32 +193,39 @@ public class ExecStatusReportActivity extends ActionBarActivity
     @Override
     public void onProjectStatusSyncRequested(final ProjectDTO project) {
         Log.w(LOG, "## onProjectStatusSyncRequested - call service method startSyncService");
-        Intent i = new Intent();
-        i.putExtra("project", project);
-        mService.startSyncService(i);
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setMax(project.getProjectSiteList().size());
         progressBar.setProgress(0);
-        final Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
+
+        Intent i = new Intent();
+        i.putExtra("project", project);
+        mService.startSyncService(i, new StatusSyncService.StatusSyncServiceListener() {
             @Override
-            public void run() {
+            public void onStatusSyncComplete(String message) {
+                Log.d(LOG,message);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        int index = mService.getSitesCompleted();
-                        Log.e(LOG,"++++ StatusSyncService index returned: " + index);
-                        progressBar.setProgress(index);
-                        if (index >= project.getProjectSiteList().size() - 1) {
-                            progressBar.setVisibility(View.GONE);
-                            timer.cancel();
-                            Util.showToast(ctx,getString(R.string.status_download_done));
-                        }
+                        progressBar.setVisibility(View.GONE);
+                        Util.showToast(ctx,getString(R.string.status_download_done));
                     }
                 });
 
             }
-        }, 1000, 1000);
+
+            @Override
+            public void onSiteSyncComplete(ProjectSiteDTO site, final int count) {
+                Log.e(LOG,"++++ onSiteSyncComplete index returned: " + count + " site: " + site.getProjectSiteName());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setProgress(count);
+                    }
+                });
+
+            }
+        });
+
 
     }
 

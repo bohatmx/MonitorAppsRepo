@@ -17,9 +17,17 @@ public class SubTaskStatusDTO implements Serializable {
     private Date statusDate;
     private Date dateUpdated;
     private TaskStatusDTO taskStatus;
-    private Integer subTaskID,taskID;
+    private Integer subTaskID,taskID, projectSiteTaskID;
     private Integer companyStaffID;
     private String staffName, subTaskName;
+
+    public Integer getProjectSiteTaskID() {
+        return projectSiteTaskID;
+    }
+
+    public void setProjectSiteTaskID(Integer projectSiteTaskID) {
+        this.projectSiteTaskID = projectSiteTaskID;
+    }
 
     public Integer getTaskID() {
         return taskID;

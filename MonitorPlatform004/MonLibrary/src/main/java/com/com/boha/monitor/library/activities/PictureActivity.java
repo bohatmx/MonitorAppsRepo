@@ -48,6 +48,7 @@ import com.com.boha.monitor.library.util.ImageUtil;
 import com.com.boha.monitor.library.util.PMException;
 import com.com.boha.monitor.library.util.PhotoCacheUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
+import com.com.boha.monitor.library.util.SiteLocation;
 import com.com.boha.monitor.library.util.Util;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -57,6 +58,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.acra.ACRA;
+import org.joda.time.DateTime;
 
 import java.io.File;
 import java.io.IOException;
@@ -71,17 +73,17 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
     LocationRequest mLocationRequest;
     LocationClient mLocationClient;
-    View topLayout;
     TextView txtAccuracy;
     Chronometer chrono;
     LinearLayout imageContainerLayout;
     LayoutInflater inflater;
     ProgressBar progressBar;
     TextView txtMsg;
+    View topLayout, gpsLayout;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(LOG, "### onCreate");
+        Log.d(LOG, "### onCreate............");
         ctx = getApplicationContext();
         inflater = getLayoutInflater();
         setContentView(R.layout.camera);
@@ -122,14 +124,28 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
             getSupportActionBar().setSubtitle(project.getProjectName());
 
     }
-
+    SiteLocation siteLocation;
     @Override
     public void onResume() {
-        Log.d(LOG, "@@@@@@@@@@@ onResume");
+        Log.d(LOG, "@@@ onResume...........");
+        siteLocation = SharedUtil.getSiteLocation(ctx);
+        Log.e(LOG,"## site: " + siteLocation.getProjectSiteID() + " " + siteLocation.getAccuracy() + " - " + siteLocation.getDateTaken().toString());
+        if (siteLocation != null) {
+            if (projectSite.getProjectSiteID().intValue() != projectSite.getProjectSiteID().intValue()) {
+                siteLocation = null;
+            } else {
+                DateTime dt = new DateTime();
+                DateTime then = new DateTime(siteLocation.getDateTaken().getTime());
+                long time = dt.toDate().getTime() - then.toDate().getTime();
+                if (time > FIVE_MINUTES) {
+                    siteLocation = null;
+                }
+            }
+        }
         super.onResume();
 
     }
-
+    static final long FIVE_MINUTES = 1000 * 60 * 60 * 3;
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         Log.e(LOG, "%%%%%%%%%%%% onRestoreInstanceState" + savedInstanceState);
@@ -230,17 +246,18 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-        Log.d(LOG, "## onLocationChanged accuracy = " + location.getAccuracy());
-        txtAccuracy.setText("" + location.getAccuracy());
+    public void onLocationChanged(Location loc) {
+        Log.d(LOG, "## onLocationChanged accuracy = " + loc.getAccuracy());
+        txtAccuracy.setText("" + loc.getAccuracy());
         Util.flashSeveralTimes(txtAccuracy,200,2,null);
         if (this.location == null) {
-            this.location = location;
+            this.location = loc;
         }
-        if (location.getAccuracy() <= ACCURACY_THRESHOLD) {
-            this.location = location;
+        if (loc.getAccuracy() <= ACCURACY_THRESHOLD) {
+            this.location = loc;
             mLocationClient.removeLocationUpdates(this);
             chrono.stop();
+            SharedUtil.saveSiteLocation(ctx,projectSite,location);
             if (confirmedStandingAtSite) {
                 progressBar.setVisibility(View.GONE);
                 txtMsg.setText(getString(R.string.gps_complete));
@@ -255,7 +272,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         Log.e(LOG, "### uploadPhotos, the accuracy: " + location.getAccuracy());
         switch (type) {
             case PhotoUploadDTO.PROJECT_IMAGE:
-                addProjectPicture(project, currentThumbFile, location, new CacheListener() {
+                addProjectPicture(new CacheListener() {
                     @Override
                     public void onCachingDone() {
                         mService.uploadCachedPhotos(null);
@@ -263,7 +280,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                 });
                 break;
             case PhotoUploadDTO.SITE_IMAGE:
-                addSitePicture(projectSite, currentThumbFile, location, new CacheListener() {
+                addSitePicture( new CacheListener() {
                     @Override
                     public void onCachingDone() {
                         mService.uploadCachedPhotos(null);
@@ -271,7 +288,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                 });
                 break;
             case PhotoUploadDTO.STAFF_IMAGE:
-                addStaffPicture(companyStaff, currentThumbFile, location, new CacheListener() {
+                addStaffPicture(new CacheListener() {
                     @Override
                     public void onCachingDone() {
                         mService.uploadCachedPhotos(null);
@@ -279,7 +296,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                 });
                 break;
             case PhotoUploadDTO.TASK_IMAGE:
-                addSiteTaskPicture(projectSiteTask, currentThumbFile, location, new CacheListener() {
+                addSiteTaskPicture(new CacheListener() {
                     @Override
                     public void onCachingDone() {
                         mService.uploadCachedPhotos(null);
@@ -324,7 +341,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     }
 
     Location location;
-    static final float ACCURACY_THRESHOLD = 10;
+    static final float ACCURACY_THRESHOLD = 25;
     ActionBarActivity activity;
 
 
@@ -332,6 +349,20 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     public void onConnected(Bundle bundle) {
         Log.i(LOG,
                 "+++ LocationClient onConnected() -  requestLocationUpdates ...");
+        if (siteLocation != null) {
+            Log.w(LOG,"## already have a good location, returning");
+            location = mLocationClient.getLastLocation();
+            location.setAccuracy(siteLocation.getAccuracy());
+            location.setLatitude(siteLocation.getLatitude());
+            location.setLongitude(siteLocation.getLongitude());
+            topLayout.setVisibility(View.GONE);
+            gpsStatus.setVisibility(View.GONE);
+            imgCamera.setVisibility(View.VISIBLE);
+            btnStart.setVisibility(View.GONE);
+            dispatchTakePictureIntent();
+            return;
+        }
+        Log.w(LOG,"## requesting location updates ....");
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -727,13 +758,11 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     Bitmap bitmapForScreen;
 
 
-    public void addSitePicture(final ProjectSiteDTO site,
-                               final File thumb,
-                               Location location, final CacheListener listener) {
+    public void addSitePicture(final CacheListener listener) {
         Log.w(LOG, "**** addSitePicture .......");
-        final PhotoUploadDTO dto = getObject( thumb, location);
-        dto.setProjectID(site.getProjectID());
-        dto.setProjectSiteID(site.getProjectSiteID());
+        final PhotoUploadDTO dto = getObject();
+        dto.setProjectID(projectSite.getProjectID());
+        dto.setProjectSiteID(projectSite.getProjectSiteID());
         dto.setPictureType(PhotoUploadDTO.SITE_IMAGE);
         dto.setAccuracy(location.getAccuracy());
         dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
@@ -762,14 +791,12 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         public void onCachingDone();
     }
 
-    public void addSiteTaskPicture(final ProjectSiteTaskDTO siteTask,
-                                   final File thumb,
-                                   Location location, final CacheListener listener) {
+    public void addSiteTaskPicture(final CacheListener listener) {
         Log.w(LOG, "**** addSiteTaskPicture");
-        final PhotoUploadDTO dto = getObject(thumb, location);
-        dto.setProjectID(siteTask.getProjectID());
-        dto.setProjectSiteID(siteTask.getProjectSiteID());
-        dto.setProjectSiteTaskID(siteTask.getProjectSiteTaskID());
+        final PhotoUploadDTO dto = getObject();
+        dto.setProjectID(projectSiteTask.getProjectID());
+        dto.setProjectSiteID(projectSiteTask.getProjectSiteID());
+        dto.setProjectSiteTaskID(projectSiteTask.getProjectSiteTaskID());
         dto.setPictureType(PhotoUploadDTO.TASK_IMAGE);
         dto.setAccuracy(location.getAccuracy());
         dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
@@ -793,11 +820,9 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
 
     }
 
-    public void addProjectPicture(
-                                  final ProjectDTO project, final File thumb,
-                                  Location location, final CacheListener listener) {
+    public void addProjectPicture(final CacheListener listener) {
         Log.w(LOG, "**** addProjectPicture");
-        final PhotoUploadDTO dto = getObject(thumb, location);
+        final PhotoUploadDTO dto = getObject();
         dto.setProjectID(project.getProjectID());
         dto.setPictureType(PhotoUploadDTO.PROJECT_IMAGE);
         dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
@@ -821,12 +846,11 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         });
     }
 
-    private PhotoUploadDTO getObject(final File thumb,
-                                     Location location) {
+    private PhotoUploadDTO getObject() {
         PhotoUploadDTO dto = new PhotoUploadDTO();
         dto.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
         dto.setCompanyStaffID(SharedUtil.getCompanyStaff(ctx).getCompanyStaffID());
-        dto.setThumbFilePath(thumb.getAbsolutePath());
+        dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
         dto.setThumbFlag(1);
         dto.setDateTaken(new Date());
         dto.setLatitude(location.getLatitude());
@@ -837,11 +861,9 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     }
 
 
-    public void addStaffPicture(final CompanyStaffDTO staff,
-                                final File thumb,
-                                Location location, final CacheListener listener) {
-        final PhotoUploadDTO dto = getObject(thumb, location);
-        dto.setCompanyStaffID(staff.getCompanyStaffID());
+    public void addStaffPicture(final CacheListener listener) {
+        final PhotoUploadDTO dto = getObject();
+        dto.setCompanyStaffID(companyStaff.getCompanyStaffID());
         dto.setPictureType(PhotoUploadDTO.STAFF_IMAGE);
         dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
         dto.setStaffPicture(true);

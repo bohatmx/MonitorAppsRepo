@@ -143,7 +143,11 @@ public class MonitorMapActivity extends ActionBarActivity
                 Location loc = new Location(location);
                 loc.setLatitude(latLng.latitude);
                 loc.setLongitude(latLng.longitude);
-
+                for (ProjectSiteDTO site: project.getProjectSiteList()) {
+                    if (site.getProjectSiteName().equalsIgnoreCase(marker.getTitle())) {
+                        projectSite = site;
+                    }
+                }
                 float mf = location.distanceTo(loc);
                 Log.w(LOG, "######### distance, again: " + mf);
 
@@ -355,28 +359,123 @@ public class MonitorMapActivity extends ActionBarActivity
         list.add(getString(R.string.status_report));
         list.add(getString(R.string.site_gallery));
 
-        Util.showPopupBasicWithHeroImage(ctx, this, list, topLayout, ctx.getString(R.string.select_action), new Util.UtilPopupListener() {
+        Util.showPopupBasicWithHeroImage(ctx, this, list, topLayout,ctx.getString(R.string.site_colon) + projectSite.getProjectSiteName(), new Util.UtilPopupListener() {
             @Override
             public void onItemSelected(int index) {
                 if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.directions))) {
                     startDirectionsMap(lat, lng);
                 }
                 if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.status_report))) {
-                    Util.showToast(ctx, ctx.getString(R.string.under_cons));
+                    isStatusReport = true;
+                    getCachedSiteData();
                 }
 
                 if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.site_gallery))) {
-                    Intent i = new Intent(ctx, PictureRecyclerGridActivity.class);
-                    i.putExtra("projectSite", projectSite);
-                    startActivity(i);
+                    isGallery = true;
+                    getCachedSiteData();
                 }
             }
         });
 
 
     }
+    boolean isStatusReport, isGallery;
+    private void startGallery() {
+        if (projectSite.getPhotoUploadList() == null || projectSite.getPhotoUploadList().isEmpty()) {
+            Util.showToast(ctx,"There are no pictures taken for the site");
+            return;
+        }
+        Intent i = new Intent(ctx, PictureRecyclerGridActivity.class);
+        i.putExtra("projectSite", projectSite);
+        startActivity(i);
+    }
+    private void startStatusReport() {
+        if (projectSite.getProjectSiteTaskList() == null || projectSite.getProjectSiteTaskList().isEmpty()) {
+            Util.showToast(ctx,"There are no tasks defined for the site");
+            return;
+        }
+        Intent i = new Intent(ctx, SiteStatusReportActivity.class);
+        i.putExtra("projectSite", projectSite);
+        startActivity(i);
+    }
+    private void getCachedSiteData() {
+        progressBar.setVisibility(View.VISIBLE);
+        CacheUtil.getCachedSiteData(ctx, projectSite.getProjectSiteID(), new CacheUtil.CacheSiteListener() {
+            @Override
+            public void onSiteReturnedFromCache(ProjectSiteDTO site) {
+                progressBar.setVisibility(View.GONE);
+                if (site != null) {
+                    projectSite = site;
+                    if (isGallery) {
+                        isGallery = false;
+                        startGallery();
+                    }
+                    if (isStatusReport) {
+                        isStatusReport = false;
+                        startStatusReport();
+                    }
+                } else {
+                    getSiteData();
+                }
+            }
 
+            @Override
+            public void onDataCached() {
 
+            }
+
+            @Override
+            public void onError() {
+                Log.e(LOG,"--- no cache exists for the site, going to the cloud");
+                getSiteData();
+            }
+        });
+    }
+
+    private void getSiteData() {
+        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
+        if (wcr.isWifiConnected()) {
+            RequestDTO w = new RequestDTO(RequestDTO.GET_SITE_STATUS);
+            w.setProjectSiteID(projectSite.getProjectSiteID());
+            progressBar.setVisibility(View.VISIBLE);
+            WebSocketUtil.sendRequest(ctx,Statics.COMPANY_ENDPOINT,w, new WebSocketUtil.WebSocketListener() {
+                @Override
+                public void onMessage(final ResponseDTO response) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressBar.setVisibility(View.GONE);
+                            if (!ErrorUtil.checkServerError(ctx,response)) {
+                                return;
+                            }
+                            projectSite = response.getProjectSiteList().get(0);
+                            if (isGallery) {
+                                isGallery = false;
+                                startGallery();
+                            }
+                            if (isStatusReport) {
+                                isStatusReport = false;
+                                startStatusReport();
+                            }
+                        }
+
+                    });
+                }
+
+                @Override
+                public void onClose() {
+
+                }
+
+                @Override
+                public void onError(String message) {
+
+                }
+            });
+        } else {
+            Util.showToast(ctx,ctx.getString(R.string.connect_wifi));
+        }
+    }
 
     private void startDirectionsMap(double lat, double lng) {
         Log.i(LOG, "startDirectionsMap ..........");
