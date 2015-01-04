@@ -252,7 +252,7 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
         } else {
             throw new ClassCastException("Host " + activity.getLocalClassName() + "must implement SiteStatusReportListener");
         }
-        Log.w(LOG, "Fragment hosted by " + activity.getLocalClassName());
+        Log.w(LOG, "this Fragment hosted by " + activity.getLocalClassName());
     }
 
     @Override

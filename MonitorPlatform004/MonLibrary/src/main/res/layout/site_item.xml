@@ -29,6 +29,7 @@
             <LinearLayout
                 android:id="@+id/SITE_imageLayout"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -198,171 +199,6 @@
                         android:layout_height="wrap_content" />
                 </RelativeLayout>
 
-                <RelativeLayout
-                    android:padding="@dimen/mon_divider_tiny"
-                    android:background="@color/white"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:id="@+id/SITE_scrollImage6"
-                        android:src="@drawable/banner_construction14"
-                        android:scaleType="centerCrop"
-                        android:layout_width="@dimen/mon_hero_height_large"
-                        android:layout_height="@dimen/mon_hero_height_medium" />
-
-                    <TextView
-                        android:id="@+id/SITE_number6"
-                        style="@style/TextStyleSmall"
-                        android:text="0"
-                        android:layout_margin="@dimen/mon_padding"
-                        android:textColor="@color/white"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:id="@+id/SITE_date6"
-                        style="@style/TextStyleSmall"
-                        android:textSize="10sp"
-                        android:text="12 december 2099 12:09"
-                        android:layout_marginLeft="@dimen/mon_padding"
-                        android:layout_marginTop="@dimen/mon_hero_height_medium_lite"
-                        android:textColor="@color/white"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:padding="@dimen/mon_divider_tiny"
-                    android:background="@color/white"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:id="@+id/SITE_scrollImage7"
-                        android:src="@drawable/banner_construction10"
-                        android:scaleType="centerCrop"
-                        android:layout_width="@dimen/mon_hero_height_large"
-                        android:layout_height="@dimen/mon_hero_height_medium" />
-
-                    <TextView
-                        android:id="@+id/SITE_number7"
-                        style="@style/TextStyleSmall"
-                        android:text="0"
-                        android:layout_margin="@dimen/mon_padding"
-                        android:textColor="@color/white"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:id="@+id/SITE_date7"
-                        style="@style/TextStyleSmall"
-                        android:textSize="10sp"
-                        android:text="12 december 2099 12:09"
-                        android:layout_marginLeft="@dimen/mon_padding"
-                        android:layout_marginTop="@dimen/mon_hero_height_medium_lite"
-                        android:textColor="@color/white"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:padding="@dimen/mon_divider_tiny"
-                    android:background="@color/white"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:id="@+id/SITE_scrollImage8"
-                        android:src="@drawable/banner_construction13"
-                        android:scaleType="centerCrop"
-                        android:layout_width="@dimen/mon_hero_height_large"
-                        android:layout_height="@dimen/mon_hero_height_medium" />
-
-                    <TextView
-                        android:id="@+id/SITE_number8"
-                        style="@style/TextStyleSmall"
-                        android:text="0"
-                        android:layout_margin="@dimen/mon_padding"
-                        android:textColor="@color/white"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:id="@+id/SITE_date8"
-                        style="@style/TextStyleSmall"
-                        android:textSize="10sp"
-                        android:text="12 december 2099 12:09"
-                        android:layout_marginLeft="@dimen/mon_padding"
-                        android:layout_marginTop="@dimen/mon_hero_height_medium_lite"
-                        android:textColor="@color/white"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:padding="@dimen/mon_divider_tiny"
-                    android:background="@color/white"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:id="@+id/SITE_scrollImage9"
-                        android:src="@drawable/banner_construction5"
-                        android:scaleType="centerCrop"
-                        android:layout_width="@dimen/mon_hero_height_medium"
-                        android:layout_height="@dimen/mon_hero_height_medium" />
-
-                    <TextView
-                        android:id="@+id/SITE_number9"
-                        style="@style/TextStyleSmall"
-                        android:text="0"
-                        android:layout_margin="@dimen/mon_padding"
-                        android:textColor="@color/white"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:id="@+id/SITE_date9"
-                        style="@style/TextStyleSmall"
-                        android:textSize="10sp"
-                        android:text="12 december 2099 12:09"
-                        android:layout_marginLeft="@dimen/mon_padding"
-                        android:layout_marginTop="@dimen/mon_hero_height_medium_lite"
-                        android:textColor="@color/white"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:padding="@dimen/mon_divider_tiny"
-                    android:background="@color/white"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:id="@+id/SITE_scrollImage10"
-                        android:src="@drawable/banner_construction5"
-                        android:scaleType="centerCrop"
-                        android:layout_width="@dimen/mon_hero_height_large"
-                        android:layout_height="@dimen/mon_hero_height_medium" />
-
-                    <TextView
-                        android:id="@+id/SITE_number10"
-                        style="@style/TextStyleSmall"
-                        android:text="0"
-                        android:layout_margin="@dimen/mon_padding"
-                        android:textColor="@color/white"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                    <TextView
-                        android:id="@+id/SITE_date10"
-                        style="@style/TextStyleSmall"
-                        android:textSize="10sp"
-                        android:text="12 december 2099 12:09"
-                        android:layout_marginLeft="@dimen/mon_padding"
-                        android:layout_marginTop="@dimen/mon_hero_height_medium_lite"
-                        android:textColor="@color/white"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </RelativeLayout>
-
             </LinearLayout>
 
         </HorizontalScrollView>
@@ -448,7 +284,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="00"
-                android:id="@+id/SITE_txtTaskCount"
+                android:id="@+id/SITE_txtPictureCount"
                 style="@style/BlackCircleSmall"
                 android:layout_marginRight="4dp"
                 android:layout_alignParentRight="true"
@@ -457,10 +293,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/site_tasks"
+                android:text="Site Pictures"
                 android:id="@+id/SITE_txtlabel"
                 android:layout_centerVertical="true"
-                android:layout_toLeftOf="@id/SITE_txtTaskCount"
+                android:layout_toLeftOf="@id/SITE_txtPictureCount"
                 android:layout_marginRight="20dp"
                 style="@style/TextStyleGrey"
                 android:textSize="16sp"

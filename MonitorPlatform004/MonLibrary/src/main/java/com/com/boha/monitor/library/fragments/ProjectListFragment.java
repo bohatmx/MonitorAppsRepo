@@ -272,47 +272,51 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         actionsWindow.setAdapter(new PopupListAdapter(ctx,
                 com.boha.monitor.library.R.layout.xxsimple_spinner_item, list, false));
         actionsWindow.setAnchorView(txtProjectCount);
-        actionsWindow.setWidth(600);
-        actionsWindow.setHorizontalOffset(100);
+        actionsWindow.setWidth(540);
+        actionsWindow.setHorizontalOffset(40);
         actionsWindow.setModal(true);
-        actionsWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case 0:
-                        Log.e(LOG,"Yeaaah! position: " + position);
-                        Intent i = new Intent(ctx, ProjectSitePagerActivity.class);
-                        CompanyDTO company = new CompanyDTO();
-                        company.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
-                        i.putExtra("project",project);
-                        i.putExtra("company", company);
-                        i.putExtra("type", SiteTaskAndStatusAssignmentFragment.PROJECT_MANAGER);
-                        startActivity(i);
-                        break;
-                    case 1:
-                        Log.e(LOG,"Yeaaah! position: " + position);
-                        Intent i2 = new Intent(ctx, ClaimAndInvoicePagerActivity.class);
-                        i2.putExtra("project", project);
-                        startActivity(i2);
-                        break;
-                    case 2:
-                        Log.e(LOG,"Yeaaah! position: " + position);
-                        Intent i3 = new Intent(ctx, MonitorMapActivity.class);
-                        i3.putExtra("project", project);
-                        startActivity(i3);
-                        break;
-                    case 3:
-                        Log.e(LOG,"Yeaaah! position: " + position);
-                        Intent i4 = new Intent(ctx, PictureActivity.class);
-                        i4.putExtra("project", project);
-                        i4.putExtra("type", PhotoUploadDTO.PROJECT_IMAGE);
-                        startActivity(i4);
-                        break;
+        try {
+            actionsWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    switch (position) {
+                        case 0:
+                            Log.e(LOG, "Yeaaah! position: " + position);
+                            Intent i = new Intent(ctx, ProjectSitePagerActivity.class);
+                            CompanyDTO company = new CompanyDTO();
+                            company.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
+                            i.putExtra("project", project);
+                            i.putExtra("company", company);
+                            i.putExtra("type", SiteTaskAndStatusAssignmentFragment.PROJECT_MANAGER);
+                            startActivity(i);
+                            break;
+                        case 1:
+                            Log.e(LOG, "Yeaaah! position: " + position);
+                            Intent i2 = new Intent(ctx, ClaimAndInvoicePagerActivity.class);
+                            i2.putExtra("project", project);
+                            startActivity(i2);
+                            break;
+                        case 2:
+                            Log.e(LOG, "Yeaaah! position: " + position);
+                            Intent i3 = new Intent(ctx, MonitorMapActivity.class);
+                            i3.putExtra("project", project);
+                            startActivity(i3);
+                            break;
+                        case 3:
+                            Log.e(LOG, "Yeaaah! position: " + position);
+                            Intent i4 = new Intent(ctx, PictureActivity.class);
+                            i4.putExtra("project", project);
+                            i4.putExtra("type", PhotoUploadDTO.PROJECT_IMAGE);
+                            startActivity(i4);
+                            break;
+                    }
+                    actionsWindow.dismiss();
                 }
-                actionsWindow.dismiss();
-            }
-        });
-        actionsWindow.show();
+            });
+            actionsWindow.show();
+        } catch (IllegalStateException e) {
+            actionsWindow.dismiss();
+        }
     }
     private void setFields() {
         //set fields

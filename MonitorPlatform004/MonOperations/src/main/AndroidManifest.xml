@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.boha.monitor.operations" >
+    package="com.boha.monitor.operations">
 
     <application
         android:name="com.com.boha.monitor.library.activities.MonApp"
         android:allowBackup="true"
         android:icon="@drawable/maono"
         android:label="@string/app_name"
-        android:theme="@style/OperationsTheme" >
+        android:theme="@style/OperationsTheme">
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -29,7 +29,7 @@
 
         <activity
             android:name=".RegistrationActivity"
-            android:label="@string/operations_app" >
+            android:label="@string/operations_app">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -55,14 +55,14 @@
         <activity
             android:name="com.com.boha.monitor.library.activities.MonitorMapActivity"
             android:label="@string/title_activity_monitor_map"
-            android:parentActivityName="com.com.boha.monitor.library.activities.ImageActivity" >
+            android:parentActivityName="com.com.boha.monitor.library.activities.ImageActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.com.boha.monitor.library.activities.ImageActivity" />
         </activity>
         <activity
             android:name="com.com.boha.monitor.library.activities.ClaimAndInvoicePagerActivity"
-            android:parentActivityName=".OperationsPagerActivity" >
+            android:parentActivityName=".OperationsPagerActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".OperationsPagerActivity" />
@@ -74,8 +74,16 @@
 
         <service android:name="com.com.boha.monitor.library.services.PhotoUploadService" />
 
-        <activity android:name="com.com.boha.monitor.library.activities.SubTaskActivity" android:screenOrientation="portrait" />
-        <activity android:name="com.com.boha.monitor.library.activities.SubTaskStatusAssignmentActivity" android:screenOrientation="portrait" />
+        <activity
+            android:name="com.com.boha.monitor.library.activities.SiteStatusReportActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.com.boha.monitor.library.activities.SubTaskActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.com.boha.monitor.library.activities.SubTaskStatusAssignmentActivity"
+            android:screenOrientation="portrait" />
     </application>
 
     <permission

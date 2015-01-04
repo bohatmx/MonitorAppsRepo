@@ -62,9 +62,9 @@ public class ProjectSiteLocalAdapter extends ArrayAdapter<ProjectSiteDTO> implem
         ImageView imgHero, imgConfirmed;
         View statLayout1, statLayout2, imageScroller;
         LinearLayout imageLayout;
-        ImageView img1, img2, img3, img4, img5, img6, img7, img8, img9, img10;
-        TextView num1, num2, num3, num4, num5, num6, num7, num8, num9, num10;
-        TextView date1, date2, date3, date4, date5, date6, date7, date8, date9, date10;
+        ImageView img1, img2, img3, img4, img5;
+        TextView num1, num2, num3, num4, num5;
+        TextView date1, date2, date3, date4, date5;
     }
 
     @Override
@@ -79,11 +79,6 @@ public class ProjectSiteLocalAdapter extends ArrayAdapter<ProjectSiteDTO> implem
             item.img3 = (ImageView) convertView.findViewById(R.id.SITE_scrollImage3);
             item.img4 = (ImageView) convertView.findViewById(R.id.SITE_scrollImage4);
             item.img5 = (ImageView) convertView.findViewById(R.id.SITE_scrollImage5);
-            item.img6 = (ImageView) convertView.findViewById(R.id.SITE_scrollImage6);
-            item.img7 = (ImageView) convertView.findViewById(R.id.SITE_scrollImage7);
-            item.img8 = (ImageView) convertView.findViewById(R.id.SITE_scrollImage8);
-            item.img9 = (ImageView) convertView.findViewById(R.id.SITE_scrollImage9);
-            item.img10 = (ImageView) convertView.findViewById(R.id.SITE_scrollImage10);
 
             item.num1 = (TextView) convertView.findViewById(R.id.SITE_number1);
             item.num2 = (TextView) convertView.findViewById(R.id.SITE_number2);
@@ -91,11 +86,6 @@ public class ProjectSiteLocalAdapter extends ArrayAdapter<ProjectSiteDTO> implem
             item.num4 = (TextView) convertView.findViewById(R.id.SITE_number4);
             item.num5 = (TextView) convertView.findViewById(R.id.SITE_number5);
 
-            item.num6 = (TextView) convertView.findViewById(R.id.SITE_number6);
-            item.num7 = (TextView) convertView.findViewById(R.id.SITE_number7);
-            item.num8 = (TextView) convertView.findViewById(R.id.SITE_number8);
-            item.num9 = (TextView) convertView.findViewById(R.id.SITE_number9);
-            item.num10 = (TextView) convertView.findViewById(R.id.SITE_number10);
 
             item.date1 = (TextView) convertView.findViewById(R.id.SITE_date1);
             item.date2 = (TextView) convertView.findViewById(R.id.SITE_date2);
@@ -103,11 +93,6 @@ public class ProjectSiteLocalAdapter extends ArrayAdapter<ProjectSiteDTO> implem
             item.date4 = (TextView) convertView.findViewById(R.id.SITE_date4);
             item.date5 = (TextView) convertView.findViewById(R.id.SITE_date5);
 
-            item.date6 = (TextView) convertView.findViewById(R.id.SITE_date6);
-            item.date7 = (TextView) convertView.findViewById(R.id.SITE_date7);
-            item.date8 = (TextView) convertView.findViewById(R.id.SITE_date8);
-            item.date9 = (TextView) convertView.findViewById(R.id.SITE_date9);
-            item.date10 = (TextView) convertView.findViewById(R.id.SITE_date10);
 
             item.imageLayout = (LinearLayout) convertView
                     .findViewById(R.id.SITE_imageLayout);
@@ -120,7 +105,7 @@ public class ProjectSiteLocalAdapter extends ArrayAdapter<ProjectSiteDTO> implem
             item.txtBen = (TextView) convertView
                     .findViewById(R.id.SITE_txtBeneficiary);
             item.txtTaskCount = (TextView) convertView
-                    .findViewById(R.id.SITE_txtTaskCount);
+                    .findViewById(R.id.SITE_txtPictureCount);
             item.txtTaskName = (TextView) convertView
                     .findViewById(R.id.SITE_lastTask);
             item.statLayout1 = convertView.findViewById(R.id.SITE_bottom);
@@ -252,59 +237,10 @@ public class ProjectSiteLocalAdapter extends ArrayAdapter<ProjectSiteDTO> implem
                         item.date5.setVisibility(View.VISIBLE);
                         b5 = true;
                         break;
-                    case 5:
-                        ImageLoader.getInstance().displayImage(
-                                Uri.fromFile(f).toString(), item.img6);
-                        item.date6.setText(sdf.format(d.getDateTaken()));
-                        item.img6.setVisibility(View.VISIBLE);
-                        item.num6.setText("6");
-                        item.num6.setVisibility(View.VISIBLE);
-                        item.date6.setVisibility(View.VISIBLE);
-                        b6 = true;
-                        break;
-                    case 6:
-                        ImageLoader.getInstance().displayImage(
-                                Uri.fromFile(f).toString(), item.img7);
-                        item.date7.setText(sdf.format(d.getDateTaken()));
-                        item.img7.setVisibility(View.VISIBLE);
-                        item.num7.setText("7");
-                        item.num7.setVisibility(View.VISIBLE);
-                        item.date7.setVisibility(View.VISIBLE);
-                        b7 = true;
-                        break;
-                    case 7:
-                        ImageLoader.getInstance().displayImage(
-                                Uri.fromFile(f).toString(), item.img8);
-                        item.date8.setText(sdf.format(d.getDateTaken()));
-                        item.img8.setVisibility(View.VISIBLE);
-                        item.num8.setText("8");
-                        item.num8.setVisibility(View.VISIBLE);
-                        item.date8.setVisibility(View.VISIBLE);
-                        b8 = true;
-                        break;
-                    case 8:
-                        ImageLoader.getInstance().displayImage(
-                                Uri.fromFile(f).toString(), item.img9);
-                        item.date9.setText(sdf.format(d.getDateTaken()));
-                        item.img9.setVisibility(View.VISIBLE);
-                        item.num9.setText("9");
-                        item.num9.setVisibility(View.VISIBLE);
-                        item.date9.setVisibility(View.VISIBLE);
-                        b9 = true;
-                        break;
-                    case 9:
-                        ImageLoader.getInstance().displayImage(
-                                Uri.fromFile(f).toString(), item.img10);
-                        item.date10.setText(sdf.format(d.getDateTaken()));
-                        item.img10.setVisibility(View.VISIBLE);
-                        item.num10.setText("10");
-                        item.num10.setVisibility(View.VISIBLE);
-                        item.date10.setVisibility(View.VISIBLE);
-                        b10 = true;
-                        break;
+
                 }
                 index++;
-                if (index == 10) {
+                if (index == 5) {
                     break;
                 }
             }
@@ -333,26 +269,6 @@ public class ProjectSiteLocalAdapter extends ArrayAdapter<ProjectSiteDTO> implem
         if (!b5) {
             item.img5.setVisibility(View.GONE);
             item.date5.setVisibility(View.GONE);
-        }
-        if (!b6) {
-            item.img6.setVisibility(View.GONE);
-            item.date7.setVisibility(View.GONE);
-        }
-        if (!b7) {
-            item.img7.setVisibility(View.GONE);
-            item.date7.setVisibility(View.GONE);
-        }
-        if (!b8) {
-            item.img8.setVisibility(View.GONE);
-            item.date8.setVisibility(View.GONE);
-        }
-        if (!b9) {
-            item.img9.setVisibility(View.GONE);
-            item.date9.setVisibility(View.GONE);
-        }
-        if (!b10) {
-            item.img10.setVisibility(View.GONE);
-            item.date10.setVisibility(View.GONE);
         }
 
         if (countNoFile == 10) {
@@ -463,22 +379,13 @@ public class ProjectSiteLocalAdapter extends ArrayAdapter<ProjectSiteDTO> implem
         item.img3.setVisibility(View.GONE);
         item.img4.setVisibility(View.GONE);
         item.img5.setVisibility(View.GONE);
-        item.img6.setVisibility(View.GONE);
-        item.img7.setVisibility(View.GONE);
-        item.img8.setVisibility(View.GONE);
-        item.img9.setVisibility(View.GONE);
-        item.img10.setVisibility(View.GONE);
 
         item.num1.setVisibility(View.GONE);
         item.num2.setVisibility(View.GONE);
         item.num3.setVisibility(View.GONE);
         item.num4.setVisibility(View.GONE);
         item.num5.setVisibility(View.GONE);
-        item.num6.setVisibility(View.GONE);
-        item.num7.setVisibility(View.GONE);
-        item.num8.setVisibility(View.GONE);
-        item.num9.setVisibility(View.GONE);
-        item.num10.setVisibility(View.GONE);
+
         item.imageLayout.setVisibility(View.GONE);
         item.imageScroller.setVisibility(View.GONE);
     }

@@ -290,7 +290,7 @@
     <string name="confirm_gps">Confirm GPS Location</string>
     <string name="site_map">Site Location Map</string>
     <string name="project_map">Project Map</string>
-    <string name="site_gallery">Site Update Gallery</string>
+    <string name="site_gallery">Site Gallery</string>
     <string name="status_rept">Status Report</string>
     <string name="title_activity_sub_task">SubTaskActivity</string>
     <string name="enter_subtask">Please enter name of sub task</string>

@@ -41,6 +41,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 /**
  * Manages a list of project sites. Provides facility to select a site
  * and perform a set of actions: status, take picture, put on map etc.
@@ -48,7 +49,7 @@ import java.util.List;
  * must implement the ProjectSiteListListener interface. ProjectSitePagerActivity thus listens
  * to requests from this fragment and performs appropriate actions such as starting another activity.
  * e.g. the PictureActivity, MonitorMapActivty, TaskAssignmentActivity etc.
- *
+ * <p/>
  * Entry points: onCreateView, setProject
  */
 public class ProjectSiteListFragment extends Fragment implements PageFragment {
@@ -174,10 +175,10 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
     public void updateSiteLocation(ProjectSiteDTO site) {
         Log.e(LOG, "updateSiteLocation site location confirmed: " + site.getLocationConfirmed());
         List<ProjectSiteDTO> list = new ArrayList<>();
-        for (ProjectSiteDTO s: projectSiteList) {
+        for (ProjectSiteDTO s : projectSiteList) {
             if (s.getProjectSiteID().intValue() == site.getProjectSiteID().intValue()) {
                 list.add(site);
-                Log.i(LOG,"## confirmed site put in list");
+                Log.i(LOG, "## confirmed site put in list");
             } else {
                 list.add(s);
             }
@@ -192,13 +193,14 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         projectSiteAdapter.notifyDataSetChanged();
         mListView.setSelection(lastIndex);
     }
+
     private void setList() {
         Log.i(LOG, "## setList");
         txtCount.setText("" + projectSiteList.size());
         Collections.sort(projectSiteList);
         long x = ImageLoader.getInstance().getDiskCache().getDirectory().listFiles().length;
-        Log.d(LOG,"%%%%%%%% ImageLoader getDiskCache files: " + x);
-        final WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
+        Log.d(LOG, "%%%%%%%% ImageLoader getDiskCache files: " + x);
+        final WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx, true);
         if (!wcr.isWifiConnected()) {
             projectSiteAdapter = new ProjectSiteAdapter(ctx, R.layout.site_item,
                     projectSiteList, wcr, new ProjectSiteAdapter.ProjectSiteListener() {
@@ -226,7 +228,6 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         }
 
 
-
     }
 
     private void setActualList(SiteAdapterInterface adapterInterface) {
@@ -239,26 +240,32 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
                 if (null != mListener) {
                     lastIndex = position;
                     projectSite = projectSiteList.get(position);
-                    Log.d(LOG,"######## mListView onItemClick, projectSiteID: " + projectSite.getProjectSiteID());
+                    Log.d(LOG, "######## mListView onItemClick, projectSiteID: " + projectSite.getProjectSiteID());
                     showPopup();
                 }
             }
         });
 
     }
+
     private void showPopup() {
         list = new ArrayList<>();
         list.add(ctx.getString(R.string.sitestatus));
-        if (projectSite.getLocationConfirmed() != null) {
-            list.add(ctx.getString(R.string.take_picture));
+        if (projectSite.getPhotoUploadList() != null && !projectSite.getPhotoUploadList().isEmpty()) {
             list.add(ctx.getString(R.string.site_gallery));
+        }
+        if (projectSite.getLocationConfirmed() != null) {
             list.add(ctx.getString(R.string.site_on_map));
         } else {
             list.add(ctx.getString(R.string.get_gps));
         }
-        list.add(ctx.getString(R.string.status_report));
+        list.add(ctx.getString(R.string.take_picture));
+        if (projectSite.getStatusCount() != null && projectSite.getStatusCount().intValue() != 0) {
+            list.add(ctx.getString(R.string.status_report));
+        }
 
-        Util.showPopupBasicWithHeroImage(ctx,getActivity(),list,topView,ctx.getString(R.string.site_colon)
+
+        Util.showPopupBasicWithHeroImage(ctx, getActivity(), list, topView, ctx.getString(R.string.site_colon)
                 + projectSite.getProjectSiteName(), new Util.UtilPopupListener() {
             @Override
             public void onItemSelected(int index) {
@@ -279,7 +286,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
                 }
                 if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.status_report))) {
                     Intent i = new Intent(ctx, SiteStatusReportActivity.class);
-                    i.putExtra("projectSite",projectSite);
+                    i.putExtra("projectSite", projectSite);
                     startActivity(i);
                 }
 
@@ -326,7 +333,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         ResponseDTO r = new ResponseDTO();
         r.setProjectList(new ArrayList<ProjectDTO>());
         r.getProjectList().add(project);
-        CacheUtil.cacheProjectData(ctx,r,project.getProjectID(), null);
+        CacheUtil.cacheProjectData(ctx, r, project.getProjectID(), null);
         mListener.onNewStatusDone(newStatusJustDone);
     }
 
@@ -429,7 +436,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
     public void setLocationConfirmed(ProjectSiteDTO ps) {
         Log.e(LOG, "## confirmed location of " + ps.getProjectSiteName() + ", rebuild list");
         List<ProjectSiteDTO> list = new ArrayList<>();
-        for (ProjectSiteDTO s: projectSiteList) {
+        for (ProjectSiteDTO s : projectSiteList) {
             if (ps.getProjectSiteID().intValue() == s.getProjectSiteID().intValue()) {
                 list.add(ps);
             } else {
