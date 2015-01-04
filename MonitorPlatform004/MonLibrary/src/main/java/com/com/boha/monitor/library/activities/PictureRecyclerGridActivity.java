@@ -22,6 +22,7 @@ import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.util.DividerItemDecoration;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
+import com.com.boha.monitor.library.util.Util;
 
 public class PictureRecyclerGridActivity extends ActionBarActivity {
 
@@ -47,6 +48,10 @@ public class PictureRecyclerGridActivity extends ActionBarActivity {
 
         projectSite = (ProjectSiteDTO)getIntent().getSerializableExtra("projectSite");
         if (projectSite != null) {
+            if (projectSite.getPhotoUploadList() == null || projectSite.getPhotoUploadList().isEmpty()) {
+                Util.showErrorToast(ctx,"Site has no report photos found");
+                finish();
+            }
             if (projectSite.getBeneficiary() != null) {
                 title.setText(projectSite.getProjectSiteName() + ": " + projectSite.getBeneficiary().getFullName());
             } else {

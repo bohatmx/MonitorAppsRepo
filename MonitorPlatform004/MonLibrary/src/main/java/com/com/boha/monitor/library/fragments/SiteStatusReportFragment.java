@@ -60,6 +60,9 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
     public SiteStatusReportFragment() {
     }
 
+    public interface SiteStatusReportListener {
+        public void onNoDataAvailable();
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,78 +93,28 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
         Log.d(LOG, "########## onCreateView");
         this.inflater = inflater;
         ctx = getActivity();
-        view = inflater.inflate(R.layout.fragment_status_list, container, false);
+        view = inflater.inflate(R.layout.fragment_site_status_list, container, false);
         setFields();
 
 
         return view;
     }
 
-    private void showPopup() {
-        List<String> list = new ArrayList<>();
-        for (ProjectDTO p : projectList) {
-            list.add(p.getProjectName());
-        }
-        View v = Util.getHeroView(ctx, ctx.getString(R.string.select_project));
-        popupWindow = new ListPopupWindow(ctx);
-        popupWindow.setPromptView(v);
-        popupWindow.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
-        popupWindow.setAnchorView(handle);
-        popupWindow.setHorizontalOffset(72);
-        popupWindow.setWidth(600);
-        popupWindow.setHeight(ListPopupWindow.WRAP_CONTENT);
-        popupWindow.setAdapter(new PopupListAdapter(ctx, R.layout.xxsimple_spinner_item, list, false));
-        popupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                project = projectList.get(position);
-                txtProject.setText(project.getProjectName());
-                getSiteData();
-                popupWindow.dismiss();
-            }
-        });
-        popupWindow.show();
-    }
-
     private void setFields() {
-        handle = view.findViewById(R.id.STATLST_handle);
-        progressBar = (ProgressBar) view.findViewById(R.id.STATLST_progress);
-        listView = (ListView) view.findViewById(R.id.STATLST_list);
-        heroImage = (ImageView) view.findViewById(R.id.STATLST_heroImage);
-        txtProject = (TextView) view.findViewById(R.id.STATLST_project);
-        txtCount = (TextView) view.findViewById(R.id.STATLST_txtCount);
-        txtTitle = (TextView) view.findViewById(R.id.STATLST_txtTitle);
-        txtEmpty = (TextView) view.findViewById(R.id.STATLST_txtEmpty);
-        btnEnd = (Button) view.findViewById(R.id.STATLST_endDate);
-        btnStart = (Button) view.findViewById(R.id.STATLST_startDate);
-        txtSiteName = (TextView) view.findViewById(R.id.STATLST_txtTitle);
+        handle = view.findViewById(R.id.SITE_STATUS_handle);
+        progressBar = (ProgressBar) view.findViewById(R.id.SITE_STATUS_progress);
+        listView = (ListView) view.findViewById(R.id.SITE_STATUS_list);
+        heroImage = (ImageView) view.findViewById(R.id.SITE_STATUS_heroImage);
+        txtCount = (TextView) view.findViewById(R.id.SITE_STATUS_txtCount);
+        txtTitle = (TextView) view.findViewById(R.id.SITE_STATUS_txtTitle);
+        txtEmpty = (TextView) view.findViewById(R.id.SITE_STATUS_txtEmpty);
 
         heroImage.setImageDrawable(Util.getRandomHeroImage(ctx));
 
-        Statics.setRobotoFontLight(ctx, txtProject);
-        Statics.setRobotoFontLight(ctx, btnEnd);
-        Statics.setRobotoFontLight(ctx, btnStart);
         Statics.setRobotoFontLight(ctx, txtTitle);
         progressBar.setVisibility(View.GONE);
         txtTitle.setVisibility(View.GONE);
-        txtProject.setVisibility(View.GONE);
         txtEmpty.setVisibility(View.GONE);
-        setDates();
-        btnEnd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isStartDate = false;
-                showDateDialog();
-            }
-        });
-        btnStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isStartDate = true;
-                showDateDialog();
-            }
-        });
-
 
         txtCount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,16 +129,10 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
 
             }
         });
-        txtProject.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPopup();
-            }
-        });
+
 
     }
 
-    boolean isStartDate;
     List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList;
 
     public void setProjectSite(ProjectSiteDTO site) {
@@ -210,10 +157,19 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
                 progressBar.setVisibility(View.GONE);
                 if (site != null) {
                     projectSite = site;
-                    projectSiteTaskStatusList = projectSite.getProjectSiteTaskStatusList();
-                    setList();
+                    projectSiteTaskStatusList = new ArrayList<>();
+                    for (ProjectSiteTaskDTO task: projectSite.getProjectSiteTaskList()) {
+                        if (task.getProjectSiteTaskStatusList() != null && !task.getProjectSiteTaskStatusList().isEmpty()) {
+                            projectSiteTaskStatusList.addAll(task.getProjectSiteTaskStatusList());
+                        }
+                    }
+                    if (projectSiteTaskStatusList.isEmpty()) {
+                        Util.showToast(ctx,"No status updates have been recorded.");
+                    } else {
+                        setList();
+                    }
                 } else {
-                    getSiteData();
+                    Util.showErrorToast(ctx,ctx.getString(R.string.status_not));
                 }
             }
 
@@ -225,7 +181,7 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
             @Override
             public void onError() {
                 Log.e(LOG,"--- no cache exists for the site, going to the cloud");
-                getSiteData();
+               listener.onNoDataAvailable();
             }
         });
     }
@@ -276,103 +232,27 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
                 }
             });
         } else {
-            Util.showToast(ctx,ctx.getString(R.string.connect_wifi));
+            getCachedSiteData();
         }
     }
     private void setList() {
         Log.d(LOG, "########## setList");
         Collections.sort(projectSiteTaskStatusList);
         txtCount.setText("" + projectSiteTaskStatusList.size());
-        adapter = new StatusReportAdapter(ctx, R.layout.status_report_card, projectSiteTaskStatusList);
+        adapter = new StatusReportAdapter(ctx, R.layout.status_report_card, projectSiteTaskStatusList, true);
         listView.setAdapter(adapter);
-
-    }
-
-    DatePickerDialog dpStart;
-    int mYear, mMonth, mDay;
-
-    private void showDateDialog() {
-        final Calendar calendar = Calendar.getInstance();
-        int xYear, xMth, xDay;
-        if (mYear == 0) {
-            xYear = calendar.get(Calendar.YEAR);
-            xMth = calendar.get(Calendar.MONTH);
-            xDay = calendar.get(Calendar.DAY_OF_MONTH);
-        } else {
-            xYear = mYear;
-            xMth = mMonth;
-            xDay = mDay;
-        }
-        dpStart = DatePickerDialog.newInstance(
-                new DatePickerDialog.OnDateSetListener() {
-
-                    @Override
-                    public void onDateSet(DatePickerDialog datePickerDialog,
-                                          int year, int month, int day) {
-                        mYear = year;
-                        mMonth = month;
-                        mDay = day;
-
-                        calendar.set(Calendar.YEAR, mYear);
-                        calendar.set(Calendar.MONTH, mMonth);
-                        calendar.set(Calendar.DAY_OF_MONTH, mDay);
-
-                        if (isStartDate) {
-                            calendar.set(Calendar.HOUR_OF_DAY, 0);
-                            calendar.set(Calendar.MINUTE,0);
-                            calendar.set(Calendar.SECOND,0);
-                            startDate = calendar.getTime();
-                        } else {
-                            endDate = calendar.getTime();
-                        }
-                        setDates();
-                        Util.flashSeveralTimes(txtCount, 200, 2, new Util.UtilAnimationListener() {
-                            @Override
-                            public void onAnimationEnded() {
-                                getSiteData();
-                            }
-                        });
-                    }
-
-
-                }, xYear, xMth, xDay, true
-        );
-        dpStart.setVibrate(true);
-        dpStart.setYearRange(2013, calendar.get(Calendar.YEAR));
-        Bundle args = new Bundle();
-        args.putInt("year", mYear);
-        args.putInt("month", mMonth);
-        args.putInt("day", mDay);
-
-        dpStart.setArguments(args);
-        dpStart.show(getFragmentManager(), "diagx");
-
-
-    }
-
-    private void setDates() {
-        //set dates, use week (7days) as default range
-        DateTime now = new DateTime();
-        DateTime then = now.minusDays(7);
-
-        if (startDate == null) {
-            then = then.withHourOfDay(0);
-            then = then.withMinuteOfHour(0);
-            then = then.withSecondOfMinute(0);
-            startDate = then.toDate();
-        }
-        if (endDate == null) {
-            endDate = now.toDate();
-        }
-        btnStart.setText(sdf.format(startDate));
-        btnEnd.setText(sdf.format(endDate));
 
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
+        if (activity instanceof SiteStatusReportListener) {
+            listener = (SiteStatusReportListener)activity;
+        } else {
+            throw new ClassCastException("Host " + activity.getLocalClassName() + "must implement SiteStatusReportListener");
+        }
+        Log.w(LOG, "Fragment hosted by " + activity.getLocalClassName());
     }
 
     @Override
@@ -380,9 +260,8 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
         super.onDetach();
     }
 
+    SiteStatusReportListener listener;
     TaskDTO task;
-    int staffType;
-    public static final int OPERATIONS = 1, PROJECT_MANAGER = 2, SITE_SUPERVISOR = 3;
     static final String LOG = SiteStatusReportFragment.class.getSimpleName();
 
     @Override

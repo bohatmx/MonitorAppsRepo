@@ -10,8 +10,11 @@ import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.fragments.SiteStatusReportFragment;
 import com.com.boha.monitor.library.fragments.StatusReportFragment;
+import com.com.boha.monitor.library.util.Util;
+import com.com.boha.monitor.library.util.WebCheck;
+import com.com.boha.monitor.library.util.WebCheckResult;
 
-public class SiteStatusReportActivity extends ActionBarActivity {
+public class SiteStatusReportActivity extends ActionBarActivity implements SiteStatusReportFragment.SiteStatusReportListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,4 +60,14 @@ public class SiteStatusReportActivity extends ActionBarActivity {
     }
 
 
+    @Override
+    public void onNoDataAvailable() {
+        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
+        if (wcr.isWifiConnected()) {
+            Util.showErrorToast(ctx,ctx.getString(R.string.status_not));
+        } else {
+            Util.showErrorToast(ctx, getString(R.string.status_not_available));
+        }
+        finish();
+    }
 }

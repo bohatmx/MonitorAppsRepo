@@ -322,7 +322,7 @@ public class StatusReportFragment extends Fragment implements PageFragment {
         Log.d(LOG, "########## setList");
 
         txtCount.setText("" + projectSiteTaskStatusList.size());
-        adapter = new StatusReportAdapter(ctx, R.layout.status_report_card, projectSiteTaskStatusList);
+        adapter = new StatusReportAdapter(ctx, R.layout.status_report_card, projectSiteTaskStatusList, false);
         listView.setAdapter(adapter);
 
     }

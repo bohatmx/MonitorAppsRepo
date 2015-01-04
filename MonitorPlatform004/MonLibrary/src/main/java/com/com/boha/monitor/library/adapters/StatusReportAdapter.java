@@ -23,11 +23,13 @@ public class StatusReportAdapter extends ArrayAdapter<ProjectSiteTaskStatusDTO> 
     private final int mLayoutRes;
     private List<ProjectSiteTaskStatusDTO> mList;
     private Context ctx;
+    boolean isProjectSite;
 
    public StatusReportAdapter(Context context, int textViewResourceId,
-                              List<ProjectSiteTaskStatusDTO> list) {
+                              List<ProjectSiteTaskStatusDTO> list, boolean isProjectSite) {
         super(context, textViewResourceId, list);
         this.mLayoutRes = textViewResourceId;
+       this.isProjectSite = isProjectSite;
         mList = list;
         ctx = context;
         this.mInflater = (LayoutInflater) context
@@ -68,7 +70,11 @@ public class StatusReportAdapter extends ArrayAdapter<ProjectSiteTaskStatusDTO> 
         }
 
         final ProjectSiteTaskStatusDTO p = mList.get(position);
-        item.txtTaskName.setText(p.getProjectSiteName() + " - " + p.getTask().getTaskName());
+        if (isProjectSite) {
+            item.txtTaskName.setText(p.getTask().getTaskName());
+        } else {
+            item.txtTaskName.setText(p.getProjectSiteName() + " - " + p.getTask().getTaskName());
+        }
         item.txtDate.setText(sdf.format(p.getStatusDate()));
         item.txtStatus.setText(p.getTaskStatus().getTaskStatusName());
         if (p.getStaffName() != null) {

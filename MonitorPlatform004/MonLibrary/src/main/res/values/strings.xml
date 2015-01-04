@@ -299,7 +299,7 @@
     <string name="enter_taskname">Please enter task name</string>
     <string name="task_price">Task Price</string>
     <string name="title_activity_sub_task_status_assignment">SubTaskStatusAssignmentActivity</string>
-    <string name="status_not">Status not updated</string>
+    <string name="status_not">Status not updated. Report not available.</string>
     <string name="subtask_status">SubTask Status</string>
     <string name="elapsed_time">Elapsed Time in seconds</string>
     <string name="title_activity_beneficiary_import">BeneficiaryImportActivity</string>
@@ -360,5 +360,6 @@
     <string name="photo_error">Unable to cache photo. Please insert an SD card</string>
     <string name="site_syncd">Site Status Sync complete</string>
     <string name="site_colon">"Site: "</string>
+    <string name="status_not_available">Site status report not available at this time</string>
 
 </resources>
