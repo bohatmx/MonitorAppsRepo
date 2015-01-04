@@ -143,9 +143,11 @@ public class MonitorMapActivity extends ActionBarActivity
                 Location loc = new Location(location);
                 loc.setLatitude(latLng.latitude);
                 loc.setLongitude(latLng.longitude);
-                for (ProjectSiteDTO site: project.getProjectSiteList()) {
-                    if (site.getProjectSiteName().equalsIgnoreCase(marker.getTitle())) {
-                        projectSite = site;
+                if (project != null) {
+                    for (ProjectSiteDTO site : project.getProjectSiteList()) {
+                        if (site.getProjectSiteName().equalsIgnoreCase(marker.getTitle())) {
+                            projectSite = site;
+                        }
                     }
                 }
                 float mf = location.distanceTo(loc);
@@ -400,6 +402,7 @@ public class MonitorMapActivity extends ActionBarActivity
     }
     private void getCachedSiteData() {
         progressBar.setVisibility(View.VISIBLE);
+
         CacheUtil.getCachedSiteData(ctx, projectSite.getProjectSiteID(), new CacheUtil.CacheSiteListener() {
             @Override
             public void onSiteReturnedFromCache(ProjectSiteDTO site) {

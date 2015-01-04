@@ -8,7 +8,7 @@
         android:id="@+id/SLT_heroImage"
         android:src="@drawable/banner_construction11"
         android:scaleType="centerCrop"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mon_widest" />
 

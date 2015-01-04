@@ -78,7 +78,7 @@ public class StatusReportFragment extends Fragment implements PageFragment {
     Date startDate, endDate;
     View view, handle;
     static final Locale locale = Locale.getDefault();
-    static final SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", locale);
+    static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", locale);
     List<ProjectDTO> projectList;
     ListPopupWindow popupWindow;
     ProgressBar progressBar;
