@@ -129,16 +129,18 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     public void onResume() {
         Log.d(LOG, "@@@ onResume...........");
         siteLocation = SharedUtil.getSiteLocation(ctx);
-        Log.e(LOG,"## site: " + siteLocation.getProjectSiteID() + " " + siteLocation.getAccuracy() + " - " + siteLocation.getDateTaken().toString());
         if (siteLocation != null) {
-            if (projectSite.getProjectSiteID().intValue() != projectSite.getProjectSiteID().intValue()) {
-                siteLocation = null;
-            } else {
-                DateTime dt = new DateTime();
-                DateTime then = new DateTime(siteLocation.getDateTaken().getTime());
-                long time = dt.toDate().getTime() - then.toDate().getTime();
-                if (time > FIVE_MINUTES) {
+            Log.e(LOG, "## site: " + siteLocation.getProjectSiteID() + " " + siteLocation.getAccuracy() + " - " + siteLocation.getDateTaken().toString());
+            if (siteLocation != null) {
+                if (projectSite.getProjectSiteID().intValue() != projectSite.getProjectSiteID().intValue()) {
                     siteLocation = null;
+                } else {
+                    DateTime dt = new DateTime();
+                    DateTime then = new DateTime(siteLocation.getDateTaken().getTime());
+                    long time = dt.toDate().getTime() - then.toDate().getTime();
+                    if (time > FIVE_MINUTES) {
+                        siteLocation = null;
+                    }
                 }
             }
         }
@@ -228,9 +230,11 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
             case CAPTURE_IMAGE:
                 if (resultCode == Activity.RESULT_OK) {
                     if (resultCode == Activity.RESULT_OK) {
-                        if (photoFile != null)
-                            Log.e(LOG, "++++++ hopefully photo file has a length: " + photoFile.length());
-                        new PhotoTask().execute();
+                        if (photoFile != null) {
+                            Log.e(LOG, "++ hopefully photo file has a length: " + photoFile.length());
+
+                            new PhotoTask().execute();
+                        }
                     }
                     pictureChanged = true;
 
@@ -641,10 +645,11 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                         thumbUri = Uri.fromFile(currentThumbFile);
                         //write exif data
                         Util.writeLocationToExif(currentThumbFile.getAbsolutePath(), location);
-
-                        Log.i(LOG, "## Thumbnail file length: " + currentThumbFile.length());
+                        boolean del = photoFile.delete();
+                        Log.i(LOG, "## Thumbnail file length: " + currentThumbFile.length()
+                        + " main image file deleted: " + del);
                     } catch (Exception e) {
-                        Log.e(LOG, "$&*%^$! Fuck it! unable to process bitmap", e);
+                        Log.e(LOG, "$&*%$! Fuck it! unable to process bitmap", e);
                         return 9;
                     }
 
@@ -691,6 +696,8 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         ImageLoader.getInstance().displayImage(uri.toString(), img);
         imageContainerLayout.addView(v, 0);
 
+        btnStart.setVisibility(View.GONE);
+        imgCamera.setVisibility(View.VISIBLE);
         uploadPhotos();
 
 

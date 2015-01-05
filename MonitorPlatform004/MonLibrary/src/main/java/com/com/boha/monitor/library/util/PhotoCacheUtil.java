@@ -65,14 +65,12 @@ public class PhotoCacheUtil {
         response.setLastCacheDate(new Date());
         photoCacheListener = listener;
         ctx = context;
-        Log.w(LOG, "@@@ getting photo cache in order to add photo");
         new CacheRetrieveForUpdateTask().execute();
     }
 
     public static void getCachedPhotos(Context context, PhotoCacheListener listener) {
         photoCacheListener = listener;
         ctx = context;
-        Log.d(LOG,"&&& getCachedPhotos: about to fire CacheRetrieveTask");
         new CacheRetrieveTask().execute();
     }
     public static void clearCache(Context context, final List<PhotoUploadDTO> uploadedList) {
@@ -88,7 +86,7 @@ public class PhotoCacheUtil {
                             File f = new File(ps.getThumbFilePath());
                             if (f.exists()) {
                                 boolean del = f.delete();
-                                Log.w(LOG, "### about to delete image file: " + ps.getThumbFilePath() + " - " + del);
+                                Log.w(LOG, "### deleted image file: " + ps.getThumbFilePath() + " - " + del);
                             }
                         }
                     }
@@ -187,12 +185,10 @@ public class PhotoCacheUtil {
                 Log.i(LOG, "++ photo cache retrieved, photos: " + response.getPhotoUploadList().size());
             } catch (FileNotFoundException e) {
                 Log.w(LOG, "############# cache file not found. not initialised yet. no problem, type = PHOTOS");
-                Log.d(LOG, "#### doInBackground - returning a new response object");
                 return response;
 
             } catch (IOException e) {
-                Log.e(LOG, "------------ Failed to retrieve cache", e);
-                Log.d(LOG, "#### doInBackground - returning a new response object, type = PHOTOS");
+                Log.e(LOG, "#### doInBackground - returning a new response object, type = PHOTOS");
             }
 
             return response;
@@ -249,14 +245,11 @@ public class PhotoCacheUtil {
             try {
                 stream = ctx.openFileInput(JSON_PHOTO);
                 response = getData(stream);
-                Log.i(LOG, "++ photo cache retrieved, photos: " + response.getPhotoUploadList().size());
             } catch (FileNotFoundException e) {
                 Log.w(LOG, "############# cache file not found. not initialised yet. no problem, type = PHOTOS");
-                Log.d(LOG, "#### doInBackground - returning a new response object");
                 return response;
 
             } catch (IOException e) {
-                Log.e(LOG, "------------ Failed to retrieve cache", e);
                 Log.d(LOG, "#### doInBackground - returning a new response object, type = PHOTOS");
             }
 
@@ -271,7 +264,6 @@ public class PhotoCacheUtil {
             }
             v.getPhotoUploadList().add(photoUpload);
             response = v;
-            Log.i(LOG, "### about to actually add photo to cache: photos: " + response.getPhotoUploadList().size());
             new CacheTask().execute();
 
         }

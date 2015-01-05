@@ -361,7 +361,9 @@ public class MonitorMapActivity extends ActionBarActivity
         list.add(getString(R.string.status_report));
         list.add(getString(R.string.site_gallery));
 
-        Util.showPopupBasicWithHeroImage(ctx, this, list, topLayout,ctx.getString(R.string.site_colon) + projectSite.getProjectSiteName(), new Util.UtilPopupListener() {
+        Util.showPopupBasicWithHeroImage(ctx, this, list, topLayout,
+                ctx.getString(R.string.site_colon) + projectSite.getProjectSiteName(),
+                new Util.UtilPopupListener() {
             @Override
             public void onItemSelected(int index) {
                 if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.directions))) {

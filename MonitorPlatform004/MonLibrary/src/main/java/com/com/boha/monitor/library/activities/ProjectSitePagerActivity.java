@@ -81,14 +81,10 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
         getSupportActionBar().setSubtitle(project.getProjectName());
         mLocationClient = new LocationClient(ctx, this, this);
         Log.e(LOG,"### about to start photo service");
-        startPhotoService();
-        getCachedProjectData();
+//
+       getCachedProjectData();
     }
 
-    private void startPhotoService() {
-        Intent i = new Intent(this,PhotoUploadService.class);
-        startService(i);
-    }
     private void getCachedProjectData() {
         //check network
         final WebCheckResult r = WebCheck.checkNetworkAvailability(ctx);
@@ -283,11 +279,11 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
     public void onStart() {
         super.onStart();
         Log.i(LOG,
-                "#################### onStart");
+                "### onStart");
         if (mLocationClient != null) {
             mLocationClient.connect();
             Log.i(LOG,
-                    "#################### onStart - locationClient connecting ... ");
+                    "### onStart - locationClient connecting ... ");
         }
         Intent intent2 = new Intent(this, PhotoUploadService.class);
         try {
@@ -314,12 +310,16 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
             }
             // After disconnect() is called, the client is considered "dead".
             mLocationClient.disconnect();
-            Log.e("map", "### onStop - locationClient disconnected: "
+            Log.e(LOG, "### onStop - locationClient isConnected: "
                     + mLocationClient.isConnected());
         }
-        if (pBound) {
-            unbindService(pConnection);
-            pBound = false;
+        try {
+            if (pBound) {
+                unbindService(pConnection);
+                pBound = false;
+            }
+        } catch (Exception e) {
+            Log.e(LOG,"-- something wrong with unbind", e);
         }
         super.onStop();
     }
@@ -336,7 +336,13 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
             PhotoUploadService.LocalBinder binder = (PhotoUploadService.LocalBinder) service;
             pService = binder.getService();
             pBound = true;
-            //pService.sendCachedPhotos();
+            Log.w(LOG,"### starting PhotoUploadService ...");
+            pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+                @Override
+                public void onUploadsComplete(int count) {
+                    Log.i(LOG,"++ onUploadsComplete, count: " + count);
+                }
+            });
         }
 
         @Override

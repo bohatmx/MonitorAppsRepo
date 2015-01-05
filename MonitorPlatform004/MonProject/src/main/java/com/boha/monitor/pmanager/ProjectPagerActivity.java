@@ -325,7 +325,7 @@ public class ProjectPagerActivity extends ActionBarActivity
     @Override
     protected void onStart() {
         super.onStart();
-        Log.w(LOG, "## onStart Bind to RequestSyncService and PhotoUploadService");
+        Log.w(LOG, "## onStart Bind to RequestSyncService");
         Intent intent = new Intent(this, RequestSyncService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
@@ -335,10 +335,14 @@ public class ProjectPagerActivity extends ActionBarActivity
     @Override
     protected void onStop() {
         super.onStop();
-        Log.e(LOG, "## onStop unBind from RequestSyncService and PhotoUploadService");
-        if (mBound) {
-            unbindService(mConnection);
-            mBound = false;
+        Log.e(LOG, "## onStop unBind from RequestSyncService");
+        try {
+            if (mBound) {
+                unbindService(mConnection);
+                mBound = false;
+            }
+        } catch (Exception e) {
+            Log.e(LOG,"-- Problem with unbind", e);
         }
 
     }

@@ -160,7 +160,6 @@ public class WebSocketUtil {
             try {
                 content = new String(bb.array());
                 end = System.currentTimeMillis();
-                Log.d(LOG, "### parseData finished, elapsed: " + Util.getElapsed(start, end) + " seconds");
                 ResponseDTO response = gson.fromJson(content, ResponseDTO.class);
                 if (response.getStatusCode() == 0) {
                     webSocketListener.onMessage(response);

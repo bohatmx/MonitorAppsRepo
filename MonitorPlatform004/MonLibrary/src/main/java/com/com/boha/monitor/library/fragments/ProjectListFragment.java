@@ -85,7 +85,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e(LOG, "$$ onCreate, savedInstanceState: " + savedInstanceState);
 
     }
 
@@ -104,7 +103,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             if (r.getCompany() != null) {
                 projectList = r.getCompany().getProjectList();
                 statusCountInPeriod = r.getStatusCountInPeriod();
-                Log.w(LOG,"*** statusCountInPeriod: " + statusCountInPeriod);
             }
         }
         setTotals();
@@ -205,21 +203,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     static final DecimalFormat df = new DecimalFormat("###,###,###,###");
 
     int lastIndex;
-    private void startSitePager(ProjectDTO project) {
-        Intent i = new Intent(getActivity(), ProjectSitePagerActivity.class);
-        CompanyDTO company = new CompanyDTO();
-        company.setCompanyID(SharedUtil.getCompany(getActivity()).getCompanyID());
-        i.putExtra("project", project);
-        i.putExtra("company", company);
-        i.putExtra("type", SiteTaskAndStatusAssignmentFragment.PROJECT_MANAGER);
-        Log.e(LOG, "* about to start ProjectSitePagerActivity ...something goes over the cliff here ...");
-        //startActivityForResult(i, NEW_STATUS_EXPECTED);
-        try {
-            startActivity(i);
-        }catch (Exception e) {
-            Log.e(LOG,"FUCK!!!!", e);
-        }
-    }
+
     private void setList() {
 
         adapter = new ProjectAdapter(ctx, R.layout.project_item, projectList);

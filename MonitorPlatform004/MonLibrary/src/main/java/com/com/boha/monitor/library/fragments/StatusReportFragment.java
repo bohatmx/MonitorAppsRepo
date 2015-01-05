@@ -93,17 +93,14 @@ public class StatusReportFragment extends Fragment implements PageFragment {
         setFields();
         Bundle b = getArguments();
         if (b != null) {
-            Log.d(LOG, "########## onCreateView, bundle not null");
             ResponseDTO r = (ResponseDTO) b.getSerializable("response");
             if (r.getCompany() == null) {
-                Log.e(LOG, "########## onCreateView, company is NULL");
                 return view;
             }
             projectList = r.getCompany().getProjectList();
             if (projectList != null && !projectList.isEmpty()) {
                 project = projectList.get(0);
                 txtProject.setText(project.getProjectName());
-                //getCachedStatus();
             }
         }
 
