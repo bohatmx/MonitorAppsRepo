@@ -293,6 +293,7 @@ public class StatusReportFragment extends Fragment implements PageFragment {
                     }
                     txtCount.setText("" + projectSiteTaskStatusList.size());
                     setList();
+                    Util.expand(heroImage,1000,null);
                 }
                 if (wcr.isWifiConnected()) {
                     setDates();

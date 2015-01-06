@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -203,6 +204,16 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     static final DecimalFormat df = new DecimalFormat("###,###,###,###");
 
     int lastIndex;
+    public void refreshData(List<ProjectDTO> list) {
+        projectList = list;
+        setTotals();
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+            mListView.setSelection(lastIndex);
+        } else {
+            setList();
+        }
+    }
 
     private void setList() {
 
@@ -231,8 +242,35 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             }
         });
         mListView.setSelection(lastIndex);
+        mListView.setOnScrollListener(new AbsListView.OnScrollListener(){
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            }
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                final ListView lw = mListView;
+
+                if(scrollState == 0)
+                    //Log.i(LOG, "scrolling stopped...");
+
+                if (view.getId() == lw.getId()) {
+                    final int currentFirstVisibleItem = lw.getFirstVisiblePosition();
+                    if (currentFirstVisibleItem > mLastFirstVisibleItem) {
+                        mIsScrollingUp = false;
+                        Log.i(LOG, "scrolling down...");
+                        //Util.collapse(topView,500,null);
+                    } else if (currentFirstVisibleItem < mLastFirstVisibleItem) {
+                        mIsScrollingUp = true;
+                        Log.i(LOG, "scrolling up...");
+                        //Util.expand(topView,500,null);
+                    }
+
+                    mLastFirstVisibleItem = currentFirstVisibleItem;
+                }
+            }
+        });
     }
 
+    boolean mIsScrollingUp;
+    int mLastFirstVisibleItem;
     ListPopupWindow actionsWindow;
     List<String> list;
 

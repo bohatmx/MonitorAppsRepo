@@ -317,13 +317,10 @@ public class CacheUtil {
                 response.setStatusCode(0);
 
             } catch (FileNotFoundException e) {
-                Log.w(LOG, "############# cache file not found. not initialised yet. no problem, type = " + dataType);
-                Log.d(LOG,"#### doInBackground - returning a new response object, type = " + dataType);
-                return response;
+                Log.d(LOG,"#### cache file not found - returning a new response object, type = " + dataType);
 
             } catch (IOException e) {
                 Log.v(LOG, "------------ Failed to retrieve cache", e);
-                response.setStatusCode(9);
             }
 
             return response;
@@ -331,14 +328,9 @@ public class CacheUtil {
 
         @Override
         protected void onPostExecute(ResponseDTO v) {
-            Log.d(LOG,"### onPostExecute response should never be null, type = " + dataType);
             if (utilListener == null) return;
-            if (v != null) {
                 utilListener.onFileDataDeserialized(v);
-            } else {
-                Log.e(LOG, "-- onPostExecute, util returns null response object, onError fired!");
-                utilListener.onError();
-            }
+
 
         }
     }

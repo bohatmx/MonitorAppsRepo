@@ -15,7 +15,6 @@ import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,11 +28,7 @@ import android.widget.TextView;
 
 import com.com.boha.monitor.library.activities.AppInvitationActivity;
 import com.com.boha.monitor.library.activities.BeneficiaryImportActivity;
-import com.com.boha.monitor.library.activities.ClaimAndInvoicePagerActivity;
-import com.com.boha.monitor.library.activities.MonitorMapActivity;
 import com.com.boha.monitor.library.activities.PictureActivity;
-import com.com.boha.monitor.library.activities.PictureRecyclerGridActivity;
-import com.com.boha.monitor.library.activities.ProjectSitePagerActivity;
 import com.com.boha.monitor.library.activities.StaffActivity;
 import com.com.boha.monitor.library.activities.SubTaskActivity;
 import com.com.boha.monitor.library.adapters.DrawerAdapter;
@@ -61,10 +56,10 @@ import com.com.boha.monitor.library.fragments.EngineerListFragment;
 import com.com.boha.monitor.library.fragments.PageFragment;
 import com.com.boha.monitor.library.fragments.ProjectListFragment;
 import com.com.boha.monitor.library.fragments.ProjectStatusTypeListFragment;
-import com.com.boha.monitor.library.fragments.SiteTaskAndStatusAssignmentFragment;
 import com.com.boha.monitor.library.fragments.StaffListFragment;
 import com.com.boha.monitor.library.fragments.TaskListFragment;
 import com.com.boha.monitor.library.fragments.TaskStatusListFragment;
+import com.com.boha.monitor.library.services.PhotoUploadService;
 import com.com.boha.monitor.library.services.RequestSyncService;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
@@ -100,35 +95,36 @@ public class OperationsPagerActivity extends ActionBarActivity
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mPager = (ViewPager) findViewById(R.id.pager);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
-        if (tb != null) {
-            //setSupportActionBar(tb);
-        }
+        progressBar.setVisibility(View.GONE);
         PagerTitleStrip s = (PagerTitleStrip) findViewById(R.id.pager_title_strip);
         s.setVisibility(View.GONE);
         drawerListView = (ListView) findViewById(R.id.left_drawer);
         titles = getResources().getStringArray(R.array.action_items);
-        setDrawerList();
+        getCachedCompanyData();
         setTitle(SharedUtil.getCompany(ctx).getCompanyName());
         CompanyStaffDTO staff = SharedUtil.getCompanyStaff(ctx);
         getSupportActionBar().setSubtitle(staff.getFullName());
 
+
     }
 
-    private void setDrawerList() {
+    private void getCachedCompanyData() {
+        final WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
+        progressBar.setVisibility(View.VISIBLE);
         CacheUtil.getCachedData(getApplicationContext(), CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
+
             @Override
             public void onFileDataDeserialized(ResponseDTO r) {
-                CompanyDTO company = new CompanyDTO();
+                progressBar.setVisibility(View.GONE);
                 if (r != null) {
-                    response = r;
-                    if (response.getCompany() == null) {
-                        getCompanyData();
+                    if (r.getCompany() != null) {
+                        company = r.getCompany();
+                        response = r;
+                        buildPages();
+                    } else {
+                        Util.showErrorToast(ctx, ctx.getString(R.string.wifi_not_connected));
                         return;
                     }
-                    company = r.getCompany();
-                    projectList = company.getProjectList();
-                    buildPages();
                 }
                 for (String s : titles) {
                     sTitles.add(s);
@@ -151,7 +147,6 @@ public class OperationsPagerActivity extends ActionBarActivity
                     }
                 });
 
-                WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
                 if (wcr.isWifiConnected()) {
                     Log.w(LOG, "## RequestSyncService.startSyncCachedRequests ...from operations pager");
                     mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
@@ -172,6 +167,8 @@ public class OperationsPagerActivity extends ActionBarActivity
                         }
                     });
                 }
+
+
             }
 
             @Override
@@ -181,19 +178,21 @@ public class OperationsPagerActivity extends ActionBarActivity
 
             @Override
             public void onError() {
-                getCompanyData();
+                if (wcr.isWifiConnected()) {
+                    getCompanyData();
+                }
             }
         });
+
     }
 
+    private CompanyDTO company;
 
     private void getCompanyData() {
-
-        Log.e(LOG,"#### getCompanyData ....");
+        Log.w(LOG, "############# getCompanyData from the cloud..........");
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.GET_COMPANY_DATA);
         w.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
-
         progressBar.setVisibility(View.VISIBLE);
         WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
@@ -202,15 +201,17 @@ public class OperationsPagerActivity extends ActionBarActivity
                     @Override
                     public void run() {
                         progressBar.setVisibility(View.GONE);
-
+                        Log.e(LOG, "## getCompanyData responded...statusCode: " + r.getStatusCode());
                         if (!ErrorUtil.checkServerError(ctx, r)) {
                             return;
                         }
+                        company = r.getCompany();
                         response = r;
-                        projectList = r.getCompany().getProjectList();
-                        Log.d(LOG,"##### got myself a list of projects: " + projectList.size());
-                        buildPages();
-
+                        if (projectListFragment == null) {
+                            buildPages();
+                        } else {
+                            projectListFragment.refreshData(company.getProjectList());
+                        }
                         CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
@@ -219,7 +220,7 @@ public class OperationsPagerActivity extends ActionBarActivity
 
                             @Override
                             public void onDataCached() {
-                                Intent i = new Intent(getApplicationContext(), RequestSyncService.class);
+                                Intent i = new Intent(ctx, PhotoUploadService.class);
                                 startService(i);
                             }
 
@@ -228,16 +229,23 @@ public class OperationsPagerActivity extends ActionBarActivity
 
                             }
                         });
+                        Intent i = new Intent(getApplicationContext(), PhotoUploadService.class);
+                        startService(i);
+
 
                     }
                 });
-
 
             }
 
             @Override
             public void onClose() {
-
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
             }
 
             @Override
@@ -1114,23 +1122,26 @@ public class OperationsPagerActivity extends ActionBarActivity
             RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
             mService = binder.getService();
             mBound = true;
-            mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
-                @Override
-                public void onTasksSynced(int goodResponses, int badResponses) {
-                    Log.w(LOG,"@@ cached requests done, good: "+ goodResponses + " bad: " + badResponses);
-                }
+            WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
+            if (wcr.isWifiConnected()) {
+                mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
+                    @Override
+                    public void onTasksSynced(int goodResponses, int badResponses) {
+                        Log.w(LOG, "@@ cached requests done, good: " + goodResponses + " bad: " + badResponses);
+                    }
 
-                @Override
-                public void onError(String message) {
+                    @Override
+                    public void onError(String message) {
 
-                }
-            });
-            Util.pretendFlash(progressBar,1000,2,new Util.UtilAnimationListener() {
-                @Override
-                public void onAnimationEnded() {
-                    getCompanyData();
-                }
-            });
+                    }
+                });
+                Util.pretendFlash(progressBar, 1000, 2, new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        getCompanyData();
+                    }
+                });
+            }
         }
 
         @Override

@@ -110,7 +110,7 @@ public class ProjectPagerActivity extends ActionBarActivity
     private CompanyDTO company;
 
     private void getCompanyData() {
-        Log.w(LOG, "############# getCompanyData..........");
+        Log.w(LOG, "############# getCompanyData from the cloud..........");
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.GET_COMPANY_DATA);
         w.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
@@ -128,7 +128,11 @@ public class ProjectPagerActivity extends ActionBarActivity
                         }
                         company = r.getCompany();
                         response = r;
-                        buildPages();
+                        if (projectListFragment == null) {
+                            buildPages();
+                        } else {
+                            projectListFragment.refreshData(company.getProjectList());
+                        }
                         CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
@@ -360,17 +364,20 @@ public class ProjectPagerActivity extends ActionBarActivity
             RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
             mService = binder.getService();
             mBound = true;
-            mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
-                @Override
-                public void onTasksSynced(int goodResponses, int badResponses) {
-                    Log.i(LOG, "** cached requests sync, good: " + goodResponses + " bad: " + badResponses);
-                }
+            WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
+            if (wcr.isWifiConnected()) {
+                mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
+                    @Override
+                    public void onTasksSynced(int goodResponses, int badResponses) {
+                        Log.i(LOG, "** cached requests sync, good: " + goodResponses + " bad: " + badResponses);
+                    }
 
-                @Override
-                public void onError(String message) {
-                    Log.e(LOG, message);
-                }
-            });
+                    @Override
+                    public void onError(String message) {
+                        Log.e(LOG, message);
+                    }
+                });
+            }
         }
 
         @Override

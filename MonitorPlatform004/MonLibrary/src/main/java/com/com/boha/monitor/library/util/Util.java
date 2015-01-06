@@ -93,7 +93,6 @@ public class Util {
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int height = displaymetrics.heightPixels;
         int width = displaymetrics.widthPixels;
-        Log.i(LOG, "$$ screen width: " + width);
         Double d = Double.valueOf("" + width);
         Double e = d / 1.5;
         return e.intValue();
@@ -103,7 +102,6 @@ public class Util {
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int height = displaymetrics.heightPixels;
         int width = displaymetrics.widthPixels;
-        Log.i(LOG, "$$ screen width: " + width);
         Double d = Double.valueOf("" + width);
         Double e = d / 15;
         return e.intValue();
