@@ -513,8 +513,8 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
         actionsWindow.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
         actionsWindow.setAdapter(new TaskStatusAdapter(ctx, R.layout.task_status_item_small, taskStatusList, true));
         actionsWindow.setAnchorView(handle);
-        actionsWindow.setWidth(700);
-        actionsWindow.setHorizontalOffset(72);
+        actionsWindow.setWidth(Util.getPopupWidth(getActivity()));
+        actionsWindow.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
         actionsWindow.setModal(true);
         actionsWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -631,7 +631,8 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
         }
         taskPopupWindow = new ListPopupWindow(ctx);
         taskPopupWindow.setAnchorView(txtTitle);
-        taskPopupWindow.setWidth(800);
+        taskPopupWindow.setWidth(Util.getPopupWidth(getActivity()));
+        taskPopupWindow.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
         taskPopupWindow.setModal(true);
         taskPopupWindow.setAdapter(new PopupListAdapter(ctx, R.layout.xxsimple_spinner_item, taskStringList, false));
         taskPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {

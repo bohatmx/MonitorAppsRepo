@@ -46,7 +46,7 @@ import java.util.List;
  * sites that belong in the project.
  * Hosted by: ProjectPagerActivity, OperationsPagerActivity - these activities
  * must implement the ProjectListListener interface.
- *
+ * <p/>
  * Entry points: onCreaView
  */
 public class ProjectListFragment extends Fragment implements PageFragment {
@@ -139,14 +139,14 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         }
         setList();
 
-        CacheUtil.getCachedData(ctx,CacheUtil.CACHE_DATA,new CacheUtil.CacheUtilListener() {
+        CacheUtil.getCachedData(ctx, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
                 if (response != null) {
                     response.getCompany().setProjectList(projectList);
                     response.setStatusCountInPeriod(statusCountInPeriod);
                     //write data back
-                    CacheUtil.cacheData(ctx,response,CacheUtil.CACHE_DATA, null);
+                    CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_DATA, null);
                 }
             }
 
@@ -216,7 +216,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         }
 
 
-
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -236,6 +235,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
     ListPopupWindow actionsWindow;
     List<String> list;
+
     private void showPopup() {
 
         list = new ArrayList<>();
@@ -256,8 +256,8 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         actionsWindow.setAdapter(new PopupListAdapter(ctx,
                 com.boha.monitor.library.R.layout.xxsimple_spinner_item, list, false));
         actionsWindow.setAnchorView(txtProjectCount);
-        actionsWindow.setWidth(540);
-        actionsWindow.setHorizontalOffset(40);
+        actionsWindow.setWidth(Util.getPopupWidth(getActivity()));
+        actionsWindow.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
         actionsWindow.setModal(true);
         try {
             actionsWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -302,6 +302,8 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             actionsWindow.dismiss();
         }
     }
+
+
     private void setFields() {
         //set fields
         topView = view.findViewById(R.id.topTop);
@@ -334,7 +336,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             }
         });
 
-
         imgSearch1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -347,7 +348,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                 search();
             }
         });
-
+        Util.expand(heroImage, 1000, null);
     }
 
     public void setTotals() {

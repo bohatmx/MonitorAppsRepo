@@ -94,8 +94,8 @@ public class ExecProjectGridFragment extends Fragment implements PageFragment{
                 actionsWindow.setAdapter(new PopupListAdapter(ctx,
                         com.boha.monitor.library.R.layout.xxsimple_spinner_item, list,false));
                 actionsWindow.setAnchorView(txtTitle);
-                actionsWindow.setWidth(400);
-                actionsWindow.setHorizontalOffset(100);
+                actionsWindow.setWidth(Util.getPopupWidth(getActivity()));
+                actionsWindow.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
                 actionsWindow.setModal(true);
                 actionsWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -136,8 +136,8 @@ public class ExecProjectGridFragment extends Fragment implements PageFragment{
         win.setAnchorView(txtTitle);
         win.setPromptView(Util.getHeroView(ctx, project.getProjectName()));
         win.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
-        win.setWidth(360);
-        win.setHorizontalOffset(100);
+        win.setWidth(Util.getPopupWidth(getActivity()));
+        win.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
 
         win.setAdapter(new ExecStatusListAdapter(ctx,R.layout.quick_status, project.getProjectSiteTaskStatusList()));
         win.show();

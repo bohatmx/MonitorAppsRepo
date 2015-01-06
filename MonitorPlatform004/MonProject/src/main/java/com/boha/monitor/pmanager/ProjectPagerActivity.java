@@ -342,7 +342,7 @@ public class ProjectPagerActivity extends ActionBarActivity
                 mBound = false;
             }
         } catch (Exception e) {
-            Log.e(LOG,"-- Problem with unbind", e);
+            Log.e(LOG,"-- Problem with unbinding service", e);
         }
 
     }

@@ -70,7 +70,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
     Context ctx;
     TextView txtCount, txtName;
     int lastIndex;
-    View view, topView;
+    View view, topView, handle;
     ImageView imgSearch1, imgSearch2, heroImage;
     EditText editSearch;
 
@@ -92,8 +92,19 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
             lastIndex = savedInstanceState.getInt("lastIndex", 0);
             Log.e(LOG, "++++ lastIndex in savedInstanceState: " + lastIndex);
         }
+        setFields();
+        Statics.setRobotoFontLight(ctx, txtCount);
+        if (project.getProjectSiteList() != null && !project.getProjectSiteList().isEmpty()) {
+            projectSiteList = project.getProjectSiteList();
+            setList();
+        }
+        return view;
+    }
+
+    private void setFields() {
         txtCount = (TextView) view.findViewById(R.id.SITE_LIST_siteCount);
         topView = view.findViewById(R.id.SITE_LIST_TOP);
+        handle = view.findViewById(R.id.SITE_LIST_handle);
 
         imgSearch1 = (ImageView) view.findViewById(R.id.SLT_imgSearch1);
         imgSearch2 = (ImageView) view.findViewById(R.id.SLT_imgSearch2);
@@ -131,12 +142,6 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         });
 
         mListView = (AbsListView) view.findViewById(R.id.SLT_list);
-        Statics.setRobotoFontLight(ctx, txtCount);
-        if (project.getProjectSiteList() != null && !project.getProjectSiteList().isEmpty()) {
-            projectSiteList = project.getProjectSiteList();
-            setList();
-        }
-        return view;
     }
 
     private void search() {
@@ -265,7 +270,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         }
 
 
-        Util.showPopupBasicWithHeroImage(ctx, getActivity(), list, topView, ctx.getString(R.string.site_colon)
+        Util.showPopupBasicWithHeroImage(ctx, getActivity(), list, handle, ctx.getString(R.string.site_colon)
                 + projectSite.getProjectSiteName(), new Util.UtilPopupListener() {
             @Override
             public void onItemSelected(int index) {

@@ -204,9 +204,9 @@ public class SubTaskStatusAssignmentFragment extends Fragment {
         }
         actionsWindow.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
         actionsWindow.setAnchorView(handle);
-        actionsWindow.setWidth(700);
+        actionsWindow.setWidth(Util.getPopupWidth(getActivity()));
         actionsWindow.setModal(true);
-        actionsWindow.setHorizontalOffset(72);
+        actionsWindow.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
         actionsWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

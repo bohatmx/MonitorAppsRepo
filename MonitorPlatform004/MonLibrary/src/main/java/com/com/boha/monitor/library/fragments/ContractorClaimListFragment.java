@@ -26,7 +26,6 @@ import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.util.FileDownloader;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
-import com.com.boha.monitor.library.util.ToastUtil;
 import com.com.boha.monitor.library.util.Util;
 
 import java.io.File;
@@ -119,7 +118,8 @@ public class ContractorClaimListFragment extends Fragment implements PageFragmen
                 invoicePopupWindow = new ListPopupWindow(getActivity());
                 invoicePopupWindow.setAdapter(new SpinnerListAdapter(ctx,R.layout.xxsimple_spinner_item,list, SpinnerListAdapter.SITE_LIST,true));
                 invoicePopupWindow.setAnchorView(txtName);
-                invoicePopupWindow.setWidth(600);
+                invoicePopupWindow.setWidth(Util.getPopupWidth(getActivity()));
+                invoicePopupWindow.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
                 invoicePopupWindow.setModal(true);
                 invoicePopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override

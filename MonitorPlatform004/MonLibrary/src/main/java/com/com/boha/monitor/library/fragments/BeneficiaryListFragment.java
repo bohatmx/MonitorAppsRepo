@@ -185,9 +185,8 @@ private void buildBeneficiaryList() {
         pop.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
         pop.setAdapter(new PopupListAdapter(ctx, R.layout.xxsimple_spinner_item, sList, false));
         pop.setModal(true);
-        pop.setWidth(720);
-        pop.setHeight(1000);
-        pop.setHorizontalOffset(72);
+        pop.setWidth(Util.getPopupWidth(getActivity()));
+        pop.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
 
         pop.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

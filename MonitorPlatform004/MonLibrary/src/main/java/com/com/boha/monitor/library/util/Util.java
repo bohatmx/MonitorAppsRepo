@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Html;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -45,7 +46,6 @@ import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +56,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -89,10 +88,32 @@ public class Util {
         });
         pop.show();
     }
-
-    private static int getWindowWidth(Activity ctx) {
-        Display display = ctx.getWindowManager().getDefaultDisplay();
-        return display.getWidth();
+    public static int getPopupWidth(Activity activity) {
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int height = displaymetrics.heightPixels;
+        int width = displaymetrics.widthPixels;
+        Log.i(LOG, "$$ screen width: " + width);
+        Double d = Double.valueOf("" + width);
+        Double e = d / 1.5;
+        return e.intValue();
+    }
+    public static int getPopupHorizontalOffset(Activity activity) {
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int height = displaymetrics.heightPixels;
+        int width = displaymetrics.widthPixels;
+        Log.i(LOG, "$$ screen width: " + width);
+        Double d = Double.valueOf("" + width);
+        Double e = d / 15;
+        return e.intValue();
+    }
+    private static int getWindowWidth(Activity activity) {
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int height = displaymetrics.heightPixels;
+        int width = displaymetrics.widthPixels;
+        return width;
     }
 
     private static int getWindowHeight(Activity ctx) {
@@ -114,18 +135,15 @@ public class Util {
         }
         ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
         img.setImageDrawable(getRandomHeroImage(ctx));
-        Double b = new Double("" + getWindowWidth(act));
-        Double c = b / new Double("1.5");
-        //RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(getWindowWidth(act), 100);
-        //img.setLayoutParams(layoutParams);
+
         pop.setPromptView(v);
         pop.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
         pop.setAdapter(new PopupListAdapter(ctx, R.layout.xxsimple_spinner_item,
                 list, false));
         pop.setAnchorView(anchorView);
-        pop.setHorizontalOffset(72);
+        pop.setHorizontalOffset(getPopupHorizontalOffset(act));
         pop.setModal(true);
-        pop.setWidth(c.intValue());
+        pop.setWidth(getPopupWidth(act));
         pop.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -573,7 +591,7 @@ public class Util {
 
 
         ResizeAnimation a = new ResizeAnimation(view, 0);
-        a.setDuration(1);
+        a.setDuration(10);
         a.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {

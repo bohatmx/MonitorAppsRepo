@@ -33,7 +33,6 @@ import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
 import com.com.boha.monitor.library.util.Statics;
-import com.com.boha.monitor.library.util.ToastUtil;
 import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebSocketUtil;
 
@@ -300,7 +299,8 @@ public class SubTaskFragment extends Fragment implements PageFragment {
         taskPopupWindow = new ListPopupWindow(ctx);
         taskPopupWindow.setModal(true);
         taskPopupWindow.setAnchorView(txtTitle);
-        taskPopupWindow.setWidth(700);
+        taskPopupWindow.setWidth(Util.getPopupWidth(getActivity()));
+        taskPopupWindow.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
         taskPopupWindow.setAdapter(new PopupListAdapter(ctx, R.layout.xxsimple_spinner_item, list, false));
         taskPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

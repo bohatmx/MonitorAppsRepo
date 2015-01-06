@@ -270,8 +270,8 @@ public class ContractorClaimFragment extends Fragment implements PageFragment {
         p.setAnchorView(txtProject);
         p.setPromptView(v);
         p.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
-        p.setHorizontalOffset(72);
-        p.setWidth(720);
+        p.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
+        p.setWidth(Util.getPopupWidth(getActivity()));
         p.setAdapter(new PopupListAdapter(ctx, R.layout.xxsimple_spinner_item, list, false));
         p.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -300,8 +300,8 @@ public class ContractorClaimFragment extends Fragment implements PageFragment {
         p.setAnchorView(txtProject);
         p.setPromptView(v);
         p.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
-        p.setHorizontalOffset(72);
-        p.setWidth(720);
+        p.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
+        p.setWidth(Util.getPopupWidth(getActivity()));
         p.setAdapter(new PopupListAdapter(ctx, R.layout.xxsimple_spinner_item, list, false));
         p.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

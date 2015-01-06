@@ -15,7 +15,6 @@ import android.widget.ListPopupWindow;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.adapters.PopupListAdapter;
@@ -117,9 +116,9 @@ public class StatusReportFragment extends Fragment implements PageFragment {
         popupWindow.setPromptView(v);
         popupWindow.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
         popupWindow.setAnchorView(handle);
-        popupWindow.setHorizontalOffset(72);
-        popupWindow.setWidth(600);
-        popupWindow.setHeight(ListPopupWindow.WRAP_CONTENT);
+        popupWindow.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
+        popupWindow.setWidth(Util.getPopupWidth(getActivity()));
+        popupWindow.setModal(true);
         popupWindow.setAdapter(new PopupListAdapter(ctx, R.layout.xxsimple_spinner_item, list, false));
         popupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
