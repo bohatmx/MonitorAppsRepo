@@ -5,27 +5,35 @@
     android:padding="@dimen/mon_padding"
     android:background="@color/grey"
     android:layout_height="match_parent">
-
     <RelativeLayout
         android:id="@+id/AST_handle"
         android:padding="@dimen/mon_divider"
-        android:background="@color/beige_pale"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="1dp">
 
-        <TextView
-            android:id="@+id/AST_title2"
-            style="@style/Title3TextStyleBlack"
-            android:text="@string/site_status"
-            android:layout_centerHorizontal="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+
 
     </RelativeLayout>
 
+
+    <RelativeLayout
+        android:id="@+id/AST_heroLayout"
+        android:layout_below="@id/AST_handle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/AST_heroImage"
+            android:src="@drawable/banner_construction13"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+
     <RelativeLayout
         android:id="@+id/AST_middle"
-        android:layout_below="@id/AST_handle"
+        android:layout_below="@id/AST_heroLayout"
         android:background="@color/beige_pale"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -44,7 +52,9 @@
 
             <ImageView
                 android:id="@+id/AST_camera"
-                android:src="@drawable/camera_a32"
+                android:src="@android:drawable/ic_menu_camera"
+                android:tint="@color/white"
+                android:background="@drawable/xred_oval_large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -53,6 +63,7 @@
                 android:layout_toRightOf="@id/AST_camera"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/mon_margin"
+                android:textColor="@color/white"
                 android:text="@string/rem_take_pic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />

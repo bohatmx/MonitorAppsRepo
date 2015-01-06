@@ -71,7 +71,9 @@ public class WebSocketUtil {
                 String json = gson.toJson(req);
                 start = System.currentTimeMillis();
                 mWebSocketClient.send(json);
-                Log.d(LOG, "## web socket message sent\n" + json);
+                URI uri = new URI(Statics.WEBSOCKET_URL + suffix);
+                Log.i(LOG, "## sent request, uri: " + uri.toString() + "web socket message sent\n"
+                         + json);
             }
 
 

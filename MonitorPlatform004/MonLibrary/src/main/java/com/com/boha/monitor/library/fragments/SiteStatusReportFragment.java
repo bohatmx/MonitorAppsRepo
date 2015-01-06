@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListPopupWindow;
@@ -17,7 +16,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
-import com.com.boha.monitor.library.adapters.PopupListAdapter;
 import com.com.boha.monitor.library.adapters.StatusReportAdapter;
 import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
@@ -33,13 +31,9 @@ import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebCheck;
 import com.com.boha.monitor.library.util.WebCheckResult;
 import com.com.boha.monitor.library.util.WebSocketUtil;
-import com.fourmob.datetimepicker.date.DatePickerDialog;
-
-import org.joda.time.DateTime;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -110,7 +104,7 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
         txtEmpty = (TextView) view.findViewById(R.id.SITE_STATUS_txtEmpty);
 
         heroImage.setImageDrawable(Util.getRandomHeroImage(ctx));
-
+        Util.expand(heroImage,1000,null);
         Statics.setRobotoFontLight(ctx, txtTitle);
         progressBar.setVisibility(View.GONE);
         txtTitle.setVisibility(View.GONE);

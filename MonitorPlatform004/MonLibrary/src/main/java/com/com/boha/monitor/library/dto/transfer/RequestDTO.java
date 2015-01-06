@@ -52,7 +52,7 @@ public class RequestDTO implements Serializable {
             projectSiteID, projectSiteTaskID,loginType,
             countryID, contractorClaimID, invoiceID,
             beneficiaryID, engineerID;
-    private boolean responseRequested;
+    private Boolean responseRequested;
     private SubTaskStatusDTO subTaskStatus;
     private Date startDate, endDate;
     private Float accuracy;

@@ -111,6 +111,8 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         editSearch = (EditText) view.findViewById(R.id.SLT_editSearch);
         heroImage = (ImageView) view.findViewById(R.id.SLT_heroImage);
         heroImage.setImageDrawable(Util.getRandomHeroImage(ctx));
+
+
         editSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -231,7 +233,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
             setActualList(projectSiteAdapter);
 
         }
-
+        Util.expand(heroImage,1000,null);
 
     }
 

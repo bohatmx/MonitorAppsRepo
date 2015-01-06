@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListPopupWindow;
 import android.widget.ListView;
@@ -75,6 +76,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
     private ProjectSiteTaskListener mListener;
     private ListView mListView;
     private ListAdapter mAdapter;
+    private ImageView heroImage;
     View trafficView, cameraLayout;
 
     public SiteTaskAndStatusAssignmentFragment() {
@@ -87,7 +89,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
     }
 
     Context ctx;
-    TextView txtCount, txtTitle;
+    TextView txtCount;
     Button btnAssign;
     ProjectSiteDTO projectSite;
     List<TaskDTO> taskList;
@@ -132,7 +134,6 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
         cameraLayout.setVisibility(View.GONE);
         txtCount = (TextView) view.findViewById(R.id.AST_number);
         mListView = (ListView) view.findViewById(R.id.AST_list);
-        txtTitle = (TextView) view.findViewById(R.id.AST_title2);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
 
@@ -163,11 +164,21 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
             }
         });
 
-        Statics.setRobotoFontLight(ctx, txtTitle);
     }
 
     private void openCameraLayout() {
-        Util.expand(cameraLayout, 500, null);
+        Util.expand(cameraLayout, 500, new Util.UtilAnimationListener() {
+            @Override
+            public void onAnimationEnded() {
+
+                Util.pretendFlash(txtCount,500,3, new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        closeCameraLayout();
+                    }
+                });
+            }
+        });
     }
 
     private void closeCameraLayout() {
@@ -423,9 +434,9 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
 
         getSummary();
         tot.setText("" + (greens + yellows + reds));
-        if (mListView.getHeaderViewsCount() == 0) {
-            mListView.addHeaderView(Util.getHeroView(ctx, ctx.getString(R.string.task_status)));
-        }
+//        if (mListView.getHeaderViewsCount() == 0) {
+//            mListView.addHeaderView(Util.getHeroView(ctx, ctx.getString(R.string.task_status)));
+//        }
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -433,12 +444,9 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                 Log.d(LOG, "##### setOnItemClickListener, position: " + position);
                 lastIndex = position;
                 closeCameraLayout();
-                int index = position - 1;
-                if (index < 0) {
-                    projectSiteTask = projectSiteTaskList.get(0);
-                } else {
-                    projectSiteTask = projectSiteTaskList.get(position - 1);
-                }
+                int index = position;
+                projectSiteTask = projectSiteTaskList.get(position);
+
                 task = projectSiteTask.getTask();
                 if (projectSiteTask.isStatusDone()) {
                     Util.showToast(ctx, ctx.getString(R.string.status_completed));
@@ -512,7 +520,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
         actionsWindow.setPromptView(v);
         actionsWindow.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
         actionsWindow.setAdapter(new TaskStatusAdapter(ctx, R.layout.task_status_item_small, taskStatusList, true));
-        actionsWindow.setAnchorView(handle);
+        actionsWindow.setAnchorView(txtCount);
         actionsWindow.setWidth(Util.getPopupWidth(getActivity()));
         actionsWindow.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
         actionsWindow.setModal(true);
@@ -630,7 +638,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
             taskStringList.add("" + t.getTaskNumber() + " - " + t.getTaskName());
         }
         taskPopupWindow = new ListPopupWindow(ctx);
-        taskPopupWindow.setAnchorView(txtTitle);
+        taskPopupWindow.setAnchorView(handle);
         taskPopupWindow.setWidth(Util.getPopupWidth(getActivity()));
         taskPopupWindow.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
         taskPopupWindow.setModal(true);
