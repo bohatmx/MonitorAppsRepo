@@ -25,6 +25,7 @@ public class SharedUtil {
     public static final String
             COMPANY_STAFF_JSON = "companyStaff",
             COMPANY_JSON = "company",
+            PROJECT_SITE_ID = "siteID",
             GCM_REGISTRATION_ID = "gcm",
             SESSION_ID = "sessionID",
             SITE_LOCATION = "siteLocation",
@@ -205,5 +206,21 @@ public class SharedUtil {
         }
     }
 
+    public static void saveLastSiteID(Context ctx, Integer projectSiteID) {
 
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putInt(PROJECT_SITE_ID, projectSiteID);
+        ed.commit();
+        Log.e("SharedUtil", "%%%%% projectSiteID: " + projectSiteID + " saved in SharedPreferences");
+    }
+
+    public static Integer getLastSiteID(Context ctx) {
+
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        int id = sp.getInt(PROJECT_SITE_ID, 0);
+        return id;
+    }
 }

@@ -32,6 +32,7 @@ import com.com.boha.monitor.library.fragments.PageFragment;
 import com.com.boha.monitor.library.fragments.ProjectSiteListFragment;
 import com.com.boha.monitor.library.fragments.SiteTaskAndStatusAssignmentFragment;
 import com.com.boha.monitor.library.services.PhotoUploadService;
+import com.com.boha.monitor.library.services.RequestSyncService;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
 import com.com.boha.monitor.library.util.Statics;
@@ -135,7 +136,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
                         }
                         project = response.getProjectList().get(0);
                         Log.i(LOG, "getProjectData returned data OK....");
-                        buildPages();
+                        projectSiteListFragment.refresh(project);
                         CacheUtil.cacheProjectData(ctx, response, project.getProjectID(), new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
@@ -195,13 +196,31 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
             WebCheckResult w = WebCheck.checkNetworkAvailability(ctx);
             if (w.isWifiConnected()) {
                 if (pBound == true) {
-                    Util.showToast(ctx, getString(R.string.uploading_photos));
-                    pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+
+                    rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
                         @Override
-                        public void onUploadsComplete(int count) {
-                            getProjectData();
+                        public void onTasksSynced(int goodResponses, int badResponses) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Util.showToast(ctx, getString(R.string.uploading_photos));
+                                    pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+                                        @Override
+                                        public void onUploadsComplete(int count) {
+                                            getProjectData();
+                                        }
+                                    });
+                                }
+                            });
+
+                        }
+
+                        @Override
+                        public void onError(String message) {
+
                         }
                     });
+
                 } else {
                     getProjectData();
                 }
@@ -284,8 +303,10 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
                     "### onStart - locationClient connecting ... ");
         }
         Intent intent2 = new Intent(this, PhotoUploadService.class);
+        Intent intent3 = new Intent(this, RequestSyncService.class);
         try {
             bindService(intent2, pConnection, Context.BIND_AUTO_CREATE);
+            bindService(intent3, rConnection, Context.BIND_AUTO_CREATE);
         }catch (Exception e) {
             Log.e(LOG,"## problem with binding service", e);
         }
@@ -315,6 +336,10 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
             if (pBound) {
                 unbindService(pConnection);
                 pBound = false;
+            }
+            if (rBound) {
+                unbindService(rConnection);
+                rBound = false;
             }
         } catch (Exception e) {
             Log.e(LOG,"-- something wrong with unbind", e);
@@ -350,8 +375,39 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
         }
     };
 
-    boolean pBound;
+    private ServiceConnection rConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            Log.w(LOG, "## RequestSyncService ServiceConnection onServiceConnected");
+            RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
+            rService = binder.getService();
+            rBound = true;
+            Log.w(LOG,"### starting RequestSyncService ...");
+            rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
+                @Override
+                public void onTasksSynced(int goodResponses, int badResponses) {
+                    Log.e(LOG,"++ onTasksSynced, good: " + goodResponses + " bad: " + badResponses);
+                }
+
+                @Override
+                public void onError(String message) {
+
+                }
+            });
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.w(LOG, "## PhotoUploadService onServiceDisconnected");
+            pBound = false;
+        }
+    };
+
+    boolean pBound, rBound;
     PhotoUploadService pService;
+    RequestSyncService rService;
 
     @Override
     public void onLocationChanged(Location loc) {

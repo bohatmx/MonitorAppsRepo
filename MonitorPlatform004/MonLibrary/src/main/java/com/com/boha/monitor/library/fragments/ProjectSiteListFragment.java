@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.activities.SiteStatusReportActivity;
 import com.com.boha.monitor.library.adapters.ProjectSiteAdapter;
-import com.com.boha.monitor.library.adapters.ProjectSiteLocalAdapter;
 import com.com.boha.monitor.library.adapters.SiteAdapterInterface;
 import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
@@ -30,6 +29,7 @@ import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
+import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebCheck;
@@ -68,7 +68,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
 
     Context ctx;
     TextView txtCount, txtName;
-    int lastIndex;
+    Integer lastIndex;
     View view, topView, handle;
     ImageView imgSearch1, imgSearch2, heroImage;
     EditText editSearch;
@@ -96,6 +96,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         if (project.getProjectSiteList() != null && !project.getProjectSiteList().isEmpty()) {
             projectSiteList = project.getProjectSiteList();
             setList();
+            findLastSite();
         }
         return view;
     }
@@ -147,16 +148,8 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(editSearch.getWindowToken(), 0);
     }
-    public void setProject(ProjectDTO project) {
-        this.project = project;
-        Collections.sort(project.getProjectSiteList());
-        projectSiteAdapter.notifyDataSetChanged();
-        mListView.setSelection(lastIndex);
-
-    }
 
     List<ProjectSiteDTO> projectSiteList;
-    ProjectSiteLocalAdapter projectSiteLocalAdapter;
 
     public void updateSiteLocation(ProjectSiteDTO site) {
         Log.e(LOG, "updateSiteLocation site location confirmed: " + site.getLocationConfirmed());
@@ -174,12 +167,33 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
     }
 
     public void refresh(ProjectDTO project) {
+        Log.e(LOG,"++ on refresh of project data");
+        hideKeyboard();
         this.project = project;
         projectSiteList = project.getProjectSiteList();
-        projectSiteAdapter.notifyDataSetChanged();
-        mListView.setSelection(lastIndex);
+        if (projectSiteAdapter != null) {
+            projectSiteAdapter.notifyDataSetChanged();
+        } else {
+            setList();
+        }
+        findLastSite();
     }
 
+    private void findLastSite() {
+        Integer id = SharedUtil.getLastSiteID(ctx);
+        int index = 0;
+        if (id.intValue() > 0) {
+
+            for (ProjectSiteDTO site: projectSiteList) {
+                if (id.intValue() == site.getProjectSiteID().intValue()) {
+                    Log.i(LOG,"## found last project site: " + site.getProjectSiteName() + " - index: " + index);
+                    break;
+                }
+                index++;
+            }
+        }
+        mListView.setSelection(index);
+    }
     private void setList() {
         Log.i(LOG, "## setList");
         txtCount.setText("" + projectSiteList.size());
@@ -194,6 +208,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
                 public void onProjectSiteClicked(ProjectSiteDTO site, int index) {
                     projectSite = site;
                     lastIndex = index;
+                    SharedUtil.saveLastSiteID(ctx,projectSite.getProjectSiteID());
                     showPopup();
                 }
             });
@@ -206,6 +221,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
                 public void onProjectSiteClicked(ProjectSiteDTO site, int index) {
                     projectSite = site;
                     lastIndex = index;
+                    SharedUtil.saveLastSiteID(ctx,projectSite.getProjectSiteID());
                     showPopup();
                 }
             });
@@ -226,6 +242,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
                 if (null != mListener) {
                     lastIndex = position;
                     projectSite = projectSiteList.get(position);
+                    SharedUtil.saveLastSiteID(ctx,projectSite.getProjectSiteID());
                     Log.d(LOG, "######## mListView onItemClick, projectSiteID: " + projectSite.getProjectSiteID());
                     showPopup();
                 }

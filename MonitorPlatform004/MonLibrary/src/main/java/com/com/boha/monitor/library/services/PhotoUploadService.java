@@ -14,7 +14,6 @@ import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebCheck;
 import com.com.boha.monitor.library.util.WebCheckResult;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -105,6 +104,7 @@ public class PhotoUploadService extends IntentService {
             uploadCachedPhotos(uploadListener);
             return;
         }
+        retryCount = 0;
         webCheckResult = WebCheck.checkNetworkAvailability(getApplicationContext());
         if (webCheckResult.isWifiConnected()) {
             controlThumbUploads();
@@ -128,14 +128,34 @@ public class PhotoUploadService extends IntentService {
             }
         }
         if (index == list.size()) {
-            Log.w(LOG, "&&& cleaning cache right up!");
-            PhotoCacheUtil.clearCache(getApplicationContext(), uploadedList);
-            if (uploadListener != null)
-                uploadListener.onUploadsComplete(uploadedList.size());
-
+            if (failedUploads.isEmpty()) {
+                Log.w(LOG, "&&& cleaning cache right up!");
+                PhotoCacheUtil.clearCache(getApplicationContext(), uploadedList);
+                if (uploadListener != null)
+                    uploadListener.onUploadsComplete(uploadedList.size());
+            } else {
+                attemptFailedUploads();
+            }
         }
     }
 
+    static final int MAX_RETRIES = 3;
+    int retryCount;
+    private void attemptFailedUploads() {
+
+        retryCount++;
+        if (retryCount > MAX_RETRIES) {
+            if (uploadListener != null) {
+                uploadListener.onUploadsComplete(uploadedList.size());
+            }
+            return;
+        }
+        index = 0;
+        list = failedUploads;
+        failedUploads.clear();
+        controlThumbUploads();
+
+    }
     public int getIndex() {
         return index;
     }
@@ -160,13 +180,14 @@ public class PhotoUploadService extends IntentService {
             @Override
             public void onPhotoUploadFailed() {
                 Log.e(LOG, "------<< onPhotoUploadFailed - check and tell someone");
+                failedUploads.add(dto);
                 index++;
                 controlThumbUploads();
             }
         });
     }
 
-
+    List<PhotoUploadDTO> failedUploads = new ArrayList<>();
     static final String LOG = PhotoUploadService.class.getSimpleName();
 
     public class LocalBinder extends Binder {

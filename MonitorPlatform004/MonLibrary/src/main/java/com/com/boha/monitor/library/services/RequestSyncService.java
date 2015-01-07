@@ -10,7 +10,6 @@ import com.com.boha.monitor.library.dto.transfer.RequestList;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
-import com.com.boha.monitor.library.util.RequestCacheUtil;
 import com.com.boha.monitor.library.util.WebCheck;
 import com.com.boha.monitor.library.util.WebCheckResult;
 import com.com.boha.monitor.library.util.WebSocketUtilForRequests;
@@ -101,6 +100,7 @@ public class RequestSyncService extends IntentService {
             }
             if (list.getRequests().isEmpty()) {
                 Log.d(LOG,"#### no requests cached, quitting...");
+                requestSyncListener.onTasksSynced(0,0);
                 return;
             }
             Log.w(LOG, "### sending list of cached requests: " + list.getRequests().size());
