@@ -97,8 +97,6 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
                 }
                 if (r.isWifiConnected()) {
                     getProjectData();
-                } else {
-                    Util.showToast(ctx, ctx.getString(R.string.connect_wifi));
                 }
 
             }
@@ -120,7 +118,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
     }
 
     private void getProjectData() {
-        Log.w(LOG, "################################ getProjectData");
+        Log.w(LOG, "### getProjectData from the cloud");
         RequestDTO w = new RequestDTO(RequestDTO.GET_PROJECT_DATA);
         w.setProjectID(project.getProjectID());
 
@@ -209,7 +207,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
                 }
 
             } else {
-                Util.showToast(ctx, ctx.getString(R.string.connect_wifi));
+                //Util.showToast(ctx, ctx.getString(R.string.connect_wifi));
             }
             return true;
         }

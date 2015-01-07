@@ -117,11 +117,12 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
         if (b != null) {
             projectSite = (ProjectSiteDTO) b.getSerializable("projectSite");
             projectSiteTaskList = projectSite.getProjectSiteTaskList();
+            if (projectSite != null) {
+                setList();
+            }
         }
         setFields();
-        if (projectSite != null) {
-            setList();
-        }
+
 //
         getCachedData();
         return view;
@@ -167,11 +168,11 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
     }
 
     private void openCameraLayout() {
-        Util.expand(cameraLayout, 500, new Util.UtilAnimationListener() {
+        Util.expand(cameraLayout, 300, new Util.UtilAnimationListener() {
             @Override
             public void onAnimationEnded() {
 
-                Util.pretendFlash(txtCount,500,3, new Util.UtilAnimationListener() {
+                Util.pretendFlash(txtCount,300,2, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
                         closeCameraLayout();
@@ -434,9 +435,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
 
         getSummary();
         tot.setText("" + (greens + yellows + reds));
-//        if (mListView.getHeaderViewsCount() == 0) {
-//            mListView.addHeaderView(Util.getHeroView(ctx, ctx.getString(R.string.task_status)));
-//        }
+
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -510,7 +509,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
         tgreen.setText("" + greens);
         tyellow.setText("" + yellows);
         tred.setText("" + reds);
-        Util.flashTrafficLights(tred, tyellow, tgreen, 5, Util.FLASH_FAST);
+        Util.flashTrafficLights(tred, tyellow, tgreen, 2, Util.FLASH_FAST);
     }
 
     private void showPopup() {

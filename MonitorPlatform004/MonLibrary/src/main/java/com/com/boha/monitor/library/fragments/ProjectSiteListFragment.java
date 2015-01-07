@@ -5,12 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -112,30 +111,6 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         heroImage = (ImageView) view.findViewById(R.id.SLT_heroImage);
         heroImage.setImageDrawable(Util.getRandomHeroImage(ctx));
 
-
-        editSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                search();
-            }
-        });
-
-        imgSearch1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                search();
-            }
-        });
         imgSearch2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,9 +140,13 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         } else {
             Util.showToast(ctx, ctx.getString(R.string.site_not_found) + " " + editSearch.getText().toString());
         }
-
+        hideKeyboard();
     }
-
+    void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) ctx
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editSearch.getWindowToken(), 0);
+    }
     public void setProject(ProjectDTO project) {
         this.project = project;
         Collections.sort(project.getProjectSiteList());

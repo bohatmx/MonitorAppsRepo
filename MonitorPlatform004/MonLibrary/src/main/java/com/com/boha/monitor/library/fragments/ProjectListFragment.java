@@ -5,12 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -182,6 +181,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         if (editSearch.getText().toString().isEmpty()) {
             return;
         }
+        hideKeyboard();
         int index = 0;
         for (ProjectDTO site : projectList) {
             if (site.getProjectName().contains(editSearch.getText().toString())) {
@@ -193,7 +193,11 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         mListView.setSelection(index);
 
     }
-
+    void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) ctx
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editSearch.getWindowToken(), 0);
+    }
     @Override
     public void onResume() {
         super.onResume();
@@ -356,30 +360,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         //random hero
         heroImage.setImageDrawable(Util.getRandomHeroImage(ctx));
 
-        editSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                Log.e(LOG, "#### search text afterTextChanged");
-                search();
-            }
-        });
-
-        imgSearch1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                search();
-            }
-        });
         imgSearch2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
