@@ -232,6 +232,7 @@ public class ProjectPagerActivity extends ActionBarActivity
             public void onPageSelected(int arg0) {
                 currentPageIndex = arg0;
                 if (pageFragmentList.get(currentPageIndex) instanceof StatusReportFragment) {
+                    progressBar.setVisibility(View.GONE);
                     statusReportFragment.getCachedStatus();
                 }
             }

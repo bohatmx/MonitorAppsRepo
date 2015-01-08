@@ -62,7 +62,6 @@ public class RequestSyncService extends IntentService {
             } else {
                 Log.e(LOG, "-- requestCache is null");
             }
-            Log.i(LOG, "++ request cache retrieved");
         } catch (Exception e) {
 
         }
@@ -112,7 +111,6 @@ public class RequestSyncService extends IntentService {
                     }
                     Log.i(LOG, "** cached requests sent up! good responses: " + response.getGoodCount() +
                             " bad responses: " + response.getBadCount());
-                    //Util.showToast(getApplicationContext(), getString(R.string.cache_uploaded));
                     for (RequestCacheEntry e : requestCache.getRequestCacheEntryList()) {
                         e.setDateUploaded(new Date());
                     }

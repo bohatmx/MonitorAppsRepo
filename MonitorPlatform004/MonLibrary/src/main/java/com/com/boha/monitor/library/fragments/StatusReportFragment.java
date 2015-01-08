@@ -148,25 +148,30 @@ public class StatusReportFragment extends Fragment implements PageFragment {
         heroImage.setImageDrawable(Util.getRandomHeroImage(ctx));
 
         Statics.setRobotoFontLight(ctx, txtProject);
-        Statics.setRobotoFontLight(ctx, btnEnd);
-        Statics.setRobotoFontLight(ctx, btnStart);
+        Statics.setRobotoFontBold(ctx, btnEnd);
+        Statics.setRobotoFontBold(ctx, btnStart);
         Statics.setRobotoFontLight(ctx, txtTitle);
         setDates();
-        btnEnd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isStartDate = false;
-                showDateDialog();
-            }
-        });
-        btnStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isStartDate = true;
-                showDateDialog();
-            }
-        });
-
+        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
+        if (wcr.isWifiConnected()) {
+            btnEnd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    isStartDate = false;
+                    showDateDialog();
+                }
+            });
+            btnStart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    isStartDate = true;
+                    showDateDialog();
+                }
+            });
+        } else {
+            btnEnd.setEnabled(false);
+            btnStart.setEnabled(false);
+        }
 
         txtCount.setOnClickListener(new View.OnClickListener() {
             @Override

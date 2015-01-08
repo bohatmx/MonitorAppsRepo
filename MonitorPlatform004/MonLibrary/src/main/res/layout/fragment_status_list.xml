@@ -61,7 +61,9 @@
             <Button
                 android:id="@+id/STATLST_startDate"
                 android:text="Start Date"
-                style="@style/TextStyleSmall"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                android:textColor="@color/blue"
+                android:textStyle="bold"
                 android:layout_below="@id/label1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -84,7 +86,9 @@
             <Button
                 android:id="@+id/STATLST_endDate"
                 android:text="End Date"
-                style="@style/TextStyleSmall"
+                style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                android:textColor="@color/blue"
+                android:textStyle="bold"
                 android:layout_below="@id/label2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
