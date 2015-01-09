@@ -5,11 +5,13 @@
  */
 package com.com.boha.monitor.library.dto;
 
+import java.io.Serializable;
+
 /**
  *
  * @author aubreyM
  */
-public class ErrorStoreAndroidDTO {
+public class ErrorStoreAndroidDTO implements Serializable {
 
     private int errorStoreAndroidID, companyID;
     private String companyName, logCat, stackTrace, androidVersion,
@@ -25,20 +27,20 @@ public class ErrorStoreAndroidDTO {
         this.errorStoreAndroidID = errorStoreAndroidID;
     }
 
-    public int getGolfGroupID() {
+    public int getCompanyID() {
         return companyID;
     }
 
-    public void setGolfGroupID(int golfGroupID) {
-        this.companyID = golfGroupID;
+    public void setCompanyID(int companyID) {
+        this.companyID = companyID;
     }
 
-    public String getGolfGroupName() {
+    public String getCompanyName() {
         return companyName;
     }
 
-    public void setGolfGroupName(String golfGroupName) {
-        this.companyName = golfGroupName;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public String getLogCat() {

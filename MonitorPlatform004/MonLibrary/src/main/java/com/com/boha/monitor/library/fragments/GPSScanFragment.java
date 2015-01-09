@@ -1,6 +1,5 @@
 package com.com.boha.monitor.library.fragments;
 
-import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
@@ -12,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageView;
@@ -105,7 +103,6 @@ public class GPSScanFragment extends Fragment implements PageFragment {
 
     public void startScan() {
         listener.onStartScanRequested();
-        rotateLogo();
         txtAccuracy.setText("0.00");
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometer.start();
@@ -181,13 +178,11 @@ public class GPSScanFragment extends Fragment implements PageFragment {
                             listener.onEndScanRequested();
                             isScanning = false;
                             btnScan.setText(ctx.getString(R.string.start_scan));
-                            stopRotatingLogo();
                             chronometer.stop();
                         } else {
                             listener.onStartScanRequested();
                             isScanning = true;
                             btnScan.setText(ctx.getString(R.string.stop_scan));
-                            rotateLogo();
                             chronometer.setBase(SystemClock.elapsedRealtime());
                             chronometer.start();
                             Util.collapse(btnSave,300,null);
@@ -227,7 +222,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
     }
 
     private void sendRequest(final RequestDTO request) {
-        WebSocketUtil.sendRequest(ctx,Statics.COMPANY_ENDPOINT,request, new WebSocketUtil.WebSocketListener() {
+        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, request, new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(ResponseDTO response) {
                 if (response.getStatusCode() > 0) {
@@ -255,6 +250,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
                 Log.e(LOG, "----onDataCached, onEndScanRequested - please stop scanning");
                 listener.onEndScanRequested();
                 listener.onLocationConfirmed(projectSite);
+
             }
 
             @Override
@@ -268,13 +264,6 @@ public class GPSScanFragment extends Fragment implements PageFragment {
             }
         });
     }
-    public void stopRotatingLogo() {
-        pleaseStop = true;
-        if (logoAnimator != null) {
-            logoAnimator.cancel();
-            Log.e(LOG, "###### stopRotatingLogo - logoAnimator.cancel");
-        }
-    }
 
     boolean pleaseStop;
     public void resetLogo() {
@@ -282,64 +271,29 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         logoAnimator.setDuration(200);
         logoAnimator.start();
     }
-    public void rotateLogo() {
-        btnScan.setText(ctx.getString(R.string.stop_scan));
-        if (logoAnimator != null) logoAnimator.cancel();
-        logoAnimator = ObjectAnimator.ofFloat(imgLogo, "rotation", 0, 360);
-        logoAnimator.setDuration(200);
-        logoAnimator.setInterpolator(new AccelerateInterpolator());
-        logoAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
 
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (!pleaseStop) {
-                    rotateLogo();
-                } else {
-                    pleaseStop = false;
-                    resetLogo();
-                    Log.w(LOG, "#### not repeating the logo anim anymore");
-                }
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-       // logoAnimator.start();
-        //flashAccuracy();
-    }
 
     private void sendGPSData() {
 
         RequestDTO w = new RequestDTO(RequestDTO.UPDATE_PROJECT_SITE);
-        ProjectSiteDTO site = new ProjectSiteDTO();
+        final ProjectSiteDTO site = new ProjectSiteDTO();
         site.setProjectSiteID(projectSite.getProjectSiteID());
         site.setLatitude(location.getLatitude());
         site.setLongitude(location.getLongitude());
         site.setAccuracy(location.getAccuracy());
         w.setProjectSite(site);
 
-        rotateLogo();
         WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO response) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        stopRotatingLogo();
                         if (!ErrorUtil.checkServerError(ctx, response)) {
                             return;
                         }
+                        listener.onEndScanRequested();
+                        listener.onLocationConfirmed(site);
                         Log.w(LOG, "++++++++++++ project site location updated");
                     }
                 });
@@ -373,7 +327,6 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         if (location.getAccuracy() == seekBar.getProgress()
                 || location.getAccuracy() < seekBar.getProgress()) {
             isScanning = false;
-            stopRotatingLogo();
             chronometer.stop();
             resetLogo();
             btnScan.setText(ctx.getString(R.string.start_scan));

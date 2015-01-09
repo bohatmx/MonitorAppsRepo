@@ -150,8 +150,7 @@ public class ProjectPagerActivity extends ActionBarActivity
 
                             }
                         });
-                        Intent i = new Intent(getApplicationContext(), PhotoUploadService.class);
-                        startService(i);
+
 
 
                     }
@@ -195,6 +194,7 @@ public class ProjectPagerActivity extends ActionBarActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
+
         if (id == R.id.action_help) {
             Util.showToast(ctx, ctx.getString(R.string.under_cons));
             return true;
@@ -231,6 +231,7 @@ public class ProjectPagerActivity extends ActionBarActivity
             @Override
             public void onPageSelected(int arg0) {
                 currentPageIndex = arg0;
+
                 if (pageFragmentList.get(currentPageIndex) instanceof StatusReportFragment) {
                     progressBar.setVisibility(View.GONE);
                     statusReportFragment.getCachedStatus();
@@ -239,7 +240,6 @@ public class ProjectPagerActivity extends ActionBarActivity
 
             @Override
             public void onPageScrolled(int arg0, float arg1, int arg2) {
-
             }
 
             @Override
@@ -330,9 +330,12 @@ public class ProjectPagerActivity extends ActionBarActivity
     @Override
     protected void onStart() {
         super.onStart();
-        Log.w(LOG, "## onStart Bind to RequestSyncService");
+        Log.w(LOG, "## onStart Bind to RequestSyncService and PhotoUploadService");
         Intent intent = new Intent(this, RequestSyncService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
+        Intent intent2 = new Intent(this, PhotoUploadService.class);
+        bindService(intent2, pConnection, Context.BIND_AUTO_CREATE);
 
 
     }
@@ -340,21 +343,26 @@ public class ProjectPagerActivity extends ActionBarActivity
     @Override
     protected void onStop() {
         super.onStop();
-        Log.e(LOG, "## onStop unBind from RequestSyncService");
+        Log.e(LOG, "## onStop unBind from RequestSyncService and PhotoUploadService");
         try {
             if (mBound) {
                 unbindService(mConnection);
                 mBound = false;
             }
+            if (pBound) {
+                unbindService(pConnection);
+                pBound = false;
+            }
         } catch (Exception e) {
-            Log.e(LOG,"-- Problem with unbinding service", e);
+            Log.e(LOG,"-- Problem with unbinding services", e);
         }
 
     }
 
 
-    boolean mBound;
+    boolean mBound, pBound;
     RequestSyncService mService;
+    PhotoUploadService pService;
 
     private ServiceConnection mConnection = new ServiceConnection() {
 
@@ -387,6 +395,33 @@ public class ProjectPagerActivity extends ActionBarActivity
             mBound = false;
         }
     };
+
+    private ServiceConnection pConnection = new ServiceConnection() {
+
+                 @Override
+                 public void onServiceConnected(ComponentName className,
+                                                IBinder service) {
+                     Log.w(LOG, "## PhotoUploadService ServiceConnection onServiceConnected");
+                     PhotoUploadService.LocalBinder binder = (PhotoUploadService.LocalBinder) service;
+                     pService = binder.getService();
+                     pBound = true;
+                     WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
+                     if (wcr.isWifiConnected()) {
+                         pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+                             @Override
+                             public void onUploadsComplete(int count) {
+
+                             }
+                         });
+                     }
+                 }
+
+                 @Override
+                 public void onServiceDisconnected(ComponentName arg0) {
+                     Log.w(LOG, "## RequestSyncService onServiceDisconnected");
+                     mBound = false;
+                 }
+             };
 
     @Override
     public void onBackPressed() {

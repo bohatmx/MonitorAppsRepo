@@ -128,7 +128,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         }
         int index = 0;
         boolean found = false;
-        for (ProjectSiteDTO site : project.getProjectSiteList()) {
+        for (ProjectSiteDTO site : projectSiteList) {
             if (site.getProjectSiteName().contains(editSearch.getText().toString())) {
                 found = true;
                 break;
@@ -138,6 +138,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         if (found) {
             mListView.setSelection(index);
             lastIndex = index;
+            SharedUtil.saveLastSiteID(ctx, projectSiteList.get(index).getProjectSiteID());
         } else {
             Util.showToast(ctx, ctx.getString(R.string.site_not_found) + " " + editSearch.getText().toString());
         }
@@ -340,6 +341,20 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         mListener.onNewStatusDone(newStatusJustDone);
     }
 
+    public void findUnconfirmedSites() {
+        int index = 0;
+        boolean isFound = false;
+        for (ProjectSiteDTO s: projectSiteList) {
+            if (s.getLocationConfirmed() == null) {
+                isFound = true;
+                break;
+            }
+            index++;
+        }
+        if (isFound) {
+            mListView.setSelection(index);
+        }
+    }
 
     public void refreshPhotoList(List<String> list) {
         Log.i(LOG, "################### refreshPhotoList");

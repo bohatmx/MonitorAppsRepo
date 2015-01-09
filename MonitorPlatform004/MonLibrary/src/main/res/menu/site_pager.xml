@@ -8,6 +8,11 @@
         android:orderInCategory="100"
         android:visible="true"
         android:showAsAction="always" />
+    <item android:id="@+id/action_unconfirmed"
+        android:title="Unconfirmed Location"
+        android:icon="@drawable/ic_action_globe"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom" />
     <item android:id="@+id/action_add"
         android:title="@string/action_add"
         android:icon="@drawable/ic_action_new"

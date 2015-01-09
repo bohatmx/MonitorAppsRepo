@@ -18,7 +18,6 @@ public class Statics {
     public static final String IMAGE_URL = "http://bohamaker.com:51490/";
     public static final String PDF_URL = "http://bohamaker.com:51490/monitor_documents/";
 
-    //
     //google cloud http://mggolf-303.appspot.com/golf?JSON={requestType:38,golfGroupID:21}
     //public static final String URL = "http://mggolf-303.appspot.com/";
 

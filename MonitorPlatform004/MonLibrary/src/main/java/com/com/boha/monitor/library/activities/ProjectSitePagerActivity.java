@@ -192,42 +192,12 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        if (id == R.id.action_unconfirmed) {
+            projectSiteListFragment.findUnconfirmedSites();
+            return true;
+        }
         if (id == R.id.action_refresh) {
-            WebCheckResult w = WebCheck.checkNetworkAvailability(ctx);
-            if (w.isWifiConnected()) {
-                if (pBound == true) {
-
-                    rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
-                        @Override
-                        public void onTasksSynced(int goodResponses, int badResponses) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Util.showToast(ctx, getString(R.string.uploading_photos));
-                                    pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
-                                        @Override
-                                        public void onUploadsComplete(int count) {
-                                            getProjectData();
-                                        }
-                                    });
-                                }
-                            });
-
-                        }
-
-                        @Override
-                        public void onError(String message) {
-
-                        }
-                    });
-
-                } else {
-                    getProjectData();
-                }
-
-            } else {
-                //Util.showToast(ctx, ctx.getString(R.string.connect_wifi));
-            }
+            refresh();
             return true;
         }
         if (id == R.id.action_help) {
@@ -273,6 +243,42 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
         return super.onOptionsItemSelected(item);
     }
 
+    private void refresh() {
+        WebCheckResult w = WebCheck.checkNetworkAvailability(ctx,true);
+        if (w.isWifiConnected()) {
+            if (rBound) {
+                rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
+                    @Override
+                    public void onTasksSynced(int goodResponses, int badResponses) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (pBound) {
+                                    Util.showToast(ctx, getString(R.string.uploading_photos));
+                                    pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+                                        @Override
+                                        public void onUploadsComplete(int count) {
+                                            getProjectData();
+                                        }
+                                    });
+                                }
+                            }
+                        });
+
+                    }
+
+                    @Override
+                    public void onError(String message) {
+
+                    }
+                });
+
+            } else {
+                getProjectData();
+            }
+
+        }
+    }
     boolean isRefresh;
 
     private void getGPSCoordinates() {
@@ -296,17 +302,18 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
     public void onStart() {
         super.onStart();
         Log.i(LOG,
-                "### onStart");
+                "### onStart, binding RequestSyncService and PhotoUploadService");
         if (mLocationClient != null) {
             mLocationClient.connect();
             Log.i(LOG,
                     "### onStart - locationClient connecting ... ");
         }
-        Intent intent2 = new Intent(this, PhotoUploadService.class);
-        Intent intent3 = new Intent(this, RequestSyncService.class);
+        Intent photoIntent = new Intent(this, PhotoUploadService.class);
+        Intent requestIntent = new Intent(this, RequestSyncService.class);
         try {
-            bindService(intent2, pConnection, Context.BIND_AUTO_CREATE);
-            bindService(intent3, rConnection, Context.BIND_AUTO_CREATE);
+            bindService(requestIntent, rConnection, Context.BIND_AUTO_CREATE);
+            bindService(photoIntent, pConnection, Context.BIND_AUTO_CREATE);
+
         }catch (Exception e) {
             Log.e(LOG,"## problem with binding service", e);
         }
@@ -359,13 +366,20 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
             PhotoUploadService.LocalBinder binder = (PhotoUploadService.LocalBinder) service;
             pService = binder.getService();
             pBound = true;
-            Log.w(LOG,"### starting PhotoUploadService ...");
-            pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
-                @Override
-                public void onUploadsComplete(int count) {
-                    Log.i(LOG,"++ onUploadsComplete, count: " + count);
-                }
-            });
+
+            WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
+            if (wcr.isWifiConnected()) {
+                Log.w(LOG,"### starting PhotoUploadService ...");
+                pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+                    @Override
+                    public void onUploadsComplete(int count) {
+                        Log.i(LOG, "++ onUploadsComplete, count: " + count);
+                        if (count > 0) {
+                            refresh();
+                        }
+                    }
+                });
+            }
         }
 
         @Override

@@ -127,7 +127,8 @@ public class RequestDTO implements Serializable {
             GET_COMPANY_STATUS_IN_PERIOD = 117,
             GET_PROJECT_STATUS_IN_PERIOD = 118,
             GET_SITE_STATUS_IN_PERIOD = 119,
-            GET_PROJECT_SITES = 120;
+            GET_PROJECT_SITES = 120,
+            GET_ERROR_REPORTS = 121;
     //login's
     public static final int
             LOGIN = 200,

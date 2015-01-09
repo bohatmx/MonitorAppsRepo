@@ -4,11 +4,13 @@
  */
 package com.com.boha.monitor.library.dto;
 
+import java.io.Serializable;
+
 /**
  *
  * @author aubreyM
  */
-public class ErrorStoreDTO {
+public class ErrorStoreDTO implements Serializable {
 
     private int errorStoreID;
     private int statusCode;

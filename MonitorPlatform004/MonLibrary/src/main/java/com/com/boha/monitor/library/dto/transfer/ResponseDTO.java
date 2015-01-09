@@ -48,11 +48,11 @@ import java.util.List;
  */
 public class ResponseDTO implements Serializable {
 
-    private double elapsedRequestTimeInSeconds;
+    private Double elapsedRequestTimeInSeconds;
     private PhotoCache photoCache;
     private Date lastCacheDate, startDate, endDate;
     private Integer statusCode,statusCountInPeriod,goodCount, badCount;
-    private String message, sessionID, GCMRegistrationID,fileString;
+    private String message, sessionID, GCMRegistrationID,fileString, log;
     private List<String> taskImageFileNameList;
     private List<BankDTO> bankList;
     private List<SessionPhoto> sessionPhotoList = new ArrayList<>();
@@ -88,6 +88,18 @@ public class ResponseDTO implements Serializable {
     //
     private CompanyDTO company;
     private CompanyStaffDTO companyStaff;
+
+    public void setElapsedRequestTimeInSeconds(Double elapsedRequestTimeInSeconds) {
+        this.elapsedRequestTimeInSeconds = elapsedRequestTimeInSeconds;
+    }
+
+    public String getLog() {
+        return log;
+    }
+
+    public void setLog(String log) {
+        this.log = log;
+    }
 
     public Date getStartDate() {
         return startDate;
