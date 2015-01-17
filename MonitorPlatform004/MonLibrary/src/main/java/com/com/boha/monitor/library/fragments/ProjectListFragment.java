@@ -183,14 +183,18 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         }
         hideKeyboard();
         int index = 0;
+        boolean isFound = false;
         for (ProjectDTO site : projectList) {
             if (site.getProjectName().contains(editSearch.getText().toString())) {
+                isFound = true;
                 break;
             }
             index++;
         }
-
-        mListView.setSelection(index);
+        if (isFound) {
+            mListView.setSelection(index);
+            SharedUtil.saveLastProjectID(ctx,projectList.get(index).getProjectID());
+        }
 
     }
     void hideKeyboard() {
@@ -217,10 +221,27 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         } else {
             setList();
         }
+        setLastProject();
     }
 
+    private void setLastProject() {
+        Integer id = SharedUtil.getLastProjectID(ctx);
+        boolean isFound = false;
+        int index = 0;
+        if (id.intValue() > 0) {
+            for (ProjectDTO p: projectList) {
+                if (p.getProjectID().intValue() == id.intValue()) {
+                    isFound = true;
+                    break;
+                }
+                index++;
+            }
+        }
+        if (isFound) {
+            mListView.setSelection(index);
+        }
+    }
     private void setList() {
-
         adapter = new ProjectAdapter(ctx, R.layout.project_item, projectList);
         mListView.setAdapter(adapter);
 
@@ -230,12 +251,12 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             txtStatusCount.setText("0");
         }
 
-
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 project = projectList.get(position);
                 lastIndex = position;
+                SharedUtil.saveLastProjectID(ctx,project.getProjectID());
                 if (project.getProjectSiteList() == null || project.getProjectSiteList().isEmpty()) {
                     Util.showErrorToast(ctx, "Project has no sites defined. Please add the sites.");
                     return;
@@ -371,19 +392,16 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     }
 
     public void setTotals() {
-        if (projectList == null) {
-            Log.e(LOG, "-----> projectList is null");
-            return;
-        }
 
         try {
-            if (txtProjectCount == null) {
+            if (projectList == null) {
                 txtProjectCount.setText("0");
             } else {
                 txtProjectCount.setText("" + projectList.size());
             }
         } catch (Exception e) {
             Log.e(LOG, "--- ran aground ...", e);
+            return;
         }
         statusCount = 0;
         for (ProjectDTO p : projectList) {

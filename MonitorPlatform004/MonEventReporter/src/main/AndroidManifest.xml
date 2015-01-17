@@ -17,7 +17,7 @@
         <activity
             android:name=".EventActivity"
             android:screenOrientation="portrait"
-            android:label="@string/pm_app">
+            android:label="Reporta">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

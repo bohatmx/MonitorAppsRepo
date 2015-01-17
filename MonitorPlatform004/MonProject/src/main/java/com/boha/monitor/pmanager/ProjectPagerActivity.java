@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.ListPopupWindow;
 import android.widget.ProgressBar;
 
+import com.com.boha.monitor.library.activities.MonApp;
 import com.com.boha.monitor.library.activities.PictureRecyclerGridActivity;
 import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
@@ -40,13 +41,14 @@ import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebCheck;
 import com.com.boha.monitor.library.util.WebCheckResult;
 import com.com.boha.monitor.library.util.WebSocketUtil;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class ProjectPagerActivity extends ActionBarActivity
-         {
+public class ProjectPagerActivity extends ActionBarActivity {
     View handle;
     ProgressBar progressBar;
     static final String LOG = ProjectPagerActivity.class.getSimpleName();
@@ -58,9 +60,9 @@ public class ProjectPagerActivity extends ActionBarActivity
         ctx = getApplicationContext();
         handle = findViewById(R.id.TIT_handle);
         mPager = (ViewPager) findViewById(R.id.TIT_pager);
-        if (mPager == null) throw new UnsupportedOperationException("Fucking pager is null");
+        // if (mPager == null) throw new UnsupportedOperationException("Fucking pager is null");
         PagerTitleStrip strip = (PagerTitleStrip) findViewById(R.id.pager_title_strip);
-        strip.setVisibility(View.GONE);
+        //strip.setVisibility(View.GONE);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         getCachedCompanyData();
@@ -68,6 +70,12 @@ public class ProjectPagerActivity extends ActionBarActivity
         CompanyStaffDTO staff = SharedUtil.getCompanyStaff(ctx);
         getSupportActionBar().setSubtitle(staff.getFullName());
 
+        MonApp app = (MonApp) getApplication();
+        Tracker t = app.getTracker(MonApp.TrackerName.APP_TRACKER);
+
+        Log.e(LOG, "### got Tracker form MonApp: " + t.toString());
+        t.setScreenName("ProjectPagerActivity");
+        t.send(new HitBuilders.AppViewBuilder().build());
     }
 
     private void getCachedCompanyData() {
@@ -152,7 +160,6 @@ public class ProjectPagerActivity extends ActionBarActivity
                         });
 
 
-
                     }
                 });
 
@@ -218,6 +225,7 @@ public class ProjectPagerActivity extends ActionBarActivity
 
 
     private void buildPages() {
+
         pageFragmentList = new ArrayList<>();
         projectListFragment = ProjectListFragment.newInstance(response);
         statusReportFragment = StatusReportFragment.newInstance(response);
@@ -231,9 +239,9 @@ public class ProjectPagerActivity extends ActionBarActivity
             @Override
             public void onPageSelected(int arg0) {
                 currentPageIndex = arg0;
+                progressBar.setVisibility(View.GONE);
 
                 if (pageFragmentList.get(currentPageIndex) instanceof StatusReportFragment) {
-                    progressBar.setVisibility(View.GONE);
                     statusReportFragment.getCachedStatus();
                 }
             }
@@ -246,7 +254,6 @@ public class ProjectPagerActivity extends ActionBarActivity
             public void onPageScrollStateChanged(int arg0) {
             }
         });
-
 
     }
 
@@ -304,16 +311,9 @@ public class ProjectPagerActivity extends ActionBarActivity
                     title = ctx.getResources().getString(R.string.company_projects);
                     break;
                 case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
+                    title = ctx.getString(R.string.status_report);
                     break;
 
-                default:
-                    break;
             }
             return title;
         }
@@ -354,7 +354,7 @@ public class ProjectPagerActivity extends ActionBarActivity
                 pBound = false;
             }
         } catch (Exception e) {
-            Log.e(LOG,"-- Problem with unbinding services", e);
+            Log.e(LOG, "-- Problem with unbinding services", e);
         }
 
     }
@@ -373,7 +373,7 @@ public class ProjectPagerActivity extends ActionBarActivity
             RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
             mService = binder.getService();
             mBound = true;
-            WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
+            WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx, true);
             if (wcr.isWifiConnected()) {
                 mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
                     @Override
@@ -398,30 +398,30 @@ public class ProjectPagerActivity extends ActionBarActivity
 
     private ServiceConnection pConnection = new ServiceConnection() {
 
-                 @Override
-                 public void onServiceConnected(ComponentName className,
-                                                IBinder service) {
-                     Log.w(LOG, "## PhotoUploadService ServiceConnection onServiceConnected");
-                     PhotoUploadService.LocalBinder binder = (PhotoUploadService.LocalBinder) service;
-                     pService = binder.getService();
-                     pBound = true;
-                     WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
-                     if (wcr.isWifiConnected()) {
-                         pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
-                             @Override
-                             public void onUploadsComplete(int count) {
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            Log.w(LOG, "## PhotoUploadService ServiceConnection onServiceConnected");
+            PhotoUploadService.LocalBinder binder = (PhotoUploadService.LocalBinder) service;
+            pService = binder.getService();
+            pBound = true;
+            WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx, true);
+            if (wcr.isWifiConnected()) {
+                pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+                    @Override
+                    public void onUploadsComplete(int count) {
 
-                             }
-                         });
-                     }
-                 }
+                    }
+                });
+            }
+        }
 
-                 @Override
-                 public void onServiceDisconnected(ComponentName arg0) {
-                     Log.w(LOG, "## RequestSyncService onServiceDisconnected");
-                     mBound = false;
-                 }
-             };
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.w(LOG, "## RequestSyncService onServiceDisconnected");
+            mBound = false;
+        }
+    };
 
     @Override
     public void onBackPressed() {

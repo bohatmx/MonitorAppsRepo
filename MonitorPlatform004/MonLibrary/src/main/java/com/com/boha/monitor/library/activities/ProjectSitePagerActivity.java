@@ -81,7 +81,6 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
         setTitle(ctx.getString(R.string.project_sites));
         getSupportActionBar().setSubtitle(project.getProjectName());
         mLocationClient = new LocationClient(ctx, this, this);
-        Log.e(LOG,"### about to start photo service");
 //
        getCachedProjectData();
     }
@@ -279,7 +278,6 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
 
         }
     }
-    boolean isRefresh;
 
     private void getGPSCoordinates() {
         if (!mLocationClient.isConnected()) {

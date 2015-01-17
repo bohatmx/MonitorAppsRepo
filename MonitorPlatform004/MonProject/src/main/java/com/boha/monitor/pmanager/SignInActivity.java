@@ -34,6 +34,8 @@ import com.com.boha.monitor.library.util.WebSocketUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
+import org.acra.ACRA;
+
 import java.util.ArrayList;
 
 import static com.com.boha.monitor.library.util.Util.showErrorToast;
@@ -117,7 +119,6 @@ public class SignInActivity extends Activity {
         }
     }
     private void sendSignIn() {
-//validate
         WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
         if (!wcr.isWifiConnected()) {
             Util.showToast(ctx,ctx.getString(R.string.wifi_not_available));
@@ -155,6 +156,7 @@ public class SignInActivity extends Activity {
                         Intent intent = new Intent(ctx, ProjectPagerActivity.class);
                         startActivity(intent);
 
+                        ACRA.getErrorReporter().putCustomData("companyStaffID", "" + response.getCompanyStaff().getCompanyStaffID());
                         CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {

@@ -23,7 +23,6 @@ import android.provider.MediaStore;
 import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -114,9 +113,11 @@ public class Util {
         return width;
     }
 
-    private static int getWindowHeight(Activity ctx) {
-        Display display = ctx.getWindowManager().getDefaultDisplay();
-        return display.getHeight();
+    private static int getWindowHeight(Activity activity) {
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int height = displaymetrics.heightPixels;
+        return height;
     }
 
     public static void showPopupBasicWithHeroImage(Context ctx, Activity act,

@@ -8,10 +8,10 @@ import android.util.Log;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.boha.monitor.library.R;
-import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.toolbox.BitmapLruCache;
-import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -20,11 +20,11 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.utils.L;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 
-import org.acra.ACRA;
 import org.acra.ReportField;
 import org.acra.annotation.ReportsCrashes;
 
 import java.io.File;
+import java.util.HashMap;
 
 /**
  * Created by aubreyM on 2014/05/17.
@@ -43,6 +43,37 @@ import java.io.File;
         socketTimeout = 10000
 )
 public class MonApp extends Application {
+    /**
+     * Enum used to identify the tracker that needs to be used for tracking.
+     * <p/>
+     * A single tracker is usually enough for most purposes. In case you do need multiple trackers,
+     * storing them all in Application object helps ensure that they are created only once per
+     * application instance.
+     */
+    public enum TrackerName {
+        APP_TRACKER, // Tracker used only in this app.
+        GLOBAL_TRACKER, // Tracker used by all the apps from a company. eg: roll-up tracking.
+        ECOMMERCE_TRACKER, // Tracker used by all ecommerce transactions from a company.
+    }
+
+    static final String PROPERTY_ID = "UA-53661372-2";
+    HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
+
+    public synchronized Tracker getTracker(TrackerName trackerId) {
+        if (!mTrackers.containsKey(trackerId)) {
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            Tracker t = null;
+            if (trackerId == TrackerName.APP_TRACKER) {
+                t = analytics.newTracker(PROPERTY_ID);
+            }
+            if (trackerId == TrackerName.GLOBAL_TRACKER) {
+                t = analytics.newTracker(R.xml.global_tracker);
+            }
+            mTrackers.put(trackerId, t);
+        }
+        Log.i(LOG,"## analytics tracker ID: " + trackerId.toString());
+        return mTrackers.get(trackerId);
+    }
 
     @Override
     public void onCreate() {
@@ -57,14 +88,13 @@ public class MonApp extends Application {
 
         Log.d(LOG, sb.toString());
 //
-        ACRA.init(this);
-        CompanyDTO company = SharedUtil.getCompany(getApplicationContext());
-        if (company != null) {
-            ACRA.getErrorReporter().putCustomData("companyID", "" + company.getCompanyID());
-            ACRA.getErrorReporter().putCustomData("companyName", company.getCompanyName());
-        }
+////        ACRA.init(this);
+//        CompanyStaffDTO staff = SharedUtil.getCompanyStaff(getApplicationContext());
+//        if (staff != null) {
+////            ACRA.getErrorReporter().putCustomData("companyStaffID", "" + staff.getCompanyStaffID());
+//        }
 
-        Log.e(LOG, "###### ACRA Crash Reporting has been initiated");
+//        Log.e(LOG, "###### ACRA Crash Reporting has been initiated");
         initializeVolley(getApplicationContext());
 
         DisplayImageOptions defaultOptions =

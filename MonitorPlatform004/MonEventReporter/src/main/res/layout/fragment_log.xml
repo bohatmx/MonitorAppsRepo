@@ -4,8 +4,7 @@
     android:background="@color/grey"
     android:padding="10dp"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
+    android:layout_height="fill_parent">
 
     <RelativeLayout
         android:id="@+id/LOG_top"
@@ -20,23 +19,26 @@
             android:layout_width="wrap_content"
             android:layout_centerVertical="true"
             android:layout_height="wrap_content"
-            android:text="mgGolf Server Log Snippet"
-            android:textStyle="bold"/>
+            android:text="Server Log Snippet"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/LOG_count"
-            style="@style/Title3TextStyleBlue"
+            style="@style/Title3TextStyleGreen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:text="00"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
     </RelativeLayout>
 
     <ScrollView
-        android:layout_width="match_parent" android:background="@color/beige_pale"
-        android:layout_below="@id/LOG_top" android:layout_marginTop="10dp"
+        android:id="@+id/LOG_scroll"
+        android:layout_width="match_parent"
+        android:background="@color/beige_pale"
+        android:layout_below="@id/LOG_top"
+        android:layout_marginTop="10dp"
         android:layout_height="match_parent">
 
         <RelativeLayout
@@ -44,11 +46,13 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/LOG_log" android:padding="5dp"
+                android:id="@+id/LOG_log"
+                android:padding="5dp"
                 android:textSize="12sp"
+                android:gravity="bottom"
                 android:text="log text comes here"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent" />
 
         </RelativeLayout>
 

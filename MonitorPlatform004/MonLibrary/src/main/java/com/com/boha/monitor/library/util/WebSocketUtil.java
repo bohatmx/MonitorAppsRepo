@@ -44,7 +44,8 @@ public class WebSocketUtil {
         }
     }
 
-    public static void sendRequest(Context c, final String suffix, RequestDTO req, WebSocketListener listener) {
+    public static void sendRequest(Context c, final String suffix, RequestDTO req,
+                                   WebSocketListener listener) {
         if (!BaseVolley.checkNetworkOnDevice(c)) {
             listener.onError("Network connections unavailable");
             return;

@@ -31,7 +31,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
@@ -138,7 +137,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                     DateTime dt = new DateTime();
                     DateTime then = new DateTime(siteLocation.getDateTaken().getTime());
                     long time = dt.toDate().getTime() - then.toDate().getTime();
-                    if (time > FIVE_MINUTES) {
+                    if (time > ONE_MINUTE) {
                         siteLocation = null;
                     }
                 }
@@ -147,7 +146,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         super.onResume();
 
     }
-    static final long FIVE_MINUTES = 1000 * 60 * 60 * 3;
+    static final long ONE_MINUTE = 1000 * 60 * 60;
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         Log.e(LOG, "%%%%%%%%%%%% onRestoreInstanceState" + savedInstanceState);

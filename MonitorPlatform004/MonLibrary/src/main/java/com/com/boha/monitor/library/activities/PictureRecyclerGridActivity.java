@@ -23,6 +23,8 @@ import com.com.boha.monitor.library.util.DividerItemDecoration;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 public class PictureRecyclerGridActivity extends ActionBarActivity {
 
@@ -85,6 +87,11 @@ public class PictureRecyclerGridActivity extends ActionBarActivity {
         CompanyStaffDTO staff = SharedUtil.getCompanyStaff(ctx);
         getSupportActionBar().setSubtitle(staff.getFullName());
         Statics.setRobotoFontLight(ctx,title);
+        MonApp app = (MonApp) getApplication();
+        Tracker t = app.getTracker(MonApp.TrackerName.APP_TRACKER);
+
+        t.setScreenName("PictureRecyclerGridActivity");
+        t.send(new HitBuilders.AppViewBuilder().build());
     }
 
 

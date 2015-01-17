@@ -206,7 +206,6 @@ public class ExecSignInActivity extends Activity {
         txtEmail = (TextView) findViewById(R.id.SI_txtEmail);
         txtApp = (TextView)findViewById(R.id.SI_app);
         btnSave = (Button)findViewById(R.id.SI_btnSave);
-        txtApp.setText(ctx.getString(R.string.pm_app));
 
         txtEmail.setOnClickListener(new View.OnClickListener() {
             @Override

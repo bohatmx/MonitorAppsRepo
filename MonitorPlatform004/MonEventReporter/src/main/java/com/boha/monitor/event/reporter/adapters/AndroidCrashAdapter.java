@@ -40,7 +40,7 @@ public class AndroidCrashAdapter extends ArrayAdapter<ErrorStoreAndroidDTO> {
 
 
     static class ViewHolderItem {
-        TextView txtCompanyName, txtAppVersion, txtErrorDate, txtPackage, txtNum;
+        TextView txtCompanyName, txtStaff, txtAppVersion, txtErrorDate, txtPackage, txtNum;
         TextView txtAndroidVersion, txtPhone, txtLogcat, txtStackTrace, txtBrand;
         ImageView btnExample;
         NetworkImageView image;
@@ -53,7 +53,9 @@ public class AndroidCrashAdapter extends ArrayAdapter<ErrorStoreAndroidDTO> {
             convertView = mInflater.inflate(mLayoutRes, null);
             vhItem = new ViewHolderItem();
             vhItem.txtCompanyName = (TextView) convertView
-                    .findViewById(R.id.AE_group);
+                    .findViewById(R.id.AE_company);
+            vhItem.txtStaff = (TextView) convertView
+                    .findViewById(R.id.AE_companyStaff);
             vhItem.txtAppVersion = (TextView) convertView
                     .findViewById(R.id.AE_appVersion);
             vhItem.txtErrorDate = (TextView) convertView
@@ -81,6 +83,12 @@ public class AndroidCrashAdapter extends ArrayAdapter<ErrorStoreAndroidDTO> {
         final ErrorStoreAndroidDTO p = mList.get(position);
         vhItem.txtNum.setText("" + (position + 1));
         vhItem.txtCompanyName.setText(p.getCompanyName());
+        if (p.getStaffName() != null) {
+            vhItem.txtStaff.setText(p.getStaffName());
+            vhItem.txtStaff.setVisibility(View.VISIBLE);
+        } else {
+            vhItem.txtStaff.setVisibility(View.GONE);
+        }
         vhItem.txtAndroidVersion.setText(p.getAndroidVersion());
         vhItem.txtAppVersion.setText("Version: " + p.getAppVersionName() +"." + p.getAppVersionCode());
         vhItem.txtBrand.setText(p.getBrand().toUpperCase());

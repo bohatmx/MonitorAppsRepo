@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.boha.monitor.event.reporter.R;
@@ -20,6 +21,7 @@ import java.text.DecimalFormat;
  */
 public class ServerLogFragment extends Fragment implements PageFragment {
 
+    ScrollView scrollView;
     @Override
     public void onAttach(Activity a) {
         Log.i(LOG,
@@ -43,7 +45,7 @@ public class ServerLogFragment extends Fragment implements PageFragment {
         inflater = getActivity().getLayoutInflater();
         view = inflater
                 .inflate(R.layout.fragment_log, container, false);
-
+        scrollView = (ScrollView) view.findViewById(R.id.LOG_scroll);
         setFields();
         if (response != null) {
             Log.e(LOG, "response not null in onCreateView");
@@ -83,12 +85,23 @@ public class ServerLogFragment extends Fragment implements PageFragment {
 
     public void setList() {
         txtLog.setText(response.getLog());
-        txtCount.setText(df.format(response.getLog().length()));
+        txtCount.setText(df.format(getKB(response.getLog().length())) + " KB");
+
+        scrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.fullScroll(View.FOCUS_DOWN);
+            }
+        });
+
 
     }
 
-
-    static final DecimalFormat df = new DecimalFormat("###,###,###,###,###,###");
+private double getKB(int length) {
+    Double d = Double.valueOf("" + length)/Double.valueOf("1024");
+    return d.doubleValue();
+}
+    static final DecimalFormat df = new DecimalFormat("###,###,###,###,###,##0.00");
     TextView txtLog, txtCount;
 
     static final String LOG = "ServerLogFrag";

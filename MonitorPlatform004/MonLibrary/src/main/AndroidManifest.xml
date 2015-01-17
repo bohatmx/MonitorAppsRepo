@@ -52,10 +52,7 @@
             android:name="com.com.boha.monitor.library.activities.ProjectSitePagerActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
-            android:name="com.com.boha.monitor.library.activities.TabTestActivity"
-            android:label="@string/title_activity_tab_test" >
-        </activity>
+
     </application>
 
 </manifest>

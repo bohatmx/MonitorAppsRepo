@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class ErrorStoreAndroidDTO implements Serializable {
 
     private int errorStoreAndroidID, companyID;
-    private String companyName, logCat, stackTrace, androidVersion,
+    private String companyName, staffName, logCat, stackTrace, androidVersion,
             brand, appVersionCode, appVersionName, packageName, phoneModel;
     private long errorDate;
 
@@ -25,6 +25,14 @@ public class ErrorStoreAndroidDTO implements Serializable {
 
     public void setErrorStoreAndroidID(int errorStoreAndroidID) {
         this.errorStoreAndroidID = errorStoreAndroidID;
+    }
+
+    public String getStaffName() {
+        return staffName;
+    }
+
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
     }
 
     public int getCompanyID() {
