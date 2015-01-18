@@ -37,6 +37,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
+import org.acra.ACRA;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -184,14 +186,14 @@ public class RegistrationActivity extends ActionBarActivity implements
                         SharedUtil.saveCompany(ctx, response.getCompany());
                         if (response.getCompany() != null) {
                             //TODO - restore for production
-//                            ACRA.getErrorReporter().putCustomData("companyID", "" + response.getCompany().getCompanyID());
-//                            ACRA.getErrorReporter().putCustomData("companyName", response.getCompany().getCompanyName());
+                            try {
+                                ACRA.getErrorReporter().putCustomData("companyStaffID", "" + response.getCompanyStaff().getCompanyStaffID());
+                            } catch (Exception e) {
+                                //ignore
+                            }
                         }
 
-                        ResponseDTO countries = new ResponseDTO();
-                        countries.setCountryList(response.getCountryList());
-
-                        CacheUtil.cacheData(ctx, countries, CacheUtil.CACHE_COUNTRIES, new CacheUtil.CacheUtilListener() {
+                        CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
 
@@ -199,24 +201,9 @@ public class RegistrationActivity extends ActionBarActivity implements
 
                             @Override
                             public void onDataCached() {
-                                response.setCountryList(null);
-                                CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
-                                    @Override
-                                    public void onFileDataDeserialized(ResponseDTO response) {
-
-                                    }
-
-                                    @Override
-                                    public void onDataCached() {
-
-                                    }
-
-                                    @Override
-                                    public void onError() {
-
-                                    }
-                                });
-
+                                Intent intent = new Intent(ctx, OperationsPagerActivity.class);
+                                startActivity(intent);
+                                finish();
                             }
 
                             @Override
@@ -226,9 +213,7 @@ public class RegistrationActivity extends ActionBarActivity implements
                         });
 
 
-                        Intent intent = new Intent(ctx, OperationsPagerActivity.class);
-                        startActivity(intent);
-                        finish();
+
                     }
                 });
             }

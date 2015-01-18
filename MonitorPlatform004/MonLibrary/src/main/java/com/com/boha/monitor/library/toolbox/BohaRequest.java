@@ -48,15 +48,15 @@ public class BohaRequest extends Request<ResponseDTO> {
             Gson gson = new Gson();
             String resp = new String(response.data);
             Log.i(LOG, "response string length returned: " + resp.length());
-            try {
-                dto = gson.fromJson(resp, ResponseDTO.class);
-                if (dto != null) {
-                    return Response.success(dto,
-                            HttpHeaderParser.parseCacheHeaders(response));
-                }
-            } catch (Exception e) {
-                // ignore, it's a zipped response
-            }
+//            try {
+//                dto = gson.fromJson(resp, ResponseDTO.class);
+//                if (dto != null) {
+//                    return Response.success(dto,
+//                            HttpHeaderParser.parseCacheHeaders(response));
+//                }
+//            } catch (Exception e) {
+//                // ignore, it's a zipped response
+//            }
 
             InputStream is = new ByteArrayInputStream(response.data);
             ZipInputStream zis = new ZipInputStream(is);

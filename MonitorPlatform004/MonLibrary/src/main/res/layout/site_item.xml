@@ -278,6 +278,7 @@
             android:id="@+id/SITE_layout"
             android:layout_marginRight="48dp"
             android:layout_alignLeft="@id/SITE_top"
+            android:layout_marginBottom="@dimen/mon_margin"
             android:layout_below="@id/SITE_benLayout">
 
             <TextView

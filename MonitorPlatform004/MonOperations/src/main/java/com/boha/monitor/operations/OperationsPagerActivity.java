@@ -148,24 +148,7 @@ public class OperationsPagerActivity extends ActionBarActivity
                 });
 
                 if (wcr.isWifiConnected()) {
-                    Log.w(LOG, "## RequestSyncService.startSyncCachedRequests ...from operations pager");
-                    mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
-                        @Override
-                        public void onTasksSynced(int goodResponses, int badResponses) {
-                            Log.w(LOG,"@@ cached requests done, good: "+ goodResponses + " bad: " + badResponses);
-                        }
-
-                        @Override
-                        public void onError(String message) {
-
-                        }
-                    });
-                    Util.pretendFlash(progressBar,1000,2,new Util.UtilAnimationListener() {
-                        @Override
-                        public void onAnimationEnded() {
-                            getCompanyData();
-                        }
-                    });
+                    getCompanyData();
                 }
 
 
@@ -201,17 +184,19 @@ public class OperationsPagerActivity extends ActionBarActivity
                     @Override
                     public void run() {
                         progressBar.setVisibility(View.GONE);
-                        Log.e(LOG, "## getCompanyData responded...statusCode: " + r.getStatusCode());
+                        Log.e(LOG, "## getCompanyData responded.....statusCode: " + r.getStatusCode());
                         if (!ErrorUtil.checkServerError(ctx, r)) {
                             return;
                         }
                         company = r.getCompany();
+                        projectList = company.getProjectList();
                         response = r;
-                        if (projectListFragment == null) {
-                            buildPages();
-                        } else {
-                            projectListFragment.refreshData(company.getProjectList());
-                        }
+                        buildPages();
+//                        if (projectListFragment == null) {
+//                            buildPages();
+//                        } else {
+//                            projectListFragment.refreshData(company.getProjectList());
+//                        }
                         CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
@@ -518,7 +503,7 @@ public class OperationsPagerActivity extends ActionBarActivity
             beneficiaryListFragment = new BeneficiaryListFragment();
             ResponseDTO xx = new ResponseDTO();
             data1 = new Bundle();
-            xx.setProjectList(projectList);
+            xx.setProjectList(company.getProjectList());
             data1.putSerializable("projectList", xx);
             beneficiaryListFragment.setArguments(data1);
 

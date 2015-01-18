@@ -361,5 +361,7 @@
     <string name="site_syncd">Site Status Sync complete</string>
     <string name="site_colon">"Site: "</string>
     <string name="status_not_available">Site status report not available at this time</string>
+    <string name="network_error">Network error. Please try again.</string>
+    <string name="no_status">No status records found</string>
 
 </resources>

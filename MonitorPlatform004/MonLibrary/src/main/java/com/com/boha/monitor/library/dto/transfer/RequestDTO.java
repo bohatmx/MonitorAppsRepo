@@ -52,7 +52,7 @@ public class RequestDTO implements Serializable {
             projectSiteID, projectSiteTaskID,loginType,
             countryID, contractorClaimID, invoiceID,
             beneficiaryID, engineerID;
-    private Boolean responseRequested;
+    private Boolean responseRequested, useHttp = false;
     private SubTaskStatusDTO subTaskStatus;
     private Date startDate, endDate;
     private Float accuracy;
@@ -190,6 +190,14 @@ public class RequestDTO implements Serializable {
 
     //
 
+
+    public Boolean getUseHttp() {
+        return useHttp;
+    }
+
+    public void setUseHttp(Boolean useHttp) {
+        this.useHttp = useHttp;
+    }
 
     public RequestList getRequestList() {
         return requestList;

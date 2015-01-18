@@ -69,7 +69,7 @@ public class StatusReportFragment extends Fragment implements PageFragment {
     ImageView heroImage;
     ProjectSiteDTO projectSite;
     ProjectDTO project;
-    TextView txtProject, txtEmpty, txtTitle;
+    TextView txtProject, txtTitle;
     ListView listView;
     LayoutInflater inflater;
     StatusReportAdapter adapter;
@@ -140,7 +140,6 @@ public class StatusReportFragment extends Fragment implements PageFragment {
         txtProject = (TextView) view.findViewById(R.id.STATLST_project);
         txtCount = (TextView) view.findViewById(R.id.STATLST_txtCount);
         txtTitle = (TextView) view.findViewById(R.id.STATLST_txtTitle);
-        txtEmpty = (TextView) view.findViewById(R.id.STATLST_txtEmpty);
         btnEnd = (Button) view.findViewById(R.id.STATLST_endDate);
         btnStart = (Button) view.findViewById(R.id.STATLST_startDate);
         txtSiteName = (TextView) view.findViewById(R.id.STATLST_txtTitle);
@@ -228,12 +227,13 @@ public class StatusReportFragment extends Fragment implements PageFragment {
                         Log.e(LOG, "######### project status call took: " + Util.getElapsed(start, end) + " seconds" +
                                 " - statusCount: " + projectSiteTaskStatusList.size());
 
-                        if (!projectSiteTaskStatusList.isEmpty()) {
-                            txtEmpty.setVisibility(View.GONE);
+                        if (projectSiteTaskStatusList.isEmpty()) {
+                            txtCount.setText("0");
+                            Util.showToast(ctx, act.getString(R.string.no_status));
+                            return;
                         } else {
-                            txtEmpty.setVisibility(View.VISIBLE);
+                            txtCount.setText("" + projectSiteTaskStatusList.size());
                         }
-                        txtCount.setText("" + projectSiteTaskStatusList.size());
                         setList();
                         response.setStartDate(startDate);
                         response.setEndDate(endDate);
@@ -286,11 +286,7 @@ public class StatusReportFragment extends Fragment implements PageFragment {
                 progressBar.setVisibility(View.GONE);
                 if (response != null) {
                     projectSiteTaskStatusList = response.getProjectSiteTaskStatusList();
-                    if (!projectSiteTaskStatusList.isEmpty()) {
-                        txtEmpty.setVisibility(View.GONE);
-                    } else {
-                        txtEmpty.setVisibility(View.VISIBLE);
-                    }
+                    
 
                     if (response.getStartDate() != null) {
                         btnStart.setText(sdf.format(response.getStartDate()));

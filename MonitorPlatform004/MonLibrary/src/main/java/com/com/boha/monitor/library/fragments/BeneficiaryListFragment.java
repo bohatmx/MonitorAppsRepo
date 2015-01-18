@@ -218,8 +218,29 @@ private void buildBeneficiaryList() {
         state.putSerializable("projectList", r);
         super.onSaveInstanceState(state);
     }
-    public void setProjectList(List<ProjectDTO> projectList) {
-        this.projectList = projectList;
+    public void setProjectList(final List<ProjectDTO> list) {
+        this.projectList = list;
+        if (projectList == null) {
+            CacheUtil.getCachedData(ctx,CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
+                @Override
+                public void onFileDataDeserialized(ResponseDTO response) {
+                    if (response.getCompany() != null) {
+                        projectList = response.getCompany().getProjectList();
+                    }
+                }
+
+                @Override
+                public void onDataCached() {
+
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
+            return;
+        }
         if (!projectList.isEmpty()) {
             project = projectList.get(0);
             buildBeneficiaryList();

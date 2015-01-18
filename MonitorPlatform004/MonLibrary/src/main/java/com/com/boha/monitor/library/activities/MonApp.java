@@ -8,7 +8,9 @@ import android.util.Log;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.boha.monitor.library.R;
+import com.com.boha.monitor.library.dto.CompanyStaffDTO;
 import com.com.boha.monitor.library.toolbox.BitmapLruCache;
+import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
@@ -20,6 +22,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.utils.L;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 
+import org.acra.ACRA;
 import org.acra.ReportField;
 import org.acra.annotation.ReportsCrashes;
 
@@ -57,7 +60,7 @@ public class MonApp extends Application {
     }
 
     static final String PROPERTY_ID = "UA-53661372-2";
-    HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
+    HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
 
     public synchronized Tracker getTracker(TrackerName trackerId) {
         if (!mTrackers.containsKey(trackerId)) {
@@ -87,14 +90,14 @@ public class MonApp extends Application {
         sb.append("#######################################\n\n");
 
         Log.d(LOG, sb.toString());
-//
-////        ACRA.init(this);
-//        CompanyStaffDTO staff = SharedUtil.getCompanyStaff(getApplicationContext());
-//        if (staff != null) {
-////            ACRA.getErrorReporter().putCustomData("companyStaffID", "" + staff.getCompanyStaffID());
-//        }
 
-//        Log.e(LOG, "###### ACRA Crash Reporting has been initiated");
+        ACRA.init(this);
+        CompanyStaffDTO staff = SharedUtil.getCompanyStaff(getApplicationContext());
+        if (staff != null) {
+            ACRA.getErrorReporter().putCustomData("companyStaffID", "" + staff.getCompanyStaffID());
+        }
+
+        Log.e(LOG, "###### ACRA Crash Reporting has been initiated");
         initializeVolley(getApplicationContext());
 
         DisplayImageOptions defaultOptions =

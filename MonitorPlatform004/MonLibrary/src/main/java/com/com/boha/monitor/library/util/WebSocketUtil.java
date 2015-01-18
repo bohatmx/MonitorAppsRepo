@@ -6,7 +6,6 @@ import android.util.Log;
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
-import com.com.boha.monitor.library.toolbox.BaseVolley;
 import com.google.gson.Gson;
 
 import org.java_websocket.client.WebSocketClient;
@@ -46,11 +45,10 @@ public class WebSocketUtil {
 
     public static void sendRequest(Context c, final String suffix, RequestDTO req,
                                    WebSocketListener listener) {
-        if (!BaseVolley.checkNetworkOnDevice(c)) {
-            listener.onError("Network connections unavailable");
+        if (req.getUseHttp()) {
+            VolleyUtil.sendRequest(c,req, listener);
             return;
         }
-
         webSocketListener = listener;
         request = req;
         ctx = c;

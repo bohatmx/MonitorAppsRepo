@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -47,7 +48,7 @@ public class RequestSyncService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.e(LOG, "### RequestSyncService onHandleIntent");
+        Log.w(LOG, "### RequestSyncService onHandleIntent");
         FileInputStream stream;
         try {
             stream = getApplicationContext().openFileInput("requestCache.json");
@@ -61,9 +62,14 @@ public class RequestSyncService extends IntentService {
                 controlRequestUpload();
             } else {
                 Log.e(LOG, "-- requestCache is null");
+                requestSyncListener.onTasksSynced(0, 0);
             }
+        } catch (FileNotFoundException e) {
+            Log.i(LOG,"--- FileNotFoundException, requestCache does not exist yet");
+            requestSyncListener.onTasksSynced(0,0);
         } catch (Exception e) {
-
+            Log.e(LOG, "problem with sync", e);
+            requestSyncListener.onTasksSynced(0,0);
         }
     }
 

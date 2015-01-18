@@ -412,6 +412,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             }
         }
 
+        txtStatusCount.setText("" + df.format(statusCount));
         animateCounts();
 
 

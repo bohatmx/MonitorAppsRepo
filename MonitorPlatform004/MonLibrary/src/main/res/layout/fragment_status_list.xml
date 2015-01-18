@@ -126,16 +126,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/STATLST_txtEmpty"
-        android:text="No status updates found"
-        style="@style/Title2TextStyleBlack"
-        android:textStyle="normal"
-        android:layout_marginLeft="@dimen/mon_padding"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
     <ProgressBar
         android:id="@+id/STATLST_progress"
         android:layout_alignParentRight="true"

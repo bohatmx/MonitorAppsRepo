@@ -193,7 +193,6 @@ public class BaseVolley {
             public void onResponse(ResponseDTO r) {
                 response = r;
                 Log.e(LOG, "Yup! ...response object received, status code: " + r.getStatusCode());
-
                 if (r.getStatusCode() > 0) {
                     try {
                         Log.w(LOG, response.getMessage());

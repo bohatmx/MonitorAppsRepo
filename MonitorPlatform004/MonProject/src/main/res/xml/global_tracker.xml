@@ -41,6 +41,9 @@
     <screenName name="com.boha.monitor.library.activities.PictureActivity">
         Monitor PictureActivity
     </screenName>
+    <screenName name="com.boha.monitor.library.activities.MonitorMapActivity">
+        Monitor MonitorMapActivity
+    </screenName>
 
 
     <string name="ga_trackingId">UA-53661372-2</string>

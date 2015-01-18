@@ -64,7 +64,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.w(LOG,"##### onCreate ...........");
+        Log.w(LOG, "##### onCreate ...........");
         setContentView(R.layout.activity_site_pager);
         ctx = getApplicationContext();
 
@@ -82,7 +82,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
         getSupportActionBar().setSubtitle(project.getProjectName());
         mLocationClient = new LocationClient(ctx, this, this);
 //
-       getCachedProjectData();
+        getCachedProjectData();
     }
 
     private void getCachedProjectData() {
@@ -111,7 +111,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
                 if (r.isWifiConnected()) {
                     getProjectData();
                 } else {
-                    Util.showErrorToast(ctx,getString(R.string.connect_wifi));
+                    Util.showErrorToast(ctx, getString(R.string.connect_wifi));
                 }
             }
         });
@@ -121,7 +121,6 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
         Log.w(LOG, "### getProjectData from the cloud");
         RequestDTO w = new RequestDTO(RequestDTO.GET_PROJECT_DATA);
         w.setProjectID(project.getProjectID());
-
         progressBar.setVisibility(View.VISIBLE);
         WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
@@ -135,7 +134,11 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
                         }
                         project = response.getProjectList().get(0);
                         Log.i(LOG, "getProjectData returned data OK....");
-                        projectSiteListFragment.refresh(project);
+                        if (projectSiteListFragment != null)
+                            projectSiteListFragment.refresh(project);
+                        else {
+                            buildPages();
+                        }
                         CacheUtil.cacheProjectData(ctx, response, project.getProjectID(), new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
@@ -243,7 +246,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
     }
 
     private void refresh() {
-        WebCheckResult w = WebCheck.checkNetworkAvailability(ctx,true);
+        WebCheckResult w = WebCheck.checkNetworkAvailability(ctx, true);
         if (w.isWifiConnected()) {
             if (rBound) {
                 rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
@@ -272,9 +275,8 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
                     }
                 });
 
-            } else {
-                getProjectData();
             }
+            //getProjectData();
 
         }
     }
@@ -312,8 +314,8 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
             bindService(requestIntent, rConnection, Context.BIND_AUTO_CREATE);
             bindService(photoIntent, pConnection, Context.BIND_AUTO_CREATE);
 
-        }catch (Exception e) {
-            Log.e(LOG,"## problem with binding service", e);
+        } catch (Exception e) {
+            Log.e(LOG, "## problem with binding service", e);
         }
 
     }
@@ -347,7 +349,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
                 rBound = false;
             }
         } catch (Exception e) {
-            Log.e(LOG,"-- something wrong with unbind", e);
+            Log.e(LOG, "-- something wrong with unbind", e);
         }
         super.onStop();
     }
@@ -365,9 +367,9 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
             pService = binder.getService();
             pBound = true;
 
-            WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
+            WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx, true);
             if (wcr.isWifiConnected()) {
-                Log.w(LOG,"### starting PhotoUploadService ...");
+                Log.w(LOG, "### starting PhotoUploadService ...");
                 pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
                     @Override
                     public void onUploadsComplete(int count) {
@@ -396,11 +398,11 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
             RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
             rService = binder.getService();
             rBound = true;
-            Log.w(LOG,"### starting RequestSyncService ...");
+            Log.w(LOG, "### starting RequestSyncService ...");
             rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
                 @Override
                 public void onTasksSynced(int goodResponses, int badResponses) {
-                    Log.e(LOG,"++ onTasksSynced, good: " + goodResponses + " bad: " + badResponses);
+                    Log.e(LOG, "++ onTasksSynced, good: " + goodResponses + " bad: " + badResponses);
                 }
 
                 @Override
@@ -473,20 +475,20 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
 
     private void buildPages() {
 
-            pageFragmentList = new ArrayList<>();
-            projectSiteListFragment = new ProjectSiteListFragment();
-            Bundle data1 = new Bundle();
-            data1.putSerializable("project", project);
-            data1.putSerializable("company", company);
-            data1.putInt("index", selectedSiteIndex);
-            projectSiteListFragment.setArguments(data1);
+        pageFragmentList = new ArrayList<>();
+        projectSiteListFragment = new ProjectSiteListFragment();
+        Bundle data1 = new Bundle();
+        data1.putSerializable("project", project);
+        data1.putSerializable("company", company);
+        data1.putInt("index", selectedSiteIndex);
+        projectSiteListFragment.setArguments(data1);
 
-            gpsScanFragment = new GPSScanFragment();
+        gpsScanFragment = new GPSScanFragment();
 
-            pageFragmentList.add(projectSiteListFragment);
-            pageFragmentList.add(gpsScanFragment);
+        pageFragmentList.add(projectSiteListFragment);
+        pageFragmentList.add(gpsScanFragment);
 
-            initializeAdapter();
+        initializeAdapter();
 
     }
 
@@ -573,7 +575,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
         this.projectSite = projectSite;
         Intent i = new Intent(this, TaskAssignmentActivity.class);
         i.putExtra("projectSite", projectSite);
-        i.putExtra("company",company);
+        i.putExtra("company", company);
         i.putExtra("type", type);
         startActivityForResult(i, SITE_TASK_REQUEST);
     }
@@ -647,7 +649,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
             pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
                 @Override
                 public void onUploadsComplete(int count) {
-                    Log.w(LOG,"+++ onUploadsComplete count: " + count);
+                    Log.w(LOG, "+++ onUploadsComplete count: " + count);
                 }
             });
         }
@@ -669,8 +671,8 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
             case SITE_PICTURE_REQUEST:
                 Log.i(LOG, "################### onActivityResult SITE_PICTURE_REQUEST");
                 if (res == RESULT_OK) {
-                    ResponseDTO r = (ResponseDTO)data.getSerializableExtra("response");
-                    Log.w(LOG,"## refresh list with new local photos: " + r.getSiteImageFileNameList());
+                    ResponseDTO r = (ResponseDTO) data.getSerializableExtra("response");
+                    Log.w(LOG, "## refresh list with new local photos: " + r.getSiteImageFileNameList());
                     projectSiteListFragment.refreshPhotoList(r.getSiteImageFileNameList());
                 }
                 break;
@@ -772,9 +774,6 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
 
         finish();
     }
-
-
-
 
 
     int selectedSiteIndex;

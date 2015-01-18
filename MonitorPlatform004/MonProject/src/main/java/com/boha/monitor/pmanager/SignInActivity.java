@@ -156,7 +156,11 @@ public class SignInActivity extends Activity {
                         Intent intent = new Intent(ctx, ProjectPagerActivity.class);
                         startActivity(intent);
 
-                        ACRA.getErrorReporter().putCustomData("companyStaffID", "" + response.getCompanyStaff().getCompanyStaffID());
+                        try {
+                            ACRA.getErrorReporter().putCustomData("companyStaffID", ""
+                                    + response.getCompanyStaff().getCompanyStaffID());
+                        } catch (Exception e) {//ignore}
+                        }
                         CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
