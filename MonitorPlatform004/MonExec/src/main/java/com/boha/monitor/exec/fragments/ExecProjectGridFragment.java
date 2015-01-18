@@ -23,6 +23,7 @@ import com.com.boha.monitor.library.activities.MonitorMapActivity;
 import com.com.boha.monitor.library.adapters.ExecStatusListAdapter;
 import com.com.boha.monitor.library.adapters.PopupListAdapter;
 import com.com.boha.monitor.library.dto.ProjectDTO;
+import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.fragments.PageFragment;
 import com.com.boha.monitor.library.util.Util;
@@ -80,6 +81,7 @@ public class ExecProjectGridFragment extends Fragment implements PageFragment{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 project = projectList.get(position);
+
                 //setup list for pop
                 final List<String> list = new ArrayList<String>();
                 list.add(ctx.getString(R.string.quick_status));
@@ -110,6 +112,11 @@ public class ExecProjectGridFragment extends Fragment implements PageFragment{
                             startActivity(i);
                         }
                         if (list.get(position).equalsIgnoreCase(ctx.getString(R.string.project_map))) {
+                            if (!locationAvailable()) {
+                                actionsWindow.dismiss();
+                                Util.showToast(ctx, ctx.getString(R.string.no_location_data));
+                                return;
+                            }
                             Intent i = new Intent(ctx, MonitorMapActivity.class);
                             i.putExtra("project",project);
                             startActivity(i);
@@ -129,6 +136,15 @@ public class ExecProjectGridFragment extends Fragment implements PageFragment{
                 actionsWindow.show();
             }
         });
+    }
+    private boolean locationAvailable() {
+
+        for (ProjectSiteDTO site: project.getProjectSiteList()) {
+            if (site.getLocationConfirmed() != null || site.getLatitude() != null) {
+                return true;
+            }
+        }
+        return false;
     }
     private void getQuickStatusPopup() {
 

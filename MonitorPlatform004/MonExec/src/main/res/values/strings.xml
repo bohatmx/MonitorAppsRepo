@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">MonitorPlatform</string>
+    <string name="app_name">Exec</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
@@ -17,7 +17,7 @@
     <string name="no_projects">"No projects found with the name: "</string>
     <string name="quick_status">Quick Status</string>
     <string name="title_activity_exec_status_report">ExecStatusReportActivity</string>
-
+    <string name="no_location_data">Location data for the project is not available</string>
 
 
 </resources>

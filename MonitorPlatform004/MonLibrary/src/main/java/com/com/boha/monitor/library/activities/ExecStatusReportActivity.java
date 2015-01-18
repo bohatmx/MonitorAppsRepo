@@ -33,9 +33,6 @@ import com.com.boha.monitor.library.util.WebCheck;
 import com.com.boha.monitor.library.util.WebCheckResult;
 import com.com.boha.monitor.library.util.WebSocketUtil;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 public class ExecStatusReportActivity extends ActionBarActivity
         implements ExecProjectSiteListFragment.ExecProjectSiteListListener,
         ExecProjectSiteStatusListFragment.ExecProjectSiteStatusListListener {
@@ -99,6 +96,7 @@ public class ExecStatusReportActivity extends ActionBarActivity
                         }
                         project.setProjectSiteList(response.getProjectSiteList());
                         execProjectSiteListFragment.setProject(project);
+                        CacheUtil.cacheProjectData(ctx,response, project.getProjectID(), null);
                     }
                 });
             }
@@ -120,12 +118,11 @@ public class ExecStatusReportActivity extends ActionBarActivity
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
                 if (response != null) {
-                    if (!response.getProjectList().isEmpty()) {
-                        project = response.getProjectList().get(0);
+                    if (!response.getProjectSiteList().isEmpty()) {
+                        project.setProjectSiteList(response.getProjectSiteList());
                         execProjectSiteListFragment.setProject(project);
                     }
                 }
-
                 WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
                 if (wcr.isWifiConnected()) {
                     getProjectData();
@@ -136,7 +133,6 @@ public class ExecStatusReportActivity extends ActionBarActivity
 
             @Override
             public void onDataCached() {
-
             }
 
             @Override

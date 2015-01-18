@@ -153,12 +153,13 @@ public class ExecProjectSiteListFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                listener.onProjectSiteClicked(projectSiteList.get(position));
+
                 for (ProjectSiteDTO s: projectSiteList) {
                     s.setSelected(false);
                 }
                 projectSiteList.get(position).setSelected(true);
                 adapter.notifyDataSetChanged();
+                listener.onProjectSiteClicked(projectSiteList.get(position));
             }
         });
     }
@@ -168,6 +169,11 @@ public class ExecProjectSiteListFragment extends Fragment {
         this.project = project;
         projectSiteList = project.getProjectSiteList();
         setList();
+
+        if (projectSiteList != null && !projectSiteList.isEmpty()) {
+            listener.onProjectSiteClicked(projectSiteList.get(0));
+        }
+
     }
     @Override
      public void onAttach(Activity a) {

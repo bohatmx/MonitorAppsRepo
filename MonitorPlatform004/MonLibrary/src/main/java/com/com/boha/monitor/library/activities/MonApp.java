@@ -38,8 +38,13 @@ import java.util.HashMap;
 @ReportsCrashes(
         formKey = "",
         formUri = Statics.CRASH_REPORTS_URL,
-        customReportContent = {ReportField.APP_VERSION_NAME, ReportField.APP_VERSION_CODE,
-                ReportField.ANDROID_VERSION, ReportField.PHONE_MODEL, ReportField.BRAND, ReportField.STACK_TRACE,
+        customReportContent = {
+                ReportField.APP_VERSION_NAME,
+                ReportField.APP_VERSION_CODE,
+                ReportField.ANDROID_VERSION,
+                ReportField.PHONE_MODEL,
+                ReportField.BRAND,
+                ReportField.STACK_TRACE,
                 ReportField.PACKAGE_NAME,
                 ReportField.CUSTOM_DATA,
                 ReportField.LOGCAT},
@@ -48,7 +53,6 @@ import java.util.HashMap;
 public class MonApp extends Application {
     /**
      * Enum used to identify the tracker that needs to be used for tracking.
-     * <p/>
      * A single tracker is usually enough for most purposes. In case you do need multiple trackers,
      * storing them all in Application object helps ensure that they are created only once per
      * application instance.

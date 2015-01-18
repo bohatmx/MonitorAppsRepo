@@ -94,6 +94,7 @@ public class Util {
         int width = displaymetrics.widthPixels;
         Double d = Double.valueOf("" + width);
         Double e = d / 1.5;
+        Log.w(LOG,"## popup width: " + e.intValue());
         return e.intValue();
     }
     public static int getPopupHorizontalOffset(Activity activity) {
@@ -103,6 +104,7 @@ public class Util {
         int width = displaymetrics.widthPixels;
         Double d = Double.valueOf("" + width);
         Double e = d / 15;
+        Log.w(LOG,"## horizontalOffset: " + e.intValue());
         return e.intValue();
     }
     private static int getWindowWidth(Activity activity) {
@@ -417,6 +419,7 @@ public class Util {
         ind.setBackground(ctx.getResources().getDrawable(R.drawable.xblue_oval_small));
         txt.setTextColor(ctx.getResources().getColor(R.color.blue));
         txt.setText(caption);
+
         Toast customtoast = new Toast(ctx);
 
         customtoast.setView(view);

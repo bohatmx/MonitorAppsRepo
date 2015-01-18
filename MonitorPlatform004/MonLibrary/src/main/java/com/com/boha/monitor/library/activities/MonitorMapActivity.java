@@ -262,6 +262,7 @@ public class MonitorMapActivity extends ActionBarActivity
 
     Random random = new Random(System.currentTimeMillis());
 
+
     private void setProjectMarkers() {
         googleMap.clear();
         LatLng point = null;

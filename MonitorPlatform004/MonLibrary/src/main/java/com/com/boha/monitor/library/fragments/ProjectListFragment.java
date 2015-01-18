@@ -351,6 +351,11 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                             break;
                         case 2:
                             Log.e(LOG, "Yeaaah! position: " + position);
+                            if (!locationAvailable()) {
+                                actionsWindow.dismiss();
+                                Util.showToast(ctx, ctx.getString(R.string.no_location_found));
+                                return;
+                            }
                             Intent i3 = new Intent(ctx, MonitorMapActivity.class);
                             i3.putExtra("project", project);
                             startActivity(i3);
@@ -371,7 +376,15 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             actionsWindow.dismiss();
         }
     }
+    private boolean locationAvailable() {
 
+        for (ProjectSiteDTO site: project.getProjectSiteList()) {
+            if (site.getLocationConfirmed() != null || site.getLatitude() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private void setFields() {
         //set fields
