@@ -151,6 +151,7 @@ public class StatusReportFragment extends Fragment implements PageFragment {
         Statics.setRobotoFontBold(ctx, btnStart);
         Statics.setRobotoFontLight(ctx, txtTitle);
         setDates();
+
         WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
         if (wcr.isWifiConnected()) {
             btnEnd.setOnClickListener(new View.OnClickListener() {
@@ -286,7 +287,7 @@ public class StatusReportFragment extends Fragment implements PageFragment {
                 progressBar.setVisibility(View.GONE);
                 if (response != null) {
                     projectSiteTaskStatusList = response.getProjectSiteTaskStatusList();
-                    
+
 
                     if (response.getStartDate() != null) {
                         btnStart.setText(sdf.format(response.getStartDate()));

@@ -76,7 +76,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     Context ctx;
     View topView;
     LayoutInflater inflater;
-    View view;
+    View view, searchLayout;
     ImageView imgLogo, imgSearch1, imgSearch2;
     EditText editSearch;
     public static final int PROJECT_TYPE = 1, OPERATIONS_TYPE = 2;
@@ -245,6 +245,12 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         adapter = new ProjectAdapter(ctx, R.layout.project_item, projectList);
         mListView.setAdapter(adapter);
 
+        if (projectList.size() > 5) {
+            searchLayout.setVisibility(View.VISIBLE);
+        } else {
+            searchLayout.setVisibility(View.GONE);
+        }
+
         if (statusCountInPeriod != null) {
             txtStatusCount.setText(df.format(statusCountInPeriod));
         } else {
@@ -370,6 +376,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     private void setFields() {
         //set fields
         topView = view.findViewById(R.id.topTop);
+        searchLayout = view.findViewById(R.id.SLT_searchLayout);
         imgLogo = (ImageView) view.findViewById(R.id.PROJ_LIST_img);
         txtStatusCount = (TextView) view.findViewById(R.id.HERO_P_statusCount);
         heroImage = (ImageView) view.findViewById(R.id.HERO_P_image);

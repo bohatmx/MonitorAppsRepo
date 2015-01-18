@@ -69,7 +69,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
     Context ctx;
     TextView txtCount, txtName;
     Integer lastIndex;
-    View view, topView, handle;
+    View view, topView, handle, searchLayout;
     ImageView imgSearch1, imgSearch2, heroImage;
     EditText editSearch;
 
@@ -105,6 +105,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         txtCount = (TextView) view.findViewById(R.id.SITE_LIST_siteCount);
         topView = view.findViewById(R.id.SITE_LIST_TOP);
         handle = view.findViewById(R.id.SITE_LIST_handle);
+        searchLayout = view.findViewById(R.id.SLT_searchLayout);
 
         imgSearch1 = (ImageView) view.findViewById(R.id.SLT_imgSearch1);
         imgSearch2 = (ImageView) view.findViewById(R.id.SLT_imgSearch2);
@@ -199,6 +200,11 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         Log.i(LOG, "## setList");
         txtCount.setText("" + projectSiteList.size());
         Collections.sort(projectSiteList);
+        if (projectSiteList.size() > 10) {
+            searchLayout.setVisibility(View.VISIBLE);
+        } else {
+            searchLayout.setVisibility(View.GONE);
+        }
         long x = ImageLoader.getInstance().getDiskCache().getDirectory().listFiles().length;
         Log.d(LOG, "%%%%%%%% ImageLoader getDiskCache files: " + x);
         final WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx, true);

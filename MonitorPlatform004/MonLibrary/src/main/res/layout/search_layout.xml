@@ -13,7 +13,7 @@
         android:layout_height="@dimen/mon_widest" />
 
     <RelativeLayout
-        android:id="@+id/SLT_bottomLayout"
+        android:id="@+id/SLT_top"
         android:layout_below="@id/SLT_heroImage"
         android:layout_width="match_parent"
         android:padding="@dimen/mon_padding"
