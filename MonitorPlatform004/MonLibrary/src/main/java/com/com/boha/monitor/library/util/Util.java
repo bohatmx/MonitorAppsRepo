@@ -42,6 +42,7 @@ import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.adapters.PopupListAdapter;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
+import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 
@@ -1681,5 +1682,18 @@ public class Util {
             }
         }
         return directory.canWrite();
+    }
+
+    public static String getPhotoURL(PhotoUploadDTO p) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(Statics.IMAGE_URL).append("company")
+                .append(p.getCompanyID())
+                .append("/project").append(p.getProjectID());
+        if (p.getProjectSiteID() != null) {
+            sb.append("/projectsite").append(p.getProjectSiteID());
+        }
+        sb.append("/").append(p.getUri());
+        String url = sb.toString();
+        return url;
     }
 }

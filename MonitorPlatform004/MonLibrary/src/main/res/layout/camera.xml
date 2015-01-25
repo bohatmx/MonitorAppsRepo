@@ -7,74 +7,60 @@
     android:layout_height="match_parent">
 
 
+
     <RelativeLayout
-        android:id="@+id/CAM_topLayout"
-        android:background="@color/white"
-        android:padding="@dimen/mon_wider"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ProgressBar
-            android:id="@+id/CAM_progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/CAM_message"
-            style="@style/TextStyleBlueSmall"
-            android:layout_toRightOf="@id/CAM_progressBar"
-            android:layout_marginLeft="@dimen/mon_padding"
-            android:layout_centerVertical="true"
-            android:text="@string/finding_gps"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/CAM_gpsStatus"
+        android:id="@+id/CAM_projectLayout"
         android:background="@color/beige_pale"
-        android:padding="@dimen/mon_middle"
-        android:layout_below="@id/CAM_topLayout"
+        android:padding="@dimen/mon_padding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/CAM_label1"
             style="@style/TextStyleGreySmall"
-            android:text="GPS Accuracy"
+            android:text="Project"
             android:layout_marginLeft="@dimen/mon_divider"
-            android:layout_marginTop="@dimen/mon_wide"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/CAM_accuracy"
+            android:id="@+id/CAM_projectName"
             android:layout_toRightOf="@id/CAM_label1"
-            style="@style/Title2TextStyleGreen"
-            android:text="0.00"
+            style="@style/Title3TextStyleGreen"
+            android:text="Project Name Here"
             android:layout_alignBaseline="@id/CAM_label1"
             android:layout_marginLeft="@dimen/mon_margin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/CAM_siteLayout"
+        android:layout_below="@id/CAM_projectLayout"
+        android:background="@color/white"
+        android:padding="@dimen/mon_padding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
         <TextView
-            android:id="@+id/CAM_mLabel"
-            android:layout_toRightOf="@id/CAM_accuracy"
+            android:id="@+id/CAM_label2"
             style="@style/TextStyleGreySmall"
-            android:text="metres"
-            android:layout_alignBaseline="@id/CAM_label1"
-            android:layout_marginLeft="@dimen/mon_padding"
+            android:text="Site Name/Number"
+            android:layout_marginLeft="@dimen/mon_divider"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <Chronometer
-            android:id="@+id/CAM_chrono"
-            android:layout_toRightOf="@id/CAM_mLabel"
-            android:layout_marginLeft="@dimen/mon_wide"
-            android:layout_alignBaseline="@id/CAM_label1"
-            android:textColor="@color/absa_red"
-            style="@style/Title2TextStyleBlack"
+        <TextView
+            android:id="@+id/CAM_siteName"
+            android:layout_toRightOf="@id/CAM_label2"
+            style="@style/Title3TextStyleBlue"
+            android:text="Site Name Here"
+            android:layout_alignBaseline="@id/CAM_label2"
+            android:layout_marginLeft="@dimen/mon_margin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
 
     </RelativeLayout>
 
@@ -83,7 +69,7 @@
         android:id="@+id/CAM_imageLayout"
         android:layout_width="match_parent"
         android:background="@color/black"
-        android:layout_below="@+id/CAM_gpsStatus"
+        android:layout_below="@+id/CAM_siteLayout"
         android:layout_height="match_parent">
         <HorizontalScrollView
 
@@ -110,7 +96,7 @@
     <ImageView
         android:id="@+id/CAM_imgCamera"
         android:src="@android:drawable/ic_menu_camera"
-        android:tint="@color/yellow"
+        android:tint="@color/orange"
         android:background="@drawable/xred_oval_large"
         android:layout_alignParentRight="true"
         android:layout_marginTop="@dimen/mon_wider"

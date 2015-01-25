@@ -60,7 +60,7 @@
     <string name="error_encoding">Error encoding request. Contact support</string>
     <string name="error_server_comms">Problem communicating with the server. Please try again or contact mgGolf support</string>
     <string name="error_duplicate">Attempting to put duplicate data in database, ignored</string>
-    <string name="welcome_aboard">Welcome Aboard! Thanks for signing up!</string>
+    <string name="welcome_aboard">Welcome Aboard!</string>
     <string name="app_name">Operations</string>
     <string name="change_item">Change this item</string>
     <string name="remove_item">Remove this item</string>
@@ -94,7 +94,7 @@
     <string name="click_link">Click or tap the link below to navigate to Google Play</string>
     <string name="enjoy">Enjoy the app!</string>
     <string name="select_players_imp">Please select Players for import</string>
-    <string name="subject">Invitation to Project Monitor Apps</string>
+    <string name="subject">Invitation to Monitor Platform</string>
     <string name="off">Normal</string>
     <string name="message_from">Message from</string>
     <string name="on">Satellite</string>
@@ -364,5 +364,6 @@
     <string name="network_error">Network error. Please try again.</string>
     <string name="no_status">No status records found</string>
     <string name="no_location_found">Project location data is not available</string>
+    <string name="no_photos">No photos found for site gallery</string>
 
 </resources>

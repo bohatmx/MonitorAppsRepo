@@ -20,7 +20,7 @@ public class ProjectSiteDTO implements Serializable, Comparable<ProjectSiteDTO> 
 
     public static final int ACTION_ADD = 1, ACTION_UPDATE = 2, ACTION_DELETE = 3;
     private static final long serialVersionUID = 1L;
-    private Integer projectSiteID, locationConfirmed;
+    private Integer projectSiteID, locationConfirmed, photoCount;
     private String projectSiteName, standErfNumber, projectName;
     private Double latitude;
     private Double longitude;
@@ -38,6 +38,14 @@ public class ProjectSiteDTO implements Serializable, Comparable<ProjectSiteDTO> 
 
     public boolean isSelected() {
         return selected;
+    }
+
+    public Integer getPhotoCount() {
+        return photoCount;
+    }
+
+    public void setPhotoCount(Integer photoCount) {
+        this.photoCount = photoCount;
     }
 
     public Integer getLocationConfirmed() {

@@ -22,7 +22,7 @@ import android.widget.ListPopupWindow;
 import android.widget.ProgressBar;
 
 import com.com.boha.monitor.library.activities.MonApp;
-import com.com.boha.monitor.library.activities.PictureRecyclerGridActivity;
+import com.com.boha.monitor.library.activities.SitePictureGridActivity;
 import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
@@ -37,6 +37,7 @@ import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
+import com.com.boha.monitor.library.util.UnhandledExceptionHandler;
 import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebCheck;
 import com.com.boha.monitor.library.util.WebCheckResult;
@@ -76,6 +77,9 @@ public class ProjectPagerActivity extends ActionBarActivity {
         Log.e(LOG, "### got Tracker form MonApp: " + t.toString());
         t.setScreenName("ProjectPagerActivity");
         t.send(new HitBuilders.AppViewBuilder().build());
+
+        Thread.setDefaultUncaughtExceptionHandler(
+                new UnhandledExceptionHandler(this));
     }
 
     private void getCachedCompanyData() {
@@ -136,11 +140,7 @@ public class ProjectPagerActivity extends ActionBarActivity {
                         }
                         company = r.getCompany();
                         response = r;
-                        if (projectListFragment == null) {
-                            buildPages();
-                        } else {
-                            projectListFragment.refreshData(company.getProjectList());
-                        }
+                        buildPages();
                         CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
@@ -216,7 +216,7 @@ public class ProjectPagerActivity extends ActionBarActivity {
             return true;
         }
         if (id == R.id.action_gallery) {
-            Intent i = new Intent(this, PictureRecyclerGridActivity.class);
+            Intent i = new Intent(this, SitePictureGridActivity.class);
             startActivity(i);
             return true;
         }
@@ -232,6 +232,7 @@ public class ProjectPagerActivity extends ActionBarActivity {
 
         pageFragmentList.add(projectListFragment);
         pageFragmentList.add(statusReportFragment);
+
 
         adapter = new PagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(adapter);

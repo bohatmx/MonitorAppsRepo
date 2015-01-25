@@ -235,7 +235,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
             setActualList(projectSiteAdapter);
 
         }
-        Util.expand(heroImage,1000,null);
+       // Util.expand(heroImage,1000,null);
 
     }
 

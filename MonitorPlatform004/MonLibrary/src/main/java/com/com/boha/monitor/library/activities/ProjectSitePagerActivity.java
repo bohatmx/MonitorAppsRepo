@@ -70,7 +70,6 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
 
         mPager = (ViewPager) findViewById(R.id.SITE_pager);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        mPager.setOffscreenPageLimit(NUM_ITEMS - 1);
         PagerTitleStrip strip = (PagerTitleStrip) findViewById(R.id.pager_title_strip);
         strip.setVisibility(View.GONE);
 
@@ -132,13 +131,14 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
                         if (!ErrorUtil.checkServerError(ctx, response)) {
                             return;
                         }
-                        project = response.getProjectList().get(0);
-                        Log.i(LOG, "getProjectData returned data OK....");
-                        if (projectSiteListFragment != null)
-                            projectSiteListFragment.refresh(project);
-                        else {
-                            buildPages();
+                        if (!response.getProjectList().isEmpty()) {
+                            project = response.getProjectList().get(0);
+                            Log.i(LOG, "getProjectData returned data OK....");
+                        } else {
+                            Util.showErrorToast(ctx,"Project data not found. Please refresh data");
+                            return;
                         }
+                        buildPages();
                         CacheUtil.cacheProjectData(ctx, response, project.getProjectID(), new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
@@ -598,7 +598,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
     public void onGalleryRequested(ProjectSiteDTO projectSite, int index) {
         selectedSiteIndex = index;
         this.projectSite = projectSite;
-        Intent i = new Intent(this, PictureRecyclerGridActivity.class);
+        Intent i = new Intent(this, SitePictureGridActivity.class);
         i.putExtra("projectSite", projectSite);
         //i.putExtra("type", ImagePagerActivity.SITE);
         startActivity(i);
@@ -740,7 +740,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
 
         @Override
         public CharSequence getPageTitle(int position) {
-            String title = "Title";
+            String title = "";
 
             switch (position) {
                 case 0:

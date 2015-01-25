@@ -21,15 +21,76 @@ public class PhotoUploadDTO implements Serializable{
     }
     public static final int SITE_IMAGE = 1, TASK_IMAGE = 2, PROJECT_IMAGE = 3, STAFF_IMAGE = 4;
     private Integer index,companyID, projectID, projectSiteID,
+            photoUploadID,
             projectSiteTaskID, pictureType, companyStaffID, thumbFlag;
     private List<String> tags;
     private Float accuracy;
-    String projectName, projectSiteName, projectSiteTask, uri;
-    private boolean isFullPicture,isStaffPicture;
+    private String projectName, projectSiteName, projectSiteTask, uri;
+    private Boolean isFullPicture,isStaffPicture, selected;
     private String imageFilePath;
-    private double latitude, longitude;
-    private long time;
+    private Double latitude, longitude;
+    private Long time;
     private String thumbFilePath;
+
+    public Integer getPhotoUploadID() {
+        return photoUploadID;
+    }
+
+    public void setPhotoUploadID(Integer photoUploadID) {
+        this.photoUploadID = photoUploadID;
+    }
+
+    public Boolean getSelected() {
+        return selected;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public Long getTime() {
+        return time;
+    }
+
+    public Boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
+    }
+
+    public Boolean getIsFullPicture() {
+        return isFullPicture;
+    }
+
+    public void setIsFullPicture(Boolean isFullPicture) {
+        this.isFullPicture = isFullPicture;
+    }
+
+    public Boolean getIsStaffPicture() {
+        return isStaffPicture;
+    }
+
+    public void setIsStaffPicture(Boolean isStaffPicture) {
+        this.isStaffPicture = isStaffPicture;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
+    }
 
     public boolean isStaffPicture() {
         return isStaffPicture;
@@ -97,29 +158,6 @@ public class PhotoUploadDTO implements Serializable{
         this.dateUploaded = dateUploaded;
     }
 
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-    public long getTime() {
-        return time;
-    }
-
-    public void setTime(long time) {
-        this.time = time;
-    }
 
     public Integer getIndex() {
         return index;
@@ -127,14 +165,6 @@ public class PhotoUploadDTO implements Serializable{
 
     public void setIndex(Integer index) {
         this.index = index;
-    }
-
-    public boolean isFullPicture() {
-        return isFullPicture;
-    }
-
-    public void setFullPicture(boolean isFullPicture) {
-        this.isFullPicture = isFullPicture;
     }
 
     public Integer getCompanyStaffID() {

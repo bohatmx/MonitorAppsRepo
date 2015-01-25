@@ -28,7 +28,6 @@ import com.com.boha.monitor.library.adapters.ProjectAdapter;
 import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
-import com.com.boha.monitor.library.dto.ProjectSiteTaskDTO;
 import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.CacheUtil;
@@ -244,7 +243,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     private void setList() {
         adapter = new ProjectAdapter(ctx, R.layout.project_item, projectList);
         mListView.setAdapter(adapter);
-
         if (projectList.size() > 5) {
             searchLayout.setVisibility(View.VISIBLE);
         } else {
@@ -304,6 +302,14 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     int mLastFirstVisibleItem;
     ListPopupWindow actionsWindow;
     List<String> list;
+    boolean popupIsOpen;
+
+    public void closePopup() {
+        if (popupIsOpen) {
+            popupIsOpen = false;
+            actionsWindow.dismiss();
+        }
+    }
 
     private void showPopup() {
 
@@ -372,7 +378,9 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                 }
             });
             actionsWindow.show();
+            popupIsOpen = true;
         } catch (IllegalStateException e) {
+            Log.w(LOG,"####### illegal state, attempting to dismiss popup");
             actionsWindow.dismiss();
         }
     }
@@ -412,7 +420,10 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     }
 
     public void setTotals() {
-
+        if (txtProjectCount == null) {
+            Log.e(LOG, "--ERROR - txtProjectCount is NULL. probable illegal state");
+            return;
+        }
         try {
             if (projectList == null) {
                 txtProjectCount.setText("0");
@@ -425,11 +436,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         }
         statusCount = 0;
         for (ProjectDTO p : projectList) {
-            for (ProjectSiteDTO ps : p.getProjectSiteList()) {
-                for (ProjectSiteTaskDTO pst : ps.getProjectSiteTaskList()) {
-                    statusCount += pst.getProjectSiteTaskStatusList().size();
-                }
-            }
+             statusCount += p.getStatusCount();
         }
 
         txtStatusCount.setText("" + df.format(statusCount));

@@ -37,6 +37,10 @@ public class PictureUtil {
 
                         @Override
                         public void onImageUploaded(ResponseDTO response) {
+                            if (response.getStatusCode() == null) {
+                                Log.w(LOG, "-- statusCode is null");
+                                return;
+                            }
                             if (response.getStatusCode() == 0) {
                                 listener.onPhotoUploaded();
                             } else {

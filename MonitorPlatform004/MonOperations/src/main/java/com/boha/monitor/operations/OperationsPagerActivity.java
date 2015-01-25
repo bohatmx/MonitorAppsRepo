@@ -192,11 +192,6 @@ public class OperationsPagerActivity extends ActionBarActivity
                         projectList = company.getProjectList();
                         response = r;
                         buildPages();
-//                        if (projectListFragment == null) {
-//                            buildPages();
-//                        } else {
-//                            projectListFragment.refreshData(company.getProjectList());
-//                        }
                         CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {

@@ -237,7 +237,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                         }
                     }
 
-                    openCameraLayout();
+                    //openCameraLayout();
 
                     if (mListener != null)
                         mListener.onProjectSiteTaskStatusAdded(projectSiteTaskStatus);
@@ -277,7 +277,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                                 }
                             }
 
-                            openCameraLayout();
+                            //openCameraLayout();
 
                             if (mListener != null)
                                 mListener.onProjectSiteTaskStatusAdded(projectSiteTaskStatus);

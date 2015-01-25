@@ -51,13 +51,13 @@ public class PhotoUploadService extends IntentService {
                 Log.e(LOG, "##### cached photo list returned: " + response.getPhotoUploadList().size());
                 list = response.getPhotoUploadList();
                 if (list.isEmpty()) {
-                    Log.w(LOG, "--- no cached photos for download");
+                    Log.w(LOG, "--- no cached photos for upload");
                     if (uploadListener != null)
                         uploadListener.onUploadsComplete(0);
                     return;
                 }
                 getLog(response);
-                webCheckResult = WebCheck.checkNetworkAvailability(getApplicationContext());
+                webCheckResult = WebCheck.checkNetworkAvailability(getApplicationContext(), true);
                 if (!webCheckResult.isWifiConnected()) {
                     Log.e(LOG, "--- uploadCachedPhotos exiting. no wifi connected");
                     return;
@@ -99,13 +99,13 @@ public class PhotoUploadService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.w(LOG, "## onHandleIntent");
+        Log.w(LOG, "## onHandleIntent .... starting service");
         if (list == null) {
             uploadCachedPhotos(uploadListener);
             return;
         }
         retryCount = 0;
-        webCheckResult = WebCheck.checkNetworkAvailability(getApplicationContext());
+        webCheckResult = WebCheck.checkNetworkAvailability(getApplicationContext(), true);
         if (webCheckResult.isWifiConnected()) {
             controlThumbUploads();
         }
@@ -119,28 +119,18 @@ public class PhotoUploadService extends IntentService {
 
     private void controlThumbUploads() {
         if (index < list.size()) {
-            if (list.get(index).getDateThumbUploaded() == null) {
-                executeThumbUpload(list.get(index));
-            } else {
-                index++;
-                controlThumbUploads();
-                return;
+            executeThumbUpload(list.get(index));
+        } else {
+            if (uploadListener != null) {
+                uploadListener.onUploadsComplete(uploadedList.size());
             }
         }
-        if (index == list.size()) {
-            if (failedUploads.isEmpty()) {
-                Log.w(LOG, "&&& cleaning cache right up!");
-                PhotoCacheUtil.clearCache(getApplicationContext(), uploadedList);
-                if (uploadListener != null)
-                    uploadListener.onUploadsComplete(uploadedList.size());
-            } else {
-                attemptFailedUploads();
-            }
-        }
+
     }
 
     static final int MAX_RETRIES = 3;
     int retryCount;
+
     private void attemptFailedUploads() {
 
         retryCount++;
@@ -156,23 +146,24 @@ public class PhotoUploadService extends IntentService {
         controlThumbUploads();
 
     }
+
     public int getIndex() {
         return index;
     }
 
     private void executeThumbUpload(final PhotoUploadDTO dto) {
         Log.d(LOG, "** executeThumbUpload, projectSiteID: " + dto.getProjectSiteID());
-        dto.setFullPicture(false);
-        if (dto.getPictureType() == 0) dto.setPictureType(PhotoUploadDTO.PROJECT_IMAGE);
+        if (dto.getPictureType() == 0)
+            dto.setPictureType(PhotoUploadDTO.PROJECT_IMAGE);
         final long start = System.currentTimeMillis();
         PictureUtil.uploadImage(dto, false, getApplicationContext(), new PhotoUploadDTO.PhotoUploadedListener() {
             @Override
             public void onPhotoUploaded() {
                 long end = System.currentTimeMillis();
-                Log.i(LOG, "---- thumbnail uploaded, elapsed: " + Util.getElapsed(start, end) + " seconds");
+                Log.i(LOG, "---- photo uploaded, elapsed: " + Util.getElapsed(start, end) + " seconds");
                 dto.setDateThumbUploaded(new Date());
                 uploadedList.add(dto);
-
+                PhotoCacheUtil.removeUploadedPhoto(getApplicationContext(), dto);
                 index++;
                 controlThumbUploads();
             }
@@ -194,6 +185,7 @@ public class PhotoUploadService extends IntentService {
         public PhotoUploadService getService() {
             return PhotoUploadService.this;
         }
+
     }
 
     @Override

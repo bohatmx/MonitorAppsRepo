@@ -390,7 +390,7 @@ public class MonitorMapActivity extends ActionBarActivity
             Util.showToast(ctx,"There are no pictures taken for the site");
             return;
         }
-        Intent i = new Intent(ctx, PictureRecyclerGridActivity.class);
+        Intent i = new Intent(ctx, SitePictureGridActivity.class);
         i.putExtra("projectSite", projectSite);
         startActivity(i);
     }

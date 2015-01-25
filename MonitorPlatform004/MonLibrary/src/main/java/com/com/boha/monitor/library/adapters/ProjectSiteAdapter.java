@@ -69,7 +69,6 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
         if (convertView == null) {
             convertView = mInflater.inflate(mLayoutRes, null);
             item = new ViewHolderItem();
-
 //            item.img1 = (ImageView) convertView.findViewById(R.id.SITE_scrollImage1);
 //            item.img2 = (ImageView) convertView.findViewById(R.id.SITE_scrollImage2);
 //            item.img3 = (ImageView) convertView.findViewById(R.id.SITE_scrollImage3);
@@ -90,9 +89,6 @@ public class ProjectSiteAdapter extends ArrayAdapter<ProjectSiteDTO> implements 
 //            item.date3 = (TextView) convertView.findViewById(R.id.SITE_date3);
 //            item.date4 = (TextView) convertView.findViewById(R.id.SITE_date4);
 //            item.date5 = (TextView) convertView.findViewById(R.id.SITE_date5);
-
-
-
             item.imageLayout = (LinearLayout) convertView
                     .findViewById(R.id.SITE_imageLayout);
             item.imageScroller = convertView

@@ -73,6 +73,7 @@ public class PhotoCacheUtil {
         ctx = context;
         new CacheRetrieveTask().execute();
     }
+
     public static void clearCache(Context context, final List<PhotoUploadDTO> uploadedList) {
         ctx = context;
         getCachedPhotos(context,new PhotoCacheListener() {
@@ -114,6 +115,38 @@ public class PhotoCacheUtil {
             }
         });
     }
+    public static void removeUploadedPhoto(Context context, final PhotoUploadDTO photo) {
+        ctx = context;
+        getCachedPhotos(context,new PhotoCacheListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO r) {
+                List<PhotoUploadDTO> pending = new ArrayList<>();
+
+                for (PhotoUploadDTO p: r.getPhotoUploadList()) {
+                    if (photo.getThumbFilePath().equalsIgnoreCase(p.getThumbFilePath())) {
+                        continue;
+                    }
+                    pending.add(p);
+                }
+                r.setPhotoUploadList(pending);
+                response = r;
+                Log.e(LOG,"## after removing uploaded file, pending photos: " + pending.size()
+                        + " - updating photo cache");
+                new CacheTask().execute();
+
+            }
+
+            @Override
+            public void onDataCached() {
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+    }
 
 
     static class CacheTask extends AsyncTask<Void, Void, Integer> {
@@ -132,15 +165,19 @@ public class PhotoCacheUtil {
                     Log.e(LOG, "Photo cache written, path: " + file.getAbsolutePath() +
                             " - length: " + file.length() + " photos: " + response.getPhotoUploadList().size());
                 }
-                StringBuilder sb = new StringBuilder();
-                sb.append("\n### Photos in cache ###\n");
-                for (PhotoUploadDTO p: response.getPhotoUploadList()) {
-                    sb.append("+++ ").append(p.getThumbFilePath())
-                            .append(" projectSiteID: " + p.getProjectSiteID())
-                            .append("\n");
+                if (!response.getPhotoUploadList().isEmpty()) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("\n### Photos in cache ###\n");
+                    for (PhotoUploadDTO p : response.getPhotoUploadList()) {
+                        sb.append("+++ ").append(p.getThumbFilePath())
+                                .append(" projectSiteID: " + p.getProjectSiteID())
+                                .append("\n");
+                    }
+                    sb.append("#######################");
+                    Log.w(LOG, sb.toString());
+                } else {
+                    Log.w(LOG,"### no photos in cache");
                 }
-                sb.append("#######################");
-                Log.w(LOG,sb.toString());
 
             } catch (IOException e) {
                 Log.e(LOG, "Failed to cache data", e);

@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import com.boha.monitor.exec.R;
 import com.boha.monitor.exec.fragments.ExecProjectGridFragment;
-import com.com.boha.monitor.library.activities.PictureRecyclerGridActivity;
+import com.com.boha.monitor.library.activities.SitePictureGridActivity;
 import com.com.boha.monitor.library.adapters.DrawerAdapter;
 import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
@@ -62,7 +62,6 @@ public class ExecPagerActivity extends ActionBarActivity implements
     Context ctx;
     ResponseDTO response;
     int currentPageIndex;
-
 
 
     static final int PICTURE_REQUESTED = 9133;
@@ -260,7 +259,7 @@ public class ExecPagerActivity extends ActionBarActivity implements
             return true;
         }
         if (id == R.id.action_gallery) {
-            Intent i = new Intent(this, PictureRecyclerGridActivity.class);
+            Intent i = new Intent(this, SitePictureGridActivity.class);
             startActivity(i);
             return true;
         }

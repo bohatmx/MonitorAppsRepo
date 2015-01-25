@@ -3,6 +3,7 @@ package com.com.boha.monitor.library.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,7 @@ import android.widget.TextView;
 
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
-import com.com.boha.monitor.library.util.Statics;
+import com.com.boha.monitor.library.util.Util;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -23,7 +24,7 @@ import java.util.Locale;
 /**
  * Created by aubreyM on 14/12/17.
  */
-public class PictureRecyclerAdapter extends RecyclerView.Adapter<PictureRecyclerAdapter.PhotoViewHolder> {
+public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.PhotoViewHolder> {
 
     public interface PictureListener {
         public void onPictureClicked(int position);
@@ -31,12 +32,10 @@ public class PictureRecyclerAdapter extends RecyclerView.Adapter<PictureRecycler
     private PictureListener listener;
     private List<PhotoUploadDTO> photoList;
     private Context ctx;
-    private int rowLayout;
 
-    public PictureRecyclerAdapter(List<PhotoUploadDTO> photos, int rowLayout,
-                                  Context context, PictureListener listener) {
+    public PictureAdapter(List<PhotoUploadDTO> photos,
+                          Context context, PictureListener listener) {
         this.photoList = photos;
-        this.rowLayout = rowLayout;
         this.ctx = context;
         this.listener = listener;
     }
@@ -50,22 +49,38 @@ public class PictureRecyclerAdapter extends RecyclerView.Adapter<PictureRecycler
     @Override
     public void onBindViewHolder(final PhotoViewHolder holder, final int position) {
 
-        PhotoUploadDTO p = photoList.get(position);
-        int num = photoList.size() - (position);
+        final PhotoUploadDTO p = photoList.get(position);
+        final int num = photoList.size() - (position);
         holder.number.setText("" + num);
         holder.caption.setVisibility(View.GONE);
         holder.date.setText(sdf.format(p.getDateTaken()));
         holder.position = position;
 
+        //TODO - refactor after photo deletes
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                if (p.isSelected() == null) {
+//                    p.setSelected(true);
+//                } else {
+//                    p.setSelected(!p.isSelected());
+//                }
+//
+//                if (p.isSelected() == true) {
+//                    holder.number.setText("X");
+//                    holder.number.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
+//                } else {
+//                    holder.number.setText("" + num);
+//                    holder.number.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
+//                }
                 listener.onPictureClicked(position);
+
             }
         });
 
 
-        String url = Statics.IMAGE_URL + p.getUri();
+        String url = Util.getPhotoURL(p);
+        Log.w(LOG,"## photo url: " + url);
         ImageLoader.getInstance().displayImage(url, holder.image, new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
@@ -114,5 +129,5 @@ public class PictureRecyclerAdapter extends RecyclerView.Adapter<PictureRecycler
 
     }
 
-    static final String LOG = PictureRecyclerAdapter.class.getSimpleName();
+    static final String LOG = PictureAdapter.class.getSimpleName();
 }

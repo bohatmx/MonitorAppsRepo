@@ -1,10 +1,8 @@
 package com.com.boha.monitor.library.activities;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
@@ -26,10 +24,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
@@ -57,7 +53,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.acra.ACRA;
-import org.joda.time.DateTime;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,13 +67,10 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
     LocationRequest mLocationRequest;
     LocationClient mLocationClient;
-    TextView txtAccuracy;
-    Chronometer chrono;
     LinearLayout imageContainerLayout;
     LayoutInflater inflater;
-    ProgressBar progressBar;
-    TextView txtMsg;
-    View topLayout, gpsLayout;
+    TextView txtProject, txtSite;
+    View projectLayout, siteLayout;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,64 +81,37 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         setFields();
         mLocationClient = new LocationClient(getApplicationContext(), this,
                 this);
-        //get objects
-        if (savedInstanceState != null) {
-            Log.e(LOG, "##### savedInstanceState is LOADED");
-            type = savedInstanceState.getInt("type", 0);
-            projectSite = (ProjectSiteDTO) savedInstanceState.getSerializable("projectSite");
-            project = (ProjectDTO) savedInstanceState.getSerializable("project");
-            String path = savedInstanceState.getString("photoFile");
 
-            if (path != null) {
-                photoFile = new File(path);
-            }
-            double lat = savedInstanceState.getDouble("latitude");
-            double lng = savedInstanceState.getDouble("longitude");
-            float acc = savedInstanceState.getFloat("accuracy");
-            location = new Location(LocationManager.GPS_PROVIDER);
-            location.setLatitude(lat);
-            location.setLongitude(lng);
-            location.setAccuracy(acc);
-            Log.w(LOG, "### saved location accuracy: " + acc);
-        } else {
-            type = getIntent().getIntExtra("type", 0);
-            project = (ProjectDTO) getIntent().getSerializableExtra("project");
-            projectSite = (ProjectSiteDTO) getIntent().getSerializableExtra("projectSite");
-            projectSiteTask = (ProjectSiteTaskDTO) getIntent().getSerializableExtra("projectSiteTask");
-            companyStaff = (CompanyStaffDTO) getIntent().getSerializableExtra("companyStaff");
+        type = getIntent().getIntExtra("type", 0);
+        project = (ProjectDTO) getIntent().getSerializableExtra("project");
+        projectSite = (ProjectSiteDTO) getIntent().getSerializableExtra("projectSite");
+        projectSiteTask = (ProjectSiteTaskDTO) getIntent().getSerializableExtra("projectSiteTask");
+        companyStaff = (CompanyStaffDTO) getIntent().getSerializableExtra("companyStaff");
+
+
+        setTitle(SharedUtil.getCompany(ctx).getCompanyName());
+        getSupportActionBar().setSubtitle(SharedUtil.getCompanyStaff(ctx).getFullName());
+        if (projectSite != null) {
+            txtSite.setText(projectSite.getProjectSiteName());
+            txtProject.setText(projectSite.getProjectName());
+
+        }
+        if (project != null) {
+            txtProject.setText(project.getProjectName());
+            siteLayout.setVisibility(View.GONE);
         }
 
-        setTitle(getString(R.string.site_pics));
-        if (projectSite != null)
-            getSupportActionBar().setSubtitle(projectSite.getProjectSiteName());
-        if (project != null)
-            getSupportActionBar().setSubtitle(project.getProjectName());
-
     }
+
     SiteLocation siteLocation;
+
     @Override
     public void onResume() {
         Log.d(LOG, "@@@ onResume...........");
-        siteLocation = SharedUtil.getSiteLocation(ctx);
-        if (siteLocation != null) {
-            Log.e(LOG, "## site: " + siteLocation.getProjectSiteID() + " " + siteLocation.getAccuracy() + " - " + siteLocation.getDateTaken().toString());
-            if (siteLocation != null) {
-                if (projectSite.getProjectSiteID().intValue() != projectSite.getProjectSiteID().intValue()) {
-                    siteLocation = null;
-                } else {
-                    DateTime dt = new DateTime();
-                    DateTime then = new DateTime(siteLocation.getDateTaken().getTime());
-                    long time = dt.toDate().getTime() - then.toDate().getTime();
-                    if (time > ONE_MINUTE) {
-                        siteLocation = null;
-                    }
-                }
-            }
-        }
         super.onResume();
 
     }
-    static final long ONE_MINUTE = 1000 * 60 * 60;
+
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         Log.e(LOG, "%%%%%%%%%%%% onRestoreInstanceState" + savedInstanceState);
@@ -170,33 +135,29 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
 
     ImageView imgCamera;
     Button btnStart;
-    boolean confirmedStandingAtSite;
-    View gpsStatus;
 
 
     private void setFields() {
         activity = this;
-        txtMsg = (TextView) findViewById(R.id.CAM_message);
-        gpsStatus = findViewById(R.id.CAM_gpsStatus);
-        progressBar = (ProgressBar)findViewById(R.id.CAM_progressBar);
-        imageContainerLayout = (LinearLayout)findViewById(R.id.CAM_imageContainer);
-        chrono = (Chronometer)findViewById(R.id.CAM_chrono);
-        txtAccuracy = (TextView)findViewById(R.id.CAM_accuracy);
-        btnStart = (Button)findViewById(R.id.CAM_btnStart);
-        topLayout = findViewById(R.id.CAM_topLayout);
+        txtProject = (TextView) findViewById(R.id.CAM_projectName);
+        txtSite = (TextView) findViewById(R.id.CAM_siteName);
+        projectLayout = findViewById(R.id.CAM_projectLayout);
+        siteLayout = findViewById(R.id.CAM_siteLayout);
+        imageContainerLayout = (LinearLayout) findViewById(R.id.CAM_imageContainer);
+
+        btnStart = (Button) findViewById(R.id.CAM_btnStart);
         imgCamera = (ImageView) findViewById(R.id.CAM_imgCamera);
         imgCamera.setVisibility(View.GONE);
-        topLayout.setVisibility(View.GONE);
-        gpsStatus.setVisibility(View.GONE);
+
 
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.flashOnce(btnStart,200,new Util.UtilAnimationListener() {
+                Util.flashOnce(btnStart, 200, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
-                        showReminderDialog();
                         btnStart.setVisibility(View.GONE);
+                        dispatchTakePictureIntent();
                     }
                 });
 
@@ -206,11 +167,10 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         imgCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.flashOnce(imgCamera,200,new Util.UtilAnimationListener() {
+                Util.flashOnce(imgCamera, 200, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
-                        topLayout.setVisibility(View.GONE);
-                        gpsStatus.setVisibility(View.GONE);
+
                         dispatchTakePictureIntent();
                     }
                 });
@@ -251,23 +211,13 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     @Override
     public void onLocationChanged(Location loc) {
         Log.d(LOG, "## onLocationChanged accuracy = " + loc.getAccuracy());
-        txtAccuracy.setText("" + loc.getAccuracy());
-        Util.flashSeveralTimes(txtAccuracy,200,2,null);
+
         if (this.location == null) {
             this.location = loc;
         }
         if (loc.getAccuracy() <= ACCURACY_THRESHOLD) {
             this.location = loc;
             mLocationClient.removeLocationUpdates(this);
-            chrono.stop();
-            SharedUtil.saveSiteLocation(ctx,projectSite,location);
-            if (confirmedStandingAtSite) {
-                progressBar.setVisibility(View.GONE);
-                txtMsg.setText(getString(R.string.gps_complete));
-                imgCamera.setVisibility(View.VISIBLE);
-                Util.flashSeveralTimes(imgCamera, 200, 3,null);
-            }
-
         }
     }
 
@@ -283,7 +233,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                 });
                 break;
             case PhotoUploadDTO.SITE_IMAGE:
-                addSitePicture( new CacheListener() {
+                addSitePicture(new CacheListener() {
                     @Override
                     public void onCachingDone() {
                         mService.uploadCachedPhotos(null);
@@ -347,25 +297,22 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     static final float ACCURACY_THRESHOLD = 25;
     ActionBarActivity activity;
 
-
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(LOG,
                 "+++ LocationClient onConnected() -  requestLocationUpdates ...");
         if (siteLocation != null) {
-            Log.w(LOG,"## already have a good location, returning");
+            Log.w(LOG, "## already have a good location, returning");
             location = mLocationClient.getLastLocation();
             location.setAccuracy(siteLocation.getAccuracy());
             location.setLatitude(siteLocation.getLatitude());
             location.setLongitude(siteLocation.getLongitude());
-            topLayout.setVisibility(View.GONE);
-            gpsStatus.setVisibility(View.GONE);
             imgCamera.setVisibility(View.VISIBLE);
             btnStart.setVisibility(View.GONE);
             dispatchTakePictureIntent();
             return;
         }
-        Log.w(LOG,"## requesting location updates ....");
+        Log.w(LOG, "## requesting location updates ....");
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -457,13 +404,13 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                 imageFileName = "project" + project.getProjectName();
                 break;
             case PhotoUploadDTO.SITE_IMAGE:
-                imageFileName = projectSite.getProjectName()+"-"+projectSite.getProjectSiteName();
+                imageFileName = projectSite.getProjectName() + "-" + projectSite.getProjectSiteName();
                 break;
             case PhotoUploadDTO.STAFF_IMAGE:
                 imageFileName = companyStaff.getFullName();
                 break;
             case PhotoUploadDTO.TASK_IMAGE:
-                imageFileName = projectSiteTask.getProjectName()+"-"+projectSiteTask.getProjectSiteName()+"_"+projectSiteTask.getTask().getTaskName();
+                imageFileName = projectSiteTask.getProjectName() + "-" + projectSiteTask.getProjectSiteName() + "_" + projectSiteTask.getTask().getTaskName();
                 break;
         }
         imageFileName = imageFileName + "-" + System.currentTimeMillis();
@@ -476,7 +423,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
             Log.i(LOG, "###### get file from getDataDirectory");
             root = Environment.getDataDirectory();
         }
-        File pics = new File(root,"monitor_app");
+        File pics = new File(root, "monitor_app");
         if (!pics.exists()) {
             pics.mkdir();
         }
@@ -492,36 +439,9 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         return image;
     }
 
-    private void showReminderDialog() {
-        AlertDialog.Builder d = new AlertDialog.Builder(this);
-        d.setTitle("Site Location Reminder")
-                .setMessage("Are you at the site and ready to start taking pictures?")
-                .setPositiveButton(ctx.getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        imgCamera.setVisibility(View.GONE);
-                        topLayout.setVisibility(View.VISIBLE);
-                        gpsStatus.setVisibility(View.VISIBLE);
-                        confirmedStandingAtSite = true;
-                        chrono.start();
-                        try {
-                            if (mLocationClient.isConnected()) {
-                                mLocationClient.requestLocationUpdates(mLocationRequest, (LocationListener) activity);
-                            }
-                        } catch (Exception e) {}
-                    }
-                })
-                .setNegativeButton(ctx.getString(R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                })
-                .show();
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.camera, menu);
+       // getMenuInflater().inflate(R.menu.camera, menu);
         mMenu = menu;
         return true;
     }
@@ -646,7 +566,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                         Util.writeLocationToExif(currentThumbFile.getAbsolutePath(), location);
                         boolean del = photoFile.delete();
                         Log.i(LOG, "## Thumbnail file length: " + currentThumbFile.length()
-                        + " main image file deleted: " + del);
+                                + " main image file deleted: " + del);
                     } catch (Exception e) {
                         Log.e(LOG, "$&*%$! Fuck it! unable to process bitmap", e);
                         return 9;
@@ -683,13 +603,13 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     }
 
     private void addImageToScroller() {
-        Log.i(LOG,"## addImageToScroller");
+        Log.i(LOG, "## addImageToScroller");
         if (currentSessionPhotos.size() == 1) {
             imageContainerLayout.removeAllViews();
         }
         View v = inflater.inflate(R.layout.scroller_image_template, null);
-        ImageView img = (ImageView)v.findViewById(R.id.image);
-        TextView num = (TextView)v.findViewById(R.id.number);
+        ImageView img = (ImageView) v.findViewById(R.id.image);
+        TextView num = (TextView) v.findViewById(R.id.number);
         num.setText("" + currentSessionPhotos.size());
         Uri uri = Uri.fromFile(currentThumbFile);
         ImageLoader.getInstance().displayImage(uri.toString(), img);
@@ -701,7 +621,9 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
 
 
     }
+
     List<String> currentSessionPhotos = new ArrayList<>();
+
     private void getLog(Bitmap bm, String which) {
         if (bm == null) return;
         Log.e(LOG, which + " - bitmap: width: "
@@ -726,7 +648,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
             mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
                 @Override
                 public void onUploadsComplete(int count) {
-                    Log.w(LOG,"$$$ onUploadsComplete, list: " + count);
+                    Log.w(LOG, "$$$ onUploadsComplete, list: " + count);
                 }
             });
         }
@@ -737,7 +659,6 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
             mBound = false;
         }
     };
-
 
     String mCurrentPhotoPath;
     ProjectDTO project;
@@ -806,7 +727,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         dto.setPictureType(PhotoUploadDTO.TASK_IMAGE);
         dto.setAccuracy(location.getAccuracy());
         dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
-        PhotoCacheUtil.cachePhoto(ctx,dto, new PhotoCacheUtil.PhotoCacheListener() {
+        PhotoCacheUtil.cachePhoto(ctx, dto, new PhotoCacheUtil.PhotoCacheListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
 
@@ -814,7 +735,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
 
             @Override
             public void onDataCached() {
-                Log.w(LOG,"### photo has been cached");
+                Log.w(LOG, "### photo has been cached");
                 listener.onCachingDone();
             }
 

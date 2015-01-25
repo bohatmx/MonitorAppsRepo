@@ -52,7 +52,8 @@ public class RequestDTO implements Serializable {
             projectSiteID, projectSiteTaskID,loginType,
             countryID, contractorClaimID, invoiceID,
             beneficiaryID, engineerID;
-    private Boolean responseRequested, useHttp = false;
+    private Boolean responseRequested,
+            useHttp = false;
     private SubTaskStatusDTO subTaskStatus;
     private Date startDate, endDate;
     private Float accuracy;
@@ -85,7 +86,17 @@ public class RequestDTO implements Serializable {
     private ProjectStatusTypeDTO projectStatusType;
     private BeneficiaryDTO beneficiary;
     private List<BeneficiaryDTO> beneficiaryList;
+    private List<PhotoUploadDTO> photoUploadList;
     private RequestList requestList;
+
+    public List<PhotoUploadDTO> getPhotoUploadList() {
+        return photoUploadList;
+    }
+
+    public void setPhotoUploadList(List<PhotoUploadDTO> photoUploadList) {
+        this.photoUploadList = photoUploadList;
+    }
+
     //register actors
     public static final int
             REGISTER_COMPANY = 1,
@@ -179,7 +190,9 @@ public class RequestDTO implements Serializable {
             REPORT_SITE = 602,
             GET_PROJECT_STATUS_LIST = 603,
             GET_PROJECT_SITE_STATUS_LIST = 604,
-            GET_EXEC_COMPANY_DATA = 605;
+            GET_EXEC_COMPANY_DATA = 605,
+            DELETE_SITE_IMAGES = 606,
+            DELETE_PROJECT_IMAGES = 607;
 
 
     public static final String COMPANY_DIR = "company";

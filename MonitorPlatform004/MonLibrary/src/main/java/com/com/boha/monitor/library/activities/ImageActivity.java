@@ -64,25 +64,21 @@ public class ImageActivity extends ActionBarActivity {
 
 
         photoCache = new PhotoCache();
-        StringBuilder sb = new StringBuilder();
-        sb.append(Statics.IMAGE_URL);
+        PhotoUploadDTO p = photoCache.getPhotoUploadList().get(index);
+        txtDate.setText(sdf.format(p.getDateTaken()));
+
         if (projectSite != null) {
             photoCache.setPhotoUploadList(projectSite.getPhotoUploadList());
-            PhotoUploadDTO dto = photoCache.getPhotoUploadList().get(index);
-            sb.append(dto.getUri());
             txtTitle.setText(projectSite.getProjectName());
             txtSubTitle.setText(projectSite.getProjectSiteName());
-            txtDate.setText(sdf.format(dto.getDateTaken()));
+
         }
         if (project != null) {
             photoCache.setPhotoUploadList(project.getPhotoUploadList());
-            PhotoUploadDTO dto = photoCache.getPhotoUploadList().get(index);
-            sb.append(dto.getUri());
             txtTitle.setText(project.getProjectName());
-            txtDate.setText(sdf.format(dto.getDateTaken()));
             txtSubTitle.setVisibility(View.GONE);
         }
-        url = sb.toString();
+        String url = Util.getPhotoURL(p);
         Picasso.with(ctx).load(url).into(imageView);
 
 
@@ -182,12 +178,11 @@ public class ImageActivity extends ActionBarActivity {
         startActivity(i);
     }
     private void loadImage() {
-        StringBuilder sb = new StringBuilder();
-        PhotoUploadDTO dto = photoCache.getPhotoUploadList().get(index);
-        sb.append(Statics.IMAGE_URL)
-                .append(dto.getUri());
-        //Picasso.with(ctx).load(sb.toString()).into(imageView);
-        ImageLoader.getInstance().displayImage(sb.toString(), imageView, new ImageLoadingListener() {
+        PhotoUploadDTO p = photoCache.getPhotoUploadList().get(index);
+
+        String url = Util.getPhotoURL(p);
+
+        ImageLoader.getInstance().displayImage(url, imageView, new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
 
@@ -218,7 +213,7 @@ public class ImageActivity extends ActionBarActivity {
             }
         });
         txtNumber.setText("" + (index + 1));
-        txtDate.setText(sdf.format(dto.getDateTaken()));
+        txtDate.setText(sdf.format(p.getDateTaken()));
         animate();
         Util.animateRotationY(txtNext, 500);
 

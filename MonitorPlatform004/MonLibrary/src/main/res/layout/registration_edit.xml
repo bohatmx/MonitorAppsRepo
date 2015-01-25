@@ -84,7 +84,7 @@
                 android:layout_below="@id/EP_lastName"
                 android:inputType="phone"
                 android:layout_marginTop="@dimen/mon_padding"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:layout_height="wrap_content"
                 android:hint="@string/cellphone" />
 

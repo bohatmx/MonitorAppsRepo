@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
-import com.com.boha.monitor.library.util.Statics;
+import com.com.boha.monitor.library.util.Util;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -28,6 +28,7 @@ public class FullPictureAdapter extends RecyclerView.Adapter<FullPictureAdapter.
     public interface PictureListener {
         public void onPictureClicked(int position);
     }
+
     private PictureListener listener;
     private List<PhotoUploadDTO> photoList;
     private Context ctx;
@@ -65,7 +66,7 @@ public class FullPictureAdapter extends RecyclerView.Adapter<FullPictureAdapter.
         });
 
 
-        String url = Statics.IMAGE_URL + p.getUri();
+        String url = Util.getPhotoURL(p);
         ImageLoader.getInstance().displayImage(url, holder.image, new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
@@ -98,7 +99,7 @@ public class FullPictureAdapter extends RecyclerView.Adapter<FullPictureAdapter.
     static final Locale loc = Locale.getDefault();
     static final SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm", loc);
 
-    public class PhotoViewHolder extends RecyclerView.ViewHolder  {
+    public class PhotoViewHolder extends RecyclerView.ViewHolder {
         protected ImageView image;
         protected TextView caption, number, date;
         protected int position;

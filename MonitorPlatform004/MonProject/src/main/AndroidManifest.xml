@@ -55,7 +55,7 @@
             android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="portrait"></activity>
 
-        <activity android:name="com.com.boha.monitor.library.activities.PictureRecyclerGridActivity"
+        <activity android:name="com.com.boha.monitor.library.activities.SitePictureGridActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name="com.com.boha.monitor.library.activities.PictureActivity"
@@ -110,11 +110,11 @@
         android:name="android.hardware.camera.front"
         android:required="false" />
 
-
+<!--
     <permission
         android:name="com.boha.monitor.pmanager.gcm.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
     <uses-permission android:name="com.boha.monitor.pmanager.gcm.permission.C2D_MESSAGE" />
-
+-->
 </manifest>

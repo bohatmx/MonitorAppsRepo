@@ -1,5 +1,6 @@
 package com.com.boha.monitor.library.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,59 +17,58 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
-import com.com.boha.monitor.library.adapters.PictureRecyclerAdapter;
+import com.com.boha.monitor.library.adapters.PictureAdapter;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
+import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
+import com.com.boha.monitor.library.dto.transfer.RequestDTO;
+import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.DividerItemDecoration;
+import com.com.boha.monitor.library.util.ErrorUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
+import com.com.boha.monitor.library.util.WebSocketUtil;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-public class PictureRecyclerGridActivity extends ActionBarActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class SitePictureGridActivity extends ActionBarActivity {
 
     RecyclerView list;
     TextView title;
     Context ctx;
     Button btnStatusRpt;
     ProjectSiteDTO projectSite;
+    Activity activity;
+    int lastIndex;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ctx = getApplicationContext();
+        activity = this;
         setContentView(R.layout.activity_picture_recycler_grid);
-        list = (RecyclerView) findViewById(R.id.FI_recyclerView);
+
         title = (TextView) findViewById(R.id.RCV_title);
         btnStatusRpt = (Button) findViewById(R.id.RCV_btnStatusReport);
 
 
-        list.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        list.setItemAnimator(new DefaultItemAnimator());
-        list.addItemDecoration(new DividerItemDecoration(ctx, RecyclerView.VERTICAL));
-
-
-        projectSite = (ProjectSiteDTO)getIntent().getSerializableExtra("projectSite");
+        projectSite = (ProjectSiteDTO) getIntent().getSerializableExtra("projectSite");
         if (projectSite != null) {
             if (projectSite.getPhotoUploadList() == null || projectSite.getPhotoUploadList().isEmpty()) {
-                Util.showErrorToast(ctx,"Site has no report photos found");
+                Util.showErrorToast(ctx, getString(R.string.no_photos));
                 finish();
             }
+            photoList = projectSite.getPhotoUploadList();
             if (projectSite.getBeneficiary() != null) {
                 title.setText(projectSite.getProjectSiteName() + ": " + projectSite.getBeneficiary().getFullName());
             } else {
                 title.setText(projectSite.getProjectSiteName());
             }
-            adapter = new PictureRecyclerAdapter(projectSite.getPhotoUploadList(), 1, ctx, new PictureRecyclerAdapter.PictureListener() {
-                @Override
-                public void onPictureClicked(int position) {
-                    Log.e(LOG,"Picture clicked, position = " + position);
-                    Intent i = new Intent(getApplicationContext(),FullPhotoActivity.class);
-                    i.putExtra("projectSite", projectSite);
-                    startActivity(i);
-                }
-            });
-            list.setAdapter(adapter);
+            setGrid();
         }
         btnStatusRpt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,13 +86,116 @@ public class PictureRecyclerGridActivity extends ActionBarActivity {
         setTitle(SharedUtil.getCompany(ctx).getCompanyName());
         CompanyStaffDTO staff = SharedUtil.getCompanyStaff(ctx);
         getSupportActionBar().setSubtitle(staff.getFullName());
-        Statics.setRobotoFontLight(ctx,title);
+        Statics.setRobotoFontLight(ctx, title);
         MonApp app = (MonApp) getApplication();
         Tracker t = app.getTracker(MonApp.TrackerName.APP_TRACKER);
 
         t.setScreenName("PictureRecyclerGridActivity");
         t.send(new HitBuilders.AppViewBuilder().build());
+
+        //TODO - remove after deleting duplicate photos on server
+//        title.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (photosForDeletion.isEmpty()) return;
+//                Util.flashOnce(title, 200, new Util.UtilAnimationListener() {
+//                    @Override
+//                    public void onAnimationEnded() {
+//                        AlertDialog.Builder d = new AlertDialog.Builder(activity);
+//                        d.setIcon(ctx.getResources().getDrawable(R.drawable.delete_48))
+//                                .setTitle("Delete Photos")
+//                                .setMessage("Do you want to delete " + photosForDeletion.size() + " photos?")
+//                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which) {
+//
+//                                        deletePhotos();
+//                                    }
+//                                })
+//                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which) {
+//
+//                                    }
+//                                })
+//                                .show();
+//                    }
+//                });
+//            }
+//        });
     }
+
+    List<PhotoUploadDTO> photoList;
+
+    private void setGrid() {
+        list = (RecyclerView) findViewById(R.id.FI_recyclerView);
+        list.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        list.setItemAnimator(new DefaultItemAnimator());
+        list.addItemDecoration(new DividerItemDecoration(ctx, RecyclerView.VERTICAL));
+
+        adapter = new PictureAdapter(photoList,
+                ctx, new PictureAdapter.PictureListener() {
+            @Override
+            public void onPictureClicked(int position) {
+                Log.e(LOG, "Picture clicked..., position = " + position);
+                lastIndex = position;
+                photosForDeletion.add(photoList.get(position));
+                    Intent i = new Intent(getApplicationContext(),FullPhotoActivity.class);
+                    i.putExtra("projectSite", projectSite);
+                    startActivity(i);
+            }
+        });
+
+        list.setAdapter(adapter);
+        if (lastIndex < photoList.size()) {
+            list.getLayoutManager().scrollToPosition(lastIndex);
+        }
+    }
+
+    private void deletePhotos() {
+        RequestDTO w = new RequestDTO(RequestDTO.DELETE_SITE_IMAGES);
+        w.setPhotoUploadList(photosForDeletion);
+
+        //remove photos from main list
+        List<PhotoUploadDTO> tempList = new ArrayList<>();
+        for (PhotoUploadDTO p : photoList) {
+            if (p.isSelected() == null || p.isSelected() == false) {
+                tempList.add(p);
+            }
+        }
+        photoList = tempList;
+        setGrid();
+
+        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+            @Override
+            public void onMessage(final ResponseDTO response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        photosForDeletion.clear();
+                        Util.showToast(ctx, response.getMessage());
+                    }
+                });
+
+            }
+
+            @Override
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+
+            }
+        });
+    }
+
+
+    private List<PhotoUploadDTO> photosForDeletion = new ArrayList<>();
 
 
     private class TouchListener implements RecyclerView.OnItemTouchListener, View.OnTouchListener {
@@ -127,7 +230,7 @@ public class PictureRecyclerGridActivity extends ActionBarActivity {
          */
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-                Log.w(LOG, "$$ onTouchEvent, e:  " + e.toString());
+            Log.w(LOG, "$$ onTouchEvent, e:  " + e.toString());
         }
 
         /**
@@ -145,6 +248,7 @@ public class PictureRecyclerGridActivity extends ActionBarActivity {
             return false;
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_picture_recycler_grid, menu);
@@ -164,7 +268,7 @@ public class PictureRecyclerGridActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    PictureRecyclerAdapter adapter;
+    PictureAdapter adapter;
 
     @Override
     public void onPause() {
@@ -172,5 +276,5 @@ public class PictureRecyclerGridActivity extends ActionBarActivity {
         super.onPause();
     }
 
-    static final String LOG = PictureRecyclerGridActivity.class.getSimpleName();
+    static final String LOG = SitePictureGridActivity.class.getSimpleName();
 }

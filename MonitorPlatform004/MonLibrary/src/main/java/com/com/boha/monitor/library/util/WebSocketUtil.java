@@ -116,7 +116,7 @@ public class WebSocketUtil {
                         webSocketListener.onError(r.getMessage());
                     }
                 } catch (Exception e) {
-                    Log.e(LOG, "Failed to parse response from server", e);
+                    Log.e(LOG, "Failed to parse response from server.", e);
                     webSocketListener.onError("Failed to parse response from server");
                 }
 

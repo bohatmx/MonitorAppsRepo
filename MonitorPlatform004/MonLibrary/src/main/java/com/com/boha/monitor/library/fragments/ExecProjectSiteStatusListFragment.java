@@ -16,7 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
-import com.com.boha.monitor.library.activities.PictureRecyclerGridActivity;
+import com.com.boha.monitor.library.activities.SitePictureGridActivity;
 import com.com.boha.monitor.library.adapters.SiteReportAdapter;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteTaskDTO;
@@ -66,7 +66,7 @@ public class ExecProjectSiteStatusListFragment extends Fragment {
                 Util.flashOnce(imgCamera, 100, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
-                        Intent i = new Intent(getActivity(), PictureRecyclerGridActivity.class);
+                        Intent i = new Intent(getActivity(), SitePictureGridActivity.class);
                         i.putExtra("projectSite",projectSite);
                        // i.putExtra("type", ImagePagerActivity.SITE);
                         startActivity(i);

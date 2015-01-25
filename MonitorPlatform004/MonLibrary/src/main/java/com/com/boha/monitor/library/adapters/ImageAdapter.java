@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
 import com.com.boha.monitor.library.util.Statics;
+import com.com.boha.monitor.library.util.Util;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -73,11 +74,10 @@ public class ImageAdapter extends ArrayAdapter<PhotoUploadDTO> {
         PhotoUploadDTO p = mList.get(position);
 
         item.txtNumber.setText("" + (position + 1));
-        StringBuilder sb = new StringBuilder();
-        sb.append(Statics.IMAGE_URL);
-        sb.append(p.getUri());
 
-        ImageLoader.getInstance().displayImage(sb.toString(), item.img, new ImageLoadingListener() {
+        String url = Util.getPhotoURL(p);
+
+        ImageLoader.getInstance().displayImage(url, item.img, new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
 
