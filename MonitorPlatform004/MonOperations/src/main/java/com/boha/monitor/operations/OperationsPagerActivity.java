@@ -27,29 +27,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.com.boha.monitor.library.activities.AppInvitationActivity;
+import com.com.boha.monitor.library.activities.PictureActivity;
 import com.com.boha.monitor.library.activities.ProjectSitePagerActivity;
 import com.com.boha.monitor.library.activities.StaffActivity;
-import com.com.boha.monitor.library.activities.StaffPictureActivity;
-import com.com.boha.monitor.library.activities.SubTaskActivity;
 import com.com.boha.monitor.library.adapters.DrawerAdapter;
-import com.com.boha.monitor.library.dialogs.TaskAndProjectStatusDialog;
-import com.com.boha.monitor.library.dialogs.TaskDialog;
 import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
-import com.com.boha.monitor.library.dto.ProjectStatusTypeDTO;
-import com.com.boha.monitor.library.dto.TaskDTO;
-import com.com.boha.monitor.library.dto.TaskStatusDTO;
 import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
-import com.com.boha.monitor.library.fragments.BeneficiaryListFragment;
-import com.com.boha.monitor.library.fragments.ClientListFragment;
-import com.com.boha.monitor.library.fragments.EngineerListFragment;
 import com.com.boha.monitor.library.fragments.PageFragment;
 import com.com.boha.monitor.library.fragments.ProjectListFragment;
 import com.com.boha.monitor.library.fragments.ProjectStatusTypeListFragment;
-import com.com.boha.monitor.library.fragments.SiteTaskAndStatusAssignmentFragment;
 import com.com.boha.monitor.library.fragments.StaffListFragment;
 import com.com.boha.monitor.library.fragments.StatusReportFragment;
 import com.com.boha.monitor.library.fragments.TaskListFragment;
@@ -58,9 +48,12 @@ import com.com.boha.monitor.library.services.PhotoUploadService;
 import com.com.boha.monitor.library.services.RequestSyncService;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
-import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
+import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
+import com.com.boha.monitor.library.util.WebCheck;
+import com.com.boha.monitor.library.util.WebCheckResult;
+import com.com.boha.monitor.library.util.WebSocketUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,20 +62,13 @@ import java.util.List;
 public class OperationsPagerActivity extends ActionBarActivity
         implements
         StaffListFragment.CompanyStaffListListener,
-        TaskStatusListFragment.TaskStatusListListener,
-        ProjectStatusTypeListFragment.ProjectStatusTypeListListener,
-        TaskListFragment.TaskListListener, ProjectListFragment.ProjectListFragmentListener {
+        ProjectListFragment.ProjectListFragmentListener{
+
     private DrawerLayout mDrawerLayout;
     private DrawerAdapter mDrawerAdapter;
     private List<ProjectDTO> projectList;
     ProgressBar progressBar;
-
-    private List<PageFragment> pageFragmentList;
-    private ListView drawerListView;
-    private String[] titles;
-    private List<String> sTitles = new ArrayList<>();
-    private CompanyDTO company;
-    StatusReportFragment statusReportFragment;
+    boolean isRefreshing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,9 +80,9 @@ public class OperationsPagerActivity extends ActionBarActivity
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
         PagerTitleStrip s = (PagerTitleStrip) findViewById(R.id.pager_title_strip);
-//        s.setVisibility(View.GONE);
+        s.setVisibility(View.GONE);
         drawerListView = (ListView) findViewById(R.id.left_drawer);
-
+        titles = getResources().getStringArray(R.array.action_items);
         getCachedCompanyData();
         setTitle(SharedUtil.getCompany(ctx).getCompanyName());
         CompanyStaffDTO staff = SharedUtil.getCompanyStaff(ctx);
@@ -106,31 +92,29 @@ public class OperationsPagerActivity extends ActionBarActivity
     }
 
     private void getCachedCompanyData() {
+        final WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
         progressBar.setVisibility(View.VISIBLE);
         CacheUtil.getCachedData(getApplicationContext(), CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
 
             @Override
             public void onFileDataDeserialized(ResponseDTO r) {
                 progressBar.setVisibility(View.GONE);
-                if (r.getCompany() != null) {
-                    company = r.getCompany();
-                    response = r;
-                    buildPages();
-                } else {
-                    getCompanyData();
+                if (r != null) {
+                    if (r.getCompany() != null) {
+                        company = r.getCompany();
+                        response = r;
+                        buildPages();
+                    } else {
+                        Util.showErrorToast(ctx, ctx.getString(R.string.wifi_not_connected));
+                        return;
+                    }
                 }
-
-                titles = getResources().getStringArray(R.array.action_items);
                 for (String s : titles) {
                     sTitles.add(s);
                 }
-                mDrawerAdapter = new DrawerAdapter(getApplicationContext(),
-                        R.layout.drawer_item, sTitles, company);
+                mDrawerAdapter = new DrawerAdapter(getApplicationContext(), R.layout.drawer_item, sTitles, company);
                 drawerListView.setAdapter(mDrawerAdapter);
-                drawerListView.setDividerHeight(0);
-                drawerListView.setBackgroundColor(ctx.getResources().getColor(R.color.white));
-                LayoutInflater in = (LayoutInflater) getSystemService(
-                        Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater in = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View v = in.inflate(R.layout.hero_image, null);
                 ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
                 img.setImageDrawable(Util.getRandomHeroImage(ctx));
@@ -141,9 +125,14 @@ public class OperationsPagerActivity extends ActionBarActivity
                         TextView tv = (TextView) view.findViewById(R.id.DI_txtTitle);
                         Log.w(LOG, "##### onItemClick, index: " + i + " title: " + tv.getText().toString());
                         mPager.setCurrentItem(i - 1, true);
+
                         mDrawerLayout.closeDrawers();
                     }
                 });
+
+                if (wcr.isWifiConnected()) {
+                    getCompanyData();
+                }
 
 
             }
@@ -155,14 +144,15 @@ public class OperationsPagerActivity extends ActionBarActivity
 
             @Override
             public void onError() {
-                Log.e(LOG, "Caching Error .. going to the cloud");
-                getCompanyData();
-
+                if (wcr.isWifiConnected()) {
+                    getCompanyData();
+                }
             }
         });
 
     }
 
+    private CompanyDTO company;
 
     private void getCompanyData() {
         Log.w(LOG, "############# getCompanyData from the cloud..........");
@@ -170,10 +160,9 @@ public class OperationsPagerActivity extends ActionBarActivity
         w.setRequestType(RequestDTO.GET_COMPANY_DATA);
         w.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
         progressBar.setVisibility(View.VISIBLE);
-
-        NetUtil.sendRequest(ctx,w,new NetUtil.NetUtilListener() {
+        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponse(final ResponseDTO r) {
+            public void onMessage(final ResponseDTO r) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -184,7 +173,6 @@ public class OperationsPagerActivity extends ActionBarActivity
                         }
                         company = r.getCompany();
                         projectList = company.getProjectList();
-                        projectListFragment.updateStatusCount(r.getStatusCountInPeriod());
                         response = r;
                         buildPages();
                         if (isRefreshing) {
@@ -218,6 +206,16 @@ public class OperationsPagerActivity extends ActionBarActivity
             }
 
             @Override
+            public void onClose() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+            }
+
+            @Override
             public void onError(final String message) {
                 runOnUiThread(new Runnable() {
                     @Override
@@ -227,18 +225,7 @@ public class OperationsPagerActivity extends ActionBarActivity
                     }
                 });
             }
-
-            @Override
-            public void onWebSocketClose() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
-            }
         });
-
     }
 
     @Override
@@ -248,7 +235,6 @@ public class OperationsPagerActivity extends ActionBarActivity
         return true;
     }
 
-    boolean isRefreshing;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -259,49 +245,47 @@ public class OperationsPagerActivity extends ActionBarActivity
             return true;
         }
         if (id == R.id.action_help) {
-            Util.showToast(ctx,ctx.getString(R.string.under_cons));
+            Util.showErrorToast(ctx, ctx.getString(R.string.under_cons));
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
 
     private void buildPages() {
 
-        if (pageFragmentList == null) {
-            pageFragmentList = new ArrayList<>();
+        pageFragmentList = new ArrayList<>();
+        projectListFragment = new ProjectListFragment();
+        Bundle data1 = new Bundle();
+        data1.putSerializable("response", response);
+        data1.putInt("type", ProjectListFragment.OPERATIONS_TYPE);
+        projectListFragment.setArguments(data1);
 
-            projectListFragment = new ProjectListFragment();
-            Bundle data1 = new Bundle();
-            data1.putSerializable("response", response);
-            data1.putInt("type", ProjectListFragment.OPERATIONS_TYPE);
-            projectListFragment.setArguments(data1);
+        staffListFragment = new StaffListFragment();
+        staffListFragment.setArguments(data1);
 
-            statusReportFragment = StatusReportFragment.newInstance(response);
+        taskStatusListFragment = new TaskStatusListFragment();
+        taskStatusListFragment.setArguments(data1);
 
-            staffListFragment = new StaffListFragment();
-            staffListFragment.setArguments(data1);
+        projectStatusTypeListFragment = new ProjectStatusTypeListFragment();
+        projectStatusTypeListFragment.setArguments(data1);
 
-            taskStatusListFragment = new TaskStatusListFragment();
-            taskStatusListFragment.setArguments(data1);
+        taskListFragment = new TaskListFragment();
+        taskListFragment.setArguments(data1);
 
-            projectStatusTypeListFragment = new ProjectStatusTypeListFragment();
-            projectStatusTypeListFragment.setArguments(data1);
+        statusReportFragment = new StatusReportFragment();
+        statusReportFragment.setArguments(data1);
 
-            taskListFragment = new TaskListFragment();
-            taskListFragment.setArguments(data1);
-
-            pageFragmentList.add(projectListFragment);
-            pageFragmentList.add(statusReportFragment);
-            pageFragmentList.add(staffListFragment);
-            pageFragmentList.add(taskListFragment);
-            pageFragmentList.add(taskStatusListFragment);
-            pageFragmentList.add(projectStatusTypeListFragment);
+        pageFragmentList.add(projectListFragment);
+        pageFragmentList.add(statusReportFragment);
+        pageFragmentList.add(staffListFragment);
+        pageFragmentList.add(taskListFragment);
+        pageFragmentList.add(taskStatusListFragment);
+        pageFragmentList.add(projectStatusTypeListFragment);
 
 
-            initializeAdapter();
-        }
+        initializeAdapter();
+
     }
 
     private void initializeAdapter() {
@@ -314,19 +298,8 @@ public class OperationsPagerActivity extends ActionBarActivity
                 PageFragment pf = pageFragmentList.get(currentPageIndex);
 
                 if (pf instanceof TaskListFragment) {
-                    taskListFragment.animateHeroHeight();
                 }
                 if (pf instanceof StaffListFragment) {
-                    staffListFragment.animateHeroHeight();
-                }
-                if (pf instanceof ProjectStatusTypeListFragment) {
-                    projectStatusTypeListFragment.animateHeroHeight();
-                }
-                if (pf instanceof TaskStatusListFragment) {
-                    taskStatusListFragment.animateHeroHeight();
-                }
-                if (pf instanceof ProjectListFragment) {
-                    projectListFragment.animateHeroHeight();
                 }
             }
 
@@ -346,6 +319,7 @@ public class OperationsPagerActivity extends ActionBarActivity
     TaskStatusListFragment taskStatusListFragment;
     ProjectStatusTypeListFragment projectStatusTypeListFragment;
     TaskListFragment taskListFragment;
+    StatusReportFragment statusReportFragment;
     PagerAdapter adapter;
     ViewPager mPager;
     Context ctx;
@@ -355,10 +329,11 @@ public class OperationsPagerActivity extends ActionBarActivity
 
     static final int NEW_STATUS_EXPECTED = 2936;
 
+
     @Override
     public void onNewCompanyStaff() {
         Intent i = new Intent(this, StaffActivity.class);
-        startActivityForResult(i, EDIT_STAFF_REQUESTED);
+        startActivityForResult(i,NEW_STAFF_REQUESTED);
     }
 
     @Override
@@ -373,16 +348,15 @@ public class OperationsPagerActivity extends ActionBarActivity
     }
 
 
-    static final int PICTURE_REQUESTED = 9133;
+    static final int PICTURE_REQUESTED = 9133, NEW_STAFF_REQUESTED = 9134;
     CompanyStaffDTO companyStaff;
-    int type;
 
     @Override
     public void onCompanyStaffPictureRequested(CompanyStaffDTO companyStaff) {
         this.companyStaff = companyStaff;
-        type = PhotoUploadDTO.STAFF_IMAGE;
-        Intent i = new Intent(this, StaffPictureActivity.class);
+        Intent i = new Intent(this, PictureActivity.class);
         i.putExtra("companyStaff", companyStaff);
+        i.putExtra("type", PhotoUploadDTO.STAFF_IMAGE);
         startActivityForResult(i, PICTURE_REQUESTED);
     }
 
@@ -419,191 +393,19 @@ public class OperationsPagerActivity extends ActionBarActivity
         }
     }
 
-    @Override
-    public void onTaskStatusClicked(TaskStatusDTO taskStatus) {
-        TaskAndProjectStatusDialog d = new TaskAndProjectStatusDialog();
-        d.setContext(ctx);
-        d.setAction(TaskAndProjectStatusDialog.ACTION_UPDATE);
-        d.setType(TaskAndProjectStatusDialog.TASK_STATUS);
-        d.setTaskStatus(taskStatus);
-        d.setListener(new TaskAndProjectStatusDialog.EditDialogListener() {
-            @Override
-            public void onComplete() {
-
-            }
-
-            @Override
-            public void onError(final String message) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Util.showErrorToast(ctx, message);
-                    }
-                });
-            }
-        });
-        d.show(getFragmentManager(), "EDIT_DIALOG");
-    }
-
-    @Override
-    public void onNewTaskStatusRequested() {
-        TaskAndProjectStatusDialog d = new TaskAndProjectStatusDialog();
-        d.setContext(ctx);
-        d.setAction(TaskAndProjectStatusDialog.ACTION_ADD);
-        d.setType(TaskAndProjectStatusDialog.TASK_STATUS);
-        d.setListener(new TaskAndProjectStatusDialog.EditDialogListener() {
-            @Override
-            public void onComplete() {
-
-            }
-
-            @Override
-            public void onError(final String message) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Util.showErrorToast(ctx, message);
-                    }
-                });
-            }
-        });
-        d.show(getFragmentManager(), "EDIT_DIALOG");
-    }
-
-    @Override
-    public void onProjectStatusTypeClicked(ProjectStatusTypeDTO statusType) {
-
-        TaskAndProjectStatusDialog d = new TaskAndProjectStatusDialog();
-        d.setContext(ctx);
-        d.setProjectStatusType(statusType);
-        d.setAction(TaskAndProjectStatusDialog.ACTION_UPDATE);
-        d.setType(TaskAndProjectStatusDialog.PROJECT_STATUS);
-        d.setListener(new TaskAndProjectStatusDialog.EditDialogListener() {
-            @Override
-            public void onComplete() {
-
-            }
-
-            @Override
-            public void onError(final String message) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Util.showErrorToast(ctx, message);
-                    }
-                });
-            }
-        });
-        d.show(getFragmentManager(), "EDIT_DIALOG");
-
-    }
-
-    @Override
-    public void onNewProjectStatusTypeRequested() {
-        TaskAndProjectStatusDialog d = new TaskAndProjectStatusDialog();
-        d.setContext(ctx);
-        d.setAction(TaskAndProjectStatusDialog.ACTION_ADD);
-        d.setType(TaskAndProjectStatusDialog.PROJECT_STATUS);
-        d.setListener(new TaskAndProjectStatusDialog.EditDialogListener() {
-            @Override
-            public void onComplete() {
-
-            }
-
-            @Override
-            public void onError(final String message) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Util.showErrorToast(ctx, message);
-                    }
-                });
-            }
-        });
-        d.show(getFragmentManager(), "EDIT_DIALOG");
-    }
-
-    @Override
-    public void onTaskClicked(TaskDTO task) {
-
-        TaskDialog td = new TaskDialog();
-        td.setAction(TaskDTO.ACTION_UPDATE);
-        td.setContext(ctx);
-        td.setTask(task);
-        td.setListener(new TaskDialog.TaskDialogListener() {
-            @Override
-            public void onTaskAdded(TaskDTO task) {
-                taskListFragment.addTask(task);
-            }
-
-            @Override
-            public void onTaskUpdated(TaskDTO task) {
-                Log.i(LOG, "####### task updated");
-            }
-
-            @Override
-            public void onTaskDeleted(TaskDTO task) {
-
-            }
-
-            @Override
-            public void onError(String message) {
-
-            }
-        });
-        td.show(getFragmentManager(), "TD_DIAG");
-    }
-
-    @Override
-    public void onSubTasksRequested(TaskDTO task) {
-        Intent i = new Intent(ctx, SubTaskActivity.class);
-        i.putExtra("task", task);
-        startActivity(i);
-    }
-
-    @Override
-    public void onNewTaskRequested() {
-        TaskDialog td = new TaskDialog();
-        td.setAction(TaskDTO.ACTION_ADD);
-        td.setContext(ctx);
-        td.setListener(new TaskDialog.TaskDialogListener() {
-            @Override
-            public void onTaskAdded(TaskDTO task) {
-                taskListFragment.addTask(task);
-            }
-
-            @Override
-            public void onTaskUpdated(TaskDTO task) {
-                Log.i(LOG, "####### task updated");
-            }
-
-            @Override
-            public void onTaskDeleted(TaskDTO task) {
-
-            }
-
-            @Override
-            public void onError(String message) {
-
-            }
-        });
-        td.show(getFragmentManager(), "TD_DIAG");
-    }
 
     static final String LOG = OperationsPagerActivity.class.getSimpleName();
 
+
+    static final int SITE_LIST_REQUESTED = 6131;
+
     @Override
     public void onSiteListRequested(ProjectDTO project) {
-        Intent i = new Intent(ctx, ProjectSitePagerActivity.class);
-        CompanyDTO company = new CompanyDTO();
-        company.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
-        i.putExtra("project", project);
-        i.putExtra("company", company);
-        i.putExtra("type", SiteTaskAndStatusAssignmentFragment.PROJECT_MANAGER);
+        Intent i = new Intent(this, ProjectSitePagerActivity.class);
+        i.putExtra("project",project);
         startActivityForResult(i,SITE_LIST_REQUESTED);
     }
 
-    static final int SITE_LIST_REQUESTED = 4511;
     private class PagerAdapter extends FragmentStatePagerAdapter {
 
         public PagerAdapter(FragmentManager fm) {
@@ -632,9 +434,7 @@ public class OperationsPagerActivity extends ActionBarActivity
             if (pf instanceof StaffListFragment) {
                 title = ctx.getString(R.string.company_staff);
             }
-            if (pf instanceof ClientListFragment) {
-                title = ctx.getString(R.string.client_list);
-            }
+
             if (pf instanceof TaskStatusListFragment) {
                 title = ctx.getString(R.string.task_status);
             }
@@ -643,14 +443,6 @@ public class OperationsPagerActivity extends ActionBarActivity
             }
             if (pf instanceof TaskListFragment) {
                 title = ctx.getString(R.string.tasks);
-            }
-            if (pf instanceof BeneficiaryListFragment) {
-                title = ctx.getString(R.string.bennie_list);
-                BeneficiaryListFragment blf = (BeneficiaryListFragment) pf;
-                blf.setProjectList(projectList);
-            }
-            if (pf instanceof EngineerListFragment) {
-                title = ctx.getString(R.string.engineer_list);
             }
 
 
@@ -663,6 +455,11 @@ public class OperationsPagerActivity extends ActionBarActivity
         overridePendingTransition(com.boha.monitor.library.R.anim.slide_in_left, com.boha.monitor.library.R.anim.slide_out_right);
         super.onPause();
     }
+
+    private List<PageFragment> pageFragmentList;
+    private ListView drawerListView;
+    private String[] titles;
+    private List<String> sTitles = new ArrayList<>();
 
     @Override
     protected void onStart() {
@@ -698,19 +495,26 @@ public class OperationsPagerActivity extends ActionBarActivity
             RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
             mService = binder.getService();
             mBound = true;
+            WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx, true);
+            if (wcr.isWifiConnected()) {
+                mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
+                    @Override
+                    public void onTasksSynced(int goodResponses, int badResponses) {
+                        Log.w(LOG, "@@ cached requests done, good: " + goodResponses + " bad: " + badResponses);
+                    }
 
-            mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
-                @Override
-                public void onTasksSynced(int goodResponses, int badResponses) {
-                    Log.w(LOG, "@@ cached requests done, good: " + goodResponses + " bad: " + badResponses);
-                }
+                    @Override
+                    public void onError(String message) {
 
-                @Override
-                public void onError(String message) {
-
-                }
-            });
-
+                    }
+                });
+                Util.pretendFlash(progressBar, 1000, 2, new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        getCompanyData();
+                    }
+                });
+            }
         }
 
         @Override
