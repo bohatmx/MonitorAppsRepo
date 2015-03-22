@@ -46,7 +46,6 @@ import java.util.List;
  */
 public class TaskListFragment extends Fragment implements PageFragment {
 
-    private TaskListListener mListener;
     private AbsListView mListView;
     private ListAdapter mAdapter;
 
@@ -346,18 +345,12 @@ public class TaskListFragment extends Fragment implements PageFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mListener = (TaskListListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Host " + activity.getLocalClassName()
-                    + " must implement TaskListListener");
-        }
+
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
 
@@ -379,6 +372,7 @@ public class TaskListFragment extends Fragment implements PageFragment {
     @Override
     public void animateHeroHeight() {
         Util.fadeIn(topView);
+        Util.rotateViewWithDelay(getActivity(),fab,500,1000, null);
     }
 
     public void addTask(TaskDTO task) {
@@ -390,14 +384,6 @@ public class TaskListFragment extends Fragment implements PageFragment {
         adapter.notifyDataSetChanged();
 
 
-    }
-
-    public interface TaskListListener {
-        public void onTaskClicked(TaskDTO task);
-
-        public void onSubTasksRequested(TaskDTO task);
-
-        public void onNewTaskRequested();
     }
 
     ProjectDTO project;

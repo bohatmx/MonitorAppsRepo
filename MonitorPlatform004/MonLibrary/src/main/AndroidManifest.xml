@@ -24,13 +24,11 @@
             android:exported="false" />
 
         <activity
-            android:name="com.com.boha.monitor.library.activities.BeneficiaryImportActivity"
-            android:label="@string/title_activity_beneficiary_import" />
-        <activity
             android:name="com.com.boha.monitor.library.activities.AppInvitationActivity"
             android:label="@string/title_activity_app_invitation" />
         <activity
             android:name="com.com.boha.monitor.library.activities.StaffActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:label="@string/title_activity_staff" />
 
         <service

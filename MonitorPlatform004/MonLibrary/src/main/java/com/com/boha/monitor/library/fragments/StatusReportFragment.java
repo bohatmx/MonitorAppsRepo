@@ -2,6 +2,7 @@ package com.com.boha.monitor.library.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
+import com.com.boha.monitor.library.activities.SitePictureGridActivity;
 import com.com.boha.monitor.library.adapters.PopupListAdapter;
 import com.com.boha.monitor.library.adapters.StatusReportAdapter;
 import com.com.boha.monitor.library.dto.ProjectDTO;
@@ -330,6 +332,12 @@ public class StatusReportFragment extends Fragment implements PageFragment {
         txtCount.setText("" + projectSiteTaskStatusList.size());
         adapter = new StatusReportAdapter(ctx, R.layout.status_report_card, projectSiteTaskStatusList, false);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                findProjectSite(projectSiteTaskStatusList.get(position));
+            }
+        });
 //        listView.setOnScrollListener(new AbsListView.OnScrollListener(){
 //            int mLastFirstVisibleItem = 0;
 //            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -353,7 +361,50 @@ public class StatusReportFragment extends Fragment implements PageFragment {
 //        });
 
     }
+    private void findProjectSite(final ProjectSiteTaskStatusDTO taskStatus) {
+        final Integer projectID = project.getProjectID();
+        if (projectID > 0) {
+            CacheUtil.getCachedProjectData(ctx,projectID,new CacheUtil.CacheUtilListener() {
+                @Override
+                public void onFileDataDeserialized(ResponseDTO response) {
+                    if (response.getProjectList() != null && !response.getProjectList().isEmpty()) {
+                        for (ProjectDTO x: response.getProjectList()) {
+                            if (x.getProjectID().intValue() == projectID.intValue()) {
+                                project = x;
+                                if (project.getProjectSiteList() != null && !project.getProjectSiteList().isEmpty()) {
+                                    for (ProjectSiteDTO z: project.getProjectSiteList()) {
+                                        if (z.getProjectSiteID().intValue() == taskStatus.getProjectSiteID().intValue()) {
+                                            projectSite = z;
+                                            if (projectSite.getPhotoUploadList() != null && !projectSite.getPhotoUploadList().isEmpty()) {
+                                                Intent intent = new Intent(ctx, SitePictureGridActivity.class);
+                                                intent.putExtra("projectSite", projectSite);
+                                                startActivity(intent);
+                                            } else {
+                                                Log.w(LOG,"--- no pictures found for this site: " + projectSite.getProjectSiteName());
+                                                Util.showToast(ctx,"No pictures found for site " + projectSite.getProjectSiteName());
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        return;
+                    }
+                }
 
+                @Override
+                public void onDataCached() {
+
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
+        }
+    }
     DatePickerDialog dpStart;
     int mYear, mMonth, mDay;
 
@@ -454,9 +505,14 @@ public class StatusReportFragment extends Fragment implements PageFragment {
 
     @Override
     public void animateHeroHeight() {
-        Util.animateRotationY(txtCount, 500);
         Util.fadeIn(topView);
-
+        Util.rotateViewWithDelay(getActivity(),
+                txtCount,500,1000, new Util.UtilAnimationListener() {
+            @Override
+            public void onAnimationEnded() {
+                Util.flashOnce(btnProject,300,null);
+            }
+        });
     }
 
 }

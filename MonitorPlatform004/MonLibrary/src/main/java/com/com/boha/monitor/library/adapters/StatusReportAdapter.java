@@ -91,7 +91,7 @@ public class StatusReportAdapter extends ArrayAdapter<ProjectSiteTaskStatusDTO> 
                 break;
             case TaskStatusDTO.STATUS_COLOR_AMBER:
                 item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
-                item.txtColor.setText("Y");
+                item.txtColor.setText("A");
                 break;
         }
 

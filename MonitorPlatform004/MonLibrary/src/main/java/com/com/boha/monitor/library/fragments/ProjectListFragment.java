@@ -48,6 +48,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
     public interface ProjectListFragmentListener {
         public void onSiteListRequested(ProjectDTO project);
+        public void onStatusReportRequested();
     }
 
     private ListView mListView;
@@ -331,6 +332,17 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         //random hero
         heroImage.setImageDrawable(Util.getRandomHeroImage(ctx));
 
+        txtStatusCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.flashOnce(txtStatusCount,300,new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        mListener.onStatusReportRequested();
+                    }
+                });
+            }
+        });
         imgSearch2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -463,6 +475,13 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public void animateHeroHeight() {
         Util.fadeIn(topView);
+        Util.rotateViewWithDelay(getActivity(),
+                fab,500,1000, new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        Util.flashOnce(txtStatusCount,300,null);
+                    }
+                });
     }
 
     @Override

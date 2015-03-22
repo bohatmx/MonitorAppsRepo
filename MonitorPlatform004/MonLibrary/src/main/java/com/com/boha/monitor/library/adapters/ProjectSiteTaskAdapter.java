@@ -120,16 +120,16 @@ public class ProjectSiteTaskAdapter extends ArrayAdapter<ProjectSiteTaskDTO> {
                 int color = list.get(0).getTaskStatus().getStatusColor();
                 switch (color) {
                     case 1:
-                        item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval_small));
+                        item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval_small));
                         break;
                     case 2:
-                        item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
+                        item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
                         break;
                     case 3:
-                        item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
+                        item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
                         break;
                     default:
-                        item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xgrey_oval_small));
+                        item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xgrey_oval_small));
                         break;
                 }
 
@@ -137,7 +137,7 @@ public class ProjectSiteTaskAdapter extends ArrayAdapter<ProjectSiteTaskDTO> {
                 item.txtLastDate.setVisibility(View.GONE);
                 item.txtStatus.setVisibility(View.GONE);
                 item.txtStaff.setVisibility(View.GONE);
-                item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xgrey_oval_small));
+                item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xgrey_oval_small));
             }
         }
 

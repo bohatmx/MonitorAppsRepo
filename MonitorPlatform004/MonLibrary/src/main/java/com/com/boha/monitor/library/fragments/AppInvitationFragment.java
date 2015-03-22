@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListPopupWindow;
 import android.widget.ProgressBar;
@@ -31,11 +30,10 @@ public class AppInvitationFragment extends Fragment {
     public AppInvitationFragment() {
     }
 
-    View view;
+    View view, fab;
     CompanyStaffDTO companyStaff;
     List<CompanyStaffDTO> companyStaffList;
     RadioButton appExec, appOps, appProjMgr;
-    Button btnSave;
     TextView txtStaffName, txtTitle;
     ImageView imgHero;
     List<String> nameList;
@@ -57,18 +55,18 @@ public class AppInvitationFragment extends Fragment {
 
     private void setFields() {
         titleView = view.findViewById(R.id.SIV_staffLayout);
+        fab = view.findViewById(R.id.FAB);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         txtTitle = (TextView) view.findViewById(R.id.SIV_title);
         txtStaffName = (TextView) view.findViewById(R.id.SIV_staffName);
-        btnSave = (Button) view.findViewById(R.id.SIV_btnSave);
         appExec = (RadioButton) view.findViewById(R.id.SIV_appExec);
         appOps = (RadioButton) view.findViewById(R.id.SIV_appOperations);
         appProjMgr = (RadioButton) view.findViewById(R.id.SIV_appProjectMgr);
 
-        btnSave.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.flashSeveralTimes(btnSave, 200, 2, new Util.UtilAnimationListener() {
+                Util.flashOnce(fab, 200,  new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
                         validate();
@@ -150,8 +148,9 @@ public class AppInvitationFragment extends Fragment {
             type = Util.PROJ;
         }
 
+        Util.showToast(ctx,ctx.getString(R.string.under_cons));
 
-        Util.showConfirmAppInvitationDialog(ctx, getActivity(), companyStaff, type);
+//        Util.showConfirmAppInvitationDialog(ctx, getActivity(), companyStaff, type);
     }
     static final String LOG = AppInvitationFragment.class.getSimpleName();
 

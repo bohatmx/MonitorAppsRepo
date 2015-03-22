@@ -26,7 +26,6 @@ import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
-import com.com.boha.monitor.library.fragments.GPSScanFragment;
 import com.com.boha.monitor.library.fragments.PageFragment;
 import com.com.boha.monitor.library.fragments.ProjectSiteListFragment;
 import com.com.boha.monitor.library.fragments.SiteTaskAndStatusAssignmentFragment;
@@ -82,9 +81,9 @@ public class ProjectSitePagerActivity extends ActionBarActivity
                     project = response.getProjectList().get(0);
                     buildPages();
                     return;
+                } else {
+                    getProjectData();
                 }
-
-                getProjectData();
 
             }
 
@@ -223,7 +222,6 @@ public class ProjectSitePagerActivity extends ActionBarActivity
     }
 
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -272,16 +270,16 @@ public class ProjectSitePagerActivity extends ActionBarActivity
             pService = binder.getService();
             pBound = true;
 
-                Log.w(LOG, "### starting PhotoUploadService ...");
-                pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
-                    @Override
-                    public void onUploadsComplete(int count) {
-                        Log.i(LOG, "++ onUploadsComplete, count: " + count);
-                        if (count > 0) {
-                            refresh();
-                        }
+            Log.w(LOG, "### starting PhotoUploadService ...");
+            pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+                @Override
+                public void onUploadsComplete(int count) {
+                    Log.i(LOG, "++ onUploadsComplete, count: " + count);
+                    if (count > 0) {
+                        refresh();
                     }
-                });
+                }
+            });
 
         }
 
@@ -472,10 +470,10 @@ public class ProjectSitePagerActivity extends ActionBarActivity
 
     @Override
     public void onGPSRequested(ProjectSiteDTO projectSite, int index) {
-        Log.e(LOG,"######### onGPSRequested");
+        Log.e(LOG, "######### onGPSRequested");
         Intent f = new Intent(this, GPSActivity.class);
         f.putExtra("projectSite", projectSite);
-        startActivityForResult(f,GPS_REQUESTED);
+        startActivityForResult(f, GPS_REQUESTED);
 
     }
 
@@ -493,6 +491,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity
     @Override
     public void onNewStatusDone(int count) {
         newStatusDone += count;
+        refreshNeeded = true;
     }
 
     @Override
@@ -510,6 +509,8 @@ public class ProjectSitePagerActivity extends ActionBarActivity
 
     }
 
+
+    boolean refreshNeeded;
 
     @Override
     public void onActivityResult(int reqCode, int res, Intent data) {
@@ -530,20 +531,18 @@ public class ProjectSitePagerActivity extends ActionBarActivity
                 }
                 break;
             case SITE_TASK_REQUEST:
-
                 if (res == RESULT_OK) {
                     ResponseDTO r = (ResponseDTO) data.getSerializableExtra("response");
                     Log.w(LOG, "## data returned, statusList: " + r.getProjectSiteTaskStatusList().size() +
                             " taskList: " + r.getProjectSiteTaskList().size());
 
                     projectSiteListFragment.refreshData(r);
-
+                    refreshNeeded = true;
                 }
                 break;
         }
 
     }
-
 
 
     private class PagerAdapter extends FragmentStatePagerAdapter {
@@ -588,13 +587,8 @@ public class ProjectSitePagerActivity extends ActionBarActivity
 
     @Override
     public void onBackPressed() {
-        if (pageFragmentList == null) return;
-        if (pageFragmentList.get(currentPageIndex) instanceof GPSScanFragment) {
-            mPager.setCurrentItem(0, true);
-            return;
-        }
         Intent i = new Intent();
-        i.putExtra("newStatusDone", newStatusDone);
+        i.putExtra("refreshNeeded", refreshNeeded);
         setResult(RESULT_OK, i);
 
         finish();

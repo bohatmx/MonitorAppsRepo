@@ -3,7 +3,6 @@ package com.com.boha.monitor.library.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListPopupWindow;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -123,6 +121,7 @@ public class StaffListFragment extends Fragment
             throw new ClassCastException("Host " + activity.getLocalClassName()
                     + " must implement CompanyStaffListListener");
         }
+        Log.i("StaffListFragment","## onAttach, mListener = " + activity.getLocalClassName());
     }
 
     @Override
@@ -131,7 +130,6 @@ public class StaffListFragment extends Fragment
         mListener = null;
     }
 
-    ListPopupWindow staffActionsWindow;
     List<String> list;
     private void setList() {
 
@@ -170,7 +168,7 @@ public class StaffListFragment extends Fragment
                         public void onItemSelected(int index) {
                             switch (index) {
                                 case 0:
-                                    //get status
+                                    Util.showToast(ctx,getString(R.string.under_cons));
                                     break;
                                 case 1:
                                     mListener.onCompanyStaffPictureRequested(companyStaffDTO);
@@ -198,9 +196,6 @@ public class StaffListFragment extends Fragment
 
     CompanyStaffDTO companyStaffDTO;
 
-    public CompanyStaffDTO getCompanyStaffDTO() {
-        return companyStaffDTO;
-    }
 
     /**
      * The default content for this Fragment has a TextView that is shown when
@@ -217,8 +212,13 @@ public class StaffListFragment extends Fragment
 
     @Override
     public void animateHeroHeight() {
-        int max = (int) ctx.getResources().getDimension(R.dimen.mon_hero_height_medium);
         Util.fadeIn(topView);
+        Util.rotateViewWithDelay(getActivity(),fab,500,1000, new Util.UtilAnimationListener() {
+            @Override
+            public void onAnimationEnded() {
+                Util.flashOnce(icon,300,null);
+            }
+        });
 
     }
 
@@ -230,7 +230,7 @@ public class StaffListFragment extends Fragment
         Collections.sort(companyStaffList);
         staffAdapter.notifyDataSetChanged();
         txtCount.setText("" + companyStaffList.size());
-        Util.pretendFlash(txtCount,300,4,new Util.UtilAnimationListener() {
+        Util.preen(txtCount, 300, 4, new Util.UtilAnimationListener() {
             @Override
             public void onAnimationEnded() {
                 Util.animateRotationY(txtCount, 500);
@@ -272,11 +272,6 @@ public class StaffListFragment extends Fragment
         public void onCompanyStaffInvitationRequested(List<CompanyStaffDTO> companyStaffList, int index);
         public void onCompanyStaffPictureRequested(CompanyStaffDTO companyStaff);
         public void onCompanyStaffEditRequested(CompanyStaffDTO companyStaff);
-
-    }
-    Uri pictureuUri;
-    public void updatePicture(String uri) {
-        pictureuUri = Uri.parse(uri);
 
     }
     ProjectDTO project;

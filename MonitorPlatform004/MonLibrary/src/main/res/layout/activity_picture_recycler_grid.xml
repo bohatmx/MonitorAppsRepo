@@ -6,8 +6,8 @@
 
     <RelativeLayout
         android:id="@+id/RCV_top"
-        android:background="@color/white"
-        android:padding="@dimen/mon_divider"
+        android:background="@color/green_300"
+        android:padding="@dimen/mon_padding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -15,7 +15,7 @@
             android:id="@+id/RCV_title"
             android:layout_marginLeft="@dimen/mon_divider"
             android:text="PlaceHolder Title"
-            style="@style/TextStyleBlue"
+            style="@style/TextStyleWhite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <Button

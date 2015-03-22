@@ -27,9 +27,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.com.boha.monitor.library.activities.AppInvitationActivity;
-import com.com.boha.monitor.library.activities.PictureActivity;
 import com.com.boha.monitor.library.activities.ProjectSitePagerActivity;
 import com.com.boha.monitor.library.activities.StaffActivity;
+import com.com.boha.monitor.library.activities.StaffPictureActivity;
 import com.com.boha.monitor.library.adapters.DrawerAdapter;
 import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
@@ -48,12 +48,9 @@ import com.com.boha.monitor.library.services.PhotoUploadService;
 import com.com.boha.monitor.library.services.RequestSyncService;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
+import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
-import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
-import com.com.boha.monitor.library.util.WebCheck;
-import com.com.boha.monitor.library.util.WebCheckResult;
-import com.com.boha.monitor.library.util.WebSocketUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +59,7 @@ import java.util.List;
 public class OperationsPagerActivity extends ActionBarActivity
         implements
         StaffListFragment.CompanyStaffListListener,
-        ProjectListFragment.ProjectListFragmentListener{
+        ProjectListFragment.ProjectListFragmentListener {
 
     private DrawerLayout mDrawerLayout;
     private DrawerAdapter mDrawerAdapter;
@@ -92,7 +89,6 @@ public class OperationsPagerActivity extends ActionBarActivity
     }
 
     private void getCachedCompanyData() {
-        final WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
         progressBar.setVisibility(View.VISIBLE);
         CacheUtil.getCachedData(getApplicationContext(), CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
 
@@ -104,9 +100,6 @@ public class OperationsPagerActivity extends ActionBarActivity
                         company = r.getCompany();
                         response = r;
                         buildPages();
-                    } else {
-                        Util.showErrorToast(ctx, ctx.getString(R.string.wifi_not_connected));
-                        return;
                     }
                 }
                 for (String s : titles) {
@@ -118,6 +111,7 @@ public class OperationsPagerActivity extends ActionBarActivity
                 View v = in.inflate(R.layout.hero_image, null);
                 ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
                 img.setImageDrawable(Util.getRandomHeroImage(ctx));
+                drawerListView.setBackgroundColor(ctx.getResources().getColor(com.boha.monitor.library.R.color.white));
                 drawerListView.addHeaderView(v);
                 drawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -125,15 +119,9 @@ public class OperationsPagerActivity extends ActionBarActivity
                         TextView tv = (TextView) view.findViewById(R.id.DI_txtTitle);
                         Log.w(LOG, "##### onItemClick, index: " + i + " title: " + tv.getText().toString());
                         mPager.setCurrentItem(i - 1, true);
-
                         mDrawerLayout.closeDrawers();
                     }
                 });
-
-                if (wcr.isWifiConnected()) {
-                    getCompanyData();
-                }
-
 
             }
 
@@ -144,9 +132,8 @@ public class OperationsPagerActivity extends ActionBarActivity
 
             @Override
             public void onError() {
-                if (wcr.isWifiConnected()) {
-                    getCompanyData();
-                }
+                Log.e(LOG, "## cache onError, getting data from cloud");
+                getCompanyData();
             }
         });
 
@@ -160,9 +147,10 @@ public class OperationsPagerActivity extends ActionBarActivity
         w.setRequestType(RequestDTO.GET_COMPANY_DATA);
         w.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
         progressBar.setVisibility(View.VISIBLE);
-        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
-            public void onMessage(final ResponseDTO r) {
+            public void onResponse(final ResponseDTO r) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -172,13 +160,16 @@ public class OperationsPagerActivity extends ActionBarActivity
                             return;
                         }
                         company = r.getCompany();
+                        if (company == null) {
+                            Log.e(LOG, "??? why is this call made???, company is NULL");
+                            return;
+                        }
                         projectList = company.getProjectList();
                         response = r;
                         buildPages();
-                        if (isRefreshing) {
-                            isRefreshing = false;
-                            statusReportFragment.getProjectStatus();
-                        }
+
+                        statusReportFragment.getProjectStatus();
+
                         CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
@@ -202,17 +193,6 @@ public class OperationsPagerActivity extends ActionBarActivity
 
                     }
                 });
-
-            }
-
-            @Override
-            public void onClose() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
             }
 
             @Override
@@ -225,13 +205,22 @@ public class OperationsPagerActivity extends ActionBarActivity
                     }
                 });
             }
+
+            @Override
+            public void onWebSocketClose() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+            }
         });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.operations_pager, menu);
-
         return true;
     }
 
@@ -298,8 +287,22 @@ public class OperationsPagerActivity extends ActionBarActivity
                 PageFragment pf = pageFragmentList.get(currentPageIndex);
 
                 if (pf instanceof TaskListFragment) {
+                    taskListFragment.animateHeroHeight();
+                }
+                if (pf instanceof ProjectStatusTypeListFragment) {
+                    projectStatusTypeListFragment.animateHeroHeight();
                 }
                 if (pf instanceof StaffListFragment) {
+                    staffListFragment.animateHeroHeight();
+                }
+                if (pf instanceof StatusReportFragment) {
+                    statusReportFragment.animateHeroHeight();
+                }
+                if (pf instanceof ProjectListFragment) {
+                    projectListFragment.animateHeroHeight();
+                }
+                if (pf instanceof TaskStatusListFragment) {
+                    taskStatusListFragment.animateHeroHeight();
                 }
             }
 
@@ -333,7 +336,7 @@ public class OperationsPagerActivity extends ActionBarActivity
     @Override
     public void onNewCompanyStaff() {
         Intent i = new Intent(this, StaffActivity.class);
-        startActivityForResult(i,NEW_STAFF_REQUESTED);
+        startActivityForResult(i, NEW_STAFF_REQUESTED);
     }
 
     @Override
@@ -354,7 +357,7 @@ public class OperationsPagerActivity extends ActionBarActivity
     @Override
     public void onCompanyStaffPictureRequested(CompanyStaffDTO companyStaff) {
         this.companyStaff = companyStaff;
-        Intent i = new Intent(this, PictureActivity.class);
+        Intent i = new Intent(this, StaffPictureActivity.class);
         i.putExtra("companyStaff", companyStaff);
         i.putExtra("type", PhotoUploadDTO.STAFF_IMAGE);
         startActivityForResult(i, PICTURE_REQUESTED);
@@ -371,7 +374,7 @@ public class OperationsPagerActivity extends ActionBarActivity
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.w(LOG, "## onActivityResult");
+        Log.w(LOG, "## onActivityResult, requestCode: " + requestCode);
         if (requestCode == PICTURE_REQUESTED) {
             if (resultCode == RESULT_OK) {
                 Log.e(LOG, "############# refresh picture,  stafflist ");
@@ -391,6 +394,15 @@ public class OperationsPagerActivity extends ActionBarActivity
                 projectListFragment.updateStatusCount(count);
             }
         }
+        if (requestCode == SITE_LIST_REQUESTED) {
+            if (resultCode == RESULT_OK) {
+                boolean refreshNeeded = data.getBooleanExtra("refreshNeeded", false);
+                if (refreshNeeded) {
+                    Log.e(LOG, "+++ refreshNeeded: " + refreshNeeded);
+                    getCompanyData();
+                }
+            }
+        }
     }
 
 
@@ -402,8 +414,20 @@ public class OperationsPagerActivity extends ActionBarActivity
     @Override
     public void onSiteListRequested(ProjectDTO project) {
         Intent i = new Intent(this, ProjectSitePagerActivity.class);
-        i.putExtra("project",project);
-        startActivityForResult(i,SITE_LIST_REQUESTED);
+        i.putExtra("project", project);
+        startActivityForResult(i, SITE_LIST_REQUESTED);
+    }
+
+    @Override
+    public void onStatusReportRequested() {
+        int index = 0;
+        for (PageFragment d: pageFragmentList) {
+            if (d instanceof StatusReportFragment) {
+                break;
+            }
+            index++;
+        }
+        mPager.setCurrentItem(index, true);
     }
 
     private class PagerAdapter extends FragmentStatePagerAdapter {
@@ -495,26 +519,18 @@ public class OperationsPagerActivity extends ActionBarActivity
             RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
             mService = binder.getService();
             mBound = true;
-            WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx, true);
-            if (wcr.isWifiConnected()) {
-                mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
-                    @Override
-                    public void onTasksSynced(int goodResponses, int badResponses) {
-                        Log.w(LOG, "@@ cached requests done, good: " + goodResponses + " bad: " + badResponses);
-                    }
+            mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
+                @Override
+                public void onTasksSynced(int goodResponses, int badResponses) {
+                    Log.w(LOG, "@@ cached requests done, good: " + goodResponses + " bad: " + badResponses);
+                }
 
-                    @Override
-                    public void onError(String message) {
+                @Override
+                public void onError(String message) {
 
-                    }
-                });
-                Util.pretendFlash(progressBar, 1000, 2, new Util.UtilAnimationListener() {
-                    @Override
-                    public void onAnimationEnded() {
-                        getCompanyData();
-                    }
-                });
-            }
+                }
+            });
+
         }
 
         @Override

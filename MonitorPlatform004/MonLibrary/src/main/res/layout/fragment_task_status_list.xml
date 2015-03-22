@@ -55,6 +55,7 @@
             android:id="@+id/TASK_STAT_editor"
             android:layout_below="@id/TASK_STAT_top"
             android:visibility="gone"
+            android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -68,6 +69,8 @@
         android:id="@+id/TASK_STAT_list"
         android:layout_below="@id/TASK_STAT_scroll"
         android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/mon_divider"
+        android:dividerHeight="@dimen/mon_divider"
         android:background="@color/white"
         android:layout_height="match_parent" />
 

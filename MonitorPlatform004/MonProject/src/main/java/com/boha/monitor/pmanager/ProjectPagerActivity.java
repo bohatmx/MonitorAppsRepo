@@ -22,6 +22,7 @@ import android.widget.ListPopupWindow;
 import android.widget.ProgressBar;
 
 import com.com.boha.monitor.library.activities.MonApp;
+import com.com.boha.monitor.library.activities.ProjectSitePagerActivity;
 import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
@@ -46,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ProjectPagerActivity extends ActionBarActivity {
+public class ProjectPagerActivity extends ActionBarActivity
+implements ProjectListFragment.ProjectListFragmentListener{
     View handle;
     ProgressBar progressBar;
     static final String LOG = ProjectPagerActivity.class.getSimpleName();
@@ -132,10 +134,7 @@ public class ProjectPagerActivity extends ActionBarActivity {
                         company = r.getCompany();
                         response = r;
                         buildPages();
-                        if (isRefreshing) {
-                            isRefreshing = false;
-                            statusReportFragment.getProjectStatus();
-                        }
+                        statusReportFragment.getProjectStatus();
                         CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
@@ -229,7 +228,11 @@ public class ProjectPagerActivity extends ActionBarActivity {
                 progressBar.setVisibility(View.GONE);
 
                 if (pageFragmentList.get(currentPageIndex) instanceof StatusReportFragment) {
-                    statusReportFragment.getCachedStatus();
+//                    statusReportFragment.getCachedStatus();
+                    statusReportFragment.animateHeroHeight();
+                }
+                if (pageFragmentList.get(currentPageIndex) instanceof ProjectListFragment) {
+                    projectListFragment.animateHeroHeight();
                 }
             }
 
@@ -257,6 +260,8 @@ public class ProjectPagerActivity extends ActionBarActivity {
     static final int NEW_STATUS_EXPECTED = 2937;
     static final int PICTURE_REQUESTED = 9133;
 
+    static final int SITE_LIST_REQUESTED = 6131;
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICTURE_REQUESTED) {
@@ -268,6 +273,32 @@ public class ProjectPagerActivity extends ActionBarActivity {
                 projectListFragment.updateStatusCount(count);
             }
         }
+        if (requestCode == SITE_LIST_REQUESTED) {
+            if (resultCode == RESULT_OK) {
+                boolean refreshNeeded = data.getBooleanExtra("refreshNeeded",false);
+                if (refreshNeeded) {
+                    getCompanyData();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onSiteListRequested(ProjectDTO project) {
+        Intent i = new Intent(this, ProjectSitePagerActivity.class);
+        i.putExtra("project",project);
+        startActivityForResult(i,SITE_LIST_REQUESTED);
+    }
+    @Override
+    public void onStatusReportRequested() {
+        int index = 0;
+        for (PageFragment d: pageFragmentList) {
+            if (d instanceof StatusReportFragment) {
+                break;
+            }
+            index++;
+        }
+        mPager.setCurrentItem(index, true);
     }
 
     private class PagerAdapter extends FragmentStatePagerAdapter {

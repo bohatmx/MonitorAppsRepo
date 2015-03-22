@@ -171,7 +171,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
             @Override
             public void onAnimationEnded() {
 
-                Util.pretendFlash(txtCount, 300, 2, new Util.UtilAnimationListener() {
+                Util.preen(txtCount, 300, 2, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
                         closeCameraLayout();
@@ -479,7 +479,6 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                 Log.d(LOG, "##### setOnItemClickListener, position: " + position);
                 lastIndex = position;
                 closeCameraLayout();
-                int index = position;
                 projectSiteTask = projectSiteTaskList.get(position);
 
                 task = projectSiteTask.getTask();
@@ -487,11 +486,6 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                     Util.showToast(ctx, ctx.getString(R.string.status_completed));
                     return;
                 }
-//                if (projectSiteTask.getTask().getSubTaskList() != null && !projectSiteTask.getTask().getSubTaskList().isEmpty()) {
-//                    hasSubTasks = true;
-//                    mListener.onSubTaskStatusAssignmentRequested(projectSiteTask);
-//                    return;
-//                }
                 type = TASK;
                 showPopup();
 

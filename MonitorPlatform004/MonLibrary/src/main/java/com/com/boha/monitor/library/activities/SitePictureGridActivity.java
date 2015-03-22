@@ -19,10 +19,12 @@ import android.widget.TextView;
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.adapters.PictureAdapter;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
+import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
+import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.DividerItemDecoration;
 import com.com.boha.monitor.library.util.ErrorUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
@@ -44,6 +46,8 @@ public class SitePictureGridActivity extends ActionBarActivity {
     ProjectSiteDTO projectSite;
     Activity activity;
     int lastIndex;
+    Integer projectSiteID, projectID;
+    ProjectDTO project;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,18 +61,52 @@ public class SitePictureGridActivity extends ActionBarActivity {
 
 
         projectSite = (ProjectSiteDTO) getIntent().getSerializableExtra("projectSite");
+        projectSiteID = getIntent().getIntExtra("projectSiteID", 0);
+        projectID = getIntent().getIntExtra("projectID", 0);
+
         if (projectSite != null) {
             if (projectSite.getPhotoUploadList() == null || projectSite.getPhotoUploadList().isEmpty()) {
                 Util.showErrorToast(ctx, getString(R.string.no_photos));
                 finish();
             }
             photoList = projectSite.getPhotoUploadList();
-            if (projectSite.getBeneficiary() != null) {
-                title.setText(projectSite.getProjectSiteName() + ": " + projectSite.getBeneficiary().getFullName());
-            } else {
-                title.setText(projectSite.getProjectSiteName());
-            }
+            title.setText(projectSite.getProjectSiteName());
             setGrid();
+        }
+        if (projectID > 0) {
+            CacheUtil.getCachedProjectData(ctx,projectID,new CacheUtil.CacheUtilListener() {
+                @Override
+                public void onFileDataDeserialized(ResponseDTO response) {
+                    if (response.getProjectList() != null && !response.getProjectList().isEmpty()) {
+                        for (ProjectDTO x: response.getProjectList()) {
+                            if (x.getProjectID().intValue() == projectID.intValue()) {
+                                project = x;
+                                if (project.getProjectSiteList() != null && !project.getProjectSiteList().isEmpty()) {
+                                    for (ProjectSiteDTO z: project.getProjectSiteList()) {
+                                        if (z.getProjectSiteID().intValue() == projectSiteID.intValue()) {
+                                            projectSite = z;
+                                            photoList = projectSite.getPhotoUploadList();
+                                            title.setText(projectSite.getProjectSiteName());
+                                            setGrid();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        return;
+                    }
+                }
+
+                @Override
+                public void onDataCached() {
+
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
         }
         btnStatusRpt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,36 +131,7 @@ public class SitePictureGridActivity extends ActionBarActivity {
         t.setScreenName("PictureRecyclerGridActivity");
         t.send(new HitBuilders.AppViewBuilder().build());
 
-        //TODO - remove after deleting duplicate photos on server
-//        title.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (photosForDeletion.isEmpty()) return;
-//                Util.flashOnce(title, 200, new Util.UtilAnimationListener() {
-//                    @Override
-//                    public void onAnimationEnded() {
-//                        AlertDialog.Builder d = new AlertDialog.Builder(activity);
-//                        d.setIcon(ctx.getResources().getDrawable(R.drawable.delete_48))
-//                                .setTitle("Delete Photos")
-//                                .setMessage("Do you want to delete " + photosForDeletion.size() + " photos?")
-//                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(DialogInterface dialog, int which) {
-//
-//                                        deletePhotos();
-//                                    }
-//                                })
-//                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(DialogInterface dialog, int which) {
-//
-//                                    }
-//                                })
-//                                .show();
-//                    }
-//                });
-//            }
-//        });
+
     }
 
     List<PhotoUploadDTO> photoList;
@@ -140,9 +149,9 @@ public class SitePictureGridActivity extends ActionBarActivity {
                 Log.e(LOG, "Picture clicked..., position = " + position);
                 lastIndex = position;
                 photosForDeletion.add(photoList.get(position));
-                    Intent i = new Intent(getApplicationContext(),FullPhotoActivity.class);
-                    i.putExtra("projectSite", projectSite);
-                    startActivity(i);
+                Intent i = new Intent(getApplicationContext(), FullPhotoActivity.class);
+                i.putExtra("projectSite", projectSite);
+                startActivity(i);
             }
         });
 

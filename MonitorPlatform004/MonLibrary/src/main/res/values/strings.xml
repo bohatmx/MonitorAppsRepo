@@ -311,7 +311,7 @@
     <string name="contact_us"><![CDATA[<p>Should you encounter any issues please do not hesitate to contact us. We hope you find our platform useful!</p>]]></string>
     <string name="swipe_for_more">Swipe to do more </string>
     <string name="map_not_available">Map not available. Please try again!</string>
-    <string name="title_activity_staff">"Staff "</string>
+    <string name="title_activity_staff">"Monitor Team"</string>
     <string name="unable_project_data">Unable to refresh project data from the cloud. Local data may be available</string>
     <string name="sitestatus">Record Site Status</string>
     <string name="get_gps">Get GPS Coordinates</string>

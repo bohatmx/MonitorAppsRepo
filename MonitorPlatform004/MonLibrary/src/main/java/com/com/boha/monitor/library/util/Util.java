@@ -64,6 +64,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Util {
 
@@ -87,6 +89,53 @@ public class Util {
         return bitmap;
     }
 
+    public static void rotateViewWithDelay(
+            final Activity activity, final View view,
+            final int duration, int delay, final UtilAnimationListener listener ) {
+
+        final Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final ObjectAnimator an = ObjectAnimator.ofFloat(view, "rotation", 0.0f, 360f);
+                        an.setDuration(duration);
+                        an.setInterpolator(new AccelerateDecelerateInterpolator());
+                        an.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                if (listener != null) {
+                                    listener.onAnimationEnded();
+                                }
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
+                        an.start();
+
+                    }
+                });
+
+                timer.cancel();
+            }
+
+        } , delay);
+    }
     public static void setCustomActionBar(Context ctx,
                                           ActionBar actionBar, String text, Drawable image) {
         actionBar.setDisplayShowCustomEnabled(true);
@@ -512,11 +561,9 @@ public class Util {
         return sb.toString();
     }
 
-    public static void pretendFlash(final View v, final int duration, final int max, final UtilAnimationListener listener) {
+    public static void preen(final View v, final int duration, final int max, final UtilAnimationListener listener) {
         final ObjectAnimator an = ObjectAnimator.ofFloat(v, "alpha", 1, 1);
-        an.setRepeatMode(ObjectAnimator.REVERSE);
         an.setDuration(duration);
-        an.setInterpolator(new AccelerateDecelerateInterpolator());
         an.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {

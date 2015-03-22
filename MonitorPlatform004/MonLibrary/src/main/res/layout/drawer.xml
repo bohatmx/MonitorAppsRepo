@@ -7,7 +7,7 @@
     <!-- The main content view -->
     <RelativeLayout
         android:id="@+id/content_frame"
-        android:background="@color/grey"
+        android:background="@color/white"
         android:padding="@dimen/mon_divider"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >

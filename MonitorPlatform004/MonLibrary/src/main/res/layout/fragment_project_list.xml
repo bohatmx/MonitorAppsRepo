@@ -156,18 +156,6 @@
         android:layout_height="match_parent" />
 
 
-    <TextView
-        android:id="@android:id/empty"
-        android:text="+"
-        style="@style/RedCircle"
-        android:visibility="gone"
-        android:textSize="28sp"
-        android:layout_margin="30dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center" />
 
 
 

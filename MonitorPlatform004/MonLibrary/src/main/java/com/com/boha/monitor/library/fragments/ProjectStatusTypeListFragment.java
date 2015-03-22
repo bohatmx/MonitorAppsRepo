@@ -35,7 +35,6 @@ import java.util.List;
 
 public class ProjectStatusTypeListFragment extends Fragment implements PageFragment {
 
-    private ProjectStatusTypeListListener mListener;
     private AbsListView mListView;
 
     public ProjectStatusTypeListFragment() {
@@ -196,18 +195,12 @@ public class ProjectStatusTypeListFragment extends Fragment implements PageFragm
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mListener = (ProjectStatusTypeListListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Host " + activity.getLocalClassName()
-                    + " must implement TaskStatusListListener");
-        }
+
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
 
@@ -225,6 +218,7 @@ public class ProjectStatusTypeListFragment extends Fragment implements PageFragm
     @Override
     public void animateHeroHeight() {
         Util.fadeIn(heroView);
+        Util.rotateViewWithDelay(getActivity(),fab,500,1000, null);
     }
 
     public void addProjectStatusType(ProjectStatusTypeDTO status) {
@@ -314,11 +308,6 @@ public class ProjectStatusTypeListFragment extends Fragment implements PageFragm
 
     }
 
-    public interface ProjectStatusTypeListListener {
-        public void onProjectStatusTypeClicked(ProjectStatusTypeDTO statusType);
-
-        public void onNewProjectStatusTypeRequested();
-    }
 
     List<ProjectStatusTypeDTO> projectStatusTypeList;
     ProjectStatusTypeAdapter adapter;
