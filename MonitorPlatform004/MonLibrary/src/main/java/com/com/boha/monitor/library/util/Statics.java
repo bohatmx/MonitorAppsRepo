@@ -11,18 +11,19 @@ public class Statics {
 
     /*
      * REMOTE URL - bohamaker back end - production
+     * 68.169.60.130
      */
 
-    public static final String WEBSOCKET_URL = "ws://68.169.60.130:3030/mwp/";
-    public static final String URL = "http://68.169.60.130:3030/mwp/";
-    public static final String IMAGE_URL = "http://68.169.60.130:3030/monitor_images/";
-    public static final String PDF_URL = "http://68.169.60.130:3030/monitor_documents/";
+    public static final String WEBSOCKET_URL = "ws://bohamaker.com:3030/mwp/";
+    public static final String URL = "http://bohamaker.com:3030/mwp/";
+    public static final String IMAGE_URL = "http://bohamaker.com:3030/monitor_images/";
+    public static final String PDF_URL = "http://bohamaker.com:3030/monitor_documents/";
 
     //pecanwood
-//    public static final String WEBSOCKET_URL = "ws://192.168.1.111:8080/mwp/";
-//    public static final String URL = "http://192.168.1.111:8080/mwp/";
-//    public static final String IMAGE_URL = "http://192.168.1.111:8080/monitor_images/";
-//    public static final String PDF_URL = "http://192.168.1.111:8080/monitor_documents/";
+//    public static final String WEBSOCKET_URL = "ws://192.168.1.30:8080/mwp/";
+//    public static final String URL = "http://192.168.1.30:8080/mwp/";
+//    public static final String IMAGE_URL = "http://192.168.1.30:8080/monitor_images/";
+//    public static final String PDF_URL = "http://192.168.1.30:8080/monitor_documents/";
 
 //codetribe
 

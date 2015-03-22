@@ -26,7 +26,7 @@
             android:src="@drawable/banner_construction13"
             android:scaleType="centerCrop"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="@dimen/mon_hero_height_medium" />
 
         </RelativeLayout>
 
@@ -38,13 +38,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <include
-            layout="@layout/traffic_lights"
-            android:id="@+id/AST_lights" />
+
 
         <RelativeLayout
             android:id="@+id/AST_cameraLayout"
-            android:layout_below="@id/AST_lights"
             android:background="@color/translucent_red"
             android:padding="@dimen/mon_margin"
             android:layout_width="match_parent"
@@ -72,18 +69,9 @@
 
     </RelativeLayout>
 
+
     <RelativeLayout
-        android:id="@+id/AST_subs"
         android:layout_below="@id/AST_middle"
-        android:background="@color/white"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <include layout="@layout/fragment_assign_site_subtasks" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_below="@id/AST_subs"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -101,7 +89,7 @@
         android:id="@+id/AST_number"
         style="@style/BlackCircle"
         android:text="99"
-        android:layout_marginTop="@dimen/mon_margin"
+        android:layout_marginTop="@dimen/mon_hero_height_medium_lite"
         android:layout_marginLeft="@dimen/mon_padding"
         android:layout_alignParentLeft="true"
         android:layout_width="wrap_content"
@@ -112,5 +100,13 @@
         android:layout_margin="@dimen/mon_wide"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+    <RelativeLayout
+        android:layout_marginTop="@dimen/mon_widest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include
+            layout="@layout/traffic_lights"
+            android:id="@+id/AST_lights" />
+        </RelativeLayout>
 
 </RelativeLayout>

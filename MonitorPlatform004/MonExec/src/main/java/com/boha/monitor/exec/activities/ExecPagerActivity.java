@@ -250,11 +250,11 @@ public class ExecPagerActivity extends ActionBarActivity implements
             return true;
         }
         if (id == R.id.action_refresh) {
-            WebCheckResult r = WebCheck.checkNetworkAvailability(ctx);
-            if (!r.isWifiConnected()) {
-                Util.showToast(ctx,getString(R.string.connect_wifi));
-                return true;
-            }
+//            WebCheckResult r = WebCheck.checkNetworkAvailability(ctx);
+//            if (!r.isWifiConnected()) {
+//                Util.showToast(ctx,getString(R.string.connect_wifi));
+//                return true;
+//            }
             getCompanyData();
             return true;
         }

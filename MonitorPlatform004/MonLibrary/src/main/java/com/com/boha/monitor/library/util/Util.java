@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -20,6 +21,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v7.app.ActionBar;
 import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -45,6 +47,9 @@ import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -57,6 +62,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 public class Util {
@@ -67,6 +73,74 @@ public class Util {
 
     public interface UtilPopupListener {
         public void onItemSelected(int index);
+    }
+
+    public static Bitmap createBitmapFromView(Context context, View view, DisplayMetrics displayMetrics) {
+        view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        view.layout(0, 0, displayMetrics.widthPixels,
+                displayMetrics.heightPixels);
+        view.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(),
+                view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        return bitmap;
+    }
+
+    public static void setCustomActionBar(Context ctx,
+                                          ActionBar actionBar, String text, Drawable image) {
+        actionBar.setDisplayShowCustomEnabled(true);
+
+        LayoutInflater inflator = (LayoutInflater)
+                ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = inflator.inflate(R.layout.action_bar_logo, null);
+        TextView txt = (TextView) v.findViewById(R.id.ACTION_BAR_text);
+        ImageView logo = (ImageView) v.findViewById(R.id.ACTION_BAR_logo);
+        txt.setText(text);
+        //
+        logo.setImageDrawable(image);
+        actionBar.setCustomView(v);
+        actionBar.setTitle("");
+    }
+
+    public static void animateHeight(final View view, int maxHeight, int duration) {
+        ValueAnimator anim = ValueAnimator.ofInt(0, maxHeight);
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                int val = (Integer) valueAnimator.getAnimatedValue();
+                ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+                layoutParams.height = val;
+                view.setLayoutParams(layoutParams);
+            }
+        });
+        anim.setDuration(duration);
+        view.setVisibility(View.VISIBLE);
+        anim.start();
+    }
+
+    public static void fadeIn(View view) {
+
+        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 0.0f, 1f);
+        animator.setDuration(300);
+        animator.setInterpolator(new AccelerateInterpolator());
+        animator.start();
+    }
+
+    public static void fadeIn(View view, int duration) {
+
+        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 0.0f, 1f);
+        animator.setDuration(duration);
+        animator.setInterpolator(new AccelerateInterpolator());
+        animator.start();
+    }
+
+    public static void fadeOut(View view, int duration) {
+
+        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 1.0f, 0f);
+        animator.setDuration(duration);
+        animator.setInterpolator(new AccelerateInterpolator());
+        animator.start();
     }
 
     public static void showPopupBasic(Context ctx, Activity act,
@@ -88,6 +162,7 @@ public class Util {
         });
         pop.show();
     }
+
     public static int getPopupWidth(Activity activity) {
         DisplayMetrics displaymetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -95,9 +170,10 @@ public class Util {
         int width = displaymetrics.widthPixels;
         Double d = Double.valueOf("" + width);
         Double e = d / 1.5;
-        Log.w(LOG,"## popup width: " + e.intValue());
+        Log.w(LOG, "## popup width: " + e.intValue());
         return e.intValue();
     }
+
     public static int getPopupHorizontalOffset(Activity activity) {
         DisplayMetrics displaymetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -105,9 +181,10 @@ public class Util {
         int width = displaymetrics.widthPixels;
         Double d = Double.valueOf("" + width);
         Double e = d / 15;
-        Log.w(LOG,"## horizontalOffset: " + e.intValue());
+        Log.w(LOG, "## horizontalOffset: " + e.intValue());
         return e.intValue();
     }
+
     private static int getWindowWidth(Activity activity) {
         DisplayMetrics displaymetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -133,7 +210,7 @@ public class Util {
         if (caption != null) {
             txt.setText(caption);
         } else {
-            txt.setVisibility(View.GONE);
+            txt.setVisibility(View.INVISIBLE);
         }
         ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
         img.setImageDrawable(getRandomHeroImage(ctx));
@@ -155,7 +232,89 @@ public class Util {
                 }
             }
         });
-        pop.show();
+        try {
+            pop.show();
+        } catch (Exception e) {
+            Log.e(LOG, "-- popup failed, probably nullpointer", e);
+        }
+    }
+
+    static final Locale lox = Locale.getDefault();
+    static final SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy HH:mm", lox);
+
+    public static void showPopupStaffImage(final Context ctx, Activity act,
+                                           List<String> list,
+                                           Integer staffID,
+                                           Date date,
+                                           View anchorView, String caption,
+                                           final UtilPopupListener listener) {
+        final ListPopupWindow pop = new ListPopupWindow(act);
+        LayoutInflater inf = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = inf.inflate(R.layout.staff_image_popup, null);
+        TextView txt = (TextView) v.findViewById(R.id.HERO_caption);
+        TextView dt = (TextView) v.findViewById(R.id.HERO_date);
+        dt.setText(sdf.format(date));
+        if (caption != null) {
+            txt.setText(caption);
+        } else {
+            txt.setVisibility(View.INVISIBLE);
+        }
+        final ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
+        //
+        ImageLoader.getInstance().displayImage(getStaffImageURL(ctx, staffID), img, new ImageLoadingListener() {
+            @Override
+            public void onLoadingStarted(String s, View view) {
+
+            }
+
+            @Override
+            public void onLoadingFailed(String s, View view, FailReason failReason) {
+                img.setImageDrawable(getRandomHeroImage(ctx));
+            }
+
+            @Override
+            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
+
+            }
+
+            @Override
+            public void onLoadingCancelled(String s, View view) {
+                img.setImageDrawable(getRandomHeroImage(ctx));
+            }
+        });
+
+
+        pop.setPromptView(v);
+        pop.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
+        pop.setAdapter(new PopupListAdapter(ctx, R.layout.xxsimple_spinner_item,
+                list, false));
+        pop.setAnchorView(anchorView);
+        pop.setHorizontalOffset(getPopupHorizontalOffset(act));
+        pop.setModal(true);
+        pop.setWidth(getPopupWidth(act));
+        pop.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                pop.dismiss();
+                if (listener != null) {
+                    listener.onItemSelected(position);
+                }
+            }
+        });
+        try {
+            pop.show();
+        } catch (Exception e) {
+            Log.e(LOG,"popup failed", e);
+        }
+    }
+
+    public static String getStaffImageURL(Context ctx, Integer staffID) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(Statics.IMAGE_URL);
+        sb.append("company").append(SharedUtil.getCompany(ctx).getCompanyID());
+        sb.append("/companyStaff/t").append(staffID).append(".jpg");
+
+        return sb.toString();
     }
 
     public static void showPopup(Context ctx, Activity act,
@@ -397,7 +556,7 @@ public class Util {
         TextView txt = (TextView) view.findViewById(R.id.MONTOAST_text);
         TextView ind = (TextView) view.findViewById(R.id.MONTOAST_indicator);
         ind.setText("E");
-        Statics.setRobotoFontLight(ctx,txt);
+        Statics.setRobotoFontLight(ctx, txt);
         ind.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
         txt.setTextColor(ctx.getResources().getColor(R.color.absa_red));
         txt.setText(caption);
@@ -978,6 +1137,7 @@ public class Util {
         return ctx.getResources().getDrawable(
                 R.drawable.banner_report2);
     }
+
     public static Drawable getRandomHeroImage(Context ctx) {
         random = new Random(System.currentTimeMillis());
         int index = random.nextInt(17);
@@ -1040,6 +1200,7 @@ public class Util {
         return ctx.getResources().getDrawable(
                 R.drawable.banner_report2);
     }
+
     public static void writeLocationToExif(String filePath, Location loc) {
         try {
             ExifInterface ef = new ExifInterface(filePath);
@@ -1067,7 +1228,7 @@ public class Util {
         sOut = sOut + Integer.toString((int) coord) + "/1,";   // 105/1,59/1,
         coord = (coord % 1) * 60000;             // .259258 * 60000 = 15555
         sOut = sOut + Integer.toString((int) coord) + "/1000";   // 105/1,59/1,15555/1000
-       // Log.i(LOG, "decimalToDMS coord: " + coord + " converted to: " + sOut);
+        // Log.i(LOG, "decimalToDMS coord: " + coord + " converted to: " + sOut);
         return sOut;
     }
 
@@ -1130,7 +1291,7 @@ public class Util {
                                           final Context ctx, final Integer projectID,
                                           final ProjectDataRefreshListener listener) {
         if (activity == null || ctx == null) {
-            Log.e(LOG,"## activity passed in is null, exit");
+            Log.e(LOG, "## activity passed in is null, exit");
             return;
         }
         Log.i(LOG, "######## refreshProjectData started ....");

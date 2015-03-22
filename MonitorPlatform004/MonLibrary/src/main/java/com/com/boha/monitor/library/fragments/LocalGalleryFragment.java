@@ -44,7 +44,7 @@ public class LocalGalleryFragment extends Fragment implements PageFragment{
 
         if (getArguments() != null) {
             ResponseDTO r = (ResponseDTO)getArguments().getSerializable("response");
-            pathList = r.getSiteImageFileNameList();
+            pathList = r.getImageFileNameList();
 
         }
         adapter = new LocalPictureRecyclerAdapter(pathList,1,getActivity());
@@ -60,7 +60,7 @@ public class LocalGalleryFragment extends Fragment implements PageFragment{
         }
     }
     @Override
-    public void animateCounts() {
+    public void animateHeroHeight() {
 
     }
 }

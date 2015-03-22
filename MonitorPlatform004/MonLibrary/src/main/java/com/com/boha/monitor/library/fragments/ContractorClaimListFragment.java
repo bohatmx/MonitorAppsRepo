@@ -32,6 +32,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class ContractorClaimListFragment extends Fragment implements PageFragment {
 
     private ContractorClaimListListener mListener;
@@ -269,7 +270,7 @@ public class ContractorClaimListFragment extends Fragment implements PageFragmen
     }
 
     @Override
-    public void animateCounts() {
+    public void animateHeroHeight() {
         Util.animateRotationY(txtCount, 500);
 
     }

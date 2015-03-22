@@ -23,7 +23,7 @@ public class TaskStatusAdapter extends ArrayAdapter<TaskStatusDTO> {
     boolean isSmallIcons;
 
     public TaskStatusAdapter(Context context, int textViewResourceId,
-                             List<TaskStatusDTO> list,boolean isSmallIcons) {
+                             List<TaskStatusDTO> list, boolean isSmallIcons) {
         super(context, textViewResourceId, list);
         this.mLayoutRes = textViewResourceId;
         mList = list;
@@ -63,31 +63,19 @@ public class TaskStatusAdapter extends ArrayAdapter<TaskStatusDTO> {
         item.txtNumber.setText("" + (position + 1));
 
         final int color = p.getStatusColor();
-        if (isSmallIcons) {
-            switch (color) {
-                case TaskStatusDTO.STATUS_COLOR_GREEN:
-                    item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval_small));
-                    break;
-                case TaskStatusDTO.STATUS_COLOR_RED:
-                    item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
-                    break;
-                case TaskStatusDTO.STATUS_COLOR_YELLOW:
-                    item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
-                    break;
-            }
-        } else {
-            switch (color) {
-                case TaskStatusDTO.STATUS_COLOR_GREEN:
-                    item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval));
-                    break;
-                case TaskStatusDTO.STATUS_COLOR_RED:
-                    item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval));
-                    break;
-                case TaskStatusDTO.STATUS_COLOR_YELLOW:
-                    item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval));
-                    break;
-            }
+
+        switch (color) {
+            case TaskStatusDTO.STATUS_COLOR_GREEN:
+                item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval_small));
+                break;
+            case TaskStatusDTO.STATUS_COLOR_RED:
+                item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
+                break;
+            case TaskStatusDTO.STATUS_COLOR_AMBER:
+                item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xamber_oval_small));
+                break;
         }
+
 
         Statics.setRobotoFontLight(ctx, item.txtNumber);
         Statics.setRobotoFontLight(ctx, item.txtName);

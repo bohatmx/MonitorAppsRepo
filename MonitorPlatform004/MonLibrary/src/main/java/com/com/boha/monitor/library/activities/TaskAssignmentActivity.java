@@ -88,13 +88,13 @@ public class TaskAssignmentActivity extends ActionBarActivity implements
 
     }
 
-    @Override
-    public void onSubTaskStatusAssignmentRequested(ProjectSiteTaskDTO task) {
-        Intent w = new Intent(this, SubTaskStatusAssignmentActivity.class);
-        w.putExtra("projectSiteTask", task);
-        w.putExtra("projectSite", site);
-        startActivityForResult(w, SUBTASK_STATUS_ASSIGNMENT_REQUESTED);
-    }
+//    @Override
+//    public void onSubTaskStatusAssignmentRequested(ProjectSiteTaskDTO task) {
+//        Intent w = new Intent(this, SubTaskStatusAssignmentActivity.class);
+//        w.putExtra("projectSiteTask", task);
+//        w.putExtra("projectSite", site);
+//        startActivityForResult(w, SUBTASK_STATUS_ASSIGNMENT_REQUESTED);
+//    }
 
     static final int SUBTASK_STATUS_ASSIGNMENT_REQUESTED = 8133;
     @Override

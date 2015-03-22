@@ -31,7 +31,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.ErrorDialogFragment;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdate;
@@ -57,7 +56,6 @@ public class MonitorMapActivity extends ActionBarActivity
         GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener {
 
-    LocationClient mLocationClient;
     GoogleMap googleMap;
     GoogleApiClient mGoogleApiClient;
     LocationRequest locationRequest;
@@ -93,9 +91,6 @@ public class MonitorMapActivity extends ActionBarActivity
         projectSite = (ProjectSiteDTO) getIntent().getSerializableExtra("projectSite");
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
         index = getIntent().getIntExtra("index", 0);
-
-        mLocationClient = new LocationClient(getApplicationContext(), this,
-                this);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         text = (TextView) findViewById(R.id.text);
@@ -127,15 +122,22 @@ public class MonitorMapActivity extends ActionBarActivity
     private void setGoogleMap() {
         googleMap.setMyLocationEnabled(true);
         googleMap.setBuildingsEnabled(true);
-        //TODO - remove after test
-        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+
+        googleMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
             @Override
-            public void onMapClick(LatLng latLng) {
-                location.setLatitude(latLng.latitude);
-                location.setLongitude(latLng.longitude);
-                Log.w(LOG, "********* onMapClick");
+            public void onMyLocationChange(Location loc) {
+                location = loc;
             }
         });
+        //TODO - remove after test
+//        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+//            @Override
+//            public void onMapClick(LatLng latLng) {
+//                location.setLatitude(latLng.latitude);
+//                location.setLongitude(latLng.longitude);
+//                Log.w(LOG, "********* onMapClick");
+//            }
+//        });
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -164,10 +166,6 @@ public class MonitorMapActivity extends ActionBarActivity
                 finish();
             } else {
                 setOneMarker();
-                if (projectSite.getLocationConfirmed() == null && !toastHasBeenShown) {
-                    Util.showToast(ctx, getString(R.string.tap_site));
-                    toastHasBeenShown = true;
-                }
             }
         }
         if (project != null) {
@@ -195,10 +193,11 @@ public class MonitorMapActivity extends ActionBarActivity
                         text.setText(project.getProjectName() + " - Sites (" + project.getProjectSiteList().size() + ")");
                     }
                 }
-                WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
-                if (wcr.isWifiConnected()) {
-                    refreshProjectData();
-                }
+                refreshProjectData();
+//                WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
+//                if (wcr.isWifiConnected()) {
+//                    refreshProjectData();
+//                }
             }
 
             @Override
@@ -266,21 +265,8 @@ public class MonitorMapActivity extends ActionBarActivity
     private void setProjectMarkers() {
         googleMap.clear();
         LatLng point = null;
-        int index = 0, count = 0, randomIndex = 0;
-        randomIndex = random.nextInt(project.getProjectSiteList().size() - 1);
-        if (randomIndex == -1) randomIndex = 0;
+        int index = 0, count = 0;
 
-        if (project.getProjectSiteList().get(randomIndex).getLatitude() == null) {
-            for (ProjectSiteDTO s: project.getProjectSiteList()) {
-                if (s.getLatitude() != null) {
-                   point = new LatLng(s.getLatitude(), s.getLongitude());
-                    break;
-                }
-            }
-        } else {
-            point = new LatLng(project.getProjectSiteList().get(randomIndex).getLatitude(),
-                    project.getProjectSiteList().get(randomIndex).getLongitude());
-        }
         for (ProjectSiteDTO site : project.getProjectSiteList()) {
             if (site.getLatitude() == null) continue;
             LatLng pnt = new LatLng(site.getLatitude(), site.getLongitude());
@@ -296,7 +282,7 @@ public class MonitorMapActivity extends ActionBarActivity
                     case TaskStatusDTO.STATUS_COLOR_GREEN:
                         desc = BitmapDescriptorFactory.fromResource(R.drawable.dot_green);
                         break;
-                    case TaskStatusDTO.STATUS_COLOR_YELLOW:
+                    case TaskStatusDTO.STATUS_COLOR_AMBER:
                         desc = BitmapDescriptorFactory.fromResource(R.drawable.dot_yellow);
                         break;
                 }
@@ -326,7 +312,6 @@ public class MonitorMapActivity extends ActionBarActivity
                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
 
                 txtCount.setText("" + markers.size());
-                //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 1.0f));
                 googleMap.animateCamera(cu);
                 setTitle(project.getProjectName());
             }
@@ -439,8 +424,7 @@ public class MonitorMapActivity extends ActionBarActivity
     }
 
     private void getSiteData() {
-        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
-        if (wcr.isWifiConnected()) {
+
             RequestDTO w = new RequestDTO(RequestDTO.GET_SITE_STATUS);
             w.setProjectSiteID(projectSite.getProjectSiteID());
             progressBar.setVisibility(View.VISIBLE);
@@ -478,9 +462,7 @@ public class MonitorMapActivity extends ActionBarActivity
 
                 }
             });
-        } else {
-            Util.showToast(ctx,ctx.getString(R.string.connect_wifi));
-        }
+
     }
 
     private void startDirectionsMap(double lat, double lng) {
@@ -524,7 +506,6 @@ public class MonitorMapActivity extends ActionBarActivity
         Log.e(LOG, "################ onStart .... connect API and location clients ");
         if (!mResolvingError) {  // more about this later
             //mGoogleApiClient.connect();
-            mLocationClient.connect();
         }
 
     }
@@ -534,7 +515,6 @@ public class MonitorMapActivity extends ActionBarActivity
         Log.w(LOG, "############## onStop stopping google service clients");
         try {
             //mGoogleApiClient.disconnect();
-            mLocationClient.disconnect();
         } catch (Exception e) {
             Log.e(LOG, "Failed to Stop something", e);
         }
@@ -544,13 +524,7 @@ public class MonitorMapActivity extends ActionBarActivity
     @Override
     public void onConnected(Bundle bundle) {
         Log.e(LOG, "########### onConnected .... what is in the bundle...?");
-        location = mLocationClient.getLastLocation();
 
-        locationRequest = new LocationRequest();
-        locationRequest.setFastestInterval(FIVE_MINUTES);
-        locationRequest.setInterval(ONE_MINUTE);
-
-        mLocationClient.requestLocationUpdates(locationRequest, this);
 
     }
 

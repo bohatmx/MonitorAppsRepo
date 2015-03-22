@@ -27,10 +27,9 @@ import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
+import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
-import com.com.boha.monitor.library.util.WebCheck;
-import com.com.boha.monitor.library.util.WebCheckResult;
 import com.com.boha.monitor.library.util.WebSocketUtil;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 
@@ -69,13 +68,14 @@ public class StatusReportFragment extends Fragment implements PageFragment {
     ImageView heroImage;
     ProjectSiteDTO projectSite;
     ProjectDTO project;
-    TextView txtProject, txtTitle;
+    TextView txtTitle;
+    Button btnProject;
     ListView listView;
     LayoutInflater inflater;
     StatusReportAdapter adapter;
     Button btnStart, btnEnd;
     Date startDate, endDate;
-    View view, handle;
+    View view, handle, topView;
     static final Locale locale = Locale.getDefault();
     static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", locale);
     List<ProjectDTO> projectList;
@@ -97,9 +97,22 @@ public class StatusReportFragment extends Fragment implements PageFragment {
                 return view;
             }
             projectList = r.getCompany().getProjectList();
-            if (projectList != null && !projectList.isEmpty()) {
-                project = projectList.get(0);
-                txtProject.setText(project.getProjectName());
+            Integer projectID = SharedUtil.getLastProjectID(ctx);
+            if (projectID != null) {
+                for (ProjectDTO dto : projectList) {
+                    if (dto.getProjectID().intValue() == projectID.intValue()) {
+                        project = dto;
+                        btnProject.setText(project.getProjectName());
+                        getCachedStatus();
+                        break;
+                    }
+                }
+            } else {
+                if (projectList != null && !projectList.isEmpty()) {
+                    project = projectList.get(0);
+                    btnProject.setText(project.getProjectName());
+                    getCachedStatus();
+                }
             }
         }
 
@@ -124,7 +137,8 @@ public class StatusReportFragment extends Fragment implements PageFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 project = projectList.get(position);
-                txtProject.setText(project.getProjectName());
+                SharedUtil.saveLastProjectID(ctx, project.getProjectID());
+                btnProject.setText(project.getProjectName());
                 getProjectStatus();
                 popupWindow.dismiss();
             }
@@ -134,10 +148,12 @@ public class StatusReportFragment extends Fragment implements PageFragment {
 
     private void setFields() {
         handle = view.findViewById(R.id.STATLST_handle);
+        topView = view.findViewById(R.id.STATLST_topView);
         progressBar = (ProgressBar) view.findViewById(R.id.STATLST_progress);
+        progressBar.setVisibility(View.GONE);
         listView = (ListView) view.findViewById(R.id.STATLST_list);
         heroImage = (ImageView) view.findViewById(R.id.STATLST_heroImage);
-        txtProject = (TextView) view.findViewById(R.id.STATLST_project);
+        btnProject = (Button) view.findViewById(R.id.STATLST_btnProject);
         txtCount = (TextView) view.findViewById(R.id.STATLST_txtCount);
         txtTitle = (TextView) view.findViewById(R.id.STATLST_txtTitle);
         btnEnd = (Button) view.findViewById(R.id.STATLST_endDate);
@@ -146,32 +162,28 @@ public class StatusReportFragment extends Fragment implements PageFragment {
 
         heroImage.setImageDrawable(Util.getRandomHeroImage(ctx));
 
-        Statics.setRobotoFontLight(ctx, txtProject);
+        Statics.setRobotoFontLight(ctx, btnProject);
         Statics.setRobotoFontBold(ctx, btnEnd);
         Statics.setRobotoFontBold(ctx, btnStart);
-        Statics.setRobotoFontLight(ctx, txtTitle);
+//        Statics.setRobotoFontLight(ctx, txtTitle);
         setDates();
 
-        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
-        if (wcr.isWifiConnected()) {
-            btnEnd.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    isStartDate = false;
-                    showDateDialog();
-                }
-            });
-            btnStart.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    isStartDate = true;
-                    showDateDialog();
-                }
-            });
-        } else {
-            btnEnd.setEnabled(false);
-            btnStart.setEnabled(false);
-        }
+
+        btnEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isStartDate = false;
+                showDateDialog();
+            }
+        });
+        btnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isStartDate = true;
+                showDateDialog();
+            }
+        });
+
 
         txtCount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,10 +198,15 @@ public class StatusReportFragment extends Fragment implements PageFragment {
 
             }
         });
-        txtProject.setOnClickListener(new View.OnClickListener() {
+        btnProject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPopup();
+                Util.flashOnce(btnProject, 200, new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        showPopup();
+                    }
+                });
             }
         });
 
@@ -198,12 +215,8 @@ public class StatusReportFragment extends Fragment implements PageFragment {
     boolean isStartDate;
     List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList;
 
-    private void getProjectStatus() {
-        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx, true);
-        if (!wcr.isWifiConnected()) {
-            Util.showToast(ctx, ctx.getString(R.string.connect_wifi));
-            return;
-        }
+    public void getProjectStatus() {
+
         final long start = System.currentTimeMillis();
         RequestDTO w = new RequestDTO(RequestDTO.GET_PROJECT_STATUS_IN_PERIOD);
         w.setProjectID(project.getProjectID());
@@ -225,16 +238,12 @@ public class StatusReportFragment extends Fragment implements PageFragment {
                         }
                         projectSiteTaskStatusList = response.getProjectSiteTaskStatusList();
                         long end = System.currentTimeMillis();
-                        Log.e(LOG, "######### project status call took: " + Util.getElapsed(start, end) + " seconds" +
+                        Log.e(LOG, "######### project status call, took: " + Util.getElapsed(start, end) + " seconds" +
                                 " - statusCount: " + projectSiteTaskStatusList.size());
 
-                        if (projectSiteTaskStatusList.isEmpty()) {
-                            txtCount.setText("0");
-                            Util.showToast(ctx, act.getString(R.string.no_status));
-                            return;
-                        } else {
-                            txtCount.setText("" + projectSiteTaskStatusList.size());
-                        }
+
+                        txtCount.setText("" + projectSiteTaskStatusList.size());
+
                         setList();
                         response.setStartDate(startDate);
                         response.setEndDate(endDate);
@@ -279,7 +288,9 @@ public class StatusReportFragment extends Fragment implements PageFragment {
 
     public void getCachedStatus() {
 
-        final WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
+        if (project == null) {
+            return;
+        }
         progressBar.setVisibility(View.VISIBLE);
         CacheUtil.getCachedProjectStatus(ctx, project.getProjectID(), new CacheUtil.CacheUtilListener() {
             @Override
@@ -287,22 +298,18 @@ public class StatusReportFragment extends Fragment implements PageFragment {
                 progressBar.setVisibility(View.GONE);
                 if (response != null) {
                     projectSiteTaskStatusList = response.getProjectSiteTaskStatusList();
-
-
                     if (response.getStartDate() != null) {
                         btnStart.setText(sdf.format(response.getStartDate()));
                         btnEnd.setText(sdf.format(response.getEndDate()));
+                        startDate = response.getStartDate();
+                        endDate = response.getEndDate();
                     }
                     txtCount.setText("" + projectSiteTaskStatusList.size());
                     setList();
-                    Util.expand(heroImage,1000,null);
+                    animateHeroHeight();
                 }
-                if (wcr.isWifiConnected()) {
-                    setDates();
-                    getProjectStatus();
-                } else {
-                    Util.showToast(ctx, ctx.getString(R.string.connect_wifi));
-                }
+                setDates();
+
             }
 
             @Override
@@ -323,6 +330,27 @@ public class StatusReportFragment extends Fragment implements PageFragment {
         txtCount.setText("" + projectSiteTaskStatusList.size());
         adapter = new StatusReportAdapter(ctx, R.layout.status_report_card, projectSiteTaskStatusList, false);
         listView.setAdapter(adapter);
+//        listView.setOnScrollListener(new AbsListView.OnScrollListener(){
+//            int mLastFirstVisibleItem = 0;
+//            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+//                if (view.getId() == listView.getId()) {
+//                    final int currentFirstVisibleItem = listView.getFirstVisiblePosition();
+//
+//                    if (currentFirstVisibleItem > mLastFirstVisibleItem) {
+//                        //Util.collapse(topView,300, null);
+//                        topView.setVisibility(View.GONE);
+//                    } else if (currentFirstVisibleItem < mLastFirstVisibleItem) {
+//                        //Util.expand(topView,300,null);
+//                        topView.setVisibility(View.VISIBLE);
+//                    }
+//
+//                    mLastFirstVisibleItem = currentFirstVisibleItem;
+//                }
+//            }
+//            public void onScrollStateChanged(AbsListView view, int scrollState) {
+//                final ListView lw = listView;
+//            }
+//        });
 
     }
 
@@ -357,8 +385,8 @@ public class StatusReportFragment extends Fragment implements PageFragment {
 
                         if (isStartDate) {
                             calendar.set(Calendar.HOUR_OF_DAY, 0);
-                            calendar.set(Calendar.MINUTE,0);
-                            calendar.set(Calendar.SECOND,0);
+                            calendar.set(Calendar.MINUTE, 0);
+                            calendar.set(Calendar.SECOND, 0);
                             startDate = calendar.getTime();
                         } else {
                             endDate = calendar.getTime();
@@ -389,9 +417,8 @@ public class StatusReportFragment extends Fragment implements PageFragment {
     }
 
     private void setDates() {
-        //set dates, use week (7days) as default range
         DateTime now = new DateTime();
-        DateTime then = now.minusDays(7);
+        DateTime then = now.minusDays(30);
 
         if (startDate == null) {
             then = then.withHourOfDay(0);
@@ -400,6 +427,10 @@ public class StatusReportFragment extends Fragment implements PageFragment {
             startDate = then.toDate();
         }
         if (endDate == null) {
+            now = now.withHourOfDay(23);
+            now = now.withMinuteOfHour(59);
+            now = now.withSecondOfMinute(59);
+
             endDate = now.toDate();
         }
         btnStart.setText(sdf.format(startDate));
@@ -419,13 +450,12 @@ public class StatusReportFragment extends Fragment implements PageFragment {
     }
 
     TaskDTO task;
-    int staffType;
-    public static final int OPERATIONS = 1, PROJECT_MANAGER = 2, SITE_SUPERVISOR = 3;
     static final String LOG = StatusReportFragment.class.getSimpleName();
 
     @Override
-    public void animateCounts() {
+    public void animateHeroHeight() {
         Util.animateRotationY(txtCount, 500);
+        Util.fadeIn(topView);
 
     }
 

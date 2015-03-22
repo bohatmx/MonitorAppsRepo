@@ -1,7 +1,9 @@
 package com.com.boha.monitor.library.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,9 +14,9 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListPopupWindow;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
@@ -29,13 +31,11 @@ import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
+import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
-import com.com.boha.monitor.library.util.WebCheck;
-import com.com.boha.monitor.library.util.WebCheckResult;
 import com.com.boha.monitor.library.util.WebSocketUtil;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,11 +67,12 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
     }
 
     Context ctx;
-    TextView txtCount, txtName;
+    TextView txtCount, txtName, txtSubTitle;
     Integer lastIndex;
-    View view, topView, handle, searchLayout;
-    ImageView imgSearch1, imgSearch2, heroImage;
-    EditText editSearch;
+    View view, topView, handle, searchLayout, editorLayout, fab;
+    ImageView imgSearch, fabIcon;
+    EditText editSearch, editName;
+    Button btnSave;
 
     static final String LOG = ProjectSiteListFragment.class.getSimpleName();
 
@@ -102,18 +103,25 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
     }
 
     private void setFields() {
-        txtCount = (TextView) view.findViewById(R.id.SITE_LIST_siteCount);
-        topView = view.findViewById(R.id.SITE_LIST_TOP);
+        fabIcon = (ImageView)view.findViewById(R.id.FAB_icon);
+        editorLayout = view.findViewById(R.id.SITE_LIST_editor);
+        editorLayout.setVisibility(View.GONE);
+        fab = view.findViewById(R.id.FAB);
+        txtCount = (TextView) view.findViewById(R.id.SLT_siteCount);
+        txtSubTitle = (TextView) view.findViewById(R.id.SLT_subtitle);
+        txtSubTitle.setText(project.getProjectName());
+        topView = view.findViewById(R.id.SLT_heroLayout);
+        topView.setVisibility(View.GONE);
         handle = view.findViewById(R.id.SITE_LIST_handle);
         searchLayout = view.findViewById(R.id.SLT_searchLayout);
+        btnSave = (Button) view.findViewById(R.id.SITE_LIST_btnSave);
 
-        imgSearch1 = (ImageView) view.findViewById(R.id.SLT_imgSearch1);
-        imgSearch2 = (ImageView) view.findViewById(R.id.SLT_imgSearch2);
+        imgSearch = (ImageView) view.findViewById(R.id.SLT_imgSearch);
         editSearch = (EditText) view.findViewById(R.id.SLT_editSearch);
-        heroImage = (ImageView) view.findViewById(R.id.SLT_heroImage);
-        heroImage.setImageDrawable(Util.getRandomHeroImage(ctx));
+        editName = (EditText) view.findViewById(R.id.SITE_LIST_editName);
 
-        imgSearch2.setOnClickListener(new View.OnClickListener() {
+
+        imgSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 search();
@@ -121,8 +129,91 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         });
 
         mListView = (AbsListView) view.findViewById(R.id.SLT_list);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.flashOnce(fab,300,new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        isUpdate = false;
+                        if (editorLayout.getVisibility() == View.GONE) {
+                            fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_overflow));
+                            Util.expand(editorLayout,500, null);
+                        } else {
+                            fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_new));
+                            Util.collapse(editorLayout,500,null);
+                        }
+                    }
+                });
+            }
+        });
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.flashOnce(btnSave,300,new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        sendData();
+                    }
+                });
+            }
+        });
+
+
     }
 
+    boolean isUpdate;
+    private void sendData() {
+
+        if (editName.getText().toString().isEmpty()) {
+            Util.showErrorToast(ctx, ctx.getString(R.string.enter_site));
+            return;
+        }
+        ProjectSiteDTO site = new ProjectSiteDTO();
+        site.setProjectID(project.getProjectID());
+        site.setProjectSiteName(editName.getText().toString());
+
+        RequestDTO req;
+        if (isUpdate) {
+            req = new RequestDTO(RequestDTO.UPDATE_PROJECT_SITE);
+            site.setProjectSiteID(projectSite.getProjectSiteID());
+
+        } else {
+            req = new RequestDTO(RequestDTO.REGISTER_PROJECT_SITE);
+        }
+        req.setProjectSite(site);
+
+        NetUtil.sendRequest(ctx,req, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!isUpdate) {
+                            addProjectSite(response.getProjectSiteList().get(0));
+                        }
+                        Util.collapse(editorLayout,500,null);
+                        fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_new));
+                    }
+                });
+            }
+
+            @Override
+            public void onError(final String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Util.showErrorToast(ctx,message);
+                    }
+                });
+            }
+
+            @Override
+            public void onWebSocketClose() {
+
+            }
+        });
+    }
     private void search() {
         if (editSearch.getText().toString().isEmpty()) {
             return;
@@ -145,6 +236,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         }
         hideKeyboard();
     }
+
     void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) ctx
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -169,7 +261,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
     }
 
     public void refresh(ProjectDTO project) {
-        Log.e(LOG,"++ on refresh of project data");
+        Log.e(LOG, "++ on refresh of project data");
         hideKeyboard();
         this.project = project;
         projectSiteList = project.getProjectSiteList();
@@ -181,61 +273,42 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         findLastSite();
     }
 
+    boolean firstTime;
     private void findLastSite() {
         Integer id = SharedUtil.getLastSiteID(ctx);
         int index = 0;
         if (id.intValue() > 0) {
 
-            for (ProjectSiteDTO site: projectSiteList) {
+            for (ProjectSiteDTO site : projectSiteList) {
                 if (id.intValue() == site.getProjectSiteID().intValue()) {
-                    Log.i(LOG,"## found last project site: " + site.getProjectSiteName() + " - index: " + index);
+                    Log.i(LOG, "## found last project site: " + site.getProjectSiteName() + " - index: " + index);
                     break;
                 }
                 index++;
             }
         }
         mListView.setSelection(index);
+        firstTime = true;
     }
+
     private void setList() {
         Log.i(LOG, "## setList");
         txtCount.setText("" + projectSiteList.size());
         Collections.sort(projectSiteList);
-        if (projectSiteList.size() > 10) {
-            searchLayout.setVisibility(View.VISIBLE);
-        } else {
-            searchLayout.setVisibility(View.GONE);
+        projectSiteAdapter = new ProjectSiteAdapter(ctx, R.layout.site_item,
+                projectSiteList, new ProjectSiteAdapter.ProjectSiteListener() {
+            @Override
+            public void onProjectSiteClicked(ProjectSiteDTO site, int index) {
+                projectSite = site;
+                lastIndex = index;
+                SharedUtil.saveLastSiteID(ctx, projectSite.getProjectSiteID());
+                showPopup();
+            }
+        });
+        if (projectSiteList.size() < 10) {
+            //searchLayout.setVisibility(View.GONE);
         }
-        long x = ImageLoader.getInstance().getDiskCache().getDirectory().listFiles().length;
-        Log.d(LOG, "%%%%%%%% ImageLoader getDiskCache files: " + x);
-        final WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx, true);
-        if (!wcr.isWifiConnected()) {
-            projectSiteAdapter = new ProjectSiteAdapter(ctx, R.layout.site_item,
-                    projectSiteList, wcr, new ProjectSiteAdapter.ProjectSiteListener() {
-                @Override
-                public void onProjectSiteClicked(ProjectSiteDTO site, int index) {
-                    projectSite = site;
-                    lastIndex = index;
-                    SharedUtil.saveLastSiteID(ctx,projectSite.getProjectSiteID());
-                    showPopup();
-                }
-            });
-            setActualList(projectSiteAdapter);
-
-        } else {
-            projectSiteAdapter = new ProjectSiteAdapter(ctx, R.layout.site_item,
-                    projectSiteList, wcr, new ProjectSiteAdapter.ProjectSiteListener() {
-                @Override
-                public void onProjectSiteClicked(ProjectSiteDTO site, int index) {
-                    projectSite = site;
-                    lastIndex = index;
-                    SharedUtil.saveLastSiteID(ctx,projectSite.getProjectSiteID());
-                    showPopup();
-                }
-            });
-            setActualList(projectSiteAdapter);
-
-        }
-       // Util.expand(heroImage,1000,null);
+        setActualList(projectSiteAdapter);
 
     }
 
@@ -249,12 +322,13 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
                 if (null != mListener) {
                     lastIndex = position;
                     projectSite = projectSiteList.get(position);
-                    SharedUtil.saveLastSiteID(ctx,projectSite.getProjectSiteID());
+                    SharedUtil.saveLastSiteID(ctx, projectSite.getProjectSiteID());
                     Log.d(LOG, "######## mListView onItemClick, projectSiteID: " + projectSite.getProjectSiteID());
                     showPopup();
                 }
             }
         });
+        animateHeroHeight();
 
     }
 
@@ -273,10 +347,11 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         if (projectSite.getStatusCount() != null && projectSite.getStatusCount().intValue() != 0) {
             list.add(ctx.getString(R.string.status_report));
         }
+        list.add(ctx.getString(R.string.edit_site));
 
 
-        Util.showPopupBasicWithHeroImage(ctx, getActivity(), list, handle, ctx.getString(R.string.site_colon)
-                + projectSite.getProjectSiteName(), new Util.UtilPopupListener() {
+        Util.showPopupBasicWithHeroImage(ctx, getActivity(), list, handle,
+                 projectSite.getProjectSiteName(), new Util.UtilPopupListener() {
             @Override
             public void onItemSelected(int index) {
                 if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.sitestatus))) {
@@ -292,12 +367,19 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
                     mListener.onSiteOnMapRequested(projectSite, lastIndex);
                 }
                 if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.get_gps))) {
-                    mListener.onGPSRequested(projectSite, lastIndex);
+                    confirmPosition();
                 }
                 if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.status_report))) {
                     Intent i = new Intent(ctx, SiteStatusReportActivity.class);
                     i.putExtra("projectSite", projectSite);
                     startActivity(i);
+                }
+
+                if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.edit_site))) {
+                    editName.setText(projectSite.getProjectSiteName());
+                    fabIcon.setImageDrawable(ctx.getResources()
+                            .getDrawable(R.drawable.ic_action_overflow));
+                    Util.expand(editorLayout,500, null);
                 }
 
             }
@@ -306,10 +388,28 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
 
     }
 
+    private void confirmPosition() {
+        AlertDialog.Builder dg = new AlertDialog.Builder(ctx);
+        dg.setTitle("Confirm Position")
+                .setMessage("Are you standing at the centre of the site or as close as you can get?")
+                .setIcon(ctx.getResources().getDrawable(R.drawable.ic_action_globe))
+                .setPositiveButton(ctx.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mListener.onGPSRequested(projectSite, lastIndex);
+                    }
+                })
+                .setNegativeButton(ctx.getString(R.string.no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+    }
 
     int index;
     List<String> list, currentSessionPhotos;
-    ListPopupWindow actionsWindow;
     int newStatusJustDone;
 
     public void refreshData(ResponseDTO resp) {
@@ -350,7 +450,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
     public void findUnconfirmedSites() {
         int index = 0;
         boolean isFound = false;
-        for (ProjectSiteDTO s: projectSiteList) {
+        for (ProjectSiteDTO s : projectSiteList) {
             if (s.getLocationConfirmed() == null) {
                 isFound = true;
                 break;
@@ -370,10 +470,6 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         w.setRequestType(RequestDTO.GET_SITE_IMAGES);
         w.setProjectSiteID(projectSite.getProjectSiteID());
 
-        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
-        if (!wcr.isWifiConnected()) {
-            return;
-        }
         WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO response) {
@@ -515,8 +611,10 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
     }
 
     @Override
-    public void animateCounts() {
-        Util.animateRotationY(txtCount, 500);
+    public void animateHeroHeight() {
+        int height = topView.getLayoutParams().height;
+        Log.e(LOG,"## topView height: " + height);
+        Util.animateHeight(topView,height,1000);
 
     }
 

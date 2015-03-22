@@ -27,7 +27,7 @@ public class StatusWall {
         for (ProjectSiteTaskStatusDTO status: statusList) {
             TextView txt = (TextView) i.inflate(R.layout.status_text, null);
             switch (status.getTaskStatus().getStatusColor()) {
-                case TaskStatusDTO.STATUS_COLOR_YELLOW:
+                case TaskStatusDTO.STATUS_COLOR_AMBER:
                     txt.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
                     break;
                 case TaskStatusDTO.STATUS_COLOR_RED:

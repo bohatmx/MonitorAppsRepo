@@ -24,7 +24,7 @@
             android:scaleType="centerCrop"
             android:alpha="0.5"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/mon_hero_height_small" />
+            android:layout_height="@dimen/mon_hero_height_medium" />
 
         <RelativeLayout
             android:id="@+id/REG_ediLayout"

@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@color/grey"
-    android:padding="@dimen/mon_padding"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/FTL_top"
-        android:background="@color/white"
+        android:background="@color/indian_red"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/mon_hero_height_medium">
 
-        <ImageView
-            android:id="@+id/FTL_hero"
-            android:src="@drawable/banner_construction11"
-            android:scaleType="centerCrop"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/mon_hero_height_small" />
 
         <TextView
             android:id="@+id/FTL_title"
             android:text="@string/tasks"
-            style="@style/Title2TextStyleBlack"
+            style="@style/Title1TextStyleWhite"
             android:layout_marginTop="@dimen/mon_wider"
-            android:layout_marginLeft="@dimen/mon_padding"
+            android:layout_marginLeft="@dimen/mon_wide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/FTL_subtitle"
+            android:text="List of tasks to be monitored by staff"
+            style="@style/TextStyle"
+            android:layout_below="@id/FTL_title"
+            android:layout_alignLeft="@id/FTL_title"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -34,32 +36,31 @@
 
     <RelativeLayout
         android:id="@+id/FTL_editLayout"
-        android:layout_marginTop="@dimen/mon_divider"
         android:layout_below="@id/FTL_top"
-        android:background="@color/white"
+        android:background="@color/beige_pale"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <include layout="@layout/task_edit"/>
 
     </RelativeLayout>
     <ListView
         android:id="@+id/FTL_list"
-        android:layout_marginTop="@dimen/mon_padding"
         android:background="@color/white"
         android:layout_below="@id/FTL_editLayout"
         android:dividerHeight="@dimen/mon_divider"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <TextView
-        android:id="@+id/FTL_count"
-        style="@style/BlackCircle"
-        android:text="00"
-        android:layout_marginTop="@dimen/mon_wider"
+    <RelativeLayout
+        android:layout_marginTop="@dimen/mon_hero_height_medium_lite"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/mon_padding"
+        android:layout_marginRight="@dimen/mon_margin"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content" >
+
+        <include layout="@layout/fab_red"/>
+
+        </RelativeLayout>
 
 </RelativeLayout>

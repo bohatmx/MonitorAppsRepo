@@ -27,8 +27,6 @@ import com.com.boha.monitor.library.util.ErrorUtil;
 import com.com.boha.monitor.library.util.RequestCacheUtil;
 import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
-import com.com.boha.monitor.library.util.WebCheck;
-import com.com.boha.monitor.library.util.WebCheckResult;
 import com.com.boha.monitor.library.util.WebSocketUtil;
 
 import java.text.DecimalFormat;
@@ -37,7 +35,7 @@ import java.text.DecimalFormat;
 public class GPSScanFragment extends Fragment implements PageFragment {
 
     @Override
-    public void animateCounts() {
+    public void animateHeroHeight() {
 
     }
 
@@ -77,7 +75,8 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         }
     }
 
-    TextView desiredAccuracy, txtLat, txtLng, txtAccuracy, txtName;
+    TextView desiredAccuracy, txtLat, txtCount,
+            gpsMessage, txtLng, txtAccuracy, txtName;
     Button btnScan, btnSave;
     View view;
     SeekBar seekBar;
@@ -96,25 +95,21 @@ public class GPSScanFragment extends Fragment implements PageFragment {
 
         view = inflater.inflate(R.layout.fragment_gps, container, false);
         ctx = getActivity();
-
         setFields();
-        return view;
-    }
 
-    public void startScan() {
-        listener.onStartScanRequested();
-        txtAccuracy.setText("0.00");
+        btnScan.setText(ctx.getString(R.string.stop_scan));
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometer.start();
-        isScanning = true;
-        btnScan.setText(ctx.getString(R.string.stop_scan));
+
+        return view;
     }
     private void setFields() {
-
         desiredAccuracy = (TextView) view.findViewById(R.id.GPS_desiredAccuracy);
         txtAccuracy = (TextView) view.findViewById(R.id.GPS_accuracy);
         txtLat = (TextView) view.findViewById(R.id.GPS_latitude);
         txtLng = (TextView) view.findViewById(R.id.GPS_longitude);
+        txtCount = (TextView) view.findViewById(R.id.GPS_count);
+        gpsMessage = (TextView) view.findViewById(R.id.GPS_message);
         btnSave = (Button) view.findViewById(R.id.GPS_btnSave);
         btnScan = (Button) view.findViewById(R.id.GPS_btnStop);
         seekBar = (SeekBar) view.findViewById(R.id.GPS_seekBar);
@@ -122,6 +117,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         hero = (ImageView) view.findViewById(R.id.GPS_hero);
         txtName = (TextView) view.findViewById(R.id.GPS_siteName);
         chronometer = (Chronometer)view.findViewById(R.id.GPS_chrono);
+        gpsMessage.setVisibility(View.GONE);
 
         btnSave.setVisibility(View.GONE);
         Statics.setRobotoFontBold(ctx, txtLat);
@@ -211,23 +207,27 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         w.setLatitude(projectSite.getLatitude());
         w.setLongitude(projectSite.getLongitude());
         w.setAccuracy(projectSite.getAccuracy());
+        sendRequest(w);
 
-
-        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
-        if (wcr.isWifiConnected()) {
-            sendRequest(w);
-        } else {
-            addRequestToCache(w);
-        }
     }
 
     private void sendRequest(final RequestDTO request) {
         WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, request, new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onMessage(ResponseDTO response) {
-                if (response.getStatusCode() > 0) {
-                    addRequestToCache(request);
-                }
+            public void onMessage(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (response.getStatusCode() > 0) {
+                            addRequestToCache(request);
+                        } else {
+                            btnScan.setVisibility(View.GONE);
+                            gpsMessage.setVisibility(View.VISIBLE);
+                            Util.flashSeveralTimes(gpsMessage,200,3,null);
+                        }
+                    }
+                });
+
             }
 
             @Override
@@ -265,12 +265,6 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         });
     }
 
-    boolean pleaseStop;
-    public void resetLogo() {
-        logoAnimator = ObjectAnimator.ofFloat(imgLogo, "rotation", 0, 360);
-        logoAnimator.setDuration(200);
-        logoAnimator.start();
-    }
 
 
     private void sendGPSData() {
@@ -281,6 +275,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         site.setLatitude(location.getLatitude());
         site.setLongitude(location.getLongitude());
         site.setAccuracy(location.getAccuracy());
+
         w.setProjectSite(site);
 
         WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
@@ -293,6 +288,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
                             return;
                         }
                         listener.onEndScanRequested();
+                        site.setLocationConfirmed(1);
                         listener.onLocationConfirmed(site);
                         Log.w(LOG, "++++++++++++ project site location updated");
                     }
@@ -317,8 +313,14 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         });
     }
 
+    int count;
     public void setLocation(Location location) {
-        if (projectSite == null) return;
+        if (projectSite == null) {
+            Log.e(LOG,"#### projectSite is NULL, verboten!");
+            return;
+        }
+        count++;
+        txtCount.setText("" + count);
         this.location = location;
         txtLat.setText("" + location.getLatitude());
         txtLng.setText("" + location.getLongitude());
@@ -328,11 +330,13 @@ public class GPSScanFragment extends Fragment implements PageFragment {
                 || location.getAccuracy() < seekBar.getProgress()) {
             isScanning = false;
             chronometer.stop();
-            resetLogo();
             btnScan.setText(ctx.getString(R.string.start_scan));
             projectSite.setLatitude(location.getLatitude());
             projectSite.setLongitude(location.getLongitude());
             projectSite.setAccuracy(location.getAccuracy());
+            //
+            listener.onEndScanRequested();
+            listener.onLocationConfirmed(projectSite);
             confirmLocation();
             return;
         }

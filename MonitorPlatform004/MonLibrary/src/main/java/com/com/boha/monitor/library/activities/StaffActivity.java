@@ -9,8 +9,10 @@ import android.view.MenuItem;
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
 import com.com.boha.monitor.library.fragments.StaffFragment;
+import com.com.boha.monitor.library.util.Util;
 
-public class StaffActivity extends ActionBarActivity implements StaffFragment.StaffFragmentListener {
+public class StaffActivity extends ActionBarActivity
+        implements StaffFragment.StaffFragmentListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,12 @@ public class StaffActivity extends ActionBarActivity implements StaffFragment.St
     public void onStaffUpdated(CompanyStaffDTO companyStaff) {
         onBackPressed();
     }
+
+    @Override
+    public void onAppInvitationRequested(CompanyStaffDTO staff, int appType) {
+        Util.showConfirmAppInvitationDialog(getApplicationContext(),this,staff,appType);
+    }
+
     @Override
     public void onBackPressed() {
         if (companyStaff != null) {

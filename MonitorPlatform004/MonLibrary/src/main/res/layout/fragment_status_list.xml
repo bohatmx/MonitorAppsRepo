@@ -1,135 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:padding="@dimen/mon_padding"
     android:background="@color/grey"
     android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/STATLST_handle"
         android:layout_width="match_parent"
-        android:layout_height="1dp">
-
-        </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/STATLST_heroImage"
-        android:src="@drawable/under_construction"
-        android:layout_below="@id/STATLST_handle"
-        android:scaleType="centerCrop"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/mon_hero_height_small" />
+        android:layout_height="1dp"/>
 
     <RelativeLayout
-        android:id="@+id/STATLST_top"
-        android:layout_below="@id/STATLST_heroImage"
-        android:background="@color/beige_pale"
+        android:id="@+id/STATLST_topView"
+        android:layout_below="@id/STATLST_handle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+
+        <ImageView
+            android:id="@+id/STATLST_heroImage"
+            android:src="@drawable/under_construction"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mon_hero_height_small" />
+
+        <RelativeLayout
+            android:id="@+id/STATLST_top"
+            android:layout_below="@id/STATLST_heroImage"
+            android:background="@color/beige_pale"
+            android:padding="@dimen/mon_padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <com.dd.ShadowLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:sl_shadowRadius="4dp"
+                app:sl_shadowColor="#AA000000"
+                app:sl_dx="2dp"
+                app:sl_dy="2dp"
+                app:sl_cornerRadius="8dp">
+
+                <Button
+                    android:id="@+id/STATLST_btnProject"
+                    android:layout_width="260dp"
+                    android:layout_height="wrap_content"
+                    android:minWidth="88dp"
+                    android:minHeight="36dp"
+                    android:gravity="center"
+                    android:padding="@dimen/mon_padding"
+                    android:elevation="@dimen/mon_padding"
+                    android:textColor="@android:color/white"
+                    android:background="@color/teal"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                    android:text="Select Project "/>
+
+            </com.dd.ShadowLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/STATLST_dates"
+            android:layout_below="@id/STATLST_top"
+            android:background="@color/beige_pale"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="@dimen/mon_padding"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/label1"
+                    android:text="Start Date"
+                    style="@style/TextStyleSmall"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:id="@+id/STATLST_startDate"
+                    android:text="Start Date"
+                    style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                    android:textColor="@color/blue"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:layout_below="@id/label1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="@dimen/mon_padding"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/label2"
+                    android:text="End Date"
+                    style="@style/TextStyleSmall"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:id="@+id/STATLST_endDate"
+                    android:text="End Date"
+                    style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                    android:textColor="@color/teal"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:layout_below="@id/label2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+        </LinearLayout>
+
         <TextView
-            android:id="@+id/STATLST_project"
-            android:text="Project Name"
-            android:padding="@dimen/mon_divider"
-            android:layout_marginLeft="@dimen/mon_padding"
-            style="@style/Title2TextStyleBlue"
+            android:id="@+id/STATLST_txtTitle"
+            android:text="@string/status_rept"
+            style="@style/Title1TextStyleWhite"
+            android:layout_marginTop="@dimen/mon_margin"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/STATLST_txtCount"
+            android:text="0"
+            style="@style/RedCircle"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/mon_widest"
+            android:elevation="@dimen/mon_divider"
+            android:layout_marginRight="@dimen/mon_margin"
+            android:layout_width="56dp"
+            android:layout_height="56dp" />
+
+        <ProgressBar
+            android:id="@+id/STATLST_progress"
+            android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/mon_margin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/STATLST_dates"
-        android:layout_below="@id/STATLST_top"
-        android:background="@color/beige_pale"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:padding="@dimen/mon_padding"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/label1"
-                android:text="Start Date"
-                style="@style/TextStyleSmall"
-                android:layout_centerHorizontal="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <Button
-                android:id="@+id/STATLST_startDate"
-                android:text="Start Date"
-                style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
-                android:textColor="@color/blue"
-                android:textStyle="bold"
-                android:layout_below="@id/label1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:padding="@dimen/mon_padding"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/label2"
-                android:text="End Date"
-                style="@style/TextStyleSmall"
-                android:layout_centerHorizontal="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <Button
-                android:id="@+id/STATLST_endDate"
-                android:text="End Date"
-                style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
-                android:textColor="@color/blue"
-                android:textStyle="bold"
-                android:layout_below="@id/label2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </RelativeLayout>
-    </LinearLayout>
-
     <ListView
         android:id="@+id/STATLST_list"
         android:dividerHeight="4dp"
-        android:layout_marginTop="@dimen/mon_padding"
-        android:layout_below="@id/STATLST_dates"
+        android:layout_marginTop="@dimen/mon_divider"
+        android:layout_below="@id/STATLST_topView"
         android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
 
-    <TextView
-        android:id="@+id/STATLST_txtTitle"
-        android:text="@string/status_rept"
-        style="@style/Title3TextStyleBlack"
-        android:textColor="@color/white"
-        android:layout_marginLeft="@dimen/mon_padding"
-        android:layout_above="@id/STATLST_top"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/STATLST_txtCount"
-        android:text="0"
-        style="@style/RedCircle"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="@dimen/mon_widest"
-        android:elevation="4dp"
-        android:layout_marginRight="@dimen/mon_margin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <ProgressBar
-        android:id="@+id/STATLST_progress"
-        android:layout_alignParentRight="true"
-        android:layout_margin="@dimen/mon_margin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 </RelativeLayout>

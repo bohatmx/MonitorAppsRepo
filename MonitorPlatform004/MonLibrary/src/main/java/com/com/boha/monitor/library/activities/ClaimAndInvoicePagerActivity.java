@@ -59,7 +59,7 @@ implements ContractorClaimFragment.ContractorClaimFragmentListener,
         mPager = (ViewPager) findViewById(R.id.SITE_pager);
         mPager.setOffscreenPageLimit(NUM_ITEMS-1);
         PagerTitleStrip strip = (PagerTitleStrip)findViewById(R.id.pager_title_strip);
-        strip.setVisibility(View.GONE);
+        strip.setVisibility(View.VISIBLE);
 
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
 
@@ -100,6 +100,9 @@ implements ContractorClaimFragment.ContractorClaimFragmentListener,
         RequestDTO w = new RequestDTO(RequestDTO.GET_PROJECT_DATA);
         w.setProjectID(project.getProjectID());
 
+//        if (!WebCheck.checkNetworkAvailability(ctx,true).isWifiConnected()) {
+//            return;
+//        }
         setRefreshActionButtonState(true);
         contractorClaimFragment.setBusy();
         WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
@@ -265,15 +268,14 @@ implements ContractorClaimFragment.ContractorClaimFragmentListener,
 
         @Override
         public CharSequence getPageTitle(int position) {
-            String title = "Title";
+            String title = "Title Here";
 
             switch (position) {
                 case 0:
-                    title = project.getProjectName();
+                    title = "Create Claims";
                     break;
-
-
-                default:
+                case 1:
+                    title = "Claims List";
                     break;
             }
             return title;

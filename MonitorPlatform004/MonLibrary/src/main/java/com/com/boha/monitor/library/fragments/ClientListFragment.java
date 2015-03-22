@@ -31,6 +31,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the ProjectSiteListListener
  * interface.
  */
+@Deprecated
 public class ClientListFragment extends Fragment implements AbsListView.OnItemClickListener, PageFragment {
 
     private ClientListListener mListener;
@@ -132,7 +133,7 @@ public class ClientListFragment extends Fragment implements AbsListView.OnItemCl
     }
 
     @Override
-    public void animateCounts() {
+    public void animateHeroHeight() {
         Util.animateRotationY(txtCount,500);
 
     }

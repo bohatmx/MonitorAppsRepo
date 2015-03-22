@@ -32,7 +32,6 @@ import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.ErrorUtil;
 import com.com.boha.monitor.library.util.Statics;
-import com.com.boha.monitor.library.util.ToastUtil;
 import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebSocketUtil;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -44,6 +43,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+@Deprecated
 public class InvoiceFragment extends Fragment implements PageFragment {
 
     private InvoiceFragmentListener mListener;
@@ -437,7 +437,7 @@ public class InvoiceFragment extends Fragment implements PageFragment {
     }
 
     @Override
-    public void animateCounts() {
+    public void animateHeroHeight() {
         Util.animateRotationY(txtCount, 500);
 
     }

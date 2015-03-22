@@ -42,7 +42,9 @@ public class CacheUtil {
 
     public interface CacheSiteListener {
         public void onSiteReturnedFromCache(ProjectSiteDTO site);
+
         public void onDataCached();
+
         public void onError();
     }
 
@@ -50,7 +52,8 @@ public class CacheUtil {
     static CacheRequestListener cacheListener;
     static CacheSiteListener siteListener;
     public static final int CACHE_DATA = 1, CACHE_COUNTRIES = 3, CACHE_SITE = 7,
-            CACHE_PROJECT = 5, CACHE_REQUEST = 6, CACHE_PROJECT_STATUS = 4;
+            CACHE_PROJECT = 5, CACHE_REQUEST = 6, CACHE_PROJECT_STATUS = 4,
+            CACHE_TRACKER = 8;
     static int dataType;
     static Integer projectID;
     static ResponseDTO response;
@@ -61,7 +64,7 @@ public class CacheUtil {
     static RequestCache requestCache;
     static final String JSON_DATA = "data.json", JSON_COUNTRIES = "countries.json",
             JSON_PROJECT_DATA = "project_data", JSON_PROJECT_STATUS = "project_status",
-            JSON_REQUEST = "requestCache.json", JSON_SITE = "site";
+            JSON_REQUEST = "requestCache.json", JSON_SITE = "site", JSON_TRACKER = "tracker.json";
 
 
     public static void cacheRequest(Context context, RequestCache cache, CacheRequestListener listener) {
@@ -90,12 +93,22 @@ public class CacheUtil {
         ctx = context;
         new CacheTask().execute();
     }
+
     public static void cacheProjectStatus(Context context, ResponseDTO r, Integer pID, CacheUtilListener cacheUtilListener) {
         dataType = CACHE_PROJECT_STATUS;
         response = r;
         response.setLastCacheDate(new Date());
         utilListener = cacheUtilListener;
         projectID = pID;
+        ctx = context;
+        new CacheTask().execute();
+    }
+
+    public static void cacheTrackerData(Context context, ResponseDTO r, CacheUtilListener cacheUtilListener) {
+        dataType = CACHE_TRACKER;
+        response = r;
+        response.setLastCacheDate(new Date());
+        utilListener = cacheUtilListener;
         ctx = context;
         new CacheTask().execute();
     }
@@ -119,12 +132,18 @@ public class CacheUtil {
     }
 
 
-
     public static void getCachedRequests(Context context, CacheRequestListener listener) {
         dataType = CACHE_REQUEST;
         cacheListener = listener;
         ctx = context;
         new CacheRetrieveRequestTask().execute();
+    }
+
+    public static void getCachedTrackerData(Context context, CacheUtilListener cacheUtilListener) {
+        dataType = CACHE_TRACKER;
+        utilListener = cacheUtilListener;
+        ctx = context;
+        new CacheRetrieveTask().execute();
     }
 
     public static void getCachedProjectData(Context context, Integer id, CacheUtilListener cacheUtilListener) {
@@ -166,13 +185,22 @@ public class CacheUtil {
                 switch (dataType) {
 
                     case CACHE_REQUEST:
-                        Log.w(LOG, "## before caching request file, list: " + requestCache.getRequestCacheEntryList().size());
                         json = gson.toJson(requestCache);
                         outputStream = ctx.openFileOutput(JSON_REQUEST, Context.MODE_PRIVATE);
                         write(outputStream, json);
                         file = ctx.getFileStreamPath(JSON_REQUEST);
                         if (file != null) {
                             Log.e(LOG, "Request cache written, path: " + file.getAbsolutePath() +
+                                    " - length: " + file.length());
+                        }
+                        break;
+                    case CACHE_TRACKER:
+                        json = gson.toJson(response);
+                        outputStream = ctx.openFileOutput(JSON_TRACKER, Context.MODE_PRIVATE);
+                        write(outputStream, json);
+                        file = ctx.getFileStreamPath(JSON_TRACKER);
+                        if (file != null) {
+                            Log.e(LOG, "Tracker cache written, path: " + file.getAbsolutePath() +
                                     " - length: " + file.length());
                         }
                         break;
@@ -301,6 +329,11 @@ public class CacheUtil {
                         response = getData(stream);
                         Log.i(LOG, "++ request cache retrieved");
                         break;
+                    case CACHE_TRACKER:
+                        stream = ctx.openFileInput(JSON_TRACKER);
+                        response = getData(stream);
+                        Log.i(LOG, "++ tracker cache retrieved");
+                        break;
 
                     case CACHE_DATA:
                         stream = ctx.openFileInput(JSON_DATA);
@@ -317,7 +350,7 @@ public class CacheUtil {
                 response.setStatusCode(0);
 
             } catch (FileNotFoundException e) {
-                Log.d(LOG,"#### cache file not found - returning a new response object, type = " + dataType);
+                Log.d(LOG, "#### cache file not found - returning a new response object, type = " + dataType);
 
             } catch (IOException e) {
                 Log.v(LOG, "------------ Failed to retrieve cache", e);
@@ -329,7 +362,7 @@ public class CacheUtil {
         @Override
         protected void onPostExecute(ResponseDTO v) {
             if (utilListener == null) return;
-                utilListener.onFileDataDeserialized(v);
+            utilListener.onFileDataDeserialized(v);
 
 
         }

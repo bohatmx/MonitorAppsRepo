@@ -27,7 +27,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:text="00"
-                style="@style/GreyCircleSmall" />
+                style="@style/BlueCircleSmall" />
 
             <TextView
                 android:layout_width="wrap_content"

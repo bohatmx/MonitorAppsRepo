@@ -10,33 +10,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListPopupWindow;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
-import com.com.boha.monitor.library.activities.ClaimAndInvoicePagerActivity;
 import com.com.boha.monitor.library.activities.MonitorMapActivity;
 import com.com.boha.monitor.library.activities.PictureActivity;
-import com.com.boha.monitor.library.activities.ProjectSitePagerActivity;
-import com.com.boha.monitor.library.adapters.PopupListAdapter;
 import com.com.boha.monitor.library.adapters.ProjectAdapter;
-import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
+import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.CacheUtil;
+import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Util;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,9 +46,12 @@ import java.util.List;
  */
 public class ProjectListFragment extends Fragment implements PageFragment {
 
+    public interface ProjectListFragmentListener {
+        public void onSiteListRequested(ProjectDTO project);
+    }
 
     private ListView mListView;
-    private TextView txtProjectCount, txtStatusCount, txtLabel;
+    private TextView  txtStatusCount, txtLabel;
 
     static final String LOG = ProjectListFragment.class.getSimpleName();
     ProjectDTO project;
@@ -75,9 +74,11 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     Context ctx;
     View topView;
     LayoutInflater inflater;
-    View view, searchLayout;
-    ImageView imgLogo, imgSearch1, imgSearch2;
-    EditText editSearch;
+    View view, searchLayout, fab, editorLayout, headerLayout, handle;
+    ImageView imgSearch1, imgSearch2, fabIcon;
+    EditText editSearch, editName, editDesc;
+    Button btnSave;
+    TextView txtCount;
     public static final int PROJECT_TYPE = 1, OPERATIONS_TYPE = 2;
     int type;
 
@@ -105,44 +106,27 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             }
         }
         setTotals();
+        if (statusCountInPeriod != null) {
+            txtStatusCount.setText(df.format(statusCountInPeriod));
+        } else {
+            txtStatusCount.setText("0");
+        }
         setList();
 
-        Date lastReminder = SharedUtil.getReminderTime(ctx);
-        Date now = new Date();
-        long delta = now.getTime() - lastReminder.getTime();
-        if (delta > (ONE_DAY)) {
-            Util.pretendFlash(txtLabel, 300, 5, new Util.UtilAnimationListener() {
-                @Override
-                public void onAnimationEnded() {
-                    SharedUtil.saveReminderTime(ctx, new Date());
-                    Util.showPagerToast(ctx, ctx.getString(R.string.swipe_for_more), ctx.getResources().getDrawable(R.drawable.arrow_right));
-                }
-            });
-        }
 
         return view;
     }
 
     public void updateStatusCount(int count) {
         Log.w(LOG, "### incrementing status count by " + count);
-        if (count == 0) return;
-        if (statusCountInPeriod == null) {
-            statusCountInPeriod = count;
-        } else {
-            statusCountInPeriod += count;
-        }
-        if (project.getStatusCount() == null) {
-            project.setStatusCount(count);
-        } else {
-            project.setStatusCount(project.getStatusCount() + count);
-        }
-        setList();
+        statusCountInPeriod = count;
+        txtStatusCount.setText(df.format(statusCountInPeriod));
+
 
         CacheUtil.getCachedData(ctx, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
                 if (response != null) {
-                    response.getCompany().setProjectList(projectList);
                     response.setStatusCountInPeriod(statusCountInPeriod);
                     //write data back
                     CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_DATA, null);
@@ -161,15 +145,8 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         });
     }
 
-    public void refreshData(ResponseDTO resp) {
-        Log.e(LOG, "##### refreshing data, projectList from host, count: " + resp.getStatusCountInPeriod());
-        projectList = resp.getCompany().getProjectList();
-        statusCountInPeriod = resp.getStatusCountInPeriod();
-        setTotals();
-        setList();
-    }
-
-    static final long ONE_DAY = 1000 * 60 * 60 * 60 * 24, TWO_HOUR = 1000 * 60 * 60 * 2;
+    static final long ONE_HOUR = 1000 * 60 * 60,
+            TWO_HOUR = ONE_HOUR * 2;
 
     @Override
     public void onSaveInstanceState(Bundle b) {
@@ -192,18 +169,21 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         }
         if (isFound) {
             mListView.setSelection(index);
-            SharedUtil.saveLastProjectID(ctx,projectList.get(index).getProjectID());
+            SharedUtil.saveLastProjectID(ctx, projectList.get(index).getProjectID());
         }
 
     }
+
     void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) ctx
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(editSearch.getWindowToken(), 0);
     }
+
     @Override
     public void onResume() {
         super.onResume();
+        changeHeroImage();
     }
 
     Integer statusCountInPeriod;
@@ -211,24 +191,19 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     static final DecimalFormat df = new DecimalFormat("###,###,###,###");
 
     int lastIndex;
-    public void refreshData(List<ProjectDTO> list) {
-        projectList = list;
-        setTotals();
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
-            mListView.setSelection(lastIndex);
-        } else {
-            setList();
-        }
-        setLastProject();
+
+    public void changeHeroImage() {
+        heroImage.setImageDrawable(Util.getRandomHeroImage(ctx));
     }
+
+
 
     private void setLastProject() {
         Integer id = SharedUtil.getLastProjectID(ctx);
         boolean isFound = false;
         int index = 0;
         if (id.intValue() > 0) {
-            for (ProjectDTO p: projectList) {
+            for (ProjectDTO p : projectList) {
                 if (p.getProjectID().intValue() == id.intValue()) {
                     isFound = true;
                     break;
@@ -240,7 +215,9 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             mListView.setSelection(index);
         }
     }
+
     private void setList() {
+        txtCount.setText("" + projectList.size());
         adapter = new ProjectAdapter(ctx, R.layout.project_item, projectList);
         mListView.setAdapter(adapter);
         if (projectList.size() > 5) {
@@ -249,18 +226,13 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             searchLayout.setVisibility(View.GONE);
         }
 
-        if (statusCountInPeriod != null) {
-            txtStatusCount.setText(df.format(statusCountInPeriod));
-        } else {
-            txtStatusCount.setText("0");
-        }
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 project = projectList.get(position);
                 lastIndex = position;
-                SharedUtil.saveLastProjectID(ctx,project.getProjectID());
+                SharedUtil.saveLastProjectID(ctx, project.getProjectID());
                 if (project.getProjectSiteList() == null || project.getProjectSiteList().isEmpty()) {
                     Util.showErrorToast(ctx, "Project has no sites defined. Please add the sites.");
                     return;
@@ -270,123 +242,66 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
             }
         });
-        mListView.setSelection(lastIndex);
-        mListView.setOnScrollListener(new AbsListView.OnScrollListener(){
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-            }
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                final ListView lw = mListView;
-
-                if(scrollState == 0)
-                    //Log.i(LOG, "scrolling stopped...");
-
-                if (view.getId() == lw.getId()) {
-                    final int currentFirstVisibleItem = lw.getFirstVisiblePosition();
-                    if (currentFirstVisibleItem > mLastFirstVisibleItem) {
-                        mIsScrollingUp = false;
-                        Log.i(LOG, "scrolling down...");
-                        //Util.collapse(topView,500,null);
-                    } else if (currentFirstVisibleItem < mLastFirstVisibleItem) {
-                        mIsScrollingUp = true;
-                        Log.i(LOG, "scrolling up...");
-                        //Util.expand(topView,500,null);
-                    }
-
-                    mLastFirstVisibleItem = currentFirstVisibleItem;
-                }
-            }
-        });
+        setLastProject();
     }
 
-    boolean mIsScrollingUp;
-    int mLastFirstVisibleItem;
-    ListPopupWindow actionsWindow;
     List<String> list;
-    boolean popupIsOpen;
+    boolean popupIsOpen, isUpdate;
+    Activity activity;
 
-    public void closePopup() {
-        if (popupIsOpen) {
-            popupIsOpen = false;
-            actionsWindow.dismiss();
-        }
-    }
 
     private void showPopup() {
-
+        activity = getActivity();
         list = new ArrayList<>();
         list.add(ctx.getString(com.boha.monitor.library.R.string.site_list));
-        list.add(ctx.getString(com.boha.monitor.library.R.string.claims_invoices));
         list.add(ctx.getString(com.boha.monitor.library.R.string.project_map));
         list.add(ctx.getString(com.boha.monitor.library.R.string.take_picture));
+        list.add(ctx.getString(R.string.edit_project));
 
-        View v = getActivity().getLayoutInflater().inflate(com.boha.monitor.library.R.layout.hero_image, null);
-        TextView cap = (TextView) v.findViewById(com.boha.monitor.library.R.id.HERO_caption);
-        cap.setText(ctx.getString(com.boha.monitor.library.R.string.select_action));
-        ImageView img = (ImageView) v.findViewById(com.boha.monitor.library.R.id.HERO_image);
-        img.setImageDrawable(Util.getRandomHeroImage(ctx));
+        Util.showPopupBasicWithHeroImage(ctx, activity, list,
+                handle, project.getProjectName(), new Util.UtilPopupListener() {
+                    @Override
+                    public void onItemSelected(int index) {
+                        switch (index) {
+                            case 0:
+                               mListener.onSiteListRequested(project);
+                                break;
 
-        actionsWindow = new ListPopupWindow(getActivity());
-        actionsWindow.setPromptView(v);
-        actionsWindow.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
-        actionsWindow.setAdapter(new PopupListAdapter(ctx,
-                com.boha.monitor.library.R.layout.xxsimple_spinner_item, list, false));
-        actionsWindow.setAnchorView(txtProjectCount);
-        actionsWindow.setWidth(Util.getPopupWidth(getActivity()));
-        actionsWindow.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
-        actionsWindow.setModal(true);
-        try {
-            actionsWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    switch (position) {
-                        case 0:
-                            Log.e(LOG, "Yeaaah! position: " + position);
-                            Intent i = new Intent(ctx, ProjectSitePagerActivity.class);
-                            CompanyDTO company = new CompanyDTO();
-                            company.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
-                            i.putExtra("project", project);
-                            i.putExtra("company", company);
-                            i.putExtra("type", SiteTaskAndStatusAssignmentFragment.PROJECT_MANAGER);
-                            startActivity(i);
-                            break;
-                        case 1:
-                            Log.e(LOG, "Yeaaah! position: " + position);
-                            Intent i2 = new Intent(ctx, ClaimAndInvoicePagerActivity.class);
-                            i2.putExtra("project", project);
-                            startActivity(i2);
-                            break;
-                        case 2:
-                            Log.e(LOG, "Yeaaah! position: " + position);
-                            if (!locationAvailable()) {
-                                actionsWindow.dismiss();
-                                Util.showToast(ctx, ctx.getString(R.string.no_location_found));
-                                return;
-                            }
-                            Intent i3 = new Intent(ctx, MonitorMapActivity.class);
-                            i3.putExtra("project", project);
-                            startActivity(i3);
-                            break;
-                        case 3:
-                            Log.e(LOG, "Yeaaah! position: " + position);
-                            Intent i4 = new Intent(ctx, PictureActivity.class);
-                            i4.putExtra("project", project);
-                            i4.putExtra("type", PhotoUploadDTO.PROJECT_IMAGE);
-                            startActivity(i4);
-                            break;
+                            case 1:
+                                if (!locationAvailable()) {
+                                    Util.showToast(ctx, ctx.getString(R.string.no_location_found));
+                                    return;
+                                }
+                                Intent i3 = new Intent(ctx, MonitorMapActivity.class);
+                                i3.putExtra("project", project);
+                                startActivity(i3);
+                                break;
+                            case 2:
+                                Intent i4 = new Intent(ctx, PictureActivity.class);
+                                i4.putExtra("project", project);
+                                i4.putExtra("type", PhotoUploadDTO.PROJECT_IMAGE);
+                                startActivity(i4);
+                                break;
+                            case 3:
+                                editName.setText(project.getProjectName());
+                                editDesc.setText(project.getDescription());
+                                headerLayout.setVisibility(View.GONE);
+                                mListView.setVisibility(View.GONE);
+                                fabIcon.setImageDrawable(ctx.getResources()
+                                        .getDrawable(R.drawable.ic_action_overflow));
+                                Util.expand(editorLayout, 500, null);
+
+                                break;
+                        }
                     }
-                    actionsWindow.dismiss();
-                }
-            });
-            actionsWindow.show();
-            popupIsOpen = true;
-        } catch (IllegalStateException e) {
-            Log.w(LOG,"####### illegal state, attempting to dismiss popup");
-            actionsWindow.dismiss();
-        }
+                });
+        popupIsOpen = true;
+
     }
+
     private boolean locationAvailable() {
 
-        for (ProjectSiteDTO site: project.getProjectSiteList()) {
+        for (ProjectSiteDTO site : project.getProjectSiteList()) {
             if (site.getLocationConfirmed() != null || site.getLatitude() != null) {
                 return true;
             }
@@ -395,20 +310,26 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     }
 
     private void setFields() {
-        //set fields
+        handle = view.findViewById(R.id.PROJ_LIST_handle);
+        editorLayout = view.findViewById(R.id.PROJ_LIST_editor);
+        headerLayout = view.findViewById(R.id.PROJ_LIST_layoutx);
+        editorLayout.setVisibility(View.GONE);
+        btnSave = (Button) view.findViewById(R.id.PROJ_LIST_btnSave);
+        editName = (EditText) view.findViewById(R.id.PROJ_LIST_editName);
+        editDesc = (EditText) view.findViewById(R.id.PROJ_LIST_editDesc);
+        txtCount = (TextView) view.findViewById(R.id.PROJ_LIST_count);
         topView = view.findViewById(R.id.topTop);
+        fab = view.findViewById(R.id.FAB);
+        fabIcon = (ImageView) view.findViewById(R.id.FAB_icon);
         searchLayout = view.findViewById(R.id.SLT_searchLayout);
-        imgLogo = (ImageView) view.findViewById(R.id.PROJ_LIST_img);
         txtStatusCount = (TextView) view.findViewById(R.id.HERO_P_statusCount);
         heroImage = (ImageView) view.findViewById(R.id.HERO_P_image);
         imgSearch1 = (ImageView) view.findViewById(R.id.SLT_imgSearch1);
-        imgSearch2 = (ImageView) view.findViewById(R.id.SLT_imgSearch2);
+        imgSearch2 = (ImageView) view.findViewById(R.id.SLT_imgSearch);
         editSearch = (EditText) view.findViewById(R.id.SLT_editSearch);
-        txtProjectCount = (TextView) view.findViewById(R.id.PROJ_LIST_projectCount);
         mListView = (ListView) view.findViewById(R.id.PROJ_LIST_list);
         //random hero
         heroImage.setImageDrawable(Util.getRandomHeroImage(ctx));
-
 
         imgSearch2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -416,51 +337,150 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                 search();
             }
         });
-        Util.expand(heroImage, 1000, null);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.flashOnce(fab, 300, new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        if (editorLayout.getVisibility() == View.GONE) {
+                            isUpdate = false;
+                            mListView.setVisibility(View.GONE);
+                            Util.expand(editorLayout, 500, null);
+                            headerLayout.setVisibility(View.GONE);
+                            fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_overflow));
+                        } else {
+                            Util.collapse(editorLayout, 500, null);
+                            mListView.setVisibility(View.VISIBLE);
+                            headerLayout.setVisibility(View.VISIBLE);
+                            fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_new));
+                        }
+                    }
+                });
+            }
+        });
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.flashOnce(btnSave, 300, new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        sendData();
+                    }
+                });
+            }
+        });
+    }
+
+    public void sendData() {
+
+        if (editName.getText().toString().isEmpty()) {
+            Util.showErrorToast(ctx, ctx.getString(R.string.enter_project));
+            return;
+        }
+        if (editDesc.getText().toString().isEmpty()) {
+            Util.showErrorToast(ctx, ctx.getString(R.string.enter_project_desc));
+            return;
+        }
+        RequestDTO req = new RequestDTO(RequestDTO.REGISTER_PROJECT);
+        ProjectDTO dto = new ProjectDTO();
+        dto.setProjectName(editName.getText().toString());
+        dto.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
+        dto.setDescription(editDesc.getText().toString());
+        req.setProject(dto);
+
+        NetUtil.sendRequest(ctx, req, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(final ResponseDTO response) {
+                if (response.getStatusCode() == 0) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            addProject(response.getProjectList().get(0));
+                            Util.collapse(editorLayout, 500, null);
+                            headerLayout.setVisibility(View.VISIBLE);
+                            mListView.setVisibility(View.VISIBLE);
+                            fabIcon.setImageDrawable(ctx.getResources()
+                                    .getDrawable(R.drawable.ic_action_new));
+                            CacheUtil.getCachedData(ctx, CacheUtil.CACHE_DATA,
+                                    new CacheUtil.CacheUtilListener() {
+                                        @Override
+                                        public void onFileDataDeserialized(ResponseDTO r) {
+                                            if (r != null) {
+                                                r.getProjectList().add(response.getProjectList().get(0));
+                                                CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_DATA, null);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onDataCached() {
+
+                                        }
+
+                                        @Override
+                                        public void onError() {
+
+                                        }
+                                    });
+                        }
+                    });
+
+                }
+            }
+
+            @Override
+            public void onError(final String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Util.showErrorToast(ctx, message);
+                    }
+                });
+            }
+
+            @Override
+            public void onWebSocketClose() {
+
+            }
+        });
+
     }
 
     public void setTotals() {
-        if (txtProjectCount == null) {
-            Log.e(LOG, "--ERROR - txtProjectCount is NULL. probable illegal state");
-            return;
-        }
-        try {
-            if (projectList == null) {
-                txtProjectCount.setText("0");
-            } else {
-                txtProjectCount.setText("" + projectList.size());
-            }
-        } catch (Exception e) {
-            Log.e(LOG, "--- ran aground ...", e);
-            return;
-        }
+
+
         statusCount = 0;
         for (ProjectDTO p : projectList) {
-             statusCount += p.getStatusCount();
+            statusCount += p.getStatusCount();
         }
 
         txtStatusCount.setText("" + df.format(statusCount));
-        animateCounts();
+        animateHeroHeight();
 
 
     }
 
     @Override
-    public void animateCounts() {
-
-        Util.animateRotationY(txtProjectCount, 500);
-        //Util.animateScaleX(topView, 500);
+    public void animateHeroHeight() {
+        Util.fadeIn(topView);
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        if (activity instanceof ProjectListFragmentListener) {
+            mListener = (ProjectListFragmentListener)activity;
+        } else {
+            throw new ClassCastException("Host "
+                    + activity.getLocalClassName() + " must implement ProjectListFragmentListener");
+        }
 
     }
-
+    ProjectListFragmentListener mListener;
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener = null;
     }
 
 
@@ -469,15 +489,8 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             projectList = new ArrayList<>();
         }
         projectList.add(0, project);
-        //Collections.sort(engineerList);
         adapter.notifyDataSetChanged();
-        txtProjectCount.setText("" + projectList.size());
-        try {
-            Thread.sleep(1000);
-            Util.animateRotationY(txtProjectCount, 500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        txtCount.setText("" + projectList.size());
 
     }
 

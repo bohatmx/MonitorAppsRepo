@@ -21,7 +21,7 @@ public class TaskStatusDTO implements Serializable, Comparable<TaskStatusDTO> {
     public static final int 
             STATUS_COLOR_RED = 3,
             STATUS_COLOR_GREEN = 1,
-            STATUS_COLOR_YELLOW = 2;
+            STATUS_COLOR_AMBER = 2;
 
     public TaskStatusDTO() {
     }

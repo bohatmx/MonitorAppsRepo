@@ -65,17 +65,17 @@ public class ProjectStatusTypeAdapter extends ArrayAdapter<ProjectStatusTypeDTO>
         if (p.getStatusColor() != null) {
             switch (p.getStatusColor()) {
                 case TaskStatusDTO.STATUS_COLOR_GREEN:
-                    item.txtNumber.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xgreen_oval));
+                    item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval_small));
                     break;
                 case TaskStatusDTO.STATUS_COLOR_RED:
-                    item.txtNumber.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xred_oval));
+                    item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
                     break;
-                case TaskStatusDTO.STATUS_COLOR_YELLOW:
-                    item.txtNumber.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xorange_oval));
+                case TaskStatusDTO.STATUS_COLOR_AMBER:
+                    item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xamber_oval_small));
                     break;
             }
         }
-        Statics.setRobotoFontLight(ctx,item.txtNumber);
+        Statics.setRobotoFontLight(ctx, item.txtNumber);
         Statics.setRobotoFontLight(ctx, item.txtName);
 
         return (convertView);

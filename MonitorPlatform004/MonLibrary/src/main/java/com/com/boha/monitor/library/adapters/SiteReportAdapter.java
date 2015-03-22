@@ -85,7 +85,7 @@ public class SiteReportAdapter extends ArrayAdapter<ProjectSiteTaskDTO> {
                 case TaskStatusDTO.STATUS_COLOR_GREEN:
                     countGreen++;
                     break;
-                case TaskStatusDTO.STATUS_COLOR_YELLOW:
+                case TaskStatusDTO.STATUS_COLOR_AMBER:
                     countYellow++;
                     break;
                 case TaskStatusDTO.STATUS_COLOR_RED:
@@ -109,7 +109,7 @@ public class SiteReportAdapter extends ArrayAdapter<ProjectSiteTaskDTO> {
                     item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval));
                     item.txtColor.setText(ctx.getString(R.string.green));
                     break;
-                case TaskStatusDTO.STATUS_COLOR_YELLOW:
+                case TaskStatusDTO.STATUS_COLOR_AMBER:
                     item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval));
                     item.txtColor.setText(ctx.getString(R.string.yellow));
                     break;

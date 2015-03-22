@@ -14,17 +14,14 @@
         tools:cardCornerRadius="8dp">
 
         <RelativeLayout
-            android:layout_marginBottom="4dp"
-            android:padding="@dimen/mon_padding"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <ImageView
-                android:layout_width="@dimen/mon_hero_height_small"
-                android:layout_height="@dimen/mon_hero_height_small"
+                android:layout_width="@dimen/mon_hero_height_medium"
+                android:layout_height="@dimen/mon_hero_height_medium"
                 android:id="@+id/PSN_imagex"
                 android:scaleType="centerCrop"
-
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:alpha="0.4"
@@ -45,7 +42,6 @@
                     android:text="@string/txt"
                     android:id="@+id/PSN_txtName"
                     style="@style/Title3TextStyleBlack"
-
                     android:layout_marginLeft="@dimen/mon_padding"
                     android:layout_marginTop="@dimen/mon_wider" />
 
@@ -86,6 +82,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/zero"
+                android:visibility="gone"
                 android:id="@+id/PSN_txtNum"
                 android:layout_marginTop="@dimen/mon_widest"
                 android:layout_marginLeft="@dimen/mon_padding"

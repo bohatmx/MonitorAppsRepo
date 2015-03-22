@@ -8,14 +8,10 @@
         android:icon="@drawable/ic_action_refresh"
         android:orderInCategory="100"
         app:showAsAction="ifRoom" />
-    <item android:id="@+id/action_add"
-        android:title="@string/action_add"
-        android:icon="@drawable/ic_action_new"
+    <item android:id="@+id/action_help"
+        android:title="@string/help_me"
+        android:icon="@drawable/ic_action_help"
         android:orderInCategory="100"
-        app:showAsAction="never" />
-    <item android:id="@+id/action_gallery"
-        android:title="@string/gallery"
-        android:icon="@drawable/ic_action_slideshow"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
+
 </menu>

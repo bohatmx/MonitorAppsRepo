@@ -91,7 +91,7 @@ ImageLoader imageLoader;
     }
 
     @Override
-    public void animateCounts() {
+    public void animateHeroHeight() {
         //Util.animateScaleX(image,300);
 
     }

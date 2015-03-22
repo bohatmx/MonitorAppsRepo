@@ -111,7 +111,7 @@ public class ProjectExecAdapter extends ArrayAdapter<ProjectDTO> {
                     item.txtSiteCount.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval));
                     item.txtStatusCount.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval));
                     break;
-                case TaskStatusDTO.STATUS_COLOR_YELLOW:
+                case TaskStatusDTO.STATUS_COLOR_AMBER:
                     item.txtSiteCount.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval));
                     item.txtStatusCount.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval));
                     break;

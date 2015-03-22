@@ -223,7 +223,7 @@ public class ExecProjectGridFragment extends Fragment implements PageFragment{
     }
 
     @Override
-    public void animateCounts() {
+    public void animateHeroHeight() {
 
     }
 

@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
-import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
+import com.com.boha.monitor.library.util.Util;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -94,13 +94,9 @@ public class StaffAdapter extends ArrayAdapter<CompanyStaffDTO> {
         });
         Statics.setRobotoFontLight(ctx, item.txtNumber);
         Statics.setRobotoFontLight(ctx, item.txtName);
+        String url = Util.getStaffImageURL(ctx, p.getCompanyStaffID());
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(Statics.IMAGE_URL);
-        sb.append("company").append(SharedUtil.getCompany(ctx).getCompanyID());
-        sb.append("/companyStaff/t").append(p.getCompanyStaffID()).append(".jpg");
-
-        ImageLoader.getInstance().displayImage(sb.toString(),item.photo, new ImageLoadingListener() {
+        ImageLoader.getInstance().displayImage(url,item.photo, new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
 

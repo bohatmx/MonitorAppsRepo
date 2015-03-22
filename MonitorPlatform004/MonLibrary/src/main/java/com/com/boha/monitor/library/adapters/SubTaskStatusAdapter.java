@@ -96,7 +96,7 @@ public class SubTaskStatusAdapter extends ArrayAdapter<SubTaskStatusDTO>  {
             case TaskStatusDTO.STATUS_COLOR_GREEN:
                 item.txtNumber.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xgreen_oval_small));
                 break;
-            case TaskStatusDTO.STATUS_COLOR_YELLOW:
+            case TaskStatusDTO.STATUS_COLOR_AMBER:
                 item.txtNumber.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
                 break;
             case TaskStatusDTO.STATUS_COLOR_RED:

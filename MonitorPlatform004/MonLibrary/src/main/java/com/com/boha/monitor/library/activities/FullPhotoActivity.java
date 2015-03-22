@@ -60,8 +60,8 @@ public class FullPhotoActivity extends ActionBarActivity {
 //            ImageLoader.getInstance().displayImage(Statics.IMAGE_URL + pu.getUri(), image);
 //            TextView num = (TextView) v.findViewById(R.id.FI_number);
 //            TextView date = (TextView) v.findViewById(R.id.FI_date);
-//            int x = resp.getPhotoUploadList().size() - (position);
-//            num.setText("" + x);
+//            int sdf = resp.getPhotoUploadList().size() - (position);
+//            num.setText("" + sdf);
 //            date.setText(sdf.format(pu.getDateTaken()));
 //            imageLayout.addView(v);
 //            position++;

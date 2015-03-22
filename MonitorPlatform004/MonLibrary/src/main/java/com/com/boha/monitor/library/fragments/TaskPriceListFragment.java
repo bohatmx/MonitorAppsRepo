@@ -173,7 +173,7 @@ public class TaskPriceListFragment extends Fragment implements PageFragment {
         mListener = null;
     }
     @Override
-    public void animateCounts() {
+    public void animateHeroHeight() {
         Util.animateRotationY(txtCount, 500);
 
     }

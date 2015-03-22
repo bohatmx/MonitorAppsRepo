@@ -3,7 +3,7 @@
 
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@color/blue</item>
-        <item name="colorPrimaryDark">@color/grey2</item>
+        <item name="colorPrimaryDark">@color/grey</item>
     </style>
 
 </resources>

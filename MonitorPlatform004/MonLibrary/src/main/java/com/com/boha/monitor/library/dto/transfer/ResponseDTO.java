@@ -21,6 +21,7 @@ import com.com.boha.monitor.library.dto.ErrorStoreDTO;
 import com.com.boha.monitor.library.dto.HappyLetterDTO;
 import com.com.boha.monitor.library.dto.InvoiceDTO;
 import com.com.boha.monitor.library.dto.InvoiceItemDTO;
+import com.com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.ProjectDiaryRecordDTO;
 import com.com.boha.monitor.library.dto.ProjectEngineerDTO;
@@ -55,10 +56,11 @@ public class ResponseDTO implements Serializable {
     private String message, sessionID, GCMRegistrationID,fileString, log;
     private List<String> taskImageFileNameList;
     private List<BankDTO> bankList;
+    private List<LocationTrackerDTO> locationTrackerList;
     private List<SessionPhoto> sessionPhotoList = new ArrayList<>();
     private List<SubTaskStatusDTO> subTaskStatusList;
     private List<SubTaskDTO> subTaskList;
-    private List<String> siteImageFileNameList;
+    private List<String> imageFileNameList;
     private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
     private List<TaskStatusDTO> taskStatusList = new ArrayList<>();
     private List<ProjectStatusTypeDTO> projectStatusTypeList = new ArrayList<>();
@@ -91,6 +93,14 @@ public class ResponseDTO implements Serializable {
 
     public void setElapsedRequestTimeInSeconds(Double elapsedRequestTimeInSeconds) {
         this.elapsedRequestTimeInSeconds = elapsedRequestTimeInSeconds;
+    }
+
+    public List<LocationTrackerDTO> getLocationTrackerList() {
+        return locationTrackerList;
+    }
+
+    public void setLocationTrackerList(List<LocationTrackerDTO> locationTrackerList) {
+        this.locationTrackerList = locationTrackerList;
     }
 
     public String getLog() {
@@ -336,12 +346,12 @@ public class ResponseDTO implements Serializable {
         this.taskImageFileNameList = taskImageFileNameList;
     }
 
-    public List<String> getSiteImageFileNameList() {
-        return siteImageFileNameList;
+    public List<String> getImageFileNameList() {
+        return imageFileNameList;
     }
 
-    public void setSiteImageFileNameList(List<String> siteImageFileNameList) {
-        this.siteImageFileNameList = siteImageFileNameList;
+    public void setImageFileNameList(List<String> imageFileNameList) {
+        this.imageFileNameList = imageFileNameList;
     }
 
     public String getFileString() {

@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -25,7 +24,6 @@ import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.ErrorUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
-import com.com.boha.monitor.library.util.ToastUtil;
 import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebSocketUtil;
 
@@ -36,7 +34,7 @@ public class TaskAndProjectStatusDialog extends DialogFragment {
 
     Context context;
     EditText editName, editDesc;
-    ProgressBar progressBar;
+//    ProgressBar progressBar;
     Button  btnSave;
     RadioButton radioRed, radioGreen, radioYellow;
     View view;
@@ -64,8 +62,8 @@ public class TaskAndProjectStatusDialog extends DialogFragment {
         imgDelete.setVisibility(View.GONE);
 
         editDesc.setVisibility(View.GONE);
-        progressBar = (ProgressBar) view.findViewById(R.id.EDD_progress);
-        progressBar.setVisibility(View.GONE);
+//        progressBar = (ProgressBar) view.findViewById(R.id.EDD_progress);
+//        progressBar.setVisibility(View.GONE);
 
         btnSave = (Button) view.findViewById(R.id.EDD_btnChange);
         switch (type) {
@@ -169,7 +167,7 @@ public class TaskAndProjectStatusDialog extends DialogFragment {
             editName.setText(taskStatus.getTaskStatusName());
             if (taskStatus.getStatusColor() != null) {
                 switch (taskStatus.getStatusColor()) {
-                    case TaskStatusDTO.STATUS_COLOR_YELLOW:
+                    case TaskStatusDTO.STATUS_COLOR_AMBER:
                         radioYellow.setChecked(true);
                         break;
                     case TaskStatusDTO.STATUS_COLOR_GREEN:
@@ -184,7 +182,7 @@ public class TaskAndProjectStatusDialog extends DialogFragment {
         if (projectStatusType != null) {
             editName.setText(projectStatusType.getProjectStatusName());
             switch (projectStatusType.getStatusColor()) {
-                case TaskStatusDTO.STATUS_COLOR_YELLOW:
+                case TaskStatusDTO.STATUS_COLOR_AMBER:
                     radioYellow.setChecked(true);
                     break;
                 case TaskStatusDTO.STATUS_COLOR_GREEN:
@@ -220,7 +218,7 @@ public class TaskAndProjectStatusDialog extends DialogFragment {
                 return;
             }
             if (radioGreen.isChecked()) color = (short) TaskStatusDTO.STATUS_COLOR_GREEN;
-            if (radioYellow.isChecked()) color = (short) TaskStatusDTO.STATUS_COLOR_YELLOW;
+            if (radioYellow.isChecked()) color = (short) TaskStatusDTO.STATUS_COLOR_AMBER;
             if (radioRed.isChecked()) color = (short) TaskStatusDTO.STATUS_COLOR_RED;
         }
 
@@ -265,7 +263,7 @@ public class TaskAndProjectStatusDialog extends DialogFragment {
                 break;
         }
 
-        progressBar.setVisibility(View.VISIBLE);
+        //progressBar.setVisibility(View.VISIBLE);
         WebSocketUtil.sendRequest(context, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO response) {
@@ -273,7 +271,7 @@ public class TaskAndProjectStatusDialog extends DialogFragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            progressBar.setVisibility(View.GONE);
+                            //progressBar.setVisibility(View.GONE);
                             if (!ErrorUtil.checkServerError(context, response)) {
                                 return;
                             }

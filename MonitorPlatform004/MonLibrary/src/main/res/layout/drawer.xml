@@ -7,6 +7,8 @@
     <!-- The main content view -->
     <RelativeLayout
         android:id="@+id/content_frame"
+        android:background="@color/grey"
+        android:padding="@dimen/mon_divider"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
@@ -22,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
                 android:visibility="gone"
-                android:background="@color/blue_dark2"
+                android:background="@color/darker_blue"
                 android:paddingBottom="@dimen/mon_padding"
                 android:paddingTop="@dimen/mon_padding"
                 android:textColor="#fff" />

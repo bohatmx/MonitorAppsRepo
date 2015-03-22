@@ -28,8 +28,6 @@ import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
 import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
-import com.com.boha.monitor.library.util.WebCheck;
-import com.com.boha.monitor.library.util.WebCheckResult;
 import com.com.boha.monitor.library.util.WebSocketUtil;
 
 import java.text.SimpleDateFormat;
@@ -116,7 +114,7 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
                 Util.flashOnce(txtCount, 200, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
-                        getSiteData();
+                        getCachedSiteData();
                         txtCount.setAlpha(1.0f);
                     }
                 });
@@ -138,7 +136,7 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
             }
         }
         if (projectSiteTaskStatusList.isEmpty()) {
-            getSiteData();
+            getCachedSiteData();
         } else {
             setList();
         }
@@ -162,9 +160,8 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
                     } else {
                         setList();
                     }
-                } else {
-                    Util.showErrorToast(ctx,ctx.getString(R.string.status_not));
                 }
+                getSiteData();
             }
 
             @Override
@@ -181,8 +178,7 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
     }
 
     private void getSiteData() {
-        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
-        if (wcr.isWifiConnected()) {
+
             RequestDTO w = new RequestDTO(RequestDTO.GET_SITE_STATUS);
             w.setProjectSiteID(projectSite.getProjectSiteID());
             progressBar.setVisibility(View.VISIBLE);
@@ -225,9 +221,7 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
 
                 }
             });
-        } else {
-            getCachedSiteData();
-        }
+
     }
     private void setList() {
         Log.d(LOG, "########## setList");
@@ -259,7 +253,7 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
     static final String LOG = SiteStatusReportFragment.class.getSimpleName();
 
     @Override
-    public void animateCounts() {
+    public void animateHeroHeight() {
         Util.animateRotationY(txtCount, 500);
 
     }

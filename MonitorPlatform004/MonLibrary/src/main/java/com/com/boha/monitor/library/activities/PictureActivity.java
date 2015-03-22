@@ -43,13 +43,12 @@ import com.com.boha.monitor.library.util.ImageUtil;
 import com.com.boha.monitor.library.util.PMException;
 import com.com.boha.monitor.library.util.PhotoCacheUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
-import com.com.boha.monitor.library.util.SiteLocation;
 import com.com.boha.monitor.library.util.Util;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.acra.ACRA;
@@ -64,13 +63,14 @@ import java.util.List;
  * Created by aubreyM on 2014/04/21.
  */
 public class PictureActivity extends ActionBarActivity implements LocationListener,
-        GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     LocationRequest mLocationRequest;
-    LocationClient mLocationClient;
+    GoogleApiClient googleApiClient;
     LinearLayout imageContainerLayout;
     LayoutInflater inflater;
     TextView txtProject, txtSite;
     View projectLayout, siteLayout;
+
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,31 +79,48 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         inflater = getLayoutInflater();
         setContentView(R.layout.camera);
         setFields();
-        mLocationClient = new LocationClient(getApplicationContext(), this,
-                this);
-
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
         type = getIntent().getIntExtra("type", 0);
-        project = (ProjectDTO) getIntent().getSerializableExtra("project");
-        projectSite = (ProjectSiteDTO) getIntent().getSerializableExtra("projectSite");
-        projectSiteTask = (ProjectSiteTaskDTO) getIntent().getSerializableExtra("projectSiteTask");
-        companyStaff = (CompanyStaffDTO) getIntent().getSerializableExtra("companyStaff");
+        switch (type) {
+            case PhotoUploadDTO.STAFF_IMAGE:
+                companyStaff = (CompanyStaffDTO) getIntent().getSerializableExtra("companyStaff");
+                if (companyStaff != null) {
+                    dispatchTakePictureIntent();
+                }
+                break;
+            case PhotoUploadDTO.PROJECT_IMAGE:
+                project = (ProjectDTO) getIntent().getSerializableExtra("project");
+                if (project != null) {
+                    txtProject.setText(project.getProjectName());
+                    siteLayout.setVisibility(View.GONE);
+                }
+                break;
+            case PhotoUploadDTO.SITE_IMAGE:
+                projectSite = (ProjectSiteDTO) getIntent().getSerializableExtra("projectSite");
+                if (projectSite != null) {
+                    txtSite.setText(projectSite.getProjectSiteName());
+                    txtProject.setText(projectSite.getProjectName());
+                }
+                break;
+            case PhotoUploadDTO.TASK_IMAGE:
+                projectSiteTask = (ProjectSiteTaskDTO) getIntent().getSerializableExtra("projectSiteTask");
+                break;
+        }
+
+
+
+
 
 
         setTitle(SharedUtil.getCompany(ctx).getCompanyName());
         getSupportActionBar().setSubtitle(SharedUtil.getCompanyStaff(ctx).getFullName());
-        if (projectSite != null) {
-            txtSite.setText(projectSite.getProjectSiteName());
-            txtProject.setText(projectSite.getProjectName());
-
-        }
-        if (project != null) {
-            txtProject.setText(project.getProjectName());
-            siteLayout.setVisibility(View.GONE);
-        }
 
     }
 
-    SiteLocation siteLocation;
 
     @Override
     public void onResume() {
@@ -217,7 +234,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         }
         if (loc.getAccuracy() <= ACCURACY_THRESHOLD) {
             this.location = loc;
-            mLocationClient.removeLocationUpdates(this);
+            stopLocationUpdates();
         }
     }
 
@@ -228,7 +245,12 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                 addProjectPicture(new CacheListener() {
                     @Override
                     public void onCachingDone() {
-                        mService.uploadCachedPhotos(null);
+                        mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+                            @Override
+                            public void onUploadsComplete(int count) {
+                                Log.i(LOG,"## project picture uploaded");
+                            }
+                        });
                     }
                 });
                 break;
@@ -236,7 +258,12 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                 addSitePicture(new CacheListener() {
                     @Override
                     public void onCachingDone() {
-                        mService.uploadCachedPhotos(null);
+                        mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+                            @Override
+                            public void onUploadsComplete(int count) {
+                                Log.i(LOG,"## site picture uploaded");
+                            }
+                        });
                     }
                 });
                 break;
@@ -244,7 +271,12 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                 addStaffPicture(new CacheListener() {
                     @Override
                     public void onCachingDone() {
-                        mService.uploadCachedPhotos(null);
+                        mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+                            @Override
+                            public void onUploadsComplete(int count) {
+                                Log.i(LOG,"## staff picture uploaded");
+                            }
+                        });
                     }
                 });
                 break;
@@ -252,24 +284,27 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
                 addSiteTaskPicture(new CacheListener() {
                     @Override
                     public void onCachingDone() {
-                        mService.uploadCachedPhotos(null);
+                        mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+                            @Override
+                            public void onUploadsComplete(int count) {
+                                Log.i(LOG,"## task picture uploaded");
+                            }
+                        });
                     }
                 });
                 break;
 
-
         }
+        isUploaded = true;
 
     }
 
     @Override
     public void onStart() {
         Log.i(LOG,
-                "## onStart - locationClient connecting ... ");
-        if (mLocationClient != null) {
-            if (location == null) {
-                mLocationClient.connect();
-            }
+                "## onStart - GoogleApiClient connecting ... ");
+        if (googleApiClient != null) {
+            googleApiClient.connect();
         }
         Log.i(LOG, "## onStart Bind to PhotoUploadService");
         Intent intent = new Intent(this, PhotoUploadService.class);
@@ -281,9 +316,9 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     public void onStop() {
         super.onStop();
 
-        if (mLocationClient != null) {
-            mLocationClient.disconnect();
-            Log.e(LOG, "### onStop - locationClient disconnecting ");
+        if (googleApiClient != null) {
+            googleApiClient.disconnect();
+            Log.e(LOG, "### onStop - GoogleApiClient disconnecting ");
         }
         Log.e(LOG, "## onStop unBind from PhotoUploadService");
         if (mBound) {
@@ -294,38 +329,45 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
     }
 
     Location location;
-    static final float ACCURACY_THRESHOLD = 25;
+    static final float ACCURACY_THRESHOLD = 20;
     ActionBarActivity activity;
+    boolean mRequestingLocationUpdates;
 
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(LOG,
-                "+++ LocationClient onConnected() -  requestLocationUpdates ...");
-        if (siteLocation != null) {
-            Log.w(LOG, "## already have a good location, returning");
-            location = mLocationClient.getLastLocation();
-            location.setAccuracy(siteLocation.getAccuracy());
-            location.setLatitude(siteLocation.getLatitude());
-            location.setLongitude(siteLocation.getLongitude());
-            imgCamera.setVisibility(View.VISIBLE);
-            btnStart.setVisibility(View.GONE);
-            dispatchTakePictureIntent();
-            return;
-        }
+                "+++  onConnected() -  requestLocationUpdates ...");
+        location = LocationServices.FusedLocationApi.getLastLocation(
+                googleApiClient);
         Log.w(LOG, "## requesting location updates ....");
         mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(1000);
+        mLocationRequest.setInterval(3000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setFastestInterval(500);
+        mLocationRequest.setFastestInterval(1000);
+        startLocationUpdates();
 
-        location = mLocationClient.getLastLocation();
-        mLocationClient.requestLocationUpdates(mLocationRequest, this);
     }
 
     @Override
-    public void onDisconnected() {
-        Log.e(LOG, "--- onDisconnected");
+    public void onConnectionSuspended(int i) {
+
     }
+
+    protected void startLocationUpdates() {
+        if (googleApiClient.isConnected()) {
+            mRequestingLocationUpdates = true;
+            LocationServices.FusedLocationApi.requestLocationUpdates(
+                    googleApiClient, mLocationRequest, this);
+        }
+    }
+
+    protected void stopLocationUpdates() {
+        if (googleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(
+                    googleApiClient, this);
+        }
+    }
+
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -483,7 +525,7 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         if (isUploaded) {
             Log.d(LOG, "onBackPressed ... picture uploaded");
             ResponseDTO r = new ResponseDTO();
-            r.setSiteImageFileNameList(currentSessionPhotos);
+            r.setImageFileNameList(currentSessionPhotos);
             Intent i = new Intent();
             i.putExtra("response", r);
             setResult(RESULT_OK, i);
@@ -590,7 +632,6 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
             if (thumbUri != null) {
                 pictureChanged = true;
                 try {
-                    isUploaded = true;
                     currentSessionPhotos.add(Uri.fromFile(currentThumbFile).toString());
                     addImageToScroller();
 
@@ -611,13 +652,28 @@ public class PictureActivity extends ActionBarActivity implements LocationListen
         ImageView img = (ImageView) v.findViewById(R.id.image);
         TextView num = (TextView) v.findViewById(R.id.number);
         num.setText("" + currentSessionPhotos.size());
-        Uri uri = Uri.fromFile(currentThumbFile);
+        final Uri uri = Uri.fromFile(currentThumbFile);
         ImageLoader.getInstance().displayImage(uri.toString(), img);
+        img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (type == PhotoUploadDTO.STAFF_IMAGE) {
+                    currentSessionPhotos.clear();
+                    currentSessionPhotos.add(uri.toString());
+                    onBackPressed();
+                }
+            }
+        });
         imageContainerLayout.addView(v, 0);
 
         btnStart.setVisibility(View.GONE);
         imgCamera.setVisibility(View.VISIBLE);
         uploadPhotos();
+        isUploaded = true;
+
+        if (type == PhotoUploadDTO.STAFF_IMAGE) {
+            Util.showToast(ctx,"Tap picture to select staff profile picture");
+        }
 
 
     }

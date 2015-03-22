@@ -3,20 +3,17 @@
 
     <string-array name="action_items">
         <item>Projects</item>
-        <item>Staff</item>
-        <item>Clients</item>
+        <item>Status Report</item>
+        <item>Monitoring Team</item>
+        <item>Tasks</item>
         <item>Task Status</item>
         <item>Project Status</item>
-        <item>Tasks</item>
-        <item>Engineers</item>
-        <item>Beneficiaries</item>
+
     </string-array>
     <string-array name="exec_action_items">
         <item>Projects</item>
         <item>Staff</item>
-        <item>Clients</item>
         <item>Task Status</item>
-        <item>Beneficiaries</item>
     </string-array>
 
     <string name="not_avail">NOT AVAILABLE</string>
@@ -112,9 +109,9 @@
     <string name="supervisor_app">Site Supervisor App</string>
     <string name="operations_app">Operations App</string>
     <string name="exec_app">Executive Dashboard App</string>
-    <string name="pm_app">Project Manager App</string>
-    <string name="invite_title">Invite Golf Group members to download apps</string>
-    <string name="mg_apps">ProjectMonitor Apps</string>
+    <string name="pm_app">Monitor App</string>
+    <string name="invite_title">Invite Company monitoring team to download apps</string>
+    <string name="mg_apps">Monitor Platform Apps</string>
     <string name="invite_dialog">Are you sure you want to invite a download of this app? \nThe user will be able to add and change data in your Company\'s database.</string>
     <string name="invite_confirm">Do you want to invite someone to download the App?</string>
     <string name="yes">Yes</string>
@@ -124,7 +121,7 @@
     <string name="text_msg">Text Message</string>
     <string name="email">Email</string>
     <string name="postcode">Postal Code</string>
-    <string name="zero">00</string>
+    <string name="zero">0</string>
     <string name="tee">Tee</string>
     <string name="enter_pin">Enter PIN</string>
     <string name="select_acct">Please select account</string>
@@ -239,7 +236,7 @@
     <string name="title_activity_monitor_map">MonitorMapActivity</string>
     <string name="title_activity_status_report">StatusReportActivity</string>
     <string name="task_seq_no">Sequence Number</string>
-    <string name="tasks">Tasks</string>
+    <string name="tasks">Monitored Tasks</string>
     <string name="engineer_list">Engineer List</string>
     <string name="no_engineers">There are no engineers on record. Please add engineers</string>
     <string name="id_number">ID Number</string>
@@ -289,7 +286,7 @@
     <string name="stop_scan">Stop GPS Scan</string>
     <string name="confirm_gps">Confirm GPS Location</string>
     <string name="site_map">Site Location Map</string>
-    <string name="project_map">Project Map</string>
+    <string name="project_map">Project Site Map</string>
     <string name="site_gallery">Site Gallery</string>
     <string name="status_rept">Status Report</string>
     <string name="title_activity_sub_task">SubTaskActivity</string>
@@ -365,5 +362,20 @@
     <string name="no_status">No status records found</string>
     <string name="no_location_found">Project location data is not available</string>
     <string name="no_photos">No photos found for site gallery</string>
+    <string name="title_activity_task_editor">TaskEditorActivity</string>
+    <string name="invite">Invitation to Download App</string>
+    <string name="team_member">Monitoring Team Member</string>
+    <string name="search">Search</string>
+    <string name="enter_project">Enter Project Name</string>
+    <string name="enter_project_desc">Enter Project Description or Comments</string>
+    <string name="enter_site">Enter Site Name or Number</string>
+    <string name="title_activity_gps">GPSActivity</string>
+    <string name="site_coords">Site GPS Coordinates</string>
+    <string name="title_activity_staff_tracker">StaffTrackerActivity</string>
+    <string name="no_address">No address can be computed</string>
+    <string name="show_tracks">Show Tracks</string>
+    <string name="get_dir">Get Directions</string>
+    <string name="title_activity_staff_picture">StaffPictureActivity</string>
+    <string name="save_prof_pic">Save Profile Picture</string>
 
 </resources>

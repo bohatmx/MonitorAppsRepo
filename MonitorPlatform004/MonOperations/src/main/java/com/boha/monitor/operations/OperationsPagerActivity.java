@@ -27,22 +27,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.com.boha.monitor.library.activities.AppInvitationActivity;
-import com.com.boha.monitor.library.activities.BeneficiaryImportActivity;
-import com.com.boha.monitor.library.activities.PictureActivity;
+import com.com.boha.monitor.library.activities.ProjectSitePagerActivity;
 import com.com.boha.monitor.library.activities.StaffActivity;
+import com.com.boha.monitor.library.activities.StaffPictureActivity;
 import com.com.boha.monitor.library.activities.SubTaskActivity;
 import com.com.boha.monitor.library.adapters.DrawerAdapter;
-import com.com.boha.monitor.library.dialogs.BeneficiaryDialog;
-import com.com.boha.monitor.library.dialogs.ClientDialog;
-import com.com.boha.monitor.library.dialogs.EngineerDialog;
-import com.com.boha.monitor.library.dialogs.ProjectDialog;
 import com.com.boha.monitor.library.dialogs.TaskAndProjectStatusDialog;
 import com.com.boha.monitor.library.dialogs.TaskDialog;
-import com.com.boha.monitor.library.dto.BeneficiaryDTO;
-import com.com.boha.monitor.library.dto.ClientDTO;
 import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
-import com.com.boha.monitor.library.dto.EngineerDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.ProjectStatusTypeDTO;
 import com.com.boha.monitor.library.dto.TaskDTO;
@@ -56,19 +49,18 @@ import com.com.boha.monitor.library.fragments.EngineerListFragment;
 import com.com.boha.monitor.library.fragments.PageFragment;
 import com.com.boha.monitor.library.fragments.ProjectListFragment;
 import com.com.boha.monitor.library.fragments.ProjectStatusTypeListFragment;
+import com.com.boha.monitor.library.fragments.SiteTaskAndStatusAssignmentFragment;
 import com.com.boha.monitor.library.fragments.StaffListFragment;
+import com.com.boha.monitor.library.fragments.StatusReportFragment;
 import com.com.boha.monitor.library.fragments.TaskListFragment;
 import com.com.boha.monitor.library.fragments.TaskStatusListFragment;
 import com.com.boha.monitor.library.services.PhotoUploadService;
 import com.com.boha.monitor.library.services.RequestSyncService;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
+import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
-import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
-import com.com.boha.monitor.library.util.WebCheck;
-import com.com.boha.monitor.library.util.WebCheckResult;
-import com.com.boha.monitor.library.util.WebSocketUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,13 +71,18 @@ public class OperationsPagerActivity extends ActionBarActivity
         StaffListFragment.CompanyStaffListListener,
         TaskStatusListFragment.TaskStatusListListener,
         ProjectStatusTypeListFragment.ProjectStatusTypeListListener,
-        ClientListFragment.ClientListListener, TaskListFragment.TaskListListener,
-        EngineerListFragment.EngineerListListener, BeneficiaryListFragment.BeneficiaryListListener {
-
+        TaskListFragment.TaskListListener, ProjectListFragment.ProjectListFragmentListener {
     private DrawerLayout mDrawerLayout;
     private DrawerAdapter mDrawerAdapter;
     private List<ProjectDTO> projectList;
     ProgressBar progressBar;
+
+    private List<PageFragment> pageFragmentList;
+    private ListView drawerListView;
+    private String[] titles;
+    private List<String> sTitles = new ArrayList<>();
+    private CompanyDTO company;
+    StatusReportFragment statusReportFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,9 +94,9 @@ public class OperationsPagerActivity extends ActionBarActivity
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
         PagerTitleStrip s = (PagerTitleStrip) findViewById(R.id.pager_title_strip);
-        s.setVisibility(View.GONE);
+//        s.setVisibility(View.GONE);
         drawerListView = (ListView) findViewById(R.id.left_drawer);
-        titles = getResources().getStringArray(R.array.action_items);
+
         getCachedCompanyData();
         setTitle(SharedUtil.getCompany(ctx).getCompanyName());
         CompanyStaffDTO staff = SharedUtil.getCompanyStaff(ctx);
@@ -109,29 +106,31 @@ public class OperationsPagerActivity extends ActionBarActivity
     }
 
     private void getCachedCompanyData() {
-        final WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
         progressBar.setVisibility(View.VISIBLE);
         CacheUtil.getCachedData(getApplicationContext(), CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
 
             @Override
             public void onFileDataDeserialized(ResponseDTO r) {
                 progressBar.setVisibility(View.GONE);
-                if (r != null) {
-                    if (r.getCompany() != null) {
-                        company = r.getCompany();
-                        response = r;
-                        buildPages();
-                    } else {
-                        Util.showErrorToast(ctx, ctx.getString(R.string.wifi_not_connected));
-                        return;
-                    }
+                if (r.getCompany() != null) {
+                    company = r.getCompany();
+                    response = r;
+                    buildPages();
+                } else {
+                    getCompanyData();
                 }
+
+                titles = getResources().getStringArray(R.array.action_items);
                 for (String s : titles) {
                     sTitles.add(s);
                 }
-                mDrawerAdapter = new DrawerAdapter(getApplicationContext(), R.layout.drawer_item, sTitles, company);
+                mDrawerAdapter = new DrawerAdapter(getApplicationContext(),
+                        R.layout.drawer_item, sTitles, company);
                 drawerListView.setAdapter(mDrawerAdapter);
-                LayoutInflater in = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                drawerListView.setDividerHeight(0);
+                drawerListView.setBackgroundColor(ctx.getResources().getColor(R.color.white));
+                LayoutInflater in = (LayoutInflater) getSystemService(
+                        Context.LAYOUT_INFLATER_SERVICE);
                 View v = in.inflate(R.layout.hero_image, null);
                 ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
                 img.setImageDrawable(Util.getRandomHeroImage(ctx));
@@ -142,14 +141,9 @@ public class OperationsPagerActivity extends ActionBarActivity
                         TextView tv = (TextView) view.findViewById(R.id.DI_txtTitle);
                         Log.w(LOG, "##### onItemClick, index: " + i + " title: " + tv.getText().toString());
                         mPager.setCurrentItem(i - 1, true);
-
                         mDrawerLayout.closeDrawers();
                     }
                 });
-
-                if (wcr.isWifiConnected()) {
-                    getCompanyData();
-                }
 
 
             }
@@ -161,15 +155,14 @@ public class OperationsPagerActivity extends ActionBarActivity
 
             @Override
             public void onError() {
-                if (wcr.isWifiConnected()) {
-                    getCompanyData();
-                }
+                Log.e(LOG, "Caching Error .. going to the cloud");
+                getCompanyData();
+
             }
         });
 
     }
 
-    private CompanyDTO company;
 
     private void getCompanyData() {
         Log.w(LOG, "############# getCompanyData from the cloud..........");
@@ -177,9 +170,10 @@ public class OperationsPagerActivity extends ActionBarActivity
         w.setRequestType(RequestDTO.GET_COMPANY_DATA);
         w.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
         progressBar.setVisibility(View.VISIBLE);
-        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+
+        NetUtil.sendRequest(ctx,w,new NetUtil.NetUtilListener() {
             @Override
-            public void onMessage(final ResponseDTO r) {
+            public void onResponse(final ResponseDTO r) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -190,8 +184,13 @@ public class OperationsPagerActivity extends ActionBarActivity
                         }
                         company = r.getCompany();
                         projectList = company.getProjectList();
+                        projectListFragment.updateStatusCount(r.getStatusCountInPeriod());
                         response = r;
                         buildPages();
+                        if (isRefreshing) {
+                            isRefreshing = false;
+                            statusReportFragment.getProjectStatus();
+                        }
                         CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
@@ -219,16 +218,6 @@ public class OperationsPagerActivity extends ActionBarActivity
             }
 
             @Override
-            public void onClose() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
-            }
-
-            @Override
             public void onError(final String message) {
                 runOnUiThread(new Runnable() {
                     @Override
@@ -238,7 +227,18 @@ public class OperationsPagerActivity extends ActionBarActivity
                     }
                 });
             }
+
+            @Override
+            public void onWebSocketClose() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+            }
         });
+
     }
 
     @Override
@@ -248,222 +248,21 @@ public class OperationsPagerActivity extends ActionBarActivity
         return true;
     }
 
+    boolean isRefreshing;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_add) {
-            PageFragment pf = pageFragmentList.get(currentPageIndex);
-            if (pf instanceof ProjectListFragment) {
-                ProjectDialog pd = new ProjectDialog();
-                pd.setContext(ctx);
-                pd.setAction(ProjectDTO.ACTION_ADD);
-                pd.setProject(new ProjectDTO());
-                pd.setListener(new ProjectDialog.ProjectDialogListener() {
-                    @Override
-                    public void onProjectAdded(final ProjectDTO project) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                projectListFragment.addProject(project);
-                            }
-                        });
-                    }
 
-                    @Override
-                    public void onProjectUpdated(ProjectDTO project) {
-
-                    }
-
-                    @Override
-                    public void onError(String message) {
-
-                    }
-                });
-                pd.show(getFragmentManager(), "PROJ_DIAG");
-            }
-            if (pf instanceof StaffListFragment) {
-                Intent i = new Intent(this, StaffActivity.class);
-                startActivityForResult(i, EDIT_STAFF_REQUESTED);
-            }
-            if (pf instanceof ClientListFragment) {
-                ClientDialog cd = new ClientDialog();
-                cd.setContext(ctx);
-                cd.setClient(new ClientDTO());
-                cd.setAction(ClientDTO.ACTION_ADD);
-                cd.setListener(new ClientDialog.ClientDialogListener() {
-                    @Override
-                    public void onClientAdded(final ClientDTO client) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                clientListFragment.addClient(client);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onClientUpdated(ClientDTO client) {
-
-                    }
-
-                    @Override
-                    public void onError(final String message) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Util.showErrorToast(ctx, message);
-                            }
-                        });
-                    }
-                });
-                cd.show(getFragmentManager(), "CLIENT_DIAG");
-            }
-            if (pf instanceof TaskListFragment) {
-                TaskDialog td = new TaskDialog();
-                td.setContext(ctx);
-                td.setAction(TaskDTO.ACTION_ADD);
-                td.setListener(new TaskDialog.TaskDialogListener() {
-                    @Override
-                    public void onTaskAdded(TaskDTO task) {
-                        taskListFragment.addTask(task);
-                    }
-
-                    @Override
-                    public void onTaskUpdated(TaskDTO task) {
-
-                    }
-
-                    @Override
-                    public void onTaskDeleted(TaskDTO task) {
-
-                    }
-
-                    @Override
-                    public void onError(String message) {
-
-                    }
-                });
-                td.show(getFragmentManager(), "TD_DIAG");
-            }
-            if (pf instanceof ProjectStatusTypeListFragment) {
-                TaskAndProjectStatusDialog d2 = new TaskAndProjectStatusDialog();
-                d2.setContext(ctx);
-                d2.setAction(TaskAndProjectStatusDialog.ACTION_ADD);
-                d2.setType(TaskAndProjectStatusDialog.PROJECT_STATUS);
-                d2.setProjectStatusType(new ProjectStatusTypeDTO());
-                d2.setListener(new TaskAndProjectStatusDialog.EditDialogListener() {
-                    @Override
-                    public void onComplete() {
-
-                    }
-
-                    @Override
-                    public void onError(final String message) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Util.showErrorToast(ctx, message);
-                            }
-                        });
-                    }
-                });
-                d2.show(getFragmentManager(), "EDIT_DIALOG");
-            }
-            if (pf instanceof EngineerListFragment) {
-                EngineerDialog ed = new EngineerDialog();
-                ed.setContext(ctx);
-                ed.setAction(EngineerDTO.ACTION_ADD);
-                ed.setListener(new EngineerDialog.EngineerDialogListener() {
-                    @Override
-                    public void onEngineerAdded(EngineerDTO engineer) {
-                        engineerListFragment.addEngineer(engineer);
-                    }
-
-                    @Override
-                    public void onEngineerUpdated(EngineerDTO engineer) {
-
-                    }
-
-                    @Override
-                    public void onEngineerDeleted(EngineerDTO engineer) {
-
-                    }
-
-                    @Override
-                    public void onError(String message) {
-
-                    }
-                });
-                ed.show(getFragmentManager(), "ENG_DIAG");
-            }
-            if (pf instanceof BeneficiaryListFragment) {
-                BeneficiaryDialog bd = new BeneficiaryDialog();
-                bd.setContext(ctx);
-                bd.setAction(BeneficiaryDTO.ACTION_ADD);
-                bd.setListener(new BeneficiaryDialog.BeneficiaryDialogListener() {
-                    @Override
-                    public void onBeneficiaryAdded(BeneficiaryDTO beneficiary) {
-                        beneficiaryListFragment.addBeneficiary(beneficiary);
-                    }
-
-                    @Override
-                    public void onBeneficiaryUpdated(BeneficiaryDTO beneficiary) {
-
-                    }
-
-                    @Override
-                    public void onBeneficiaryDeleted(BeneficiaryDTO beneficiary) {
-
-                    }
-
-                    @Override
-                    public void onError(String message) {
-
-                    }
-                });
-                bd.show(getFragmentManager(), "BEN_DIAG");
-            }
-            if (pf instanceof TaskStatusListFragment) {
-                TaskAndProjectStatusDialog d = new TaskAndProjectStatusDialog();
-                d.setContext(ctx);
-                d.setAction(TaskAndProjectStatusDialog.ACTION_ADD);
-                d.setType(TaskAndProjectStatusDialog.TASK_STATUS);
-                d.setListener(new TaskAndProjectStatusDialog.EditDialogListener() {
-                    @Override
-                    public void onComplete() {
-
-                    }
-
-                    @Override
-                    public void onError(final String message) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Util.showErrorToast(ctx, message);
-                            }
-                        });
-                    }
-                });
-                d.show(getFragmentManager(), "TS_DIALOG");
-            }
-            return true;
-        }
         if (id == R.id.action_refresh) {
-            WebCheckResult r = WebCheck.checkNetworkAvailability(ctx);
-            if (r.isWifiConnected()) {
-                getCompanyData();
-            } else {
-                Util.showToast(ctx, ctx.getString(R.string.wifi_not_connected));
-            }
+            isRefreshing = true;
+            getCompanyData();
             return true;
         }
-        if (id == R.id.action_gallery) {
-            Util.showErrorToast(ctx, ctx.getString(R.string.under_cons));
+        if (id == R.id.action_help) {
+            Util.showToast(ctx,ctx.getString(R.string.under_cons));
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -479,6 +278,8 @@ public class OperationsPagerActivity extends ActionBarActivity
             data1.putInt("type", ProjectListFragment.OPERATIONS_TYPE);
             projectListFragment.setArguments(data1);
 
+            statusReportFragment = StatusReportFragment.newInstance(response);
+
             staffListFragment = new StaffListFragment();
             staffListFragment.setArguments(data1);
 
@@ -488,39 +289,18 @@ public class OperationsPagerActivity extends ActionBarActivity
             projectStatusTypeListFragment = new ProjectStatusTypeListFragment();
             projectStatusTypeListFragment.setArguments(data1);
 
-            clientListFragment = new ClientListFragment();
-            clientListFragment.setArguments(data1);
-
             taskListFragment = new TaskListFragment();
-            engineerListFragment = new EngineerListFragment();
-            engineerListFragment.setArguments(data1);
-
-            beneficiaryListFragment = new BeneficiaryListFragment();
-            ResponseDTO xx = new ResponseDTO();
-            data1 = new Bundle();
-            xx.setProjectList(company.getProjectList());
-            data1.putSerializable("projectList", xx);
-            beneficiaryListFragment.setArguments(data1);
+            taskListFragment.setArguments(data1);
 
             pageFragmentList.add(projectListFragment);
+            pageFragmentList.add(statusReportFragment);
             pageFragmentList.add(staffListFragment);
-            pageFragmentList.add(clientListFragment);
+            pageFragmentList.add(taskListFragment);
             pageFragmentList.add(taskStatusListFragment);
             pageFragmentList.add(projectStatusTypeListFragment);
-            pageFragmentList.add(taskListFragment);
-            pageFragmentList.add(engineerListFragment);
-            pageFragmentList.add(beneficiaryListFragment);
+
 
             initializeAdapter();
-        } else {
-
-            if (isRefreshedDueToImport) {
-                Log.i(LOG, "*** asking fragment to refresh itself");
-                isRefreshedDueToImport = false;
-                beneficiaryListFragment.refreshBeneficiaryList(project);
-            }
-            //TODO - refresh the rest of the fragments with company data
-            projectListFragment.refreshData(response);
         }
     }
 
@@ -532,13 +312,21 @@ public class OperationsPagerActivity extends ActionBarActivity
             public void onPageSelected(int arg0) {
                 currentPageIndex = arg0;
                 PageFragment pf = pageFragmentList.get(currentPageIndex);
-                if (pf instanceof BeneficiaryListFragment) {
-                    beneficiaryListFragment.expandTopView();
-                }
+
                 if (pf instanceof TaskListFragment) {
-                    taskListFragment.expandHeroImage();
+                    taskListFragment.animateHeroHeight();
                 }
                 if (pf instanceof StaffListFragment) {
+                    staffListFragment.animateHeroHeight();
+                }
+                if (pf instanceof ProjectStatusTypeListFragment) {
+                    projectStatusTypeListFragment.animateHeroHeight();
+                }
+                if (pf instanceof TaskStatusListFragment) {
+                    taskStatusListFragment.animateHeroHeight();
+                }
+                if (pf instanceof ProjectListFragment) {
+                    projectListFragment.animateHeroHeight();
                 }
             }
 
@@ -557,10 +345,7 @@ public class OperationsPagerActivity extends ActionBarActivity
     StaffListFragment staffListFragment;
     TaskStatusListFragment taskStatusListFragment;
     ProjectStatusTypeListFragment projectStatusTypeListFragment;
-    ClientListFragment clientListFragment;
     TaskListFragment taskListFragment;
-    EngineerListFragment engineerListFragment;
-    BeneficiaryListFragment beneficiaryListFragment;
     PagerAdapter adapter;
     ViewPager mPager;
     Context ctx;
@@ -571,8 +356,9 @@ public class OperationsPagerActivity extends ActionBarActivity
     static final int NEW_STATUS_EXPECTED = 2936;
 
     @Override
-    public void onCompanyStaffClicked(CompanyStaffDTO companyStaff) {
-
+    public void onNewCompanyStaff() {
+        Intent i = new Intent(this, StaffActivity.class);
+        startActivityForResult(i, EDIT_STAFF_REQUESTED);
     }
 
     @Override
@@ -589,13 +375,14 @@ public class OperationsPagerActivity extends ActionBarActivity
 
     static final int PICTURE_REQUESTED = 9133;
     CompanyStaffDTO companyStaff;
+    int type;
 
     @Override
     public void onCompanyStaffPictureRequested(CompanyStaffDTO companyStaff) {
         this.companyStaff = companyStaff;
-        Intent i = new Intent(this, PictureActivity.class);
+        type = PhotoUploadDTO.STAFF_IMAGE;
+        Intent i = new Intent(this, StaffPictureActivity.class);
         i.putExtra("companyStaff", companyStaff);
-        i.putExtra("type", PhotoUploadDTO.STAFF_IMAGE);
         startActivityForResult(i, PICTURE_REQUESTED);
     }
 
@@ -607,8 +394,6 @@ public class OperationsPagerActivity extends ActionBarActivity
     }
 
     static final int EDIT_STAFF_REQUESTED = 1132;
-    boolean isRefreshedDueToImport;
-    ProjectDTO project;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -619,18 +404,7 @@ public class OperationsPagerActivity extends ActionBarActivity
                 staffListFragment.refreshList(companyStaff);
             }
         }
-        if (requestCode == IMPORT_REQUESTED) {
-            Log.w(LOG, "## checking for data... from intent: " + data);
-            if (resultCode == RESULT_OK) {
-                project = (ProjectDTO) data.getSerializableExtra("project");
-                Log.e(LOG, "## result is kool, retrive project loaded with beneficiaries: " + project.getBeneficiaryList().size());
-                beneficiaryListFragment.refreshBeneficiaryList(project);
-                //isRefreshedDueToImport = true;
-                //getCompanyData();
-            } else {
-                Log.e(LOG, "## no project data found onActivityResult - ?????");
-            }
-        }
+
         if (requestCode == EDIT_STAFF_REQUESTED) {
             if (resultCode == RESULT_OK) {
                 CompanyStaffDTO staff = (CompanyStaffDTO) data.getSerializableExtra("companyStaff");
@@ -639,7 +413,7 @@ public class OperationsPagerActivity extends ActionBarActivity
         }
         if (requestCode == NEW_STATUS_EXPECTED) {
             if (resultCode == RESULT_OK) {
-                int count = data.getIntExtra("newStatusDone",0);
+                int count = data.getIntExtra("newStatusDone", 0);
                 projectListFragment.updateStatusCount(count);
             }
         }
@@ -750,72 +524,6 @@ public class OperationsPagerActivity extends ActionBarActivity
     }
 
     @Override
-    public void onClientClicked(ClientDTO client) {
-
-    }
-
-    @Override
-    public void onClientEditRequested(ClientDTO client) {
-        ClientDialog cd = new ClientDialog();
-        cd.setContext(ctx);
-        cd.setClient(client);
-        cd.setAction(ClientDTO.ACTION_UPDATE);
-        cd.setListener(new ClientDialog.ClientDialogListener() {
-            @Override
-            public void onClientAdded(ClientDTO client) {
-
-            }
-
-            @Override
-            public void onClientUpdated(ClientDTO client) {
-
-            }
-
-            @Override
-            public void onError(final String message) {
-                Log.e(LOG, "---- ERROR websocket - " + message);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Util.showErrorToast(ctx, message);
-                    }
-                });
-            }
-        });
-        cd.show(getFragmentManager(), "PICD");
-    }
-
-    @Override
-    public void onNewClientRequested() {
-        ClientDialog cd = new ClientDialog();
-        cd.setContext(ctx);
-        cd.setAction(ClientDTO.ACTION_ADD);
-        cd.setListener(new ClientDialog.ClientDialogListener() {
-            @Override
-            public void onClientAdded(ClientDTO client) {
-                clientListFragment.addClient(client);
-            }
-
-            @Override
-            public void onClientUpdated(ClientDTO client) {
-
-            }
-
-            @Override
-            public void onError(final String message) {
-                Log.e(LOG, "---- ERROR websocket - " + message);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Util.showErrorToast(ctx, message);
-                    }
-                });
-            }
-        });
-        cd.show(getFragmentManager(), "PICD");
-    }
-
-    @Override
     public void onTaskClicked(TaskDTO task) {
 
         TaskDialog td = new TaskDialog();
@@ -884,126 +592,18 @@ public class OperationsPagerActivity extends ActionBarActivity
 
     static final String LOG = OperationsPagerActivity.class.getSimpleName();
 
-
     @Override
-    public void onEngineerClicked(EngineerDTO engineer) {
-
+    public void onSiteListRequested(ProjectDTO project) {
+        Intent i = new Intent(ctx, ProjectSitePagerActivity.class);
+        CompanyDTO company = new CompanyDTO();
+        company.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
+        i.putExtra("project", project);
+        i.putExtra("company", company);
+        i.putExtra("type", SiteTaskAndStatusAssignmentFragment.PROJECT_MANAGER);
+        startActivityForResult(i,SITE_LIST_REQUESTED);
     }
 
-    @Override
-    public void onEngineerEditRequested(EngineerDTO engineer) {
-        EngineerDialog ed = new EngineerDialog();
-        ed.setContext(ctx);
-        ed.setAction(EngineerDTO.ACTION_UPDATE);
-        ed.setListener(new EngineerDialog.EngineerDialogListener() {
-            @Override
-            public void onEngineerAdded(EngineerDTO engineer) {
-                engineerListFragment.addEngineer(engineer);
-            }
-
-            @Override
-            public void onEngineerUpdated(EngineerDTO engineer) {
-
-            }
-
-            @Override
-            public void onEngineerDeleted(EngineerDTO engineer) {
-
-            }
-
-            @Override
-            public void onError(String message) {
-
-            }
-        });
-        ed.show(getFragmentManager(), "ENG_DIAG");
-    }
-
-    @Override
-    public void onNewEngineerRequested() {
-        EngineerDialog ed = new EngineerDialog();
-        ed.setContext(ctx);
-        ed.setAction(EngineerDTO.ACTION_ADD);
-        ed.setListener(new EngineerDialog.EngineerDialogListener() {
-            @Override
-            public void onEngineerAdded(EngineerDTO engineer) {
-                engineerListFragment.addEngineer(engineer);
-            }
-
-            @Override
-            public void onEngineerUpdated(EngineerDTO engineer) {
-
-            }
-
-            @Override
-            public void onEngineerDeleted(EngineerDTO engineer) {
-
-            }
-
-            @Override
-            public void onError(String message) {
-
-            }
-        });
-        ed.show(getFragmentManager(), "ENG_DIAG");
-    }
-
-    @Override
-    public void onBeneficiaryClicked(BeneficiaryDTO beneficiary) {
-
-    }
-
-    @Override
-    public void onBeneficiaryImportRequested(ProjectDTO project) {
-        Intent i = new Intent(ctx, BeneficiaryImportActivity.class);
-        if (project == null) {
-            i.putExtra("project", projectList.get(0));
-        } else {
-            i.putExtra("project", project);
-        }
-        Log.e(LOG, "## starting activity for result");
-        startActivityForResult(i, IMPORT_REQUESTED);
-    }
-
-
-    static final int IMPORT_REQUESTED = 6131;
-
-    @Override
-    public void onBeneficiaryEditRequested(BeneficiaryDTO beneficiary) {
-        BeneficiaryDialog bd = new BeneficiaryDialog();
-        bd.setContext(ctx);
-        bd.setAction(BeneficiaryDTO.ACTION_UPDATE);
-        bd.setBeneficiary(beneficiary);
-        bd.setListener(new BeneficiaryDialog.BeneficiaryDialogListener() {
-            @Override
-            public void onBeneficiaryAdded(BeneficiaryDTO beneficiary) {
-                beneficiaryListFragment.addBeneficiary(beneficiary);
-            }
-
-            @Override
-            public void onBeneficiaryUpdated(BeneficiaryDTO beneficiary) {
-
-            }
-
-            @Override
-            public void onBeneficiaryDeleted(BeneficiaryDTO beneficiary) {
-
-            }
-
-            @Override
-            public void onError(final String message) {
-                Log.e(LOG, "---- ERROR websocket - " + message);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Util.showErrorToast(ctx, message);
-                    }
-                });
-            }
-        });
-        bd.show(getFragmentManager(), "BEN_DIAG");
-    }
-
+    static final int SITE_LIST_REQUESTED = 4511;
     private class PagerAdapter extends FragmentStatePagerAdapter {
 
         public PagerAdapter(FragmentManager fm) {
@@ -1046,7 +646,7 @@ public class OperationsPagerActivity extends ActionBarActivity
             }
             if (pf instanceof BeneficiaryListFragment) {
                 title = ctx.getString(R.string.bennie_list);
-                BeneficiaryListFragment blf = (BeneficiaryListFragment)pf;
+                BeneficiaryListFragment blf = (BeneficiaryListFragment) pf;
                 blf.setProjectList(projectList);
             }
             if (pf instanceof EngineerListFragment) {
@@ -1064,10 +664,6 @@ public class OperationsPagerActivity extends ActionBarActivity
         super.onPause();
     }
 
-    private List<PageFragment> pageFragmentList;
-    private ListView drawerListView;
-    private String[] titles;
-    private List<String> sTitles = new ArrayList<>();
     @Override
     protected void onStart() {
         super.onStart();
@@ -1102,26 +698,19 @@ public class OperationsPagerActivity extends ActionBarActivity
             RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
             mService = binder.getService();
             mBound = true;
-            WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
-            if (wcr.isWifiConnected()) {
-                mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
-                    @Override
-                    public void onTasksSynced(int goodResponses, int badResponses) {
-                        Log.w(LOG, "@@ cached requests done, good: " + goodResponses + " bad: " + badResponses);
-                    }
 
-                    @Override
-                    public void onError(String message) {
+            mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
+                @Override
+                public void onTasksSynced(int goodResponses, int badResponses) {
+                    Log.w(LOG, "@@ cached requests done, good: " + goodResponses + " bad: " + badResponses);
+                }
 
-                    }
-                });
-                Util.pretendFlash(progressBar, 1000, 2, new Util.UtilAnimationListener() {
-                    @Override
-                    public void onAnimationEnded() {
-                        getCompanyData();
-                    }
-                });
-            }
+                @Override
+                public void onError(String message) {
+
+                }
+            });
+
         }
 
         @Override

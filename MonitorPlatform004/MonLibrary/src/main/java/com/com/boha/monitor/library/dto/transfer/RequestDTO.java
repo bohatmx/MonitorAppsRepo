@@ -20,6 +20,7 @@ import com.com.boha.monitor.library.dto.EngineerDTO;
 import com.com.boha.monitor.library.dto.GcmDeviceDTO;
 import com.com.boha.monitor.library.dto.InvoiceDTO;
 import com.com.boha.monitor.library.dto.InvoiceItemDTO;
+import com.com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.ProjectDiaryRecordDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
@@ -43,6 +44,7 @@ import java.util.List;
 public class RequestDTO implements Serializable {
     public RequestDTO(Integer requestType) {
         this.requestType = requestType;
+        System.out.println("requestType in constructor: " + requestType);
     }
 
     public RequestDTO() {
@@ -53,7 +55,7 @@ public class RequestDTO implements Serializable {
             countryID, contractorClaimID, invoiceID,
             beneficiaryID, engineerID;
     private Boolean responseRequested,
-            useHttp = false;
+            useHttp = Boolean.FALSE, rideWebSocket = Boolean.TRUE;
     private SubTaskStatusDTO subTaskStatus;
     private Date startDate, endDate;
     private Float accuracy;
@@ -88,6 +90,7 @@ public class RequestDTO implements Serializable {
     private List<BeneficiaryDTO> beneficiaryList;
     private List<PhotoUploadDTO> photoUploadList;
     private RequestList requestList;
+    private List<LocationTrackerDTO> locationTrackerList;
 
     public List<PhotoUploadDTO> getPhotoUploadList() {
         return photoUploadList;
@@ -95,6 +98,30 @@ public class RequestDTO implements Serializable {
 
     public void setPhotoUploadList(List<PhotoUploadDTO> photoUploadList) {
         this.photoUploadList = photoUploadList;
+    }
+
+    public List<LocationTrackerDTO> getLocationTrackerList() {
+        return locationTrackerList;
+    }
+
+    public void setLocationTrackerList(List<LocationTrackerDTO> locationTrackerList) {
+        this.locationTrackerList = locationTrackerList;
+    }
+
+    public Boolean getResponseRequested() {
+        return responseRequested;
+    }
+
+    public void setResponseRequested(Boolean responseRequested) {
+        this.responseRequested = responseRequested;
+    }
+
+    public Boolean getRideWebSocket() {
+        return rideWebSocket;
+    }
+
+    public void setRideWebSocket(Boolean rideWebSocket) {
+        this.rideWebSocket = rideWebSocket;
     }
 
     //register actors
@@ -107,7 +134,8 @@ public class RequestDTO implements Serializable {
             REGISTER_CLIENT = 6,
             REGISTER_BENEFICIARY = 7,
             REGISTER_ENGINEER = 8,
-            IMPORT_BENEFICIARIES = 9;
+            IMPORT_BENEFICIARIES = 9,
+            ADD_LOCATION_TRACKERS = 10;
     //add stuff
     public static final int
             ADD_PROJECT_SITE_TASK = 11,
@@ -139,7 +167,10 @@ public class RequestDTO implements Serializable {
             GET_PROJECT_STATUS_IN_PERIOD = 118,
             GET_SITE_STATUS_IN_PERIOD = 119,
             GET_PROJECT_SITES = 120,
-            GET_ERROR_REPORTS = 121;
+            GET_ERROR_REPORTS = 121,
+            GET_LOCATION_TRACK_BY_STAFF = 122,
+            GET_LOCATION_TRACK_BY_STAFF_IN_PERIOD = 123,
+            GET_LOCATION_TRACK_BY_COMPANY_IN_PERIOD = 124;
     //login's
     public static final int
             LOGIN = 200,

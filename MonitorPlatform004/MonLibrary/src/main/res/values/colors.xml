@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<color name="white">#ffffffff</color>
+    <color name="white">#ffffffff</color>
     <color name="circle_background">#fff2f2f2</color>
     <color name="line_background">#ffcccccc</color>
     <color name="done_text_color_normal">#ff333333</color>
@@ -14,40 +14,49 @@
     <color name="ampm_text_color">#8c8c8c</color>
     <color name="numbers_text_color">#8c8c8c</color>
 
+    <color name="indian_red">#CD5C5C</color>
+
+    <color name="green_700">#00796B</color>
+    <color name="green_800">#00695C</color>
+
+    <color name="medium_sea_green">#3CB371</color>
+    <color name="medium_purple">#9370DB</color>
+    <color name="midnight_blue">#191970</color>
+    <color name="rebecca_purple">#663399</color>
+
+    <color name="amber">#FFC200</color>
     <color name="transparent_black">#7F000000</color>
     <color name="maroon">#CC0000</color>
     <color name="brown">#CC0000</color>
     <color name="navy_blue">#3399CC</color>
-    <color name="purple_lite">#FFCCFF</color>
     <color name="opaque_red">#f00</color>
     <color name="translucent_red">#80ff0000</color>
-    <color name="blue_one">#EFEDFC</color>
     <color name="beige">#EFEDFC</color>
-    <color name="blue_two">#EAF1FB</color>
-    <color name="purple">#DBF0F7</color>
+    <color name="purple">#800080</color>
     <color name="blue_pale">#EEEEFF</color>
     <color name="green_pale">#99FF99</color>
     <color name="green_two">#009900</color>
     <color name="yellow">#FFFF00</color>
-    <color name="yellow_dark">#CCCC00</color>
     <color name="grey">#CCCCCC</color>
-    <color name="grey2">#A9A9A9</color>
+    <color name="dark_slate_grey">#2F4F4F</color>
     <color name="grey_light">#EEEEEE</color>
     <color name="pale_yellow">#EAFEE2</color>
     <color name="black">#000000</color>
-    <color name="blue_dark1">#000033</color>
-    <color name="blue_dark2">#003366</color>
+    <color name="steel_blue">#4682B4</color>
+    <color name="teal">#008080</color>
     <color name="dark_blue">#0000FF</color>
-    <color name="pale1">#FAF2EF</color>
-    <color name="pale2">#F5F5F2</color>
-    <color name="pale3">#E6FCFF</color>
-    <color name="pale4">#FFF9FC</color>
+
     <color name="green">#339966</color>
-    <color name="blue2">#D9F3FF</color>
-    <color name="blue3">#EEEEFF</color>
+    <color name="royal_blue">#4169E1</color>
+    <color name="slate_grey">#708090</color>
     <color name="orange">#FFA500</color>
     <color name="absa_red">#D00505</color>
     <color name="beige_pale">#F7F2E0</color>
     <color name="yellow_pale">#F2F5A9</color>
+
+    <!-- Indigo Pallete -->
+    <color name="indigo_500">#3F51B5</color>
+    <color name="indigo_700">#303F9F</color>
+    <color name="indigo_100">#C5CAE9</color>
 
 </resources>

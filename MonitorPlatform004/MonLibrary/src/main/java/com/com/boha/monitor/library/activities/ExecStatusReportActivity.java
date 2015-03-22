@@ -123,12 +123,13 @@ public class ExecStatusReportActivity extends ActionBarActivity
                         execProjectSiteListFragment.setProject(project);
                     }
                 }
-                WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
-                if (wcr.isWifiConnected()) {
-                    getProjectData();
-                } else {
-                    Util.showToast(ctx,ctx.getString(R.string.connect_wifi));
-                }
+//                WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
+//                if (wcr.isWifiConnected()) {
+//                    getProjectData();
+//                } else {
+//                    Util.showToast(ctx,ctx.getString(R.string.connect_wifi));
+//                }
+                getProjectData();
             }
 
             @Override
@@ -234,10 +235,11 @@ public class ExecStatusReportActivity extends ActionBarActivity
                 if (cachedSite != null) {
                     execProjectSiteStatusListFragment.setProjectSite(cachedSite);
                 }
-                WebCheckResult ww = WebCheck.checkNetworkAvailability(ctx);
-                if (ww.isWifiConnected()) {
-                    getSiteStatusCloud(projectSite);
-                }
+//                WebCheckResult ww = WebCheck.checkNetworkAvailability(ctx);
+//                if (ww.isWifiConnected()) {
+//                    getSiteStatusCloud(projectSite);
+//                }
+                getSiteStatusCloud(projectSite);
             }
 
             @Override

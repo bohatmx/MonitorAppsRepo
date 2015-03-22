@@ -2,13 +2,17 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:padding="0dp"
+    android:padding="@dimen/mon_divider_small"
+    android:background="@color/grey"
     android:layout_height="wrap_content">
 
 
     <RelativeLayout
         android:id="@+id/TST_bottom"
-        android:padding="@dimen/mon_padding"
+        android:background="@color/white"
+        android:padding="@dimen/mon_margin"
+        android:layout_marginLeft="@dimen/mon_padding"
+        android:layout_marginRight="@dimen/mon_padding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -19,6 +23,7 @@
             android:background="@drawable/xgreen_oval"
             android:textColor="@color/white"
             android:gravity="center"
+            android:layout_marginLeft="@dimen/mon_margin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

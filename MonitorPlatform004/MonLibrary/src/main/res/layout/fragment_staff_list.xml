@@ -3,29 +3,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey"
-    android:padding="@dimen/mon_padding"
+
     tools:context="com.com.boha.monitor.library.fragments.ProjectSiteStaffListFragment">
 
     <RelativeLayout
         android:id="@+id/STAFF_LIST_top"
+        android:background="@color/indigo_500"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/STAFF_LIST_hero"
-            android:src="@drawable/banner_office1"
-            android:scaleType="centerCrop"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/mon_hero_height_small" />
+        android:layout_height="@dimen/mon_hero_height_medium">
 
         <TextView
             android:id="@+id/STAFF_LIST_label"
-            style="@style/Title2TextStyleGrey"
-            android:layout_marginTop="@dimen/mon_wide"
+            style="@style/Title1TextStyleWhite"
+            android:layout_marginTop="@dimen/mon_wider"
             android:textColor="@color/white"
-            android:text="@string/company_staff"
-            android:layout_marginLeft="@dimen/mon_padding"
+            android:text="Monitoring Team"
+            android:layout_marginLeft="@dimen/mon_wide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/STAFF_LIST_label2"
+            style="@style/TextStyleSmall"
+            android:layout_below="@id/STAFF_LIST_label"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:textColor="@color/white"
+            android:text="Personnel with Monitor Apps on their devices"
+            android:layout_marginLeft="@dimen/mon_wide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/STAFF_LIST_icon"
+            android:src="@android:drawable/ic_menu_mylocation"
+            android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/mon_margin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -34,30 +45,27 @@
 
     <RelativeLayout
         android:layout_below="@id/STAFF_LIST_top"
-        android:background="@color/beige_pale"
-        android:layout_marginTop="@dimen/mon_padding"
+        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
 
         <ListView
             android:id="@+id/STAFF_LIST_list"
             android:layout_marginTop="@dimen/mon_wide"
-            android:background="@color/white"
             android:dividerHeight="@dimen/mon_divider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/STAFF_LIST_staffCount"
-            android:text="00"
-            style="@style/BlackCircle"
-            android:layout_marginRight="@dimen/mon_margin"
-            android:layout_alignParentRight="true"
 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
     </RelativeLayout>
+    <RelativeLayout
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/mon_hero_height_medium_lite"
+        android:layout_marginRight="@dimen/mon_wide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <include layout="@layout/fab_teal"/>
+        </RelativeLayout>
 
 
 </RelativeLayout>

@@ -22,7 +22,6 @@ import android.widget.ListPopupWindow;
 import android.widget.ProgressBar;
 
 import com.com.boha.monitor.library.activities.MonApp;
-import com.com.boha.monitor.library.activities.SitePictureGridActivity;
 import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
@@ -35,13 +34,11 @@ import com.com.boha.monitor.library.services.PhotoUploadService;
 import com.com.boha.monitor.library.services.RequestSyncService;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
+import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
-import com.com.boha.monitor.library.util.Statics;
-import com.com.boha.monitor.library.util.UnhandledExceptionHandler;
 import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebCheck;
 import com.com.boha.monitor.library.util.WebCheckResult;
-import com.com.boha.monitor.library.util.WebSocketUtil;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -61,11 +58,10 @@ public class ProjectPagerActivity extends ActionBarActivity {
         ctx = getApplicationContext();
         handle = findViewById(R.id.TIT_handle);
         mPager = (ViewPager) findViewById(R.id.TIT_pager);
-        // if (mPager == null) throw new UnsupportedOperationException("Fucking pager is null");
         PagerTitleStrip strip = (PagerTitleStrip) findViewById(R.id.pager_title_strip);
-        //strip.setVisibility(View.GONE);
+        strip.setVisibility(View.GONE);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-
+        progressBar.setVisibility(View.GONE);
         getCachedCompanyData();
         setTitle(SharedUtil.getCompany(ctx).getCompanyName());
         CompanyStaffDTO staff = SharedUtil.getCompanyStaff(ctx);
@@ -78,27 +74,23 @@ public class ProjectPagerActivity extends ActionBarActivity {
         t.setScreenName("ProjectPagerActivity");
         t.send(new HitBuilders.AppViewBuilder().build());
 
-        Thread.setDefaultUncaughtExceptionHandler(
-                new UnhandledExceptionHandler(this));
+//        Thread.setDefaultUncaughtExceptionHandler(
+//                new UnhandledExceptionHandler(this));
     }
 
     private void getCachedCompanyData() {
-        final WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
+
+        progressBar.setVisibility(View.VISIBLE);
         CacheUtil.getCachedData(getApplicationContext(), CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
 
             @Override
             public void onFileDataDeserialized(ResponseDTO r) {
-                if (r != null) {
-                    if (r.getCompany() != null) {
-                        company = r.getCompany();
-                        response = r;
-                        buildPages();
-                    } else {
-                        Util.showErrorToast(ctx, ctx.getString(R.string.wifi_not_available));
-                        return;
-                    }
-                }
-                if (wcr.isWifiConnected()) {
+                progressBar.setVisibility(View.GONE);
+                if (r.getCompany() != null) {
+                    company = r.getCompany();
+                    response = r;
+                    buildPages();
+                } else {
                     getCompanyData();
                 }
 
@@ -111,9 +103,7 @@ public class ProjectPagerActivity extends ActionBarActivity {
 
             @Override
             public void onError() {
-                if (wcr.isWifiConnected()) {
-                    getCompanyData();
-                }
+                getCompanyData();
             }
         });
 
@@ -127,9 +117,10 @@ public class ProjectPagerActivity extends ActionBarActivity {
         w.setRequestType(RequestDTO.GET_COMPANY_DATA);
         w.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
         progressBar.setVisibility(View.VISIBLE);
-        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+
+        NetUtil.sendRequest(ctx,w,new NetUtil.NetUtilListener() {
             @Override
-            public void onMessage(final ResponseDTO r) {
+            public void onResponse(final ResponseDTO r) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -141,6 +132,10 @@ public class ProjectPagerActivity extends ActionBarActivity {
                         company = r.getCompany();
                         response = r;
                         buildPages();
+                        if (isRefreshing) {
+                            isRefreshing = false;
+                            statusReportFragment.getProjectStatus();
+                        }
                         CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
@@ -162,17 +157,6 @@ public class ProjectPagerActivity extends ActionBarActivity {
 
                     }
                 });
-
-            }
-
-            @Override
-            public void onClose() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
             }
 
             @Override
@@ -182,6 +166,16 @@ public class ProjectPagerActivity extends ActionBarActivity {
                     public void run() {
                         progressBar.setVisibility(View.GONE);
                         Util.showErrorToast(ctx, message);
+                    }
+                });
+            }
+
+            @Override
+            public void onWebSocketClose() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
             }
@@ -197,29 +191,21 @@ public class ProjectPagerActivity extends ActionBarActivity {
         return true;
     }
 
+    boolean isRefreshing;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
 
         if (id == R.id.action_help) {
             Util.showToast(ctx, ctx.getString(R.string.under_cons));
             return true;
         }
         if (id == R.id.action_refresh) {
-            WebCheckResult r = WebCheck.checkNetworkAvailability(ctx);
-            if (!r.isWifiConnected()) {
-                Util.showToast(ctx, getString(R.string.wifi_not_available));
-                return true;
-            }
+            isRefreshing = true;
             getCompanyData();
             return true;
         }
-        if (id == R.id.action_gallery) {
-            Intent i = new Intent(this, SitePictureGridActivity.class);
-            startActivity(i);
-            return true;
-        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -274,9 +260,7 @@ public class ProjectPagerActivity extends ActionBarActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICTURE_REQUESTED) {
-            if (resultCode == RESULT_OK) {
 
-            }
         }
         if (requestCode == NEW_STATUS_EXPECTED) {
             if (resultCode == RESULT_OK) {

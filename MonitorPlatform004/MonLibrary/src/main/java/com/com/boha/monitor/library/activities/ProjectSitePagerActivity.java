@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
@@ -40,10 +39,6 @@ import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebCheck;
 import com.com.boha.monitor.library.util.WebCheckResult;
 import com.com.boha.monitor.library.util.WebSocketUtil;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.location.LocationRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,13 +46,11 @@ import java.util.List;
 import static com.com.boha.monitor.library.util.Util.showErrorToast;
 import static com.com.boha.monitor.library.util.Util.showToast;
 
-public class ProjectSitePagerActivity extends ActionBarActivity implements com.google.android.gms.location.LocationListener,
-        GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener,
-        ProjectSiteListFragment.ProjectSiteListListener, GPSScanFragment.GPSScanFragmentListener {
+public class ProjectSitePagerActivity extends ActionBarActivity
+        implements
+        ProjectSiteListFragment.ProjectSiteListListener {
 
     static final int NUM_ITEMS = 2;
-    GPSScanFragment gpsScanFragment;
     ProgressBar progressBar;
     CompanyDTO company;
 
@@ -77,26 +70,21 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
         company = (CompanyDTO) getIntent().getSerializableExtra("company");
         type = getIntent().getIntExtra("type", SiteTaskAndStatusAssignmentFragment.OPERATIONS);
 
-        setTitle(ctx.getString(R.string.project_sites));
-        getSupportActionBar().setSubtitle(project.getProjectName());
-        mLocationClient = new LocationClient(ctx, this, this);
-//
+        setTitle("");
         getCachedProjectData();
     }
 
     private void getCachedProjectData() {
-        //check network
-        final WebCheckResult r = WebCheck.checkNetworkAvailability(ctx);
         CacheUtil.getCachedProjectData(ctx, project.getProjectID(), new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
                 if (response.getProjectList() != null && !response.getProjectList().isEmpty()) {
                     project = response.getProjectList().get(0);
                     buildPages();
+                    return;
                 }
-                if (r.isWifiConnected()) {
-                    getProjectData();
-                }
+
+                getProjectData();
 
             }
 
@@ -107,11 +95,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
 
             @Override
             public void onError() {
-                if (r.isWifiConnected()) {
-                    getProjectData();
-                } else {
-                    Util.showErrorToast(ctx, getString(R.string.connect_wifi));
-                }
+                getProjectData();
             }
         });
     }
@@ -135,7 +119,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
                             project = response.getProjectList().get(0);
                             Log.i(LOG, "getProjectData returned data OK....");
                         } else {
-                            Util.showErrorToast(ctx,"Project data not found. Please refresh data");
+                            Util.showErrorToast(ctx, "Project data not found. Please refresh data");
                             return;
                         }
                         buildPages();
@@ -194,10 +178,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_unconfirmed) {
-            projectSiteListFragment.findUnconfirmedSites();
-            return true;
-        }
+
         if (id == R.id.action_refresh) {
             refresh();
             return true;
@@ -206,108 +187,47 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
             showToast(ctx, ctx.getString(R.string.under_cons));
             return true;
         }
-        if (id == R.id.action_add) {
-            ProjectSiteDialog d = new ProjectSiteDialog();
-            d.setContext(ctx);
-            d.setProject(project);
-            d.setProjectSite(new ProjectSiteDTO());
-            d.setAction(ProjectSiteDTO.ACTION_ADD);
-            d.setListener(new ProjectSiteDialog.ProjectSiteDialogListener() {
-                @Override
-                public void onProjectSiteAdded(final ProjectSiteDTO site) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            projectSiteListFragment.addProjectSite(site);
-                        }
-                    });
-                }
 
-                @Override
-                public void onProjectSiteUpdated(ProjectSiteDTO project) {
-
-                }
-
-                @Override
-                public void onError(final String message) {
-                    Log.e(LOG, "---- ERROR websocket - " + message);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            showErrorToast(ctx, message);
-                        }
-                    });
-                }
-            });
-            d.show(getFragmentManager(), "PSD_DIAG");
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
 
     private void refresh() {
-        WebCheckResult w = WebCheck.checkNetworkAvailability(ctx, true);
-        if (w.isWifiConnected()) {
-            if (rBound) {
-                rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
-                    @Override
-                    public void onTasksSynced(int goodResponses, int badResponses) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (pBound) {
-                                    Util.showToast(ctx, getString(R.string.uploading_photos));
-                                    pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
-                                        @Override
-                                        public void onUploadsComplete(int count) {
-                                            getProjectData();
-                                        }
-                                    });
-                                }
+        if (rBound) {
+            rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
+                @Override
+                public void onTasksSynced(int goodResponses, int badResponses) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (pBound) {
+//                                Util.showToast(ctx, getString(R.string.uploading_photos));
+                                pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+                                    @Override
+                                    public void onUploadsComplete(int count) {
+//                                        getProjectData();
+                                    }
+                                });
                             }
-                        });
+                        }
+                    });
 
-                    }
+                }
 
-                    @Override
-                    public void onError(String message) {
+                @Override
+                public void onError(String message) {
 
-                    }
-                });
-
-            }
-            //getProjectData();
-
+                }
+            });
         }
+        getProjectData();
     }
 
-    private void getGPSCoordinates() {
-        if (!mLocationClient.isConnected()) {
-            mLocationClient.connect();
-        }
-        mCurrentLocation = mLocationClient.getLastLocation();
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setFastestInterval(1000);
 
-        try {
-            mLocationClient.requestLocationUpdates(mLocationRequest, this);
-        } catch (IllegalStateException e) {
-            Log.e(LOG, "---- mLocationClient.requestLocationUpdates ILLEGAL STATE", e);
-        }
-    }
 
     @Override
     public void onStart() {
         super.onStart();
-        Log.i(LOG,
-                "### onStart, binding RequestSyncService and PhotoUploadService");
-        if (mLocationClient != null) {
-            mLocationClient.connect();
-            Log.i(LOG,
-                    "### onStart - locationClient connecting ... ");
-        }
+
         Intent photoIntent = new Intent(this, PhotoUploadService.class);
         Intent requestIntent = new Intent(this, RequestSyncService.class);
         try {
@@ -320,25 +240,10 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
 
     }
 
-    private void stopPeriodicUpdates() {
-        mLocationClient.removeLocationUpdates(this);
-        Log.e(LOG,
-                "#################### stopPeriodicUpdates - removeLocationUpdates");
-    }
 
     @Override
     public void onStop() {
-        Log.d(LOG,
-                "#################### onStop");
-        if (mLocationClient != null) {
-            if (mLocationClient.isConnected()) {
-                stopPeriodicUpdates();
-            }
-            // After disconnect() is called, the client is considered "dead".
-            mLocationClient.disconnect();
-            Log.e(LOG, "### onStop - locationClient isConnected: "
-                    + mLocationClient.isConnected());
-        }
+
         try {
             if (pBound) {
                 unbindService(pConnection);
@@ -367,8 +272,6 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
             pService = binder.getService();
             pBound = true;
 
-            WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx, true);
-            if (wcr.isWifiConnected()) {
                 Log.w(LOG, "### starting PhotoUploadService ...");
                 pService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
                     @Override
@@ -379,7 +282,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
                         }
                     }
                 });
-            }
+
         }
 
         @Override
@@ -423,48 +326,6 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
     PhotoUploadService pService;
     RequestSyncService rService;
 
-    @Override
-    public void onLocationChanged(Location loc) {
-
-        Log.w(LOG, "### Location changed, lat: "
-                + loc.getLatitude() + " lng: "
-                + loc.getLongitude()
-                + " -- acc: " + loc.getAccuracy());
-        mCurrentLocation = loc;
-        if (gpsScanFragment != null) {
-            gpsScanFragment.setLocation(loc);
-        }
-        if (loc.getAccuracy() <= ACCURACY_THRESHOLD) {
-            location = loc;
-            mLocationClient.removeLocationUpdates(this);
-            Log.e(LOG, "+++ best accuracy found: " + location.getAccuracy());
-        }
-
-    }
-
-    Location location;
-    LocationRequest mLocationRequest;
-    static final int ACCURACY_THRESHOLD = 10;
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.i(LOG,
-                "### ---> PlayServices onConnected() - gotta start something! >>");
-        location = mLocationClient.getLastLocation();
-    }
-
-    @Override
-    public void onDisconnected() {
-        Log.e(LOG,
-                "### ---> PlayServices onDisconnected");
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.e(LOG,
-                "### ---> PlayServices onConnectionFailed: " + connectionResult.toString());
-    }
-
     boolean photosLoaded;
 
     @Override
@@ -483,11 +344,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
         data1.putInt("index", selectedSiteIndex);
         projectSiteListFragment.setArguments(data1);
 
-        gpsScanFragment = new GPSScanFragment();
-
         pageFragmentList.add(projectSiteListFragment);
-        pageFragmentList.add(gpsScanFragment);
-
         initializeAdapter();
 
     }
@@ -500,15 +357,8 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
                 @Override
                 public void onPageSelected(int arg0) {
                     currentPageIndex = arg0;
-                    if (currentPageIndex == 1) {
-                        if (gpsScanFragment.getProjectSite() == null) {
-                            mPager.setCurrentItem(0);
-                        } else {
-                            gpsScanFragment.startScan();
-                        }
-                    }
-                    if (currentPageIndex == 0) {
-                        gpsScanFragment.setProjectSite(null);
+                    PageFragment pf = pageFragmentList.get(arg0);
+                    if (pf instanceof ProjectSiteListFragment) {
                     }
                 }
 
@@ -622,10 +472,13 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
 
     @Override
     public void onGPSRequested(ProjectSiteDTO projectSite, int index) {
-        getGPSCoordinates();
-        gpsScanFragment.setProjectSite(projectSite);
-        mPager.setCurrentItem(1, true);
+        Log.e(LOG,"######### onGPSRequested");
+        Intent f = new Intent(this, GPSActivity.class);
+        f.putExtra("projectSite", projectSite);
+        startActivityForResult(f,GPS_REQUESTED);
+
     }
+
 
     @Override
     public void onSiteOnMapRequested(ProjectSiteDTO projectSite, int index) {
@@ -635,6 +488,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
     }
 
     int newStatusDone;
+    static final int GPS_REQUESTED = 3001;
 
     @Override
     public void onNewStatusDone(int count) {
@@ -661,8 +515,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
     public void onActivityResult(int reqCode, int res, Intent data) {
         Log.e(LOG, "##### onActivityResult requestCode: " + reqCode + " resultCode: " + res);
         switch (reqCode) {
-            case MAP_REQUESTED:
-                Log.w(LOG, "### map has returned with data?");
+            case GPS_REQUESTED:
                 if (res == RESULT_OK) {
                     projectSite = (ProjectSiteDTO) data.getSerializableExtra("projectSite");
                     projectSiteListFragment.updateSiteLocation(projectSite);
@@ -672,8 +525,8 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
                 Log.i(LOG, "################### onActivityResult SITE_PICTURE_REQUEST");
                 if (res == RESULT_OK) {
                     ResponseDTO r = (ResponseDTO) data.getSerializableExtra("response");
-                    Log.w(LOG, "## refresh list with new local photos: " + r.getSiteImageFileNameList());
-                    projectSiteListFragment.refreshPhotoList(r.getSiteImageFileNameList());
+                    Log.w(LOG, "## refresh list with new local photos: " + r.getImageFileNameList());
+                    projectSiteListFragment.refreshPhotoList(r.getImageFileNameList());
                 }
                 break;
             case SITE_TASK_REQUEST:
@@ -691,35 +544,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
 
     }
 
-    @Override
-    public void onStartScanRequested() {
-        getGPSCoordinates();
-    }
 
-    @Override
-    public void onLocationConfirmed(ProjectSiteDTO projectSite) {
-        Log.w(LOG, "## asking projectSiteListFragment to process confirmed location for site");
-        projectSiteListFragment.setLocationConfirmed(projectSite);
-        mPager.setCurrentItem(0, true);
-        Util.showToast(ctx, ctx.getString(R.string.location_confirmed));
-    }
-
-    @Override
-    public void onEndScanRequested() {
-        Log.w(LOG, "## onEndScanRequested");
-        stopPeriodicUpdates();
-    }
-
-    @Override
-    public void onMapRequested(ProjectSiteDTO projectSite) {
-        if (projectSite.getLatitude() != null) {
-            Intent i = new Intent(ctx, MonitorMapActivity.class);
-            i.putExtra("projectSite", projectSite);
-            startActivityForResult(i, MAP_REQUESTED);
-        }
-    }
-
-    static final int MAP_REQUESTED = 9007;
 
     private class PagerAdapter extends FragmentStatePagerAdapter {
 
@@ -780,8 +605,7 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
     ProjectSiteDTO projectSite;
     ProjectSiteListFragment projectSiteListFragment;
     List<PageFragment> pageFragmentList;
-    double latitude, longitude;
-    Location mCurrentLocation;
+
     Context ctx;
     ViewPager mPager;
     int type;
@@ -789,7 +613,6 @@ public class ProjectSitePagerActivity extends ActionBarActivity implements com.g
     int currentPageIndex;
     PagerAdapter adapter;
     ProjectDTO project;
-    LocationClient mLocationClient;
     static final String LOG = ProjectSitePagerActivity.class.getSimpleName();
     static final int SITE_PICTURE_REQUEST = 113,
             SITE_TASK_REQUEST = 114;

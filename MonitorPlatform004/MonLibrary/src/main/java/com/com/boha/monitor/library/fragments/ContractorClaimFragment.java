@@ -41,7 +41,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
+@Deprecated
 public class ContractorClaimFragment extends Fragment implements PageFragment {
 
     private ContractorClaimFragmentListener mListener;
@@ -501,7 +501,7 @@ public class ContractorClaimFragment extends Fragment implements PageFragment {
     }
 
     @Override
-    public void animateCounts() {
+    public void animateHeroHeight() {
         Util.animateRotationY(txtCount, 500);
 
     }

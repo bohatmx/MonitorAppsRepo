@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListPopupWindow;
@@ -57,7 +56,6 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
     public interface ProjectSiteTaskListener {
         public void onTaskClicked(ProjectSiteTaskDTO task);
 
-        public void onSubTaskStatusAssignmentRequested(ProjectSiteTaskDTO task);
 
         public void onProjectSiteTaskAdded(ProjectSiteTaskDTO task);
 
@@ -77,7 +75,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
     private ListView mListView;
     private ListAdapter mAdapter;
     private ImageView heroImage;
-    View trafficView, cameraLayout;
+    View topView, cameraLayout;
 
     public SiteTaskAndStatusAssignmentFragment() {
     }
@@ -89,14 +87,12 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
     }
 
     Context ctx;
-    TextView txtCount;
-    Button btnAssign;
+    TextView txtCount, txtRed,txtAmber,txtGreen, txtStatusCount;
     ProjectSiteDTO projectSite;
     List<TaskDTO> taskList;
     ProgressBar progressBar;
     View handle, view;
     LayoutInflater inflater;
-    View subTasksLayout;
 
     public void setProjectSite(ProjectSiteDTO projectSite, int type) {
         Log.d(LOG, "########## setProjectSite: " + projectSite.getProjectSiteID() + " name: " + projectSite.getProjectSiteName());
@@ -134,16 +130,19 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
         cameraLayout = view.findViewById(R.id.AST_cameraLayout);
         cameraLayout.setVisibility(View.GONE);
         txtCount = (TextView) view.findViewById(R.id.AST_number);
+
+        txtRed = (TextView) view.findViewById(R.id.TRAFF_red);
+        txtAmber = (TextView) view.findViewById(R.id.TRAFF_yellow);
+        txtGreen = (TextView) view.findViewById(R.id.TRAFF_green);
+        txtStatusCount = (TextView) view.findViewById(R.id.TRAFF_count);
+
+
         mListView = (ListView) view.findViewById(R.id.AST_list);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
 
-        subTasksLayout = view.findViewById(R.id.AST_subs);
-        subTasksLayout.setVisibility(View.GONE);
-        tgreen = (TextView) view.findViewById(R.id.TRAFF_green);
-        tyellow = (TextView) view.findViewById(R.id.TRAFF_yellow);
-        tred = (TextView) view.findViewById(R.id.TRAFF_red);
-        tot = (TextView) view.findViewById(R.id.TRAFF_count);
+        heroImage = (ImageView)view.findViewById(R.id.AST_heroImage);
+        heroImage.setImageDrawable(Util.getRandomHeroImage(ctx));
 
         cameraLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,7 +171,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
             @Override
             public void onAnimationEnded() {
 
-                Util.pretendFlash(txtCount,300,2, new Util.UtilAnimationListener() {
+                Util.pretendFlash(txtCount, 300, 2, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
                         closeCameraLayout();
@@ -195,7 +194,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
 
     private void sendTaskStatus() {
         Log.w(LOG, "############## sending taskStatus");
-        RequestDTO w = new RequestDTO(RequestDTO.ADD_PROJECT_SITE_TASK_STATUS);
+        w = new RequestDTO(RequestDTO.ADD_PROJECT_SITE_TASK_STATUS);
         final ProjectSiteTaskStatusDTO taskStatus = new ProjectSiteTaskStatusDTO();
         taskStatus.setProjectSiteTaskID(projectSiteTask.getProjectSiteTaskID());
         taskStatus.setCompanyStaffID(SharedUtil.getCompanyStaff(ctx).getCompanyStaffID());
@@ -206,20 +205,28 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
 
         switch (this.taskStatus.getStatusColor()) {
             case TaskStatusDTO.STATUS_COLOR_GREEN:
-                rotateTotal(tgreen);
+                rotateTotal(txtGreen);
+                greens++;
                 break;
-            case TaskStatusDTO.STATUS_COLOR_YELLOW:
-                rotateTotal(tyellow);
+            case TaskStatusDTO.STATUS_COLOR_AMBER:
+                rotateTotal(txtAmber);
+                ambers++;
                 break;
             case TaskStatusDTO.STATUS_COLOR_RED:
-                rotateTotal(tred);
+                rotateTotal(txtRed);
+                reds++;
                 break;
             default:
                 rotateTotal(txtCount);
                 break;
         }
-        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
-        if (!wcr.isWifiConnected()) {
+        txtRed.setText("" + reds);
+        txtAmber.setText("" + ambers);
+        txtGreen.setText("" + greens);
+        txtStatusCount.setText("" + (reds+ ambers +greens));
+
+        WebCheckResult s = WebCheck.checkNetworkAvailability(ctx);
+        if (!s.isWifiConnected() && !s.isMobileConnected()) {
             RequestCacheUtil.addRequest(ctx, w, new CacheUtil.CacheRequestListener() {
                 @Override
                 public void onDataCached() {
@@ -229,9 +236,6 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                         if (s.getProjectSiteTaskID().intValue() == projectSiteTaskStatus.getProjectSiteTaskID().intValue()) {
                             s.getProjectSiteTaskStatusList().add(0, projectSiteTaskStatus);
                             setList();
-                            if (lastIndex == 1) {
-                                mListView.setSelection(0);
-                            } else
                                 mListView.setSelection(lastIndex);
 
                         }
@@ -253,52 +257,86 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
 
                 }
             });
-        } else {
-            WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
-                @Override
-                public void onMessage(final ResponseDTO response) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!ErrorUtil.checkServerError(ctx, response)) {
-                                return;
-                            }
-                            projectSiteTaskStatus = response.getProjectSiteTaskStatusList().get(0);
-                            projectSiteTask.setStatusDone(true);
-                            for (final ProjectSiteTaskDTO s : projectSiteTaskList) {
-                                if (s.getProjectSiteTaskID().intValue() == projectSiteTaskStatus.getProjectSiteTaskID().intValue()) {
-                                    s.getProjectSiteTaskStatusList().add(0, projectSiteTaskStatus);
-                                    setList();
-                                    if (lastIndex == 1) {
-                                        mListView.setSelection(0);
-                                    } else
-                                        mListView.setSelection(lastIndex);
-
-                                }
-                            }
-
-                            //openCameraLayout();
-
-                            if (mListener != null)
-                                mListener.onProjectSiteTaskStatusAdded(projectSiteTaskStatus);
-                        }
-                    });
-                }
-
-                @Override
-                public void onClose() {
-
-                }
-
-                @Override
-                public void onError(String message) {
-
-                }
-            });
+            return;
         }
+        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+            @Override
+            public void onMessage(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        projectSiteTaskStatus = response.getProjectSiteTaskStatusList().get(0);
+                        projectSiteTask.setStatusDone(true);
+                        for (final ProjectSiteTaskDTO s : projectSiteTaskList) {
+                            if (s.getProjectSiteTaskID().intValue() == projectSiteTaskStatus.getProjectSiteTaskID().intValue()) {
+                                s.getProjectSiteTaskStatusList().add(0, projectSiteTaskStatus);
+                                setList();
+                                if (lastIndex == 1) {
+                                    mListView.setSelection(0);
+                                } else
+                                    mListView.setSelection(lastIndex);
+
+                            }
+                        }
+
+                        //openCameraLayout();
+
+                        if (mListener != null)
+                            mListener.onProjectSiteTaskStatusAdded(projectSiteTaskStatus);
+                    }
+                });
+            }
+
+            @Override
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                RequestCacheUtil.addRequest(ctx, w, new CacheUtil.CacheRequestListener() {
+                    @Override
+                    public void onDataCached() {
+                        projectSiteTaskStatus = taskStatus;
+                        projectSiteTask.setStatusDone(true);
+                        for (final ProjectSiteTaskDTO s : projectSiteTaskList) {
+                            if (s.getProjectSiteTaskID().intValue() == projectSiteTaskStatus.getProjectSiteTaskID().intValue()) {
+                                s.getProjectSiteTaskStatusList().add(0, projectSiteTaskStatus);
+                                setList();
+                                if (lastIndex == 1) {
+                                    mListView.setSelection(0);
+                                } else
+                                    mListView.setSelection(lastIndex);
+
+                            }
+                        }
+
+                        //openCameraLayout();
+
+                        if (mListener != null)
+                            mListener.onProjectSiteTaskStatusAdded(projectSiteTaskStatus);
+                    }
+
+                    @Override
+                    public void onRequestCacheReturned(RequestCache cache) {
+
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+            }
+        });
 
 
     }
+
+    RequestDTO w;
 
     private void sendTask() {
         if (task == null) {
@@ -320,80 +358,78 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
         pst.setTask(task);
         pst.setProjectSiteID(projectSite.getProjectSiteID());
 
-        RequestDTO w = new RequestDTO();
+        w = new RequestDTO();
         w.setRequestType(RequestDTO.ADD_PROJECT_SITE_TASK);
         w.setProjectSiteTask(pst);
 
         rotateTotal(txtCount);
-        WebCheckResult xx = WebCheck.checkNetworkAvailability(ctx);
-        if (xx.isWifiConnected()) {
-            WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
-                @Override
-                public void onMessage(final ResponseDTO response) {
 
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            stopRotatingTotal();
-                            if (!ErrorUtil.checkServerError(ctx, response)) {
-                                return;
-                            }
-                            if (projectSiteTaskList == null) {
-                                projectSiteTaskList = new ArrayList<ProjectSiteTaskDTO>();
-                            }
-                            projectSiteTaskList.add(0, response.getProjectSiteTaskList().get(0));
-                            adapter.notifyDataSetChanged();
-                            txtCount.setText("" + projectSiteTaskList.size());
-                            mListener.onProjectSiteTaskAdded(response.getProjectSiteTaskList().get(0));
+        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+            @Override
+            public void onMessage(final ResponseDTO response) {
 
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        stopRotatingTotal();
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
                         }
-                    });
-
-                }
-
-                @Override
-                public void onClose() {
-                    Log.e(LOG, "onClose - websocket closed .....");
-                }
-
-                @Override
-                public void onError(final String message) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Util.showErrorToast(ctx, message);
+                        if (projectSiteTaskList == null) {
+                            projectSiteTaskList = new ArrayList<ProjectSiteTaskDTO>();
                         }
-                    });
-                }
-            });
-        } else {
-            RequestCacheUtil.addRequest(ctx, w, new CacheUtil.CacheRequestListener() {
-                @Override
-                public void onDataCached() {
-                    stopRotatingTotal();
+                        projectSiteTaskList.add(0, response.getProjectSiteTaskList().get(0));
+                        adapter.notifyDataSetChanged();
+                        txtCount.setText("" + projectSiteTaskList.size());
+                        mListener.onProjectSiteTaskAdded(response.getProjectSiteTaskList().get(0));
 
-                    if (projectSiteTaskList == null) {
-                        projectSiteTaskList = new ArrayList<ProjectSiteTaskDTO>();
                     }
+                });
 
-                    projectSiteTaskList.add(0, pst);
+            }
 
-                    adapter.notifyDataSetChanged();
-                    txtCount.setText("" + projectSiteTaskList.size());
-                    mListener.onProjectSiteTaskAdded(pst);
-                }
+            @Override
+            public void onClose() {
+                Log.e(LOG, "onClose - websocket closed .....");
+            }
 
-                @Override
-                public void onRequestCacheReturned(RequestCache cache) {
+            @Override
+            public void onError(final String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Util.showErrorToast(ctx, message);
+                        RequestCacheUtil.addRequest(ctx, w, new CacheUtil.CacheRequestListener() {
+                            @Override
+                            public void onDataCached() {
+                                stopRotatingTotal();
 
-                }
+                                if (projectSiteTaskList == null) {
+                                    projectSiteTaskList = new ArrayList<ProjectSiteTaskDTO>();
+                                }
 
-                @Override
-                public void onError() {
+                                projectSiteTaskList.add(0, pst);
 
-                }
-            });
-        }
+                                adapter.notifyDataSetChanged();
+                                txtCount.setText("" + projectSiteTaskList.size());
+                                mListener.onProjectSiteTaskAdded(pst);
+                            }
+
+                            @Override
+                            public void onRequestCacheReturned(RequestCache cache) {
+
+                            }
+
+                            @Override
+                            public void onError() {
+
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
     }
 
     private void setList() {
@@ -434,7 +470,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
 
 
         getSummary();
-        tot.setText("" + (greens + yellows + reds));
+        txtStatusCount.setText("" + (greens + ambers + reds));
 
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -451,11 +487,11 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                     Util.showToast(ctx, ctx.getString(R.string.status_completed));
                     return;
                 }
-                if (projectSiteTask.getTask().getSubTaskList() != null && !projectSiteTask.getTask().getSubTaskList().isEmpty()) {
-                    hasSubTasks = true;
-                    mListener.onSubTaskStatusAssignmentRequested(projectSiteTask);
-                    return;
-                }
+//                if (projectSiteTask.getTask().getSubTaskList() != null && !projectSiteTask.getTask().getSubTaskList().isEmpty()) {
+//                    hasSubTasks = true;
+//                    mListener.onSubTaskStatusAssignmentRequested(projectSiteTask);
+//                    return;
+//                }
                 type = TASK;
                 showPopup();
 
@@ -465,23 +501,17 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
         mListView.setSelection(lastIndex);
         Util.animateRotationY(txtCount, 1000);
     }
-
-    private boolean hasSubTasks;
-    int height;
     ProjectSiteTaskDTO projectSiteTask;
-    TextView tgreen;
-    TextView tyellow;
-    TextView tred;
-    TextView tot;
+
     View trafficLayout;
-    int reds = 0, yellows = 0, greens = 0, greys = 0;
+    int reds = 0, ambers = 0, greens = 0, greys = 0;
     int lastIndex;
     ObjectAnimator objectAnimator;
 
     private void getSummary() {
         greens = 0;
         reds = 0;
-        yellows = 0;
+        ambers = 0;
         greys = 0;
         for (ProjectSiteTaskDTO pst : projectSiteTaskList) {
             if (pst.getProjectSiteTaskStatusList() != null && !pst.getProjectSiteTaskStatusList().isEmpty()) {
@@ -492,7 +522,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                             greens++;
                             break;
                         case 2:
-                            yellows++;
+                            ambers++;
                             break;
                         case 3:
                             reds++;
@@ -506,10 +536,10 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                 greys++;
             }
         }
-        tgreen.setText("" + greens);
-        tyellow.setText("" + yellows);
-        tred.setText("" + reds);
-        Util.flashTrafficLights(tred, tyellow, tgreen, 2, Util.FLASH_FAST);
+        txtGreen.setText("" + greens);
+        txtAmber.setText("" + ambers);
+        txtRed.setText("" + reds);
+        Util.flashTrafficLights(txtRed, txtAmber, txtGreen, 2, Util.FLASH_FAST);
     }
 
     private void showPopup() {
@@ -519,7 +549,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
         actionsWindow.setPromptView(v);
         actionsWindow.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
         actionsWindow.setAdapter(new TaskStatusAdapter(ctx, R.layout.task_status_item_small, taskStatusList, true));
-        actionsWindow.setAnchorView(txtCount);
+        actionsWindow.setAnchorView(handle);
         actionsWindow.setWidth(Util.getPopupWidth(getActivity()));
         actionsWindow.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
         actionsWindow.setModal(true);
@@ -623,7 +653,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
     static final String LOG = SiteTaskAndStatusAssignmentFragment.class.getSimpleName();
 
     @Override
-    public void animateCounts() {
+    public void animateHeroHeight() {
         Util.animateRotationY(txtCount, 500);
 
     }

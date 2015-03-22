@@ -33,8 +33,6 @@ import com.com.boha.monitor.library.util.RequestCacheUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
-import com.com.boha.monitor.library.util.WebCheck;
-import com.com.boha.monitor.library.util.WebCheckResult;
 import com.com.boha.monitor.library.util.WebSocketUtil;
 
 import java.util.ArrayList;
@@ -44,13 +42,17 @@ import java.util.List;
 /**
  * Fragment that manages the SubTask status updates
  */
+@Deprecated
 public class SubTaskStatusAssignmentFragment extends Fragment {
 
     public interface SubTaskStatusAssignmentListener {
         public void onSubTaskStatusCompleted(SubTaskStatusDTO subTaskStatus);
+
         public void onMainStatusCompleted(ProjectSiteTaskStatusDTO status);
     }
+
     private SubTaskStatusAssignmentListener listener;
+
     public SubTaskStatusAssignmentFragment() {
         // Required empty public constructor
     }
@@ -59,7 +61,7 @@ public class SubTaskStatusAssignmentFragment extends Fragment {
     Context ctx;
     View view;
     TextView txtTaskName, txtCount, txtTitle,
-    traffCount, traffRed,traffGreen,traffYellow;
+            traffCount, traffRed, traffGreen, traffYellow;
     ListView mListView;
     View handle;
     ProjectSiteTaskDTO task;
@@ -122,6 +124,7 @@ public class SubTaskStatusAssignmentFragment extends Fragment {
         type = TASK;
         showPopup();
     }
+
     ProjectSiteDTO projectSite;
 
     public void setProjectSiteTask(ProjectSiteDTO site, ProjectSiteTaskDTO task) {
@@ -230,7 +233,7 @@ public class SubTaskStatusAssignmentFragment extends Fragment {
 
     private void sendTaskStatus() {
         Log.w(LOG, "############## sending taskStatus");
-        RequestDTO w = new RequestDTO(RequestDTO.ADD_PROJECT_SITE_TASK_STATUS);
+        w = new RequestDTO(RequestDTO.ADD_PROJECT_SITE_TASK_STATUS);
         final ProjectSiteTaskStatusDTO s = new ProjectSiteTaskStatusDTO();
         s.setProjectSiteTaskID(task.getProjectSiteTaskID());
         s.setCompanyStaffID(SharedUtil.getCompanyStaff(ctx).getCompanyStaffID());
@@ -238,108 +241,107 @@ public class SubTaskStatusAssignmentFragment extends Fragment {
         s.setStatusDate(new Date());
         w.setProjectSiteTaskStatus(s);
 
-        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
-        if (!wcr.isWifiConnected()) {
-            RequestCacheUtil.addRequest(ctx, w, new CacheUtil.CacheRequestListener() {
-                @Override
-                public void onDataCached() {
-                    switch (s.getTaskStatus().getStatusColor()) {
-                        case TaskStatusDTO.STATUS_COLOR_GREEN:
-                            txtCount.setBackground(ctx.getResources()
-                                    .getDrawable(R.drawable.xgreen_oval));
-                            break;
-                        case TaskStatusDTO.STATUS_COLOR_YELLOW:
-                            txtCount.setBackground(ctx.getResources()
-                                    .getDrawable(R.drawable.xorange_oval));
-                            break;
-                        case TaskStatusDTO.STATUS_COLOR_RED:
-                            txtCount.setBackground(ctx.getResources()
-                                    .getDrawable(R.drawable.xred_oval));
-                            break;
-                        default:
-                            break;
+
+        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+            @Override
+            public void onMessage(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        switch (s.getTaskStatus().getStatusColor()) {
+                            case TaskStatusDTO.STATUS_COLOR_GREEN:
+                                txtCount.setBackground(ctx.getResources()
+                                        .getDrawable(R.drawable.xgreen_oval));
+                                break;
+                            case TaskStatusDTO.STATUS_COLOR_AMBER:
+                                txtCount.setBackground(ctx.getResources()
+                                        .getDrawable(R.drawable.xorange_oval));
+                                break;
+                            case TaskStatusDTO.STATUS_COLOR_RED:
+                                txtCount.setBackground(ctx.getResources()
+                                        .getDrawable(R.drawable.xred_oval));
+                                break;
+                            default:
+                                break;
+                        }
+                        mListView.setEnabled(true);
+                        ObjectAnimator an = ObjectAnimator.ofFloat(mListView, "alpha", 0f, 1f);
+                        an.setDuration(1000);
+                        an.start();
                     }
+                });
+            }
 
-                    mListView.setEnabled(true);
-                    ObjectAnimator an = ObjectAnimator.ofFloat(mListView, "alpha", 0f, 1f);
-                    an.setDuration(1000);
-                    an.start();
-                }
+            @Override
+            public void onClose() {
 
-                @Override
-                public void onRequestCacheReturned(RequestCache cache) {
+            }
 
-                }
+            @Override
+            public void onError(final String message) {
+                Log.e(LOG, "---- ERROR websocket - " + message);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Util.showErrorToast(ctx, message);
+                        RequestCacheUtil.addRequest(ctx, w, new CacheUtil.CacheRequestListener() {
+                            @Override
+                            public void onDataCached() {
+                                switch (s.getTaskStatus().getStatusColor()) {
+                                    case TaskStatusDTO.STATUS_COLOR_GREEN:
+                                        txtCount.setBackground(ctx.getResources()
+                                                .getDrawable(R.drawable.xgreen_oval));
+                                        break;
+                                    case TaskStatusDTO.STATUS_COLOR_AMBER:
+                                        txtCount.setBackground(ctx.getResources()
+                                                .getDrawable(R.drawable.xorange_oval));
+                                        break;
+                                    case TaskStatusDTO.STATUS_COLOR_RED:
+                                        txtCount.setBackground(ctx.getResources()
+                                                .getDrawable(R.drawable.xred_oval));
+                                        break;
+                                    default:
+                                        break;
+                                }
 
-                @Override
-                public void onError() {
-
-                }
-            });
-        } else {
-            WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
-                @Override
-                public void onMessage(final ResponseDTO response) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!ErrorUtil.checkServerError(ctx, response)) {
-                                return;
+                                mListView.setEnabled(true);
+                                ObjectAnimator an = ObjectAnimator.ofFloat(mListView, "alpha", 0f, 1f);
+                                an.setDuration(1000);
+                                an.start();
                             }
-                            switch (s.getTaskStatus().getStatusColor()) {
-                                case TaskStatusDTO.STATUS_COLOR_GREEN:
-                                    txtCount.setBackground(ctx.getResources()
-                                            .getDrawable(R.drawable.xgreen_oval));
-                                    break;
-                                case TaskStatusDTO.STATUS_COLOR_YELLOW:
-                                    txtCount.setBackground(ctx.getResources()
-                                            .getDrawable(R.drawable.xorange_oval));
-                                    break;
-                                case TaskStatusDTO.STATUS_COLOR_RED:
-                                    txtCount.setBackground(ctx.getResources()
-                                            .getDrawable(R.drawable.xred_oval));
-                                    break;
-                                default:
-                                    break;
+
+                            @Override
+                            public void onRequestCacheReturned(RequestCache cache) {
+
                             }
-                            mListView.setEnabled(true);
-                            ObjectAnimator an = ObjectAnimator.ofFloat(mListView, "alpha", 0f, 1f);
-                            an.setDuration(1000);
-                            an.start();
-                        }
-                    });
-                }
 
-                @Override
-                public void onClose() {
+                            @Override
+                            public void onError() {
 
-                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
 
-                @Override
-                public void onError(final String message) {
-                    Log.e(LOG, "---- ERROR websocket - " + message);
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Util.showErrorToast(ctx, message);
-                        }
-                    });
-                }
-            });
-        }
         listener.onMainStatusCompleted(s);
     }
 
+    RequestDTO w;
+
     private void sendSubTaskStatus() {
         Log.w(LOG, "##### sending subtaskStatus to cloud");
-        RequestDTO w = new RequestDTO(RequestDTO.ADD_SUBTASK_STATUS);
+        w = new RequestDTO(RequestDTO.ADD_SUBTASK_STATUS);
         final SubTaskStatusDTO s = new SubTaskStatusDTO();
         s.setSubTaskID(subTask.getSubTaskID());
         s.setCompanyStaffID(SharedUtil.getCompanyStaff(ctx).getCompanyStaffID());
         s.setTaskStatus(taskStatus);
         s.setProjectSiteTaskID(task.getProjectSiteTaskID());
         w.setSubTaskStatus(s);
-
 
 
         statusCount++;
@@ -351,82 +353,80 @@ public class SubTaskStatusAssignmentFragment extends Fragment {
             case TaskStatusDTO.STATUS_COLOR_RED:
                 redCount++;
                 break;
-            case TaskStatusDTO.STATUS_COLOR_YELLOW:
+            case TaskStatusDTO.STATUS_COLOR_AMBER:
                 yellowCount++;
                 break;
         }
-        traffRed.setText(""+redCount);
+        traffRed.setText("" + redCount);
         traffGreen.setText("" + greenCount);
         traffYellow.setText("" + yellowCount);
 
-        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
-        if (!wcr.isWifiConnected()) {
-            RequestCacheUtil.addRequest(ctx, w, new CacheUtil.CacheRequestListener() {
-                @Override
-                public void onDataCached() {
-                    for (SubTaskStatusDTO ss : subTaskStatusList) {
-                        if (s.getSubTaskID().intValue() == ss.getSubTaskID().intValue()) {
-                            ss.setTaskStatus(taskStatus);
-                            ss.setStatusDate(new Date());
-                            ss.setStaffName(SharedUtil.getCompanyStaff(ctx).getFullName());
-                            adapter.notifyDataSetChanged();
-                            break;
+
+        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+            @Override
+            public void onMessage(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
                         }
-                    }
-                }
-
-                @Override
-                public void onRequestCacheReturned(RequestCache cache) {
-
-                }
-
-                @Override
-                public void onError() {
-
-                }
-            });
-        } else {
-            WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
-                @Override
-                public void onMessage(final ResponseDTO response) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!ErrorUtil.checkServerError(ctx, response)) {
-                                return;
+                        subTaskStatus = response.getSubTaskStatusList().get(0);
+                        for (SubTaskStatusDTO ss : subTaskStatusList) {
+                            if (subTaskStatus.getSubTaskID().intValue() == ss.getSubTaskID().intValue()) {
+                                ss.setTaskStatus(subTaskStatus.getTaskStatus());
+                                ss.setStatusDate(subTaskStatus.getStatusDate());
+                                ss.setStaffName(subTaskStatus.getStaffName());
+                                adapter.notifyDataSetChanged();
+                                break;
                             }
-                            subTaskStatus = response.getSubTaskStatusList().get(0);
-                            for (SubTaskStatusDTO ss : subTaskStatusList) {
-                                if (subTaskStatus.getSubTaskID().intValue() == ss.getSubTaskID().intValue()) {
-                                    ss.setTaskStatus(subTaskStatus.getTaskStatus());
-                                    ss.setStatusDate(subTaskStatus.getStatusDate());
-                                    ss.setStaffName(subTaskStatus.getStaffName());
-                                    adapter.notifyDataSetChanged();
-                                    break;
+                        }
+
+                    }
+                });
+            }
+
+            @Override
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(final String message) {
+                Log.e(LOG, "---- ERROR websocket - " + message);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Util.showErrorToast(ctx, message);
+                        RequestCacheUtil.addRequest(ctx, w, new CacheUtil.CacheRequestListener() {
+                            @Override
+                            public void onDataCached() {
+                                for (SubTaskStatusDTO ss : subTaskStatusList) {
+                                    if (s.getSubTaskID().intValue() == ss.getSubTaskID().intValue()) {
+                                        ss.setTaskStatus(taskStatus);
+                                        ss.setStatusDate(new Date());
+                                        ss.setStaffName(SharedUtil.getCompanyStaff(ctx).getFullName());
+                                        adapter.notifyDataSetChanged();
+                                        break;
+                                    }
                                 }
                             }
 
-                        }
-                    });
-                }
+                            @Override
+                            public void onRequestCacheReturned(RequestCache cache) {
 
-                @Override
-                public void onClose() {
+                            }
 
-                }
+                            @Override
+                            public void onError() {
 
-                @Override
-                public void onError(final String message) {
-                    Log.e(LOG, "---- ERROR websocket - " + message);
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Util.showErrorToast(ctx, message);
-                        }
-                    });
-                }
-            });
-        }
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
         listener.onSubTaskStatusCompleted(s);
     }
 
@@ -461,7 +461,7 @@ public class SubTaskStatusAssignmentFragment extends Fragment {
     public void onAttach(Activity a) {
         super.onAttach(a);
         if (a instanceof SubTaskStatusAssignmentListener) {
-            listener = (SubTaskStatusAssignmentListener)a;
+            listener = (SubTaskStatusAssignmentListener) a;
         } else {
             throw new UnsupportedOperationException("Host activity " + a.getLocalClassName() + " must implement SubTaskStatusAssignmentListener");
         }

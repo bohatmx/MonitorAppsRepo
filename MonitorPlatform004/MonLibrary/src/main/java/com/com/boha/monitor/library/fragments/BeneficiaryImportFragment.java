@@ -47,10 +47,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-
+@Deprecated
 public class BeneficiaryImportFragment extends Fragment implements PageFragment {
     @Override
-    public void animateCounts() {
+    public void animateHeroHeight() {
 
     }
 

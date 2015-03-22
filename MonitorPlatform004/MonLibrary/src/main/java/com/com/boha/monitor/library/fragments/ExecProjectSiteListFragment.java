@@ -24,8 +24,6 @@ import com.com.boha.monitor.library.adapters.TinySiteAdapter;
 import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.util.Util;
-import com.com.boha.monitor.library.util.WebCheck;
-import com.com.boha.monitor.library.util.WebCheckResult;
 
 import java.util.List;
 
@@ -62,9 +60,9 @@ public class ExecProjectSiteListFragment extends Fragment {
         txtCount = (TextView)view.findViewById(R.id.EXEC_PL_count);
         txtTitle = (TextView)view.findViewById(R.id.EXEC_PL_title);
         editSearch = (EditText)view.findViewById(R.id.SLT_editSearch);
-        imgSearch = (ImageView) view.findViewById(R.id.SLT_imgSearch2);
-        hero = (ImageView) view.findViewById(R.id.SLT_heroImage);
-        hero.setVisibility(View.GONE);
+        imgSearch = (ImageView) view.findViewById(R.id.SLT_imgSearch);
+//        hero = (ImageView) view.findViewById(R.id.SLT_heroImage);
+//        hero.setVisibility(View.GONE);
         imgSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,12 +124,7 @@ public class ExecProjectSiteListFragment extends Fragment {
                 .setPositiveButton(ctx.getString(R.string.yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        WebCheckResult res = WebCheck.checkNetworkAvailability(ctx);
-                        if (!res.isWifiConnected()) {
-                            Log.w(LOG,"#### StatusSyncService will not be started, no WIFI connected.");
-                            Util.showToast(ctx,ctx.getString(R.string.connect_wifi));
-                            return;
-                        }
+
                         listener.onProjectStatusSyncRequested(project);
                     }
                 }).setNegativeButton(ctx.getString(R.string.no), new DialogInterface.OnClickListener() {

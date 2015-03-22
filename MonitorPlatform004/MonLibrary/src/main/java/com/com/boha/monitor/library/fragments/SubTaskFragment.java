@@ -48,6 +48,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the ProjectSiteListListener
  * interface.
  */
+@Deprecated
 public class SubTaskFragment extends Fragment implements PageFragment {
 
     private AbsListView mListView;
@@ -423,7 +424,7 @@ public class SubTaskFragment extends Fragment implements PageFragment {
     }
 
     @Override
-    public void animateCounts() {
+    public void animateHeroHeight() {
         Util.animateRotationY(txtCount, 500);
 
     }

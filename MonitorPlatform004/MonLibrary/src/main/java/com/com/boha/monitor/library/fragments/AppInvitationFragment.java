@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.adapters.PopupListAdapter;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
-import com.com.boha.monitor.library.util.ToastUtil;
 import com.com.boha.monitor.library.util.Util;
 
 import java.util.ArrayList;
@@ -35,7 +34,7 @@ public class AppInvitationFragment extends Fragment {
     View view;
     CompanyStaffDTO companyStaff;
     List<CompanyStaffDTO> companyStaffList;
-    RadioButton appExec, appOps, appProjMgr, appSiteMgr;
+    RadioButton appExec, appOps, appProjMgr;
     Button btnSave;
     TextView txtStaffName, txtTitle;
     ImageView imgHero;
@@ -65,7 +64,6 @@ public class AppInvitationFragment extends Fragment {
         appExec = (RadioButton) view.findViewById(R.id.SIV_appExec);
         appOps = (RadioButton) view.findViewById(R.id.SIV_appOperations);
         appProjMgr = (RadioButton) view.findViewById(R.id.SIV_appProjectMgr);
-        appSiteMgr = (RadioButton) view.findViewById(R.id.SIV_appSiteMgr);
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,7 +97,6 @@ public class AppInvitationFragment extends Fragment {
                                 companyStaff = companyStaffList.get(position);
                                 txtStaffName.setText(companyStaff.getFullName());
                                 appProjMgr.setChecked(false);
-                                appSiteMgr.setChecked(false);
                                 appProjMgr.setChecked(false);
                                 appExec.setChecked(false);
                                 Util.flashSeveralTimes(txtStaffName,200,2,null);
@@ -135,7 +132,7 @@ public class AppInvitationFragment extends Fragment {
 
     private void validate() {
         if (!appExec.isChecked() && !appOps.isChecked()
-                && !appProjMgr.isChecked() && !appSiteMgr.isChecked()) {
+                && !appProjMgr.isChecked()) {
             Util.showToast(ctx, ctx.getString(R.string.select_app));
             return;
 
@@ -152,9 +149,7 @@ public class AppInvitationFragment extends Fragment {
         if (appProjMgr.isChecked()) {
             type = Util.PROJ;
         }
-        if (appSiteMgr.isChecked()) {
-            type = Util.SITE;
-        }
+
 
         Util.showConfirmAppInvitationDialog(ctx, getActivity(), companyStaff, type);
     }

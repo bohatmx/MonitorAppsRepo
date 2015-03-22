@@ -1,14 +1,20 @@
 package com.com.boha.monitor.library.activities;
 
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.os.SystemClock;
 import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
+import com.com.boha.monitor.library.services.LocationTrackerReceiver;
 import com.com.boha.monitor.library.toolbox.BitmapLruCache;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
@@ -65,6 +71,8 @@ public class MonApp extends Application {
 
     static final String PROPERTY_ID = "UA-53661372-2";
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
+    private AlarmManager alarmMgr;
+    private PendingIntent alarmIntent;
 
     public synchronized Tracker getTracker(TrackerName trackerId) {
         if (!mTrackers.containsKey(trackerId)) {
@@ -78,7 +86,7 @@ public class MonApp extends Application {
             }
             mTrackers.put(trackerId, t);
         }
-        Log.i(LOG,"## analytics tracker ID: " + trackerId.toString());
+        Log.i(LOG, "## analytics tracker ID: " + trackerId.toString());
         return mTrackers.get(trackerId);
     }
 
@@ -94,14 +102,18 @@ public class MonApp extends Application {
         sb.append("#######################################\n\n");
 
         Log.d(LOG, sb.toString());
+        boolean isDebuggable = 0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
+        if (!isDebuggable) {
+            ACRA.init(this);
+            CompanyStaffDTO staff = SharedUtil.getCompanyStaff(getApplicationContext());
+            if (staff != null) {
+                ACRA.getErrorReporter().putCustomData("companyStaffID", "" + staff.getCompanyStaffID());
+            }
 
-        ACRA.init(this);
-        CompanyStaffDTO staff = SharedUtil.getCompanyStaff(getApplicationContext());
-        if (staff != null) {
-            ACRA.getErrorReporter().putCustomData("companyStaffID", "" + staff.getCompanyStaffID());
+            Log.e(LOG, "###### ACRA Crash Reporting has been initiated");
+        } else {
+            Log.d(LOG, "###### ACRA Crash Reporting has NOT been initiated, in DEBUG mode");
         }
-
-        Log.e(LOG, "###### ACRA Crash Reporting has been initiated");
         initializeVolley(getApplicationContext());
 
         DisplayImageOptions defaultOptions =
@@ -127,9 +139,28 @@ public class MonApp extends Application {
         L.writeLogs(false);
 
         Log.w(LOG, "###### ImageLoaderConfiguration has been initialised");
-
+        startLocationAlarm();
 
     }
+
+    public void startLocationAlarm() {
+        alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intentx = new Intent(getApplicationContext(), LocationTrackerReceiver.class);
+        alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intentx, 0);
+
+        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime(), HOUR, alarmIntent);
+
+
+        Log.e(LOG, "###### AlarmManager: alarm set: ONE_MINUTE");
+    }
+
+    static final int
+            ONE_MINUTE = 60 * 1000,
+            FIVE_MINUTES = ONE_MINUTE * 5,
+            FIFTEEN_MINUTES = FIVE_MINUTES * 3,
+            HALF_HOUR = FIFTEEN_MINUTES * 2,
+            HOUR = HALF_HOUR * 2;
 
     /**
      * Set up Volley Networking; create RequestQueue and ImageLoader

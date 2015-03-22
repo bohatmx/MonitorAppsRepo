@@ -1,7 +1,5 @@
 package com.com.boha.monitor.library.fragments;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -18,7 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
-import android.widget.ListPopupWindow;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
@@ -26,15 +23,13 @@ import com.com.boha.monitor.library.adapters.TaskAdapter;
 import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.TaskDTO;
-import com.com.boha.monitor.library.dto.TaskPriceDTO;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
+import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
-import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
-import com.com.boha.monitor.library.util.WebSocketUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,87 +60,65 @@ public class TaskListFragment extends Fragment implements PageFragment {
     }
 
     Context ctx;
-    TextView txtCount, txtName;
-    EditText editTaskName, editPrice;
+    TextView txtName;
+    EditText editTaskName;
     Button btnSave;
-    EditText numberPicker;
-    View view, topView;
+    EditText sequence;
+    View view, topView, fab;
     View editLayout;
-    ListPopupWindow actionsPopupWindow;
     List<String> list;
     TextView txtTitle;
-    ImageView hero;
+    ImageView fabIcon;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_task_list, container, false);
         ctx = getActivity();
-        hero = (ImageView)view.findViewById(R.id.FTL_hero);
+        fab = view.findViewById(R.id.FAB);
         setFields();
-        getTaskData();
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            ResponseDTO r = (ResponseDTO)bundle.getSerializable("response");
+            taskList = r.getCompany().getTaskList();
+            setList();
+        } else {
+            getTaskData();
+        }
         return view;
     }
 
-    public void expandHeroImage() {
-        //Util.expand(hero,1000,null);
-    }
-    public void updateSequenceNumber(TaskDTO task) {
-
-    }
 
     public void openEditPanel() {
-        editLayout.setVisibility(View.VISIBLE);
-        ObjectAnimator an = ObjectAnimator.ofFloat(editLayout, "scaleX", 0, 1);
-        an.setDuration(300);
-        an.start();
+        Util.expand(editLayout, 500,null);
+        fabIcon.setImageDrawable(ctx.getResources()
+                .getDrawable(R.drawable.ic_action_overflow));
     }
 
     public void closeEditPanel() {
-        ObjectAnimator an = ObjectAnimator.ofFloat(editLayout, "alpha", 1, 0);
-        an.setDuration(60);
-        an.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                editLayout.setAlpha(1);
-                editLayout.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-        an.start();
+        Util.collapse(editLayout,500,null);
+        fabIcon.setImageDrawable(ctx.getResources()
+                .getDrawable(R.drawable.ic_action_new));
     }
 
     int action;
+
     private void setFields() {
         topView = view.findViewById(R.id.FTL_top);
         editLayout = view.findViewById(R.id.FTL_editLayout);
-        txtCount = (TextView) view.findViewById(R.id.FTL_count);
         txtTitle = (TextView) view.findViewById(R.id.FTL_title);
         editTaskName = (EditText) view.findViewById(R.id.TE_editTaskName);
-        editPrice = (EditText) view.findViewById(R.id.TE_editTaskPrice);
-        numberPicker = (EditText) view.findViewById(R.id.TE_numberPicker);
-        btnSave = (Button)view.findViewById(R.id.TE_btnSave);
+        sequence = (EditText) view.findViewById(R.id.TE_sequence);
+        btnSave = (Button) view.findViewById(R.id.TE_btnSave);
+        fabIcon = (ImageView) view.findViewById(R.id.FAB_icon);
         editLayout.setVisibility(View.GONE);
-        Statics.setRobotoFontLight(ctx, txtTitle);
+//        Statics.setRobotoFontLight(ctx, txtTitle);
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.flashOnce(btnSave,100, new Util.UtilAnimationListener() {
+                Util.flashOnce(btnSave, 100, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
                         switch (action) {
@@ -165,44 +138,27 @@ public class TaskListFragment extends Fragment implements PageFragment {
 
             }
         });
-        txtCount.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ObjectAnimator an = ObjectAnimator.ofFloat(txtCount,"scaleY", 0, 1);
-                an.setDuration(100);
-                an.setRepeatMode(ObjectAnimator.REVERSE);
-                an.addListener(new Animator.AnimatorListener() {
+                Util.flashOnce(fab, 300, new Util.UtilAnimationListener() {
                     @Override
-                    public void onAnimationStart(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
+                    public void onAnimationEnded() {
                         if (editLayout.getVisibility() == View.GONE) {
                             openEditPanel();
+                            fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_overflow));
                         } else {
                             closeEditPanel();
+                            fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_new));
                         }
                     }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
-                    }
                 });
-                an.start();
             }
         });
     }
-    TaskPriceDTO taskPrice;
+
     private void registerTask() {
-        Log.w(LOG,"## registerTask");
+        Log.w(LOG, "## registerTask");
         task = new TaskDTO();
         CompanyDTO c = new CompanyDTO();
         c.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
@@ -212,30 +168,21 @@ public class TaskListFragment extends Fragment implements PageFragment {
             return;
         }
 
-        if (numberPicker.getText().toString().isEmpty()) {
+        if (sequence.getText().toString().isEmpty()) {
             Util.showToast(ctx, ctx.getString(R.string.enter_task_number));
             return;
         }
 
         task.setTaskName(editTaskName.getText().toString());
-        task.setTaskNumber(Integer.parseInt(numberPicker.getText().toString()));
+        task.setTaskNumber(Integer.parseInt(sequence.getText().toString()));
 
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.ADD_COMPANY_TASK);
         w.setTask(task);
 
-        if (editPrice.getText().toString().isEmpty()) {
-            Util.showToast(ctx, ctx.getString(R.string.enter_price));
-            return;
-        }
-        taskPrice = new TaskPriceDTO();
-        taskPrice.setPrice(Double.parseDouble(editPrice.getText().toString()));
-        w.setTaskPrice(taskPrice);
-
-        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+        NetUtil.sendRequest(ctx,w,new NetUtil.NetUtilListener() {
             @Override
-            public void onMessage(final ResponseDTO response) {
-
+            public void onResponse(final ResponseDTO response) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -243,8 +190,7 @@ public class TaskListFragment extends Fragment implements PageFragment {
                             return;
                         }
                         task = response.getTaskList().get(0);
-                        taskList.add(0,task);
-                        txtCount.setText(""+ taskList.size());
+                        taskList.add(0, task);
                         adapter.notifyDataSetChanged();
                         closeEditPanel();
                     }
@@ -252,21 +198,21 @@ public class TaskListFragment extends Fragment implements PageFragment {
             }
 
             @Override
-            public void onClose() {
-
-            }
-
-            @Override
             public void onError(final String message) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
+                        Util.showErrorToast(ctx,message);
                     }
                 });
+            }
+
+            @Override
+            public void onWebSocketClose() {
 
             }
         });
+
 
     }
 
@@ -278,26 +224,14 @@ public class TaskListFragment extends Fragment implements PageFragment {
         TaskDTO t = new TaskDTO();
         t.setTaskID(task.getTaskID());
         t.setTaskName(editTaskName.getText().toString());
-        t.setTaskNumber(Integer.parseInt(numberPicker.getText().toString()));
-        //TODO - update task and price, check that price has changed
-        if (!editPrice.getText().toString().isEmpty()) {
-            double newPrice = Double.parseDouble(editPrice.getText().toString());
-            if (taskPrice == null || taskPrice.getPrice() != newPrice) {
-                TaskPriceDTO tp = new TaskPriceDTO();
-                tp.setTaskID(task.getTaskID());
-                tp.setPrice(newPrice);
-                task.getTaskPriceList().add(0,tp);
-                t.setTaskPriceList(new ArrayList<TaskPriceDTO>());
-                t.getTaskPriceList().add(0,tp);
-                adapter.notifyDataSetChanged();
-            }
-        }
+        t.setTaskNumber(Integer.parseInt(sequence.getText().toString()));
+
         RequestDTO w = new RequestDTO(RequestDTO.UPDATE_COMPANY_TASK);
         w.setTask(t);
 
-        WebSocketUtil.sendRequest(ctx,Statics.COMPANY_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
+        NetUtil.sendRequest(ctx,w,new NetUtil.NetUtilListener() {
             @Override
-            public void onMessage(ResponseDTO response) {
+            public void onResponse(ResponseDTO response) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -308,13 +242,7 @@ public class TaskListFragment extends Fragment implements PageFragment {
             }
 
             @Override
-            public void onClose() {
-
-            }
-
-            @Override
             public void onError(final String message) {
-                Log.e(LOG, "---- ERROR websocket - " + message);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -322,58 +250,35 @@ public class TaskListFragment extends Fragment implements PageFragment {
                     }
                 });
             }
+
+            @Override
+            public void onWebSocketClose() {
+
+            }
         });
     }
+
     private void deleteTask() {
 
     }
+
     private void setList() {
         mListView = (AbsListView) view.findViewById(R.id.FTL_list);
         adapter = new TaskAdapter(ctx, R.layout.task_list_item, taskList);
         mListView.setAdapter(adapter);
-        txtCount.setText("" + taskList.size());
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 task = taskList.get(position);
+                action = TaskDTO.ACTION_UPDATE;
+                editTaskName.setText(task.getTaskName());
 
-                if (list == null) {
-                    list = new ArrayList<String>();
-                    list.add("Go to Sub Tasks");
-                    list.add("Add New Task");
-                    list.add("Edit this Task");
+                if (task.getTaskNumber() != null) {
+                    sequence.setText("" + task.getTaskNumber());
+                } else {
+                    sequence.setText("0");
                 }
-                Util.showPopupBasicWithHeroImage(ctx,getActivity(),list,txtTitle,
-                        ctx.getString(R.string.select_action),
-                        new Util.UtilPopupListener() {
-                    @Override
-                    public void onItemSelected(int index) {
-                        switch (index) {
-                            case 0:
-                                mListener.onSubTasksRequested(task);
-                                break;
-                            case 1:
-                                action = TaskDTO.ACTION_ADD;
-                                openEditPanel();
-                                break;
-                            case 2:
-                                action = TaskDTO.ACTION_UPDATE;
-                                editTaskName.setText(task.getTaskName());
-                                if (task.getTaskPriceList() != null && !task.getTaskPriceList().isEmpty()) {
-                                    editPrice.setText("" + task.getTaskPriceList().get(0).getPrice());
-                                } else {
-                                    editPrice.setHint("0.00");
-                                }
-                                if (task.getTaskNumber() != null) {
-                                    numberPicker.setText(""+task.getTaskNumber());
-                                } else {
-                                    numberPicker.setText("0");
-                                }
-                                openEditPanel();
-                                break;
-                        }
-                    }
-                });
+                openEditPanel();
 
             }
         });
@@ -408,11 +313,13 @@ public class TaskListFragment extends Fragment implements PageFragment {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
                 if (response != null) {
-                    if (response.getCompany().getTaskList() != null) {
-                        taskList = response.getCompany().getTaskList();
-                        setList();
-                    } else {
-                        Log.e(LOG, "######## no company tasks found");
+                    if (response.getCompany() != null) {
+                        if (response.getCompany().getTaskList() != null) {
+                            taskList = response.getCompany().getTaskList();
+                            setList();
+                        } else {
+                            Log.e(LOG, "######## no company tasks found");
+                        }
                     }
                 }
                 getRemoteData();
@@ -470,9 +377,8 @@ public class TaskListFragment extends Fragment implements PageFragment {
     }
 
     @Override
-    public void animateCounts() {
-        Util.animateRotationY(txtCount, 500);
-
+    public void animateHeroHeight() {
+        Util.fadeIn(topView);
     }
 
     public void addTask(TaskDTO task) {
@@ -482,13 +388,7 @@ public class TaskListFragment extends Fragment implements PageFragment {
         taskList.add(task);
         Collections.sort(taskList);
         adapter.notifyDataSetChanged();
-        txtCount.setText("" + taskList.size());
-        try {
-            Thread.sleep(1000);
-            Util.animateRotationY(txtCount, 500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
 
     }
 

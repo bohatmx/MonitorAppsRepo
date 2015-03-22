@@ -5,6 +5,7 @@
     android:versionName="1.0" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application>
         <receiver
@@ -51,8 +52,38 @@
         <activity
             android:name="com.com.boha.monitor.library.activities.ProjectSitePagerActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/PagerTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
+        <receiver
+            android:name="com.com.boha.monitor.library.services.LocationTrackerReceiver"
+            android:enabled="true"
+            android:exported="true" >
+        </receiver>
+        <receiver
+            android:name="com.com.boha.monitor.library.services.BootReceiver"
+            android:enabled="true"
+            android:exported="true" >
+        </receiver>
+
+        <service
+            android:name="com.com.boha.monitor.library.services.GPSService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+
+        <activity
+            android:name="com.com.boha.monitor.library.activities.GPSActivity"
+            android:theme="@style/PagerTheme" >
+        </activity>
+        <activity
+            android:name="com.com.boha.monitor.library.activities.StaffTrackerActivity"
+            android:theme="@style/PagerThemeNoActionBar" >
+        </activity>
+        <activity
+            android:name="com.com.boha.monitor.library.activities.StaffPictureActivity"
+            android:label="@string/title_activity_staff_picture" >
+        </activity>
     </application>
 
 </manifest>

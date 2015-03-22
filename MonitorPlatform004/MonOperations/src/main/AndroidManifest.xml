@@ -7,7 +7,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/OperationsTheme">
+        android:theme="@style/PagerTheme">
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -40,6 +40,7 @@
         <activity
             android:name=".OperationsPagerActivity"
             android:label="@string/title_activity_main_pager"
+            android:theme="@style/PagerTheme"
             android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="portrait" />
 

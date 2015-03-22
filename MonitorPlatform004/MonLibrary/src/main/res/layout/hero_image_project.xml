@@ -3,38 +3,53 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/HERO_P_image"
-        android:src="@drawable/house"
-        android:scaleType="centerCrop"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/mon_hero_height_small" />
-
     <RelativeLayout
-        android:layout_marginTop="@dimen/mon_wider"
-        android:layout_alignParentRight="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/HERO_P_statusCount"
-            style="@style/RedCircle"
-            android:text="0"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/HERO_P_statusLabel"
-            style="@style/TextStyleSmall"
-            android:textColor="@color/white"
-            android:layout_toLeftOf="@id/HERO_P_statusCount"
-            android:layout_marginRight="8dp"
-            android:layout_centerVertical="true"
-            android:text="@string/status_update_week"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <ImageView
+            android:id="@+id/HERO_P_image"
+            android:src="@drawable/banner_construction8"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mon_hero_height_medium" />
+
+        <RelativeLayout
+            android:layout_marginTop="@dimen/mon_wider"
+            android:layout_alignParentRight="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/HERO_P_statusCount"
+                style="@style/RedCircleSmall"
+                android:text="0"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/mon_wider"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/HERO_P_statusLabel"
+                style="@style/TextStyleSmall"
+                android:textColor="@color/white"
+                android:layout_toLeftOf="@id/HERO_P_statusCount"
+                android:layout_marginRight="@dimen/mon_padding"
+                android:layout_centerVertical="true"
+                android:text="@string/status_update_week"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
     </RelativeLayout>
+    <RelativeLayout
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/mon_hero_height_medium_lite"
+        android:layout_marginRight="@dimen/mon_wide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <include layout="@layout/fab_indigo"/>
+    </RelativeLayout>
+
 
 
 </RelativeLayout>

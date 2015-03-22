@@ -105,7 +105,7 @@ public class ExecStatusListAdapter extends ArrayAdapter<ProjectSiteTaskStatusDTO
             case TaskStatusDTO.STATUS_COLOR_RED:
                 item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
                 break;
-            case TaskStatusDTO.STATUS_COLOR_YELLOW:
+            case TaskStatusDTO.STATUS_COLOR_AMBER:
                 item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
                 break;
         }

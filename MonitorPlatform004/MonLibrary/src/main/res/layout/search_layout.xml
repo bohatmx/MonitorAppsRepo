@@ -1,51 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:id="@+id/SLT_searchLayout"
-    android:layout_height="wrap_content">
-
-    <ImageView
-        android:id="@+id/SLT_heroImage"
-        android:src="@drawable/banner_construction11"
-        android:scaleType="centerCrop"
-        android:visibility="visible"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/mon_widest" />
+    android:background="@color/indigo_700"
+    android:id="@+id/SLT_heroLayout"
+    android:layout_height="@dimen/mon_hero_height_large">
 
     <RelativeLayout
-        android:id="@+id/SLT_top"
-        android:layout_below="@id/SLT_heroImage"
         android:layout_width="match_parent"
-        android:padding="@dimen/mon_padding"
         android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/SLT_imgSearch1"
-            android:src="@android:drawable/ic_menu_search"
-            android:text="Find Something"
-            android:layout_alignParentLeft="true"
-            android:tint="@color/blue"
-            android:visibility="gone"
+        <TextView
+            android:id="@+id/SLT_title"
+            android:text="@string/project_sites"
+            style="@style/Title1TextStyleWhite"
+            android:layout_marginTop="@dimen/mon_wide"
+            android:layout_marginLeft="@dimen/mon_wide"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/SLT_subtitle"
+            android:text="ProjectNameHere"
+            style="@style/TextStyleWhite"
+            android:layout_marginTop="@dimen/mon_divider"
+            android:layout_below="@id/SLT_title"
+            android:layout_marginLeft="@dimen/mon_wide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/SLT_searchLayout"
+        android:layout_width="match_parent"
+        android:padding="@dimen/mon_padding"
+        android:background="@color/beige_pale"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content">
 
         <EditText
             android:id="@+id/SLT_editSearch"
             android:layout_marginLeft="@dimen/mon_padding"
-            android:layout_marginRight="@dimen/mon_wider"
-            android:hint="Search"
-            android:layout_width="match_parent"
+            android:layout_marginRight="@dimen/mon_padding"
+            android:hint="@string/search"
+            android:layout_width="@dimen/mon_hero_height_large"
             android:layout_height="wrap_content" />
 
         <ImageView
-            android:id="@+id/SLT_imgSearch2"
+            android:id="@+id/SLT_imgSearch"
             android:src="@android:drawable/ic_menu_search"
-            android:text="Find Something"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/mon_padding"
+           android:layout_toRightOf="@id/SLT_editSearch"
             android:tint="@color/blue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_marginTop="@dimen/mon_hero_height_medium_lite"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/mon_wide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <include layout="@layout/fab_steelblue"/>
+        </RelativeLayout>
+    <TextView
+        android:id="@+id/SLT_siteCount"
+        android:text="000"
+        style="@style/Title1TextStyleBlue"
+        android:layout_marginTop="48dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="36dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

@@ -2,6 +2,8 @@ package com.com.boha.monitor.library.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -9,18 +11,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListPopupWindow;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
+import com.com.boha.monitor.library.activities.StaffTrackerActivity;
 import com.com.boha.monitor.library.adapters.StaffAdapter;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
-import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.utils.DiskCacheUtils;
+import com.nostra13.universalimageloader.utils.MemoryCacheUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,7 +62,9 @@ public class StaffListFragment extends Fragment
 
     Context ctx;
     TextView txtCount, txtName;
-    View view, topView;
+    View view, topView, fab;
+    ImageView icon;
+    ResponseDTO response;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,17 +73,42 @@ public class StaffListFragment extends Fragment
         ctx = getActivity();
         Bundle b = getArguments();
         if (b != null) {
-            ResponseDTO r = (ResponseDTO) b.getSerializable("response");
-            companyStaffList = r.getCompany().getCompanyStaffList();
+            response = (ResponseDTO) b.getSerializable("response");
+            companyStaffList = response.getCompany().getCompanyStaffList();
         }
 
-        txtCount = (TextView) view.findViewById(R.id.STAFF_LIST_staffCount);
+        txtCount = (TextView) view.findViewById(R.id.FAB_text);
         txtName = (TextView) view.findViewById(R.id.STAFF_LIST_label);
         topView = view.findViewById(R.id.STAFF_LIST_top);
+        fab = view.findViewById(R.id.FAB);
+        icon = (ImageView)view.findViewById(R.id.STAFF_LIST_icon);
         mListView = (ListView) view.findViewById(R.id.STAFF_LIST_list);
 
-        Statics.setRobotoFontLight(ctx, txtName);
-        txtCount.setText("" + companyStaffList.size());
+//        Statics.setRobotoFontLight(ctx, txtName);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.flashOnce(fab,300,new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        mListener.onNewCompanyStaff();
+                    }
+                });
+            }
+        });
+        icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.flashOnce(icon,300,new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        Intent c = new Intent(ctx, StaffTrackerActivity.class);
+                        c.putExtra("staffList",response);
+                        ctx.startActivity(c);
+                    }
+                });
+            }
+        });
 
         setList();
         return view;
@@ -126,7 +158,6 @@ public class StaffListFragment extends Fragment
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (null != mListener) {
                     companyStaffDTO = companyStaffList.get(position);
-                    mListener.onCompanyStaffClicked(companyStaffDTO);
                     list = new ArrayList<>();
                     list.add(ctx.getString(R.string.get_status));
                     list.add(ctx.getString(R.string.take_picture));
@@ -134,7 +165,7 @@ public class StaffListFragment extends Fragment
                     list.add(ctx.getString(R.string.edit_staff));
                     View v = Util.getHeroView(ctx, "Select Action");
 
-                    Util.showPopupBasicWithHeroImage(ctx,getActivity(),list,txtName, ctx.getString(R.string.select_action),new Util.UtilPopupListener() {
+                    Util.showPopupBasicWithHeroImage(ctx,getActivity(),list,txtName, companyStaffDTO.getFullName(),new Util.UtilPopupListener() {
                         @Override
                         public void onItemSelected(int index) {
                             switch (index) {
@@ -185,8 +216,9 @@ public class StaffListFragment extends Fragment
     }
 
     @Override
-    public void animateCounts() {
-        Util.animateRotationY(txtCount, 500);
+    public void animateHeroHeight() {
+        int max = (int) ctx.getResources().getDimension(R.dimen.mon_hero_height_medium);
+        Util.fadeIn(topView);
 
     }
 
@@ -216,8 +248,11 @@ public class StaffListFragment extends Fragment
     }
 
     public void refreshList(CompanyStaffDTO staff) {
-        ImageLoader.getInstance().clearDiskCache();
-        ImageLoader.getInstance().clearMemoryCache();
+
+        String url = Util.getStaffImageURL(ctx,staff.getCompanyStaffID());
+        MemoryCacheUtils.removeFromCache(url, ImageLoader.getInstance().getMemoryCache());
+        DiskCacheUtils.removeFromCache(url, ImageLoader.getInstance().getDiskCache());
+        Log.w("","### refreshList, image removed from caches ... " + staff.getFullName());
         setList();
 
         int index = 0;
@@ -233,12 +268,17 @@ public class StaffListFragment extends Fragment
     }
 
     public interface CompanyStaffListListener {
-        public void onCompanyStaffClicked(CompanyStaffDTO companyStaff);
+        public void onNewCompanyStaff();
         public void onCompanyStaffInvitationRequested(List<CompanyStaffDTO> companyStaffList, int index);
         public void onCompanyStaffPictureRequested(CompanyStaffDTO companyStaff);
         public void onCompanyStaffEditRequested(CompanyStaffDTO companyStaff);
-    }
 
+    }
+    Uri pictureuUri;
+    public void updatePicture(String uri) {
+        pictureuUri = Uri.parse(uri);
+
+    }
     ProjectDTO project;
     List<CompanyStaffDTO> companyStaffList;
     StaffAdapter staffAdapter;

@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Deprecated
 public class BeneficiaryListFragment extends Fragment implements PageFragment {
 
     private BeneficiaryListListener mListener;
@@ -346,7 +347,7 @@ private void buildBeneficiaryList() {
     }
 
     @Override
-    public void animateCounts() {
+    public void animateHeroHeight() {
         Util.animateRotationY(txtCount, 500);
 
     }

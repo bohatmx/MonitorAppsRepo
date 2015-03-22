@@ -48,7 +48,7 @@ public class StaffFragment extends Fragment {
     Context ctx;
     ProgressBar progressBar;
     RadioButton radioActive, radioInactive;
-    RadioButton radioExec, radioOps, radioProj, radioSite;
+    RadioButton radioExec, radioOps, radioProj;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -119,23 +119,22 @@ public class StaffFragment extends Fragment {
                         if (!ErrorUtil.checkServerError(ctx, response)) {
                             return;
                         }
-                        if (radioExec.isChecked()) {
-                            Util.showConfirmAppInvitationDialog(ctx, getActivity(), companyStaff, Util.EXEC);
-                        }
-                        if (radioOps.isChecked()) {
-                            Util.showConfirmAppInvitationDialog(ctx, getActivity(), companyStaff, Util.OPS);
-                        }
-                        if (radioProj.isChecked()) {
-                            Util.showConfirmAppInvitationDialog(ctx, getActivity(), companyStaff, Util.PROJ);
-                        }
-                        if (radioSite.isChecked()) {
-                            Util.showConfirmAppInvitationDialog(ctx, getActivity(), companyStaff, Util.SITE);
-                        }
                         if (isUpdate) {
                             listener.onStaffUpdated(companyStaff);
                         } else {
                             listener.onStaffAdded(companyStaff);
                         }
+                        if (radioExec.isChecked()) {
+                            listener.onAppInvitationRequested(companyStaff, Util.EXEC);
+                        }
+                        if (radioOps.isChecked()) {
+                            listener.onAppInvitationRequested(companyStaff,Util.OPS);
+                        }
+                        if (radioProj.isChecked()) {
+                            listener.onAppInvitationRequested(companyStaff,Util.PROJ);
+                        }
+
+
                     }
                 });
             }
@@ -193,7 +192,6 @@ public class StaffFragment extends Fragment {
         radioExec = (RadioButton) view.findViewById(R.id.ED_PSN_chkExec);
         radioOps = (RadioButton) view.findViewById(R.id.ED_PSN_chkOps);
         radioProj = (RadioButton) view.findViewById(R.id.ED_PSN_chkProj);
-        radioSite = (RadioButton) view.findViewById(R.id.ED_PSN_chkSite);
 
         imgDelete = (ImageView) view.findViewById(R.id.ED_PSN_imgDelete);
         imgDelete.setVisibility(View.GONE);
@@ -232,6 +230,9 @@ public class StaffFragment extends Fragment {
         public void onStaffAdded(CompanyStaffDTO companyStaff);
 
         public void onStaffUpdated(CompanyStaffDTO companyStaff);
+
+        public void onAppInvitationRequested(CompanyStaffDTO staff, int appType);
+
     }
 
 }

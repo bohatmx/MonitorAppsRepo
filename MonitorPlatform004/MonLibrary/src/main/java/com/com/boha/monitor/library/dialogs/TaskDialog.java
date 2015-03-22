@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,7 +16,6 @@ import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 
 import com.boha.monitor.library.R;
-import com.com.boha.monitor.library.activities.SubTaskActivity;
 import com.com.boha.monitor.library.dto.CompanyDTO;
 import com.com.boha.monitor.library.dto.TaskDTO;
 import com.com.boha.monitor.library.dto.TaskPriceDTO;
@@ -32,7 +30,7 @@ import com.com.boha.monitor.library.util.WebSocketUtil;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import static com.com.boha.monitor.library.util.Util.*;
+import static com.com.boha.monitor.library.util.Util.showToast;
 
 /**
  * Add, update and delete company tasks
@@ -63,10 +61,10 @@ public class TaskDialog extends DialogFragment {
                              Bundle savedInstanceState) {
         this.view = inflater.inflate(R.layout.task_edit, container);
         editTaskName = (EditText) view.findViewById(R.id.TE_editTaskName);
-        editPrice = (EditText) view.findViewById(R.id.TE_editTaskPrice);
-        numberPicker = (NumberPicker) view.findViewById(R.id.TE_numberPicker);
-        numberPicker.setMinValue(1);
-        numberPicker.setMaxValue(100);
+//        editPrice = (EditText) view.findViewById(R.id.TE_editTaskPrice);
+//        numberPicker = (NumberPicker) view.findViewById(R.id.TE_numberPicker);
+//        numberPicker.setMinValue(1);
+//        numberPicker.setMaxValue(100);
 
 
 
@@ -77,17 +75,7 @@ public class TaskDialog extends DialogFragment {
         btnSave = (Button) view.findViewById(R.id.TE_btnSave);
         getDialog().setTitle(context.getString(R.string.task));
 
-        btnSubTasks.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View arg0) {
-                dismiss();
-                Intent i = new Intent(getActivity(), SubTaskActivity.class);
-                i.putExtra("task", task);
-                startActivity(i);
-
-            }
-        });
         if (action == TaskDTO.ACTION_ADD) {
             btnSubTasks.setVisibility(View.GONE);
         }

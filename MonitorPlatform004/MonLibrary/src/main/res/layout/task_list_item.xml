@@ -2,13 +2,14 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:padding="8dp"
+    android:padding="@dimen/mon_margin"
     android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/TTS_number"
-        style="@style/GreyCircleSmall"
+        style="@style/IndigoCircleSmall"
         android:text="0"
+        android:layout_marginLeft="@dimen/mon_padding"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -52,6 +53,7 @@
         android:id="@+id/TTS_priceLayout"
         android:layout_below="@id/TTS_seqLayout"
         android:layout_marginTop="@dimen/mon_padding"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

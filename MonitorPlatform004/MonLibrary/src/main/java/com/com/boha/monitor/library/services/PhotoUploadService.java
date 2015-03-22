@@ -11,7 +11,6 @@ import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.PhotoCacheUtil;
 import com.com.boha.monitor.library.util.PictureUtil;
 import com.com.boha.monitor.library.util.Util;
-import com.com.boha.monitor.library.util.WebCheck;
 import com.com.boha.monitor.library.util.WebCheckResult;
 
 import java.text.SimpleDateFormat;
@@ -57,11 +56,7 @@ public class PhotoUploadService extends IntentService {
                     return;
                 }
                 getLog(response);
-                webCheckResult = WebCheck.checkNetworkAvailability(getApplicationContext(), true);
-                if (!webCheckResult.isWifiConnected()) {
-                    Log.e(LOG, "--- uploadCachedPhotos exiting. no wifi connected");
-                    return;
-                }
+
                 onHandleIntent(null);
             }
 
@@ -105,10 +100,7 @@ public class PhotoUploadService extends IntentService {
             return;
         }
         retryCount = 0;
-        webCheckResult = WebCheck.checkNetworkAvailability(getApplicationContext(), true);
-        if (webCheckResult.isWifiConnected()) {
-            controlThumbUploads();
-        }
+        controlThumbUploads();
 
 
     }
