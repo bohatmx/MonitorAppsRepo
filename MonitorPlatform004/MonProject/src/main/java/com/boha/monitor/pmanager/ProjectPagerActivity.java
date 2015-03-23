@@ -212,7 +212,7 @@ implements ProjectListFragment.ProjectListFragmentListener{
     private void buildPages() {
 
         pageFragmentList = new ArrayList<>();
-        projectListFragment = ProjectListFragment.newInstance(response);
+        projectListFragment = ProjectListFragment.newInstance(response, ProjectListFragment.PROJECT_TYPE);
         statusReportFragment = StatusReportFragment.newInstance(response);
 
         pageFragmentList.add(projectListFragment);
@@ -228,10 +228,10 @@ implements ProjectListFragment.ProjectListFragmentListener{
                 progressBar.setVisibility(View.GONE);
 
                 if (pageFragmentList.get(currentPageIndex) instanceof StatusReportFragment) {
-//                    statusReportFragment.getCachedStatus();
                     statusReportFragment.animateHeroHeight();
                 }
                 if (pageFragmentList.get(currentPageIndex) instanceof ProjectListFragment) {
+                    projectListFragment.setLastProject();
                     projectListFragment.animateHeroHeight();
                 }
             }

@@ -1,7 +1,9 @@
 package com.com.boha.monitor.library.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -60,11 +62,11 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     TextView txtName;
 
 
-    public static ProjectListFragment newInstance(ResponseDTO r) {
+    public static ProjectListFragment newInstance(ResponseDTO r, int type) {
         ProjectListFragment fragment = new ProjectListFragment();
         Bundle args = new Bundle();
         args.putSerializable("response", r);
-        args.putInt("type", ProjectListFragment.PROJECT_TYPE);
+        args.putInt("type", type);
         fragment.setArguments(args);
         return fragment;
     }
@@ -78,7 +80,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     View view, searchLayout, fab, editorLayout, headerLayout, handle;
     ImageView imgSearch1, imgSearch2, fabIcon;
     EditText editSearch, editName, editDesc;
-    Button btnSave;
+    Button btnSave, btnCloseProject;
     TextView txtCount;
     public static final int PROJECT_TYPE = 1, OPERATIONS_TYPE = 2;
     int type;
@@ -96,7 +98,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         view = inflater.inflate(R.layout.fragment_project_list, container, false);
         this.inflater = inflater;
         ctx = getActivity();
-        setFields();
+
         Bundle b = getArguments();
         if (b != null) {
             ResponseDTO r = (ResponseDTO) b.getSerializable("response");
@@ -106,6 +108,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                 statusCountInPeriod = r.getStatusCountInPeriod();
             }
         }
+        setFields();
         setTotals();
         if (statusCountInPeriod != null) {
             txtStatusCount.setText(df.format(statusCountInPeriod));
@@ -199,7 +202,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
 
 
-    private void setLastProject() {
+    public void setLastProject() {
         Integer id = SharedUtil.getLastProjectID(ctx);
         boolean isFound = false;
         int index = 0;
@@ -257,7 +260,10 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         list.add(ctx.getString(com.boha.monitor.library.R.string.site_list));
         list.add(ctx.getString(com.boha.monitor.library.R.string.project_map));
         list.add(ctx.getString(com.boha.monitor.library.R.string.take_picture));
-        list.add(ctx.getString(R.string.edit_project));
+        if (type == OPERATIONS_TYPE) {
+            list.add(ctx.getString(R.string.edit_project));
+
+        }
 
         Util.showPopupBasicWithHeroImage(ctx, activity, list,
                 handle, project.getProjectName(), new Util.UtilPopupListener() {
@@ -286,6 +292,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                             case 3:
                                 editName.setText(project.getProjectName());
                                 editDesc.setText(project.getDescription());
+                                btnCloseProject.setVisibility(View.VISIBLE);
                                 headerLayout.setVisibility(View.GONE);
                                 mListView.setVisibility(View.GONE);
                                 fabIcon.setImageDrawable(ctx.getResources()
@@ -316,6 +323,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         headerLayout = view.findViewById(R.id.PROJ_LIST_layoutx);
         editorLayout.setVisibility(View.GONE);
         btnSave = (Button) view.findViewById(R.id.PROJ_LIST_btnSave);
+        btnCloseProject = (Button) view.findViewById(R.id.PROJ_LIST_btnCloseProject);
         editName = (EditText) view.findViewById(R.id.PROJ_LIST_editName);
         editDesc = (EditText) view.findViewById(R.id.PROJ_LIST_editDesc);
         txtCount = (TextView) view.findViewById(R.id.PROJ_LIST_count);
@@ -331,6 +339,9 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         mListView = (ListView) view.findViewById(R.id.PROJ_LIST_list);
         //random hero
         heroImage.setImageDrawable(Util.getRandomHeroImage(ctx));
+        if (type == PROJECT_TYPE) {
+            fab.setVisibility(View.GONE);
+        }
 
         txtStatusCount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -357,6 +368,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                     public void onAnimationEnded() {
                         if (editorLayout.getVisibility() == View.GONE) {
                             isUpdate = false;
+                            btnCloseProject.setVisibility(View.GONE);
                             mListView.setVisibility(View.GONE);
                             Util.expand(editorLayout, 500, null);
                             headerLayout.setVisibility(View.GONE);
@@ -378,6 +390,32 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                     @Override
                     public void onAnimationEnded() {
                         sendData();
+                    }
+                });
+            }
+        });
+        btnCloseProject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.flashOnce(btnCloseProject,300,new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        AlertDialog.Builder f = new AlertDialog.Builder(getActivity());
+                        f.setTitle("Confirmation")
+                                .setMessage("Do you really want to close this project?")
+                                .setPositiveButton(ctx.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Util.showToast(ctx,ctx.getString(R.string.under_cons));
+                                    }
+                                })
+                                .setNegativeButton(ctx.getString(R.string.no), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                })
+                                .show();
                     }
                 });
             }

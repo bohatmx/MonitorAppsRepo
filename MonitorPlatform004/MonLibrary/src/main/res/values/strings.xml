@@ -377,5 +377,6 @@
     <string name="get_dir">Get Directions</string>
     <string name="title_activity_staff_picture">StaffPictureActivity</string>
     <string name="save_prof_pic">Save Profile Picture</string>
+    <string name="net_unavailable">Network is unavailable. Please try again when able to connect.</string>
 
 </resources>

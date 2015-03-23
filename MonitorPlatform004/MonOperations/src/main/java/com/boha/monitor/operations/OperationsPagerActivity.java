@@ -244,11 +244,13 @@ public class OperationsPagerActivity extends ActionBarActivity
     private void buildPages() {
 
         pageFragmentList = new ArrayList<>();
-        projectListFragment = new ProjectListFragment();
         Bundle data1 = new Bundle();
         data1.putSerializable("response", response);
         data1.putInt("type", ProjectListFragment.OPERATIONS_TYPE);
-        projectListFragment.setArguments(data1);
+
+        projectListFragment = ProjectListFragment.newInstance(
+                response,ProjectListFragment.OPERATIONS_TYPE);
+
 
         staffListFragment = new StaffListFragment();
         staffListFragment.setArguments(data1);
@@ -299,6 +301,7 @@ public class OperationsPagerActivity extends ActionBarActivity
                     statusReportFragment.animateHeroHeight();
                 }
                 if (pf instanceof ProjectListFragment) {
+                    projectListFragment.setLastProject();
                     projectListFragment.animateHeroHeight();
                 }
                 if (pf instanceof TaskStatusListFragment) {

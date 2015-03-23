@@ -31,13 +31,14 @@ public class FullPhotoActivity extends ActionBarActivity {
         recyclerView = (RecyclerView)findViewById(R.id.FI_recyclerView);
 
         projectSite = (ProjectSiteDTO)getIntent().getSerializableExtra("projectSite");
-        setTitle("Site: " + projectSite.getProjectSiteName());
+        index = getIntent().getIntExtra("index",0);
+        setTitle(projectSite.getProjectSiteName());
         getSupportActionBar().setSubtitle(projectSite.getProjectName());
 
-        int index = 0;
+        int counter = 0;
         for (PhotoUploadDTO p: projectSite.getPhotoUploadList()) {
-            p.setIndex(projectSite.getPhotoUploadList().size() - index );
-            index++;
+            p.setIndex(projectSite.getPhotoUploadList().size() - counter );
+            counter++;
         }
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL, false));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -50,6 +51,7 @@ public class FullPhotoActivity extends ActionBarActivity {
         });
 
         recyclerView.setAdapter(adapter);
+        recyclerView.scrollToPosition(index);
 
 
 //        int position = 0;

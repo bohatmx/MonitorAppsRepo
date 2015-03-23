@@ -151,6 +151,7 @@ public class SitePictureGridActivity extends ActionBarActivity {
                 photosForDeletion.add(photoList.get(position));
                 Intent i = new Intent(getApplicationContext(), FullPhotoActivity.class);
                 i.putExtra("projectSite", projectSite);
+                i.putExtra("index",position);
                 startActivity(i);
             }
         });

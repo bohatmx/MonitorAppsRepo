@@ -3,6 +3,7 @@ package com.com.boha.monitor.library.util;
 import android.content.Context;
 
 import com.android.volley.VolleyError;
+import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.toolbox.BaseVolley;
@@ -22,6 +23,12 @@ public class NetUtil {
 
     public static void sendRequest(Context ctx, RequestDTO request, NetUtilListener utilListener) {
         listener = utilListener;
+
+        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
+        if (!wcr.isMobileConnected() && !wcr.isWifiConnected()) {
+            utilListener.onError(ctx.getString(R.string.net_unavailable));
+            return;
+        }
 
         if (request.getRideWebSocket()) {
             sendViaWebSocket(ctx,request);
