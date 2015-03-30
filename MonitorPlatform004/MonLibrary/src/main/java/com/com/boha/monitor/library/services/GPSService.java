@@ -42,7 +42,7 @@ public class GPSService extends Service implements LocationListener,
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.w(LOG, "###### onStartCommand, intent: " + intent.toString());
+        Log.w(LOG, "###### onStartCommand");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)

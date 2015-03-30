@@ -53,7 +53,7 @@ public class CacheUtil {
     static CacheSiteListener siteListener;
     public static final int CACHE_DATA = 1, CACHE_COUNTRIES = 3, CACHE_SITE = 7,
             CACHE_PROJECT = 5, CACHE_REQUEST = 6, CACHE_PROJECT_STATUS = 4,
-            CACHE_TRACKER = 8;
+            CACHE_TRACKER = 8, CACHE_CHAT = 9;
     static int dataType;
     static Integer projectID;
     static ResponseDTO response;
@@ -64,7 +64,7 @@ public class CacheUtil {
     static RequestCache requestCache;
     static final String JSON_DATA = "data.json", JSON_COUNTRIES = "countries.json",
             JSON_PROJECT_DATA = "project_data", JSON_PROJECT_STATUS = "project_status",
-            JSON_REQUEST = "requestCache.json", JSON_SITE = "site", JSON_TRACKER = "tracker.json";
+            JSON_REQUEST = "requestCache.json", JSON_SITE = "site", JSON_TRACKER = "tracker.json", JSON_CHAT = "chat.json";
 
 
     public static void cacheRequest(Context context, RequestCache cache, CacheRequestListener listener) {
@@ -245,6 +245,16 @@ public class CacheUtil {
                                     " - length: " + file.length());
                         }
                         break;
+                    case CACHE_CHAT:
+                        json = gson.toJson(response);
+                        outputStream = ctx.openFileOutput(JSON_CHAT, Context.MODE_PRIVATE);
+                        write(outputStream, json);
+                        file = ctx.getFileStreamPath(JSON_CHAT);
+                        if (file != null) {
+                            Log.e(LOG, "Data cache written, path: " + file.getAbsolutePath() +
+                                    " - length: " + file.length());
+                        }
+                        break;
                     case CACHE_COUNTRIES:
                         json = gson.toJson(response);
                         outputStream = ctx.openFileOutput(JSON_COUNTRIES, Context.MODE_PRIVATE);
@@ -339,6 +349,11 @@ public class CacheUtil {
                         stream = ctx.openFileInput(JSON_DATA);
                         response = getData(stream);
                         Log.i(LOG, "++ company data cache retrieved");
+                        break;
+                    case CACHE_CHAT:
+                        stream = ctx.openFileInput(JSON_CHAT);
+                        response = getData(stream);
+                        Log.i(LOG, "++ chat data cache retrieved");
                         break;
                     case CACHE_COUNTRIES:
                         stream = ctx.openFileInput(JSON_COUNTRIES);

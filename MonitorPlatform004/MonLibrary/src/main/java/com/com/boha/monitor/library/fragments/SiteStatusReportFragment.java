@@ -26,6 +26,7 @@ import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
+import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebSocketUtil;
@@ -36,6 +37,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import static com.com.boha.monitor.library.util.Util.showErrorToast;
 
 public class SiteStatusReportFragment extends Fragment implements PageFragment {
 
@@ -55,6 +58,7 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
     public interface SiteStatusReportListener {
         public void onNoDataAvailable();
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,7 +106,7 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
         txtEmpty = (TextView) view.findViewById(R.id.SITE_STATUS_txtEmpty);
 
         heroImage.setImageDrawable(Util.getRandomHeroImage(ctx));
-        Util.expand(heroImage,1000,null);
+        Util.expand(heroImage, 1000, null);
         Statics.setRobotoFontLight(ctx, txtTitle);
         progressBar.setVisibility(View.GONE);
         txtTitle.setVisibility(View.GONE);
@@ -130,7 +134,7 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
     public void setProjectSite(ProjectSiteDTO site) {
         this.projectSite = site;
         projectSiteTaskStatusList = new ArrayList<>();
-        for (ProjectSiteTaskDTO task: projectSite.getProjectSiteTaskList()) {
+        for (ProjectSiteTaskDTO task : projectSite.getProjectSiteTaskList()) {
             if (task.getProjectSiteTaskStatusList() != null && !task.getProjectSiteTaskStatusList().isEmpty()) {
                 projectSiteTaskStatusList.addAll(task.getProjectSiteTaskStatusList());
             }
@@ -141,6 +145,7 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
             setList();
         }
     }
+
     private void getCachedSiteData() {
         progressBar.setVisibility(View.VISIBLE);
         CacheUtil.getCachedSiteData(ctx, projectSite.getProjectSiteID(), new CacheUtil.CacheSiteListener() {
@@ -150,13 +155,13 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
                 if (site != null) {
                     projectSite = site;
                     projectSiteTaskStatusList = new ArrayList<>();
-                    for (ProjectSiteTaskDTO task: projectSite.getProjectSiteTaskList()) {
+                    for (ProjectSiteTaskDTO task : projectSite.getProjectSiteTaskList()) {
                         if (task.getProjectSiteTaskStatusList() != null && !task.getProjectSiteTaskStatusList().isEmpty()) {
                             projectSiteTaskStatusList.addAll(task.getProjectSiteTaskStatusList());
                         }
                     }
                     if (projectSiteTaskStatusList.isEmpty()) {
-                        Util.showToast(ctx,"No status updates have been recorded.");
+                        Util.showToast(ctx, "No status updates have been recorded.");
                     } else {
                         setList();
                     }
@@ -171,58 +176,88 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
 
             @Override
             public void onError() {
-                Log.e(LOG,"--- no cache exists for the site, going to the cloud");
-               listener.onNoDataAvailable();
+                Log.e(LOG, "--- no cache exists for the site, going to the cloud");
+                listener.onNoDataAvailable();
             }
         });
     }
 
     private void getSiteData() {
 
-            RequestDTO w = new RequestDTO(RequestDTO.GET_SITE_STATUS);
-            w.setProjectSiteID(projectSite.getProjectSiteID());
-            progressBar.setVisibility(View.VISIBLE);
-            WebSocketUtil.sendRequest(ctx,Statics.COMPANY_ENDPOINT,w, new WebSocketUtil.WebSocketListener() {
-                @Override
-                public void onMessage(final ResponseDTO response) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressBar.setVisibility(View.GONE);
-                            if (!ErrorUtil.checkServerError(ctx, response)) {
-                                return;
+        RequestDTO w = new RequestDTO(RequestDTO.GET_SITE_STATUS);
+        w.setProjectSiteID(projectSite.getProjectSiteID());
+        progressBar.setVisibility(View.VISIBLE);
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        projectSite = response.getProjectSiteList().get(0);
+                        projectSiteTaskStatusList = new ArrayList<>();
+                        for (ProjectSiteTaskDTO task : projectSite.getProjectSiteTaskList()) {
+                            if (task.getProjectSiteTaskStatusList() != null && !task.getProjectSiteTaskStatusList().isEmpty()) {
+                                projectSiteTaskStatusList.addAll(task.getProjectSiteTaskStatusList());
                             }
-                            projectSite = response.getProjectSiteList().get(0);
-                            projectSiteTaskStatusList = new ArrayList<>();
-                            for (ProjectSiteTaskDTO task: projectSite.getProjectSiteTaskList()) {
-                                if (task.getProjectSiteTaskStatusList() != null && !task.getProjectSiteTaskStatusList().isEmpty()) {
-                                    projectSiteTaskStatusList.addAll(task.getProjectSiteTaskStatusList());
-                                }
-                            }
-                            if (projectSiteTaskStatusList.isEmpty()) {
-                                Util.showToast(ctx,"No status updates have been recorded.");
-                            } else {
-                                setList();
-                                CacheUtil.cacheSiteData(ctx,projectSite, null);
-                            }
-
+                        }
+                        if (projectSiteTaskStatusList.isEmpty()) {
+                            Util.showToast(ctx, "No status updates have been recorded.");
+                        } else {
+                            setList();
+                            CacheUtil.cacheSiteData(ctx, projectSite, null);
                         }
 
-                    });
-                }
+                    }
 
-                @Override
-                public void onClose() {
+                });
+            }
 
-                }
+            @Override
+            public void onError(final String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                        showErrorToast(ctx, message);
 
-                @Override
-                public void onError(String message) {
+                    }
+                });
+            }
 
-                }
-            });
+            @Override
+            public void onWebSocketClose() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+            }
+        });
+
+        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+            @Override
+            public void onMessage(final ResponseDTO response) {
+
+            }
+
+            @Override
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+
+            }
+        });
 
     }
+
     private void setList() {
         Log.d(LOG, "########## setList");
         Collections.sort(projectSiteTaskStatusList);
@@ -236,7 +271,7 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (activity instanceof SiteStatusReportListener) {
-            listener = (SiteStatusReportListener)activity;
+            listener = (SiteStatusReportListener) activity;
         } else {
             throw new ClassCastException("Host " + activity.getLocalClassName() + "must implement SiteStatusReportListener");
         }

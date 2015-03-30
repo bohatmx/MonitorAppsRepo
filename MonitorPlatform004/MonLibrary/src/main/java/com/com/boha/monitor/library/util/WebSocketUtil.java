@@ -46,7 +46,7 @@ public class WebSocketUtil {
     public static void sendRequest(Context c, final String suffix, RequestDTO req,
                                    WebSocketListener listener) {
         if (req.getUseHttp()) {
-            VolleyUtil.sendRequest(c,req, listener);
+            VolleyUtil.sendRequest(c, req, listener);
             return;
         }
         webSocketListener = listener;
@@ -72,13 +72,13 @@ public class WebSocketUtil {
                 mWebSocketClient.send(json);
                 URI uri = new URI(Statics.WEBSOCKET_URL + suffix);
                 Log.i(LOG, "## sent request, uri: " + uri.toString() + "web socket message sent\n"
-                         + json);
+                        + json);
             }
 
 
         } catch (WebsocketNotConnectedException e) {
-                Log.e(LOG, "Problems with web socket", e);
-                //webSocketListener.onError("Problem starting server socket communications\n");
+            Log.e(LOG, "Problems with web socket", e);
+            //webSocketListener.onError("Problem starting server socket communications\n");
 
         } catch (URISyntaxException e) {
             Log.e(LOG, "Problems with web socket", e);

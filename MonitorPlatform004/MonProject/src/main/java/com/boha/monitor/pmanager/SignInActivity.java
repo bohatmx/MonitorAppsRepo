@@ -25,12 +25,11 @@ import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.GCMUtil;
+import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
-import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebCheck;
 import com.com.boha.monitor.library.util.WebCheckResult;
-import com.com.boha.monitor.library.util.WebSocketUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
@@ -139,9 +138,9 @@ public class SignInActivity extends Activity {
         r.setGcmDevice(gcmDevice);
 
         progressBar.setVisibility(View.VISIBLE);
-        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, r, new WebSocketUtil.WebSocketListener() {
+        NetUtil.sendRequest(ctx,r,new NetUtil.NetUtilListener() {
             @Override
-            public void onMessage(final ResponseDTO response) {
+            public void onResponse(final ResponseDTO response) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -182,16 +181,6 @@ public class SignInActivity extends Activity {
             }
 
             @Override
-            public void onClose() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
-            }
-
-            @Override
             public void onError(final String message) {
                 runOnUiThread(new Runnable() {
                     @Override
@@ -201,7 +190,18 @@ public class SignInActivity extends Activity {
                     }
                 });
             }
+
+            @Override
+            public void onWebSocketClose() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+            }
         });
+
 
 
     }

@@ -35,11 +35,12 @@ import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
-import com.com.boha.monitor.library.util.WebSocketUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.com.boha.monitor.library.util.Util.showErrorToast;
 
 /**
  * Manages a list of project sites. Provides facility to select a site
@@ -469,10 +470,9 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.GET_SITE_IMAGES);
         w.setProjectSiteID(projectSite.getProjectSiteID());
-
-        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
-            public void onMessage(final ResponseDTO response) {
+            public void onResponse(final ResponseDTO response) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -497,22 +497,27 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
             }
 
             @Override
-            public void onClose() {
-
-            }
-
-            @Override
             public void onError(final String message) {
-                Log.e(LOG, "---- ERROR websocket - " + message);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Util.showErrorToast(ctx, message);
+                        //progressBar.setVisibility(View.GONE);
+                        showErrorToast(ctx, message);
+
+                    }
+                });
+            }
+
+            @Override
+            public void onWebSocketClose() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //progressBar.setVisibility(View.GONE);
                     }
                 });
             }
         });
-
 
     }
 

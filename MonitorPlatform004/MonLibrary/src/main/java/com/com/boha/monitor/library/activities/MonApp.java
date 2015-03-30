@@ -1,5 +1,6 @@
 package com.com.boha.monitor.library.activities;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.Application;
@@ -7,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -56,7 +58,9 @@ import java.util.HashMap;
                 ReportField.LOGCAT},
         socketTimeout = 10000
 )
-public class MonApp extends Application {
+public class MonApp extends Application implements Application.ActivityLifecycleCallbacks {
+
+
     /**
      * Enum used to identify the tracker that needs to be used for tracking.
      * A single tracker is usually enough for most purposes. In case you do need multiple trackers,
@@ -73,6 +77,7 @@ public class MonApp extends Application {
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
+    private  boolean chatActivityVisible;
 
     public synchronized Tracker getTracker(TrackerName trackerId) {
         if (!mTrackers.containsKey(trackerId)) {
@@ -102,6 +107,7 @@ public class MonApp extends Application {
         sb.append("#######################################\n\n");
 
         Log.d(LOG, sb.toString());
+        registerActivityLifecycleCallbacks(this);
         boolean isDebuggable = 0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
         if (!isDebuggable) {
             ACRA.init(this);
@@ -202,6 +208,71 @@ public class MonApp extends Application {
 
     RequestQueue requestQueue;
     BitmapLruCache bitmapLruCache;
+    ChatActivity chatActivity;
     static final String LOG = "MonApp";
+
+    public ChatActivity getChatActivity() {
+        return chatActivity;
+    }
+
+    @Override
+    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+        if (activity instanceof ChatActivity) {
+            chatActivity = (ChatActivity)activity;
+            chatActivityVisible = true;
+            Log.d(LOG,"ChatActivity onActivityCreated, chatActivityVisible: " + chatActivityVisible);
+        }
+    }
+
+    @Override
+    public void onActivityStarted(Activity activity) {
+        if (activity instanceof ChatActivity) {
+            chatActivityVisible = true;
+            chatActivity = (ChatActivity)activity;
+            Log.d(LOG,"ChatActivity onActivityStarted, chatActivityVisible: " + chatActivityVisible);
+        }
+    }
+
+    @Override
+    public void onActivityResumed(Activity activity) {
+        if (activity instanceof ChatActivity) {
+            chatActivityVisible = true;
+            chatActivity = (ChatActivity)activity;
+            Log.d(LOG,"ChatActivity onActivityResumed, chatActivityVisible: " + chatActivityVisible);
+        }
+    }
+
+    @Override
+    public void onActivityPaused(Activity activity) {
+        if (activity instanceof ChatActivity) {
+            chatActivityVisible = false;
+            Log.d(LOG,"ChatActivity onActivityPaused, chatActivityVisible: " + chatActivityVisible);
+        }
+    }
+
+    @Override
+    public void onActivityStopped(Activity activity) {
+        if (activity instanceof ChatActivity) {
+            chatActivityVisible = false;
+            Log.d(LOG,"ChatActivity onActivityStopped, chatActivityVisible: " + chatActivityVisible);
+        }
+    }
+
+    @Override
+    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+    }
+
+    @Override
+    public void onActivityDestroyed(Activity activity) {
+        if (activity instanceof ChatActivity) {
+            chatActivityVisible = false;
+            Log.d(LOG,"ChatActivity onActivityDestroyed, chatActivityVisible: " + chatActivityVisible);
+        }
+    }
+
+    public boolean isChatActivityVisible() {
+        return chatActivityVisible;
+    }
 }
 

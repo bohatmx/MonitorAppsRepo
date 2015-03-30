@@ -8,6 +8,8 @@ package com.com.boha.monitor.library.dto.transfer;
 import com.com.boha.monitor.library.dto.BankDTO;
 import com.com.boha.monitor.library.dto.BankDetailDTO;
 import com.com.boha.monitor.library.dto.BeneficiaryDTO;
+import com.com.boha.monitor.library.dto.ChatDTO;
+import com.com.boha.monitor.library.dto.ChatMessageDTO;
 import com.com.boha.monitor.library.dto.CityDTO;
 import com.com.boha.monitor.library.dto.ClientDTO;
 import com.com.boha.monitor.library.dto.CompanyDTO;
@@ -30,6 +32,7 @@ import com.com.boha.monitor.library.dto.ProjectSiteTaskDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteTaskStatusDTO;
 import com.com.boha.monitor.library.dto.ProjectStatusTypeDTO;
 import com.com.boha.monitor.library.dto.ProvinceDTO;
+import com.com.boha.monitor.library.dto.StaffProjectDTO;
 import com.com.boha.monitor.library.dto.SubTaskDTO;
 import com.com.boha.monitor.library.dto.SubTaskStatusDTO;
 import com.com.boha.monitor.library.dto.TaskDTO;
@@ -52,10 +55,12 @@ public class ResponseDTO implements Serializable {
     private Double elapsedRequestTimeInSeconds;
     private PhotoCache photoCache;
     private Date lastCacheDate, startDate, endDate;
-    private Integer statusCode,statusCountInPeriod,goodCount, badCount;
+    private Integer statusCode,statusCountInPeriod,goodCount, badCount,gcmSuccess, gcmFailure;
     private String message, sessionID, GCMRegistrationID,fileString, log;
     private List<String> taskImageFileNameList;
     private List<BankDTO> bankList;
+    private  List<ChatMessageDTO> chatMessageList;
+    private List<StaffProjectDTO> staffProjectList;
     private List<LocationTrackerDTO> locationTrackerList;
     private List<SessionPhoto> sessionPhotoList = new ArrayList<>();
     private List<SubTaskStatusDTO> subTaskStatusList;
@@ -87,12 +92,54 @@ public class ResponseDTO implements Serializable {
     private List<BankDetailDTO> bankDetailList = new ArrayList<>();;
     private List<EngineerDTO> engineerList = new ArrayList<>();;
     private List<ProjectEngineerDTO> projectEngineerList = new ArrayList<>();;
+    private ChatDTO chat;
+
     //
     private CompanyDTO company;
     private CompanyStaffDTO companyStaff;
 
+    public List<ChatMessageDTO> getChatMessageList() {
+        return chatMessageList;
+    }
+
+    public void setChatMessageList(List<ChatMessageDTO> chatMessageList) {
+        this.chatMessageList = chatMessageList;
+    }
+
+    public Integer getGcmSuccess() {
+        return gcmSuccess;
+    }
+
+    public void setGcmSuccess(Integer gcmSuccess) {
+        this.gcmSuccess = gcmSuccess;
+    }
+
+    public Integer getGcmFailure() {
+        return gcmFailure;
+    }
+
+    public void setGcmFailure(Integer gcmFailure) {
+        this.gcmFailure = gcmFailure;
+    }
+
+    public ChatDTO getChat() {
+        return chat;
+    }
+
+    public void setChat(ChatDTO chat) {
+        this.chat = chat;
+    }
+
     public void setElapsedRequestTimeInSeconds(Double elapsedRequestTimeInSeconds) {
         this.elapsedRequestTimeInSeconds = elapsedRequestTimeInSeconds;
+    }
+
+    public List<StaffProjectDTO> getStaffProjectList() {
+        return staffProjectList;
+    }
+
+    public void setStaffProjectList(List<StaffProjectDTO> staffProjectList) {
+        this.staffProjectList = staffProjectList;
     }
 
     public List<LocationTrackerDTO> getLocationTrackerList() {

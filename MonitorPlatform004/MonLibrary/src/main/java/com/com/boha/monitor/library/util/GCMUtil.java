@@ -52,25 +52,25 @@ public class GCMUtil {
                 RequestDTO w = new RequestDTO();
                 w.setRequestType(RequestDTO.SEND_GCM_REGISTRATION);
                 w.setGcmRegistrationID(registrationID);
-                WebSocketUtil.sendRequest(ctx,Statics.COMPANY_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
+                NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
                     @Override
-                    public void onMessage(ResponseDTO response) {
+                    public void onResponse(final ResponseDTO response) {
                         if (response.getStatusCode() == 0) {
                             Log.w(LOG, "############ Device registered on server GCM regime");
                         }
                     }
 
                     @Override
-                    public void onClose() {
-
+                    public void onError(final String message) {
+                        Log.e(LOG, "############ Device failed to register on server GCM regime\n" + message);
                     }
 
                     @Override
-                    public void onError(final String message) {
-                        Log.e(LOG, "############ Device failed to register on server GCM regime\n" + message);
+                    public void onWebSocketClose() {
 
                     }
                 });
+
                 Log.i(LOG, msg);
 
             } catch (IOException e) {

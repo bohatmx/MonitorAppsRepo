@@ -24,14 +24,15 @@ import com.com.boha.monitor.library.dto.TaskStatusDTO;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.ErrorUtil;
+import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
-import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
-import com.com.boha.monitor.library.util.WebSocketUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.com.boha.monitor.library.util.Util.showErrorToast;
 
 /**
  * A fragment representing a taskStatusList of Items.
@@ -251,9 +252,9 @@ public class TaskStatusListFragment extends Fragment implements PageFragment {
         }
 
         progressBar.setVisibility(View.VISIBLE);
-        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
-            public void onMessage(final ResponseDTO response) {
+            public void onResponse(final ResponseDTO response) {
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -268,12 +269,6 @@ public class TaskStatusListFragment extends Fragment implements PageFragment {
                         }
                     });
                 }
-
-            }
-
-            @Override
-            public void onClose() {
-
             }
 
             @Override
@@ -282,7 +277,18 @@ public class TaskStatusListFragment extends Fragment implements PageFragment {
                     @Override
                     public void run() {
                         progressBar.setVisibility(View.GONE);
-                        Util.showErrorToast(ctx, message);
+                        showErrorToast(ctx, message);
+
+                    }
+                });
+            }
+
+            @Override
+            public void onWebSocketClose() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
             }

@@ -18,10 +18,11 @@ import com.com.boha.monitor.library.dto.CompanyStaffDTO;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.ErrorUtil;
+import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
-import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
-import com.com.boha.monitor.library.util.WebSocketUtil;
+
+import static com.com.boha.monitor.library.util.Util.showErrorToast;
 
 
 public class StaffFragment extends Fragment {
@@ -105,17 +106,17 @@ public class StaffFragment extends Fragment {
         w.setCompanyStaff(companyStaff);
 
         progressBar.setVisibility(View.VISIBLE);
-        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
-            public void onMessage(final ResponseDTO response) {
-                if (!ErrorUtil.checkServerError(ctx, response)) {
-                    return;
-                }
-                companyStaff = response.getCompanyStaff();
+            public void onResponse(final ResponseDTO response) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         progressBar.setVisibility(View.GONE);
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        companyStaff = response.getCompanyStaff();
                         if (!ErrorUtil.checkServerError(ctx, response)) {
                             return;
                         }
@@ -137,10 +138,6 @@ public class StaffFragment extends Fragment {
 
                     }
                 });
-            }
-
-            @Override
-            public void onClose() {
 
             }
 
@@ -150,10 +147,20 @@ public class StaffFragment extends Fragment {
                     @Override
                     public void run() {
                         progressBar.setVisibility(View.GONE);
-                        Util.showErrorToast(ctx, message);
+                        showErrorToast(ctx, message);
+
                     }
                 });
+            }
 
+            @Override
+            public void onWebSocketClose() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
             }
         });
 

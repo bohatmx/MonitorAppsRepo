@@ -15,7 +15,7 @@
 
         <TextView
             android:id="@+id/TRK_title"
-            android:text="Team Tracks"
+            android:text="@string/team_trks"
             style="@style/Title1TextStyleWhite"
             android:textStyle="bold"
             android:layout_width="wrap_content"

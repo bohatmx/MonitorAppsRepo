@@ -38,6 +38,7 @@ import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.services.RequestCache;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
+import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.RequestCacheUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
@@ -363,11 +364,9 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
         w.setProjectSiteTask(pst);
 
         rotateTotal(txtCount);
-
-        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
-            public void onMessage(final ResponseDTO response) {
-
+            public void onResponse(final ResponseDTO response) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -385,12 +384,6 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
 
                     }
                 });
-
-            }
-
-            @Override
-            public void onClose() {
-                Log.e(LOG, "onClose - websocket closed .....");
             }
 
             @Override
@@ -428,7 +421,18 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
                     }
                 });
             }
+
+            @Override
+            public void onWebSocketClose() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //progressBar.setVisibility(View.GONE);
+                    }
+                });
+            }
         });
+
 
     }
 

@@ -10,6 +10,9 @@ package com.com.boha.monitor.library.dto.transfer;
 import com.com.boha.monitor.library.dto.BankDTO;
 import com.com.boha.monitor.library.dto.BankDetailDTO;
 import com.com.boha.monitor.library.dto.BeneficiaryDTO;
+import com.com.boha.monitor.library.dto.ChatDTO;
+import com.com.boha.monitor.library.dto.ChatMemberDTO;
+import com.com.boha.monitor.library.dto.ChatMessageDTO;
 import com.com.boha.monitor.library.dto.CityDTO;
 import com.com.boha.monitor.library.dto.ClientDTO;
 import com.com.boha.monitor.library.dto.CompanyDTO;
@@ -81,6 +84,8 @@ public class RequestDTO implements Serializable {
     private TaskDTO task;
     private TaskStatusDTO taskStatus;
     private ClientDTO client;
+    private ChatDTO chat;
+    private ChatMessageDTO chatMessage;
 
     private ProjectSiteTaskDTO projectSiteTask;
     private ProjectDiaryRecordDTO projectDiaryRecord;
@@ -91,6 +96,23 @@ public class RequestDTO implements Serializable {
     private List<PhotoUploadDTO> photoUploadList;
     private RequestList requestList;
     private List<LocationTrackerDTO> locationTrackerList;
+    private List<ChatMemberDTO> chatMemberList;
+
+    public ChatDTO getChat() {
+        return chat;
+    }
+
+    public void setChat(ChatDTO chat) {
+        this.chat = chat;
+    }
+
+    public ChatMessageDTO getChatMessage() {
+        return chatMessage;
+    }
+
+    public void setChatMessage(ChatMessageDTO chatMessage) {
+        this.chatMessage = chatMessage;
+    }
 
     public List<PhotoUploadDTO> getPhotoUploadList() {
         return photoUploadList;
@@ -106,6 +128,14 @@ public class RequestDTO implements Serializable {
 
     public void setLocationTrackerList(List<LocationTrackerDTO> locationTrackerList) {
         this.locationTrackerList = locationTrackerList;
+    }
+
+    public List<ChatMemberDTO> getChatMemberList() {
+        return chatMemberList;
+    }
+
+    public void setChatMemberList(List<ChatMemberDTO> chatMemberList) {
+        this.chatMemberList = chatMemberList;
     }
 
     public Boolean getResponseRequested() {
@@ -135,7 +165,10 @@ public class RequestDTO implements Serializable {
             REGISTER_BENEFICIARY = 7,
             REGISTER_ENGINEER = 8,
             IMPORT_BENEFICIARIES = 9,
-            ADD_LOCATION_TRACKERS = 10;
+            ADD_LOCATION_TRACKERS = 10,
+            ADD_STAFF_PROJECTS = 21,
+            ADD_CHAT = 22;
+
     //add stuff
     public static final int
             ADD_PROJECT_SITE_TASK = 11,
@@ -170,7 +203,8 @@ public class RequestDTO implements Serializable {
             GET_ERROR_REPORTS = 121,
             GET_LOCATION_TRACK_BY_STAFF = 122,
             GET_LOCATION_TRACK_BY_STAFF_IN_PERIOD = 123,
-            GET_LOCATION_TRACK_BY_COMPANY_IN_PERIOD = 124;
+            GET_LOCATION_TRACK_BY_COMPANY_IN_PERIOD = 124,
+            GET_STAFF_DATA = 125;
     //login's
     public static final int
             LOGIN = 200,
@@ -224,7 +258,11 @@ public class RequestDTO implements Serializable {
             GET_EXEC_COMPANY_DATA = 605,
             DELETE_SITE_IMAGES = 606,
             DELETE_PROJECT_IMAGES = 607;
-
+    //chat
+    public static final int
+            REQUEST_CHAT = 700,
+            REQUEST_LOCATION = 701,
+            SEND_CHAT_MESSAGE = 702;
 
     public static final String COMPANY_DIR = "company";
     public static final String COMPANY_STAFF_DIR = "companyStaff";

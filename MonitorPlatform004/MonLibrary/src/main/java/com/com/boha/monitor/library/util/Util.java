@@ -43,6 +43,7 @@ import android.widget.Toast;
 import com.boha.monitor.library.R;
 import com.com.boha.monitor.library.adapters.PopupListAdapter;
 import com.com.boha.monitor.library.dto.CompanyStaffDTO;
+import com.com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.com.boha.monitor.library.dto.ProjectDTO;
 import com.com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
@@ -184,11 +185,33 @@ public class Util {
         animator.start();
     }
 
-    public static void fadeOut(View view, int duration) {
+    public static void fadeOut(View view, int duration, final UtilAnimationListener listener) {
 
         ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 1.0f, 0f);
         animator.setDuration(duration);
         animator.setInterpolator(new AccelerateInterpolator());
+        animator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (listener != null)
+                    listener.onAnimationEnded();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
         animator.start();
     }
 
@@ -291,11 +314,10 @@ public class Util {
     static final Locale lox = Locale.getDefault();
     static final SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy HH:mm", lox);
 
-    public static void showPopupStaffImage(final Context ctx, Activity act,
+    public static void showPopupStaffAddress(final Context ctx, Activity act,
                                            List<String> list,
-                                           Integer staffID,
                                            Date date,
-                                           View anchorView, String caption,
+                                           View anchorView, String address,
                                            final UtilPopupListener listener) {
         final ListPopupWindow pop = new ListPopupWindow(act);
         LayoutInflater inf = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -303,35 +325,78 @@ public class Util {
         TextView txt = (TextView) v.findViewById(R.id.HERO_caption);
         TextView dt = (TextView) v.findViewById(R.id.HERO_date);
         dt.setText(sdf.format(date));
-        if (caption != null) {
-            txt.setText(caption);
+        if (address != null) {
+            txt.setText(address);
         } else {
             txt.setVisibility(View.INVISIBLE);
         }
         final ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
-        //
-        ImageLoader.getInstance().displayImage(getStaffImageURL(ctx, staffID), img, new ImageLoadingListener() {
+        img.setImageDrawable(getRandomHeroImage(ctx));
+
+        pop.setPromptView(v);
+        pop.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
+        pop.setAdapter(new PopupListAdapter(ctx, R.layout.xxsimple_spinner_item,
+                list, false));
+        pop.setAnchorView(anchorView);
+        pop.setHorizontalOffset(getPopupHorizontalOffset(act));
+        pop.setModal(true);
+        pop.setWidth(getPopupWidth(act));
+        pop.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onLoadingStarted(String s, View view) {
-
-            }
-
-            @Override
-            public void onLoadingFailed(String s, View view, FailReason failReason) {
-                img.setImageDrawable(getRandomHeroImage(ctx));
-            }
-
-            @Override
-            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-
-            }
-
-            @Override
-            public void onLoadingCancelled(String s, View view) {
-                img.setImageDrawable(getRandomHeroImage(ctx));
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                pop.dismiss();
+                if (listener != null) {
+                    listener.onItemSelected(position);
+                }
             }
         });
+        try {
+            pop.show();
+        } catch (Exception e) {
+            Log.e(LOG,"popup failed", e);
+        }
+    }
+    public static void showPopupStaffImage(final Context ctx, Activity act,
+                                           List<String> list,
+                                           LocationTrackerDTO dto,
+                                           View anchorView, boolean isStaffTracks,
+                                           final UtilPopupListener listener) {
+        final ListPopupWindow pop = new ListPopupWindow(act);
+        LayoutInflater inf = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = inf.inflate(R.layout.staff_image_popup, null);
+        TextView txtName = (TextView) v.findViewById(R.id.HERO_caption);
+        TextView addr = (TextView) v.findViewById(R.id.HERO_address);
+        TextView dt = (TextView) v.findViewById(R.id.HERO_date);
+        dt.setText(sdf.format(dto.getDateTracked()));
+        txtName.setText(dto.getStaffName());
+        addr.setText(dto.getGeocodedAddress());
+        final ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
+        //
+        if (isStaffTracks) {
+            img.setImageDrawable(getRandomHeroImage(ctx));
+        } else {
+            ImageLoader.getInstance().displayImage(getStaffImageURL(ctx, dto.getCompanyStaffID()), img, new ImageLoadingListener() {
+                @Override
+                public void onLoadingStarted(String s, View view) {
 
+                }
+
+                @Override
+                public void onLoadingFailed(String s, View view, FailReason failReason) {
+                    img.setImageDrawable(getRandomHeroImage(ctx));
+                }
+
+                @Override
+                public void onLoadingComplete(String s, View view, Bitmap bitmap) {
+
+                }
+
+                @Override
+                public void onLoadingCancelled(String s, View view) {
+                    img.setImageDrawable(getRandomHeroImage(ctx));
+                }
+            });
+        }
 
         pop.setPromptView(v);
         pop.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
@@ -472,15 +537,9 @@ public class Util {
         w.setRequestType(RequestDTO.UPDATE_COMPANY_STAFF);
         w.setCompanyStaff(cs);
 
-
-        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
-            public void onMessage(final ResponseDTO response) {
-
-            }
-
-            @Override
-            public void onClose() {
+            public void onResponse(final ResponseDTO response) {
 
             }
 
@@ -488,7 +547,13 @@ public class Util {
             public void onError(final String message) {
 
             }
+
+            @Override
+            public void onWebSocketClose() {
+
+            }
         });
+
 
     }
 
@@ -1346,9 +1411,9 @@ public class Util {
         w.setRequestType(RequestDTO.GET_PROJECT_DATA);
         w.setProjectID(projectID);
 
-        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
-            public void onMessage(final ResponseDTO response) {
+            public void onResponse(final ResponseDTO response) {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -1377,11 +1442,6 @@ public class Util {
             }
 
             @Override
-            public void onClose() {
-
-            }
-
-            @Override
             public void onError(final String message) {
                 activity.runOnUiThread(new Runnable() {
                     @Override
@@ -1390,7 +1450,13 @@ public class Util {
                     }
                 });
             }
+
+            @Override
+            public void onWebSocketClose() {
+
+            }
         });
+
     }
 
     public static String getTruncated(double num) {

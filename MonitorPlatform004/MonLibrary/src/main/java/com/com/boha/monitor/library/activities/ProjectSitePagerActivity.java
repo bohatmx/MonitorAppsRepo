@@ -33,11 +33,10 @@ import com.com.boha.monitor.library.services.PhotoUploadService;
 import com.com.boha.monitor.library.services.RequestSyncService;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
-import com.com.boha.monitor.library.util.Statics;
+import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebCheck;
 import com.com.boha.monitor.library.util.WebCheckResult;
-import com.com.boha.monitor.library.util.WebSocketUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,9 +103,9 @@ public class ProjectSitePagerActivity extends ActionBarActivity
         RequestDTO w = new RequestDTO(RequestDTO.GET_PROJECT_DATA);
         w.setProjectID(project.getProjectID());
         progressBar.setVisibility(View.VISIBLE);
-        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
-            public void onMessage(final ResponseDTO response) {
+            public void onResponse(final ResponseDTO response) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -143,28 +142,28 @@ public class ProjectSitePagerActivity extends ActionBarActivity
             }
 
             @Override
-            public void onClose() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar.setVisibility(View.GONE);
-                        Log.e(LOG, "getProjectData --------------- websocket closed");
-                    }
-                });
-            }
-
-            @Override
             public void onError(final String message) {
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         progressBar.setVisibility(View.GONE);
                         showErrorToast(ctx, message);
+
+                    }
+                });
+            }
+
+            @Override
+            public void onWebSocketClose() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
             }
         });
+
     }
 
     @Override

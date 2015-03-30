@@ -12,8 +12,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -28,6 +26,8 @@ import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Util;
+import com.com.boha.monitor.library.util.WebCheck;
+import com.com.boha.monitor.library.util.WebCheckResult;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -61,10 +61,13 @@ public class StaffTrackerActivity extends ActionBarActivity {
     LocationTrackerDTO locationTracker;
     List<CompanyStaffDTO> companyStaffList;
     AutoCompleteTextView autoCompleteTxt;
-    View fab, topView, title;
+    View fab, topView;
+    TextView title;
     ProgressBar progressBar;
     CompanyStaffDTO companyStaff;
     ImageView fabIcon, staffImage;
+    boolean isStaffTracks;
+
     static final String LOG = StaffTrackerActivity.class.getSimpleName();
     static final Locale lox = Locale.getDefault();
     static final SimpleDateFormat sdate = new SimpleDateFormat("dd/MM/yyyy", lox);
@@ -74,19 +77,10 @@ public class StaffTrackerActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_staff_tracker);
-        fab = findViewById(R.id.FAB);
-        fabIcon = (ImageView) findViewById(R.id.FAB_icon);
-        staffImage = (ImageView) findViewById(R.id.TRK_staffImage);
-        staffImage.setVisibility(View.GONE);
-        topView = findViewById(R.id.TRK_top);
-        title = findViewById(R.id.TRK_title);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        autoCompleteTxt = (AutoCompleteTextView) findViewById(R.id.TRK_search);
-        ctx = getApplicationContext();
-        progressBar.setVisibility(View.GONE);
+        setFields();
+
         ResponseDTO r = (ResponseDTO) getIntent().getSerializableExtra("staffList");
         companyStaffList = r.getCompany().getCompanyStaffList();
-        setAutoCompleteTextView();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.TRK_map);
         googleMap = mapFragment.getMap();
@@ -107,8 +101,14 @@ public class StaffTrackerActivity extends ActionBarActivity {
                 Util.flashOnce(fab,200,new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
-                        Util.fadeOut(staffImage,500);
-                        //staffImage.setVisibility(View.GONE);
+                        Util.fadeOut(staffImage,500, new Util.UtilAnimationListener() {
+                            @Override
+                            public void onAnimationEnded() {
+                                staffImage.setVisibility(View.GONE);
+                            }
+                        });
+                        isStaffTracks = false;
+                        title.setText(ctx.getString(R.string.team_trks));
                         getTrackerData();
                     }
                 });
@@ -116,27 +116,19 @@ public class StaffTrackerActivity extends ActionBarActivity {
         });
     }
 
-    private void setAutoCompleteTextView() {
-        List<String> list = new ArrayList<>();
-        for (CompanyStaffDTO x : companyStaffList) {
-            list.add(x.getFullName());
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                this, android.R.layout.simple_dropdown_item_1line, list);
-        autoCompleteTxt.setAdapter(adapter);
-        autoCompleteTxt.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.i(LOG, "selected by autoComplete: " + companyStaffList.get(position).getFullName());
-                companyStaff = companyStaffList.get(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+    private void setFields() {
+        fab = findViewById(R.id.FAB);
+        fabIcon = (ImageView) findViewById(R.id.FAB_icon);
+        staffImage = (ImageView) findViewById(R.id.TRK_staffImage);
+        staffImage.setVisibility(View.GONE);
+        topView = findViewById(R.id.TRK_top);
+        title = (TextView) findViewById(R.id.TRK_title);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        autoCompleteTxt = (AutoCompleteTextView) findViewById(R.id.TRK_search);
+        ctx = getApplicationContext();
+        progressBar.setVisibility(View.GONE);
     }
+
 
     private void setGoogleMap() {
         googleMap.setMyLocationEnabled(true);
@@ -149,7 +141,7 @@ public class StaffTrackerActivity extends ActionBarActivity {
                 marker = m;
                 if (locationTrackerList != null) {
                     for (LocationTrackerDTO loc : locationTrackerList) {
-                        if (loc.getStaffName().equalsIgnoreCase(marker.getTitle())) {
+                        if (loc.getLocationTrackerID().intValue() == Integer.parseInt(marker.getTitle())) {
                             locationTracker = loc;
                             break;
                         }
@@ -165,18 +157,23 @@ public class StaffTrackerActivity extends ActionBarActivity {
 
     private void showPopup() {
         final List<String> list = new ArrayList<>();
-        list.add(getString(R.string.show_tracks));
+        if (!isStaffTracks) {
+            list.add(getString(R.string.show_tracks));
+        }
         list.add(getString(R.string.get_dir));
 
+
         Util.showPopupStaffImage(ctx, this, list,
-                locationTracker.getCompanyStaffID(), locationTracker.getDateTracked(),
+                locationTracker,
                 title,
-                locationTracker.getStaffName(), new Util.UtilPopupListener() {
+                isStaffTracks, new Util.UtilPopupListener() {
                     @Override
                     public void onItemSelected(int index) {
 
                         if (list.get(index).equalsIgnoreCase(
                                 getString(R.string.show_tracks))) {
+                            isStaffTracks = true;
+                            title.setText(locationTracker.getStaffName());
                             String url = Util.getStaffImageURL(ctx,locationTracker.getCompanyStaffID());
                             ImageLoader.getInstance().displayImage(url, staffImage, new ImageLoadingListener() {
                                 @Override
@@ -200,13 +197,13 @@ public class StaffTrackerActivity extends ActionBarActivity {
 
                                 }
                             });
-                            List<LocationTrackerDTO> tList = new ArrayList<LocationTrackerDTO>();
+                            List<LocationTrackerDTO> tList = new ArrayList<>();
                             int cnt = 0;
                             for (LocationTrackerDTO x : locationTrackerList) {
                                 if (x.getCompanyStaffID() == locationTracker.getCompanyStaffID()) {
                                     tList.add(x);
                                     cnt++;
-                                    if (cnt > 23) {
+                                    if (cnt > MAX_TRACKER_EVENTS) {
                                         break;
                                     }
                                 }
@@ -220,11 +217,13 @@ public class StaffTrackerActivity extends ActionBarActivity {
                             startDirectionsMap(locationTracker.getLatitude(),
                                     locationTracker.getLongitude());
                         }
+
                     }
                 });
 
     }
 
+    static final int MAX_TRACKER_EVENTS = 24;
     private void getCachedTrackerData() {
         CacheUtil.getCachedTrackerData(ctx, new CacheUtil.CacheUtilListener() {
             @Override
@@ -248,6 +247,11 @@ public class StaffTrackerActivity extends ActionBarActivity {
     }
 
     private void getTrackerData() {
+        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx,true);
+        if (!wcr.isMobileConnected() && !wcr.isWifiConnected()) {
+            getCachedTrackerData();
+            return;
+        }
         RequestDTO w = new RequestDTO(RequestDTO.GET_LOCATION_TRACK_BY_COMPANY_IN_PERIOD);
         w.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
 
@@ -326,7 +330,7 @@ public class StaffTrackerActivity extends ActionBarActivity {
             BitmapDescriptor desc = BitmapDescriptorFactory.fromBitmap(bm);
             Marker m =
                     googleMap.addMarker(new MarkerOptions()
-                            .title(dto.getStaffName())
+                            .title(""+dto.getLocationTrackerID().intValue())
                             .icon(desc)
                             .snippet(sdf.format(dto.getDateTracked()))
                             .position(pnt));
@@ -370,7 +374,7 @@ public class StaffTrackerActivity extends ActionBarActivity {
             pnt = new LatLng(dto.getLatitude(), dto.getLongitude());
             Marker m =
                     googleMap.addMarker(new MarkerOptions()
-                            .title(dto.getStaffName())
+                            .title("" + dto.getLocationTrackerID().intValue())
                             .icon(desc)
                             .snippet(sdf.format(dto.getDateTracked()))
                             .position(pnt));
@@ -415,7 +419,7 @@ public class StaffTrackerActivity extends ActionBarActivity {
 
     List<Marker> markers;
     static final Locale loc = Locale.getDefault();
-    static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
+    static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm", loc);
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -8,17 +8,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application>
-        <receiver
-            android:name="com.com.boha.monitor.library.services.GcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
 
-                <category android:name="com.boha.monitor.library" />
-            </intent-filter>
-        </receiver>
-
-        <service android:name="com.com.boha.monitor.library.services.GcmIntentService" />
         <service
             android:name="com.com.boha.monitor.library.services.PhotoUploadService"
             android:exported="false" />
@@ -28,8 +18,8 @@
             android:label="@string/title_activity_app_invitation" />
         <activity
             android:name="com.com.boha.monitor.library.activities.StaffActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:label="@string/title_activity_staff" />
+            android:label="@string/title_activity_staff"
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <service
             android:name="com.com.boha.monitor.library.services.RequestSyncService"
@@ -81,6 +71,11 @@
         <activity
             android:name="com.com.boha.monitor.library.activities.StaffPictureActivity"
             android:label="@string/title_activity_staff_picture" >
+        </activity>
+        <activity
+            android:name="com.com.boha.monitor.library.activities.ChatActivity"
+            android:theme="@style/PagerThemeNoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
     </application>
 

@@ -1,0 +1,109 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.com.boha.monitor.library.fragments.ChatFragment">
+
+    <RelativeLayout
+        android:id="@+id/CHAT_top"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mon_hero_height_small"
+        android:background="@color/medium_sea_green">
+
+        <TextView
+            android:text="MonitorChat"
+            style="@style/Title1TextStyleWhite"
+            android:layout_marginTop="@dimen/mon_margin"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/CHAT_staffLayout"
+        android:layout_below="@id/CHAT_top"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/CHAT_layout1"
+            android:padding="@dimen/mon_margin"
+            android:background="@color/beige_pale"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/CHAT_label1"
+                android:text="Select Chat Partners"
+                style="@style/Title3TextStyleBlue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/CHAT_staffList"
+            android:layout_below="@id/CHAT_layout1"
+            android:background="@color/white"
+            android:dividerHeight="@dimen/mon_divider"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/CHAT_messageLayout"
+        android:layout_below="@id/CHAT_top"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <RelativeLayout
+            android:id="@+id/CHAT_textLayout"
+            android:background="@color/beige_pale"
+            android:padding="@dimen/mon_padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/CHAT_text"
+                android:hint="Type message here"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+        </RelativeLayout>
+        <ListView
+            android:id="@+id/CHAT_messageList"
+            android:layout_below="@id/CHAT_textLayout"
+            android:background="@color/white"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:dividerHeight="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/CHAT_fabChatLayout"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/mon_widest"
+        android:layout_marginRight="@dimen/mon_wide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/fab_chat" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/CHAT_fabSendMsg"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/mon_widest"
+        android:layout_marginRight="@dimen/mon_wide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/fab_send" />
+    </RelativeLayout>
+
+</RelativeLayout>

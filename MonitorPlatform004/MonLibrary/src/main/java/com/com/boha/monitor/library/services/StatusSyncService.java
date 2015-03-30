@@ -12,9 +12,8 @@ import com.com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.CacheUtil;
-import com.com.boha.monitor.library.util.Statics;
+import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.Util;
-import com.com.boha.monitor.library.util.WebSocketUtil;
 
 import java.util.List;
 
@@ -69,10 +68,9 @@ public class StatusSyncService extends IntentService {
     private void getSiteStatus(ProjectSiteDTO site) {
         RequestDTO w = new RequestDTO(RequestDTO.GET_SITE_STATUS);
         w.setProjectSiteID(site.getProjectSiteID());
-
-        WebSocketUtil.sendRequest(getApplicationContext(), Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+        NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {
             @Override
-            public void onMessage(ResponseDTO response) {
+            public void onResponse(final ResponseDTO response) {
 
                 if (response.getStatusCode() == 0) {
                     final ProjectSiteDTO ss = response.getProjectSiteList().get(0);
@@ -99,15 +97,16 @@ public class StatusSyncService extends IntentService {
             }
 
             @Override
-            public void onClose() {
-
+            public void onError(final String message) {
+                Log.e(LOG,"--- ERROR - " + message);
             }
 
             @Override
-            public void onError(String message) {
+            public void onWebSocketClose() {
 
             }
         });
+
     }
     int index;
     ProjectDTO project;

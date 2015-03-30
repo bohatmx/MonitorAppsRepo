@@ -27,15 +27,17 @@ import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.DividerItemDecoration;
 import com.com.boha.monitor.library.util.ErrorUtil;
+import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
-import com.com.boha.monitor.library.util.WebSocketUtil;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.com.boha.monitor.library.util.Util.showErrorToast;
 
 public class SitePictureGridActivity extends ActionBarActivity {
 
@@ -175,10 +177,9 @@ public class SitePictureGridActivity extends ActionBarActivity {
         }
         photoList = tempList;
         setGrid();
-
-        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
-            public void onMessage(final ResponseDTO response) {
+            public void onResponse(final ResponseDTO response) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -189,19 +190,31 @@ public class SitePictureGridActivity extends ActionBarActivity {
                         Util.showToast(ctx, response.getMessage());
                     }
                 });
-
             }
 
             @Override
-            public void onClose() {
+            public void onError(final String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //progressBar.setVisibility(View.GONE);
+                        showErrorToast(ctx, message);
 
+                    }
+                });
             }
 
             @Override
-            public void onError(String message) {
-
+            public void onWebSocketClose() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //progressBar.setVisibility(View.GONE);
+                    }
+                });
             }
         });
+
     }
 
 

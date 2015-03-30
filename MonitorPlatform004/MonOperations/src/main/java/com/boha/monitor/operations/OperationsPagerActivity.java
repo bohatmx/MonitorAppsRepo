@@ -27,6 +27,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.com.boha.monitor.library.activities.AppInvitationActivity;
+import com.com.boha.monitor.library.activities.ChatActivity;
 import com.com.boha.monitor.library.activities.ProjectSitePagerActivity;
 import com.com.boha.monitor.library.activities.StaffActivity;
 import com.com.boha.monitor.library.activities.StaffPictureActivity;
@@ -118,6 +119,10 @@ public class OperationsPagerActivity extends ActionBarActivity
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                         TextView tv = (TextView) view.findViewById(R.id.DI_txtTitle);
                         Log.w(LOG, "##### onItemClick, index: " + i + " title: " + tv.getText().toString());
+                        if (i == 4) {
+                            startChat();
+                            return;
+                        }
                         mPager.setCurrentItem(i - 1, true);
                         mDrawerLayout.closeDrawers();
                     }
@@ -138,6 +143,12 @@ public class OperationsPagerActivity extends ActionBarActivity
         });
 
     }
+
+    private void startChat() {
+        Intent intent = new Intent(this, ChatActivity.class);
+        startActivity(intent);
+    }
+
 
     private CompanyDTO company;
 
@@ -249,7 +260,7 @@ public class OperationsPagerActivity extends ActionBarActivity
         data1.putInt("type", ProjectListFragment.OPERATIONS_TYPE);
 
         projectListFragment = ProjectListFragment.newInstance(
-                response,ProjectListFragment.OPERATIONS_TYPE);
+                response, ProjectListFragment.OPERATIONS_TYPE);
 
 
         staffListFragment = new StaffListFragment();
@@ -424,7 +435,7 @@ public class OperationsPagerActivity extends ActionBarActivity
     @Override
     public void onStatusReportRequested() {
         int index = 0;
-        for (PageFragment d: pageFragmentList) {
+        for (PageFragment d : pageFragmentList) {
             if (d instanceof StatusReportFragment) {
                 break;
             }

@@ -5,9 +5,11 @@
         <item>Projects</item>
         <item>Status Report</item>
         <item>Monitoring Team</item>
+        <item>MonitorChat</item>
         <item>Tasks</item>
         <item>Task Status</item>
         <item>Project Status</item>
+
 
     </string-array>
     <string-array name="exec_action_items">
@@ -373,10 +375,13 @@
     <string name="site_coords">Site GPS Coordinates</string>
     <string name="title_activity_staff_tracker">StaffTrackerActivity</string>
     <string name="no_address">No address can be computed</string>
-    <string name="show_tracks">Show Tracks</string>
+    <string name="show_tracks">Show Staff Tracks</string>
     <string name="get_dir">Get Directions</string>
     <string name="title_activity_staff_picture">StaffPictureActivity</string>
     <string name="save_prof_pic">Save Profile Picture</string>
     <string name="net_unavailable">Network is unavailable. Please try again when able to connect.</string>
+    <string name="team_trks">Team Tracks</string>
+    <string name="near_address">Nearest Address</string>
+    <string name="title_activity_chat">ChatActivity</string>
 
 </resources>

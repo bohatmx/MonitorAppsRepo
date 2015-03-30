@@ -50,11 +50,12 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
     public interface ProjectListFragmentListener {
         public void onSiteListRequested(ProjectDTO project);
+
         public void onStatusReportRequested();
     }
 
     private ListView mListView;
-    private TextView  txtStatusCount, txtLabel;
+    private TextView txtStatusCount, txtLabel;
 
     static final String LOG = ProjectListFragment.class.getSimpleName();
     ProjectDTO project;
@@ -201,7 +202,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     }
 
 
-
     public void setLastProject() {
         Integer id = SharedUtil.getLastProjectID(ctx);
         boolean isFound = false;
@@ -271,7 +271,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                     public void onItemSelected(int index) {
                         switch (index) {
                             case 0:
-                               mListener.onSiteListRequested(project);
+                                mListener.onSiteListRequested(project);
                                 break;
 
                             case 1:
@@ -293,11 +293,8 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                                 editName.setText(project.getProjectName());
                                 editDesc.setText(project.getDescription());
                                 btnCloseProject.setVisibility(View.VISIBLE);
-                                headerLayout.setVisibility(View.GONE);
-                                mListView.setVisibility(View.GONE);
-                                fabIcon.setImageDrawable(ctx.getResources()
-                                        .getDrawable(R.drawable.ic_action_overflow));
-                                Util.expand(editorLayout, 500, null);
+                                isUpdate = true;
+                                openEditor();
 
                                 break;
                         }
@@ -346,7 +343,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         txtStatusCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.flashOnce(txtStatusCount,300,new Util.UtilAnimationListener() {
+                Util.flashOnce(txtStatusCount, 300, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
                         mListener.onStatusReportRequested();
@@ -368,11 +365,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                     public void onAnimationEnded() {
                         if (editorLayout.getVisibility() == View.GONE) {
                             isUpdate = false;
-                            btnCloseProject.setVisibility(View.GONE);
-                            mListView.setVisibility(View.GONE);
-                            Util.expand(editorLayout, 500, null);
-                            headerLayout.setVisibility(View.GONE);
-                            fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_overflow));
+                            openEditor();
                         } else {
                             Util.collapse(editorLayout, 500, null);
                             mListView.setVisibility(View.VISIBLE);
@@ -397,7 +390,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         btnCloseProject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.flashOnce(btnCloseProject,300,new Util.UtilAnimationListener() {
+                Util.flashOnce(btnCloseProject, 300, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
                         AlertDialog.Builder f = new AlertDialog.Builder(getActivity());
@@ -406,13 +399,14 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                                 .setPositiveButton(ctx.getString(R.string.yes), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Util.showToast(ctx,ctx.getString(R.string.under_cons));
+                                        Util.showToast(ctx, ctx.getString(R.string.under_cons));
+                                        closeEditor();
                                     }
                                 })
                                 .setNegativeButton(ctx.getString(R.string.no), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-
+                                        closeEditor();
                                     }
                                 })
                                 .show();
@@ -420,6 +414,21 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                 });
             }
         });
+    }
+
+    private void openEditor() {
+        btnCloseProject.setVisibility(View.GONE);
+        mListView.setVisibility(View.GONE);
+        Util.expand(editorLayout, 500, null);
+        headerLayout.setVisibility(View.GONE);
+        fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_overflow));
+    }
+
+    private void closeEditor() {
+        Util.collapse(editorLayout, 500, null);
+        mListView.setVisibility(View.VISIBLE);
+        headerLayout.setVisibility(View.VISIBLE);
+        fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_new));
     }
 
     public void sendData() {
@@ -514,10 +523,10 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     public void animateHeroHeight() {
         Util.fadeIn(topView);
         Util.rotateViewWithDelay(getActivity(),
-                fab,500,1000, new Util.UtilAnimationListener() {
+                fab, 500, 1000, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
-                        Util.flashOnce(txtStatusCount,300,null);
+                        Util.flashOnce(txtStatusCount, 300, null);
                     }
                 });
     }
@@ -526,14 +535,16 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (activity instanceof ProjectListFragmentListener) {
-            mListener = (ProjectListFragmentListener)activity;
+            mListener = (ProjectListFragmentListener) activity;
         } else {
             throw new ClassCastException("Host "
                     + activity.getLocalClassName() + " must implement ProjectListFragmentListener");
         }
 
     }
+
     ProjectListFragmentListener mListener;
+
     @Override
     public void onDetach() {
         super.onDetach();

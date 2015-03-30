@@ -27,13 +27,41 @@ public class CompanyStaffDTO implements Serializable, Comparable<CompanyStaffDTO
     private String cellphone, pin;
     private Date appInvitationDate;
     private Integer companyID;
+    private Boolean selected;
     private GcmDeviceDTO gcmDevice;
     private List<PhotoUploadDTO> photoUploadList;
+
+    private List<LocationTrackerDTO> locationTrackerList;
+    private List<StaffProjectDTO> staffProjectList;
 
     public static final int ACTION_ADD = 1,
             ACTION_UPDATE = 2, ACTION_DELETE = 3;
 
+    public Boolean getSelected() {
+        return selected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
+    }
+
     public CompanyStaffDTO() {
+    }
+
+    public List<LocationTrackerDTO> getLocationTrackerList() {
+        return locationTrackerList;
+    }
+
+    public void setLocationTrackerList(List<LocationTrackerDTO> locationTrackerList) {
+        this.locationTrackerList = locationTrackerList;
+    }
+
+    public List<StaffProjectDTO> getStaffProjectList() {
+        return staffProjectList;
+    }
+
+    public void setStaffProjectList(List<StaffProjectDTO> staffProjectList) {
+        this.staffProjectList = staffProjectList;
     }
 
     public Date getAppInvitationDate() {

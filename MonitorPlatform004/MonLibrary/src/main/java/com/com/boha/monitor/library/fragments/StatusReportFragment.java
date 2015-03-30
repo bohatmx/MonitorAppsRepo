@@ -29,10 +29,10 @@ import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
+import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.SharedUtil;
 import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
-import com.com.boha.monitor.library.util.WebSocketUtil;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 
 import org.joda.time.DateTime;
@@ -43,6 +43,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import static com.com.boha.monitor.library.util.Util.showErrorToast;
 
 public class StatusReportFragment extends Fragment implements PageFragment {
 
@@ -219,6 +221,10 @@ public class StatusReportFragment extends Fragment implements PageFragment {
 
     public void getProjectStatus() {
 
+        if (project == null) {
+            Log.e(LOG,"--- project is NULL - getProjectStatus()");
+            return;
+        }
         final long start = System.currentTimeMillis();
         RequestDTO w = new RequestDTO(RequestDTO.GET_PROJECT_STATUS_IN_PERIOD);
         w.setProjectID(project.getProjectID());
@@ -227,10 +233,9 @@ public class StatusReportFragment extends Fragment implements PageFragment {
         final Activity act = getActivity();
 
         progressBar.setVisibility(View.VISIBLE);
-        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
-            public void onMessage(final ResponseDTO response) {
-
+            public void onResponse(final ResponseDTO response) {
                 act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -270,17 +275,23 @@ public class StatusReportFragment extends Fragment implements PageFragment {
             }
 
             @Override
-            public void onClose() {
-
-            }
-
-            @Override
             public void onError(final String message) {
-                Log.e(LOG, "---- ERROR websocket - " + message);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Util.showErrorToast(ctx, message);
+                        progressBar.setVisibility(View.GONE);
+                        showErrorToast(ctx, message);
+
+                    }
+                });
+            }
+
+            @Override
+            public void onWebSocketClose() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
             }

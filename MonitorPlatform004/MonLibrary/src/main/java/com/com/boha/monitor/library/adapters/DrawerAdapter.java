@@ -91,7 +91,7 @@ public class DrawerAdapter extends ArrayAdapter<String> {
                         .getDrawable(R.drawable.ic_action_person));
                 break;
 
-            case 4:
+            case 5:
                 if (company.getTaskStatusList().isEmpty()) {
                     item.txtCount.setVisibility(View.GONE);
                 } else {
@@ -102,7 +102,7 @@ public class DrawerAdapter extends ArrayAdapter<String> {
                 item.icon.setImageDrawable(ctx.getResources()
                         .getDrawable(R.drawable.ic_action_event));
                 break;
-            case 5:
+            case 6:
                 if (company.getProjectStatusTypeList().isEmpty()) {
                     item.txtCount.setVisibility(View.GONE);
                 } else {
@@ -113,7 +113,7 @@ public class DrawerAdapter extends ArrayAdapter<String> {
                 item.icon.setImageDrawable(ctx.getResources()
                         .getDrawable(R.drawable.ic_action_globe));
                 break;
-            case 3:
+            case 4:
                 if (company.getTaskList().isEmpty()) {
                     item.txtCount.setVisibility(View.GONE);
                 } else {
@@ -128,6 +128,11 @@ public class DrawerAdapter extends ArrayAdapter<String> {
                 item.txtCount.setVisibility(View.GONE);
                 item.icon.setImageDrawable(ctx.getResources()
                         .getDrawable(R.drawable.ic_action_view_as_list));
+                break;
+            case 3:
+                item.txtCount.setVisibility(View.GONE);
+                item.icon.setImageDrawable(ctx.getResources()
+                        .getDrawable(R.drawable.ic_chat_black_24dp));
                 break;
 
         }

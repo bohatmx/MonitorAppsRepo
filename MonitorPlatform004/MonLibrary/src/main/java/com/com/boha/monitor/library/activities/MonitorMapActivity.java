@@ -22,6 +22,7 @@ import com.com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.ErrorUtil;
+import com.com.boha.monitor.library.util.NetUtil;
 import com.com.boha.monitor.library.util.Statics;
 import com.com.boha.monitor.library.util.Util;
 import com.com.boha.monitor.library.util.WebCheck;
@@ -50,6 +51,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+
+import static com.com.boha.monitor.library.util.Util.showErrorToast;
 
 public class MonitorMapActivity extends ActionBarActivity
         implements LocationListener,
@@ -350,44 +353,48 @@ public class MonitorMapActivity extends ActionBarActivity
         Util.showPopupBasicWithHeroImage(ctx, this, list, topLayout,
                 ctx.getString(R.string.site_colon) + projectSite.getProjectSiteName(),
                 new Util.UtilPopupListener() {
-            @Override
-            public void onItemSelected(int index) {
-                if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.directions))) {
-                    startDirectionsMap(lat, lng);
-                }
-                if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.status_report))) {
-                    isStatusReport = true;
-                    getCachedSiteData();
-                }
+                    @Override
+                    public void onItemSelected(int index) {
+                        if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.directions))) {
+                            startDirectionsMap(lat, lng);
+                        }
+                        if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.status_report))) {
+                            isStatusReport = true;
+                            getCachedSiteData();
+                        }
 
-                if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.site_gallery))) {
-                    isGallery = true;
-                    getCachedSiteData();
-                }
-            }
-        });
+                        if (list.get(index).equalsIgnoreCase(ctx.getString(R.string.site_gallery))) {
+                            isGallery = true;
+                            getCachedSiteData();
+                        }
+                    }
+                });
 
 
     }
+
     boolean isStatusReport, isGallery;
+
     private void startGallery() {
         if (projectSite.getPhotoUploadList() == null || projectSite.getPhotoUploadList().isEmpty()) {
-            Util.showToast(ctx,"There are no pictures taken for the site");
+            Util.showToast(ctx, "There are no pictures taken for the site");
             return;
         }
         Intent i = new Intent(ctx, SitePictureGridActivity.class);
         i.putExtra("projectSite", projectSite);
         startActivity(i);
     }
+
     private void startStatusReport() {
         if (projectSite.getProjectSiteTaskList() == null || projectSite.getProjectSiteTaskList().isEmpty()) {
-            Util.showToast(ctx,"There are no tasks defined for the site");
+            Util.showToast(ctx, "There are no tasks defined for the site");
             return;
         }
         Intent i = new Intent(ctx, SiteStatusReportActivity.class);
         i.putExtra("projectSite", projectSite);
         startActivity(i);
     }
+
     private void getCachedSiteData() {
         progressBar.setVisibility(View.VISIBLE);
 
@@ -417,7 +424,7 @@ public class MonitorMapActivity extends ActionBarActivity
 
             @Override
             public void onError() {
-                Log.e(LOG,"--- no cache exists for the site, going to the cloud");
+                Log.e(LOG, "--- no cache exists for the site, going to the cloud");
                 getSiteData();
             }
         });
@@ -425,43 +432,55 @@ public class MonitorMapActivity extends ActionBarActivity
 
     private void getSiteData() {
 
-            RequestDTO w = new RequestDTO(RequestDTO.GET_SITE_STATUS);
-            w.setProjectSiteID(projectSite.getProjectSiteID());
-            progressBar.setVisibility(View.VISIBLE);
-            WebSocketUtil.sendRequest(ctx,Statics.COMPANY_ENDPOINT,w, new WebSocketUtil.WebSocketListener() {
-                @Override
-                public void onMessage(final ResponseDTO response) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressBar.setVisibility(View.GONE);
-                            if (!ErrorUtil.checkServerError(ctx,response)) {
-                                return;
-                            }
-                            projectSite = response.getProjectSiteList().get(0);
-                            if (isGallery) {
-                                isGallery = false;
-                                startGallery();
-                            }
-                            if (isStatusReport) {
-                                isStatusReport = false;
-                                startStatusReport();
-                            }
+        RequestDTO w = new RequestDTO(RequestDTO.GET_SITE_STATUS);
+        w.setProjectSiteID(projectSite.getProjectSiteID());
+        progressBar.setVisibility(View.VISIBLE);
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(final ResponseDTO response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
                         }
+                        projectSite = response.getProjectSiteList().get(0);
+                        if (isGallery) {
+                            isGallery = false;
+                            startGallery();
+                        }
+                        if (isStatusReport) {
+                            isStatusReport = false;
+                            startStatusReport();
+                        }
+                    }
 
-                    });
-                }
+                });
+            }
 
-                @Override
-                public void onClose() {
+            @Override
+            public void onError(final String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                        showErrorToast(ctx, message);
 
-                }
+                    }
+                });
+            }
 
-                @Override
-                public void onError(String message) {
-
-                }
-            });
+            @Override
+            public void onWebSocketClose() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+            }
+        });
 
     }
 
