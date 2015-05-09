@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -141,10 +142,10 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
                     public void onAnimationEnded() {
                         isUpdate = false;
                         if (editorLayout.getVisibility() == View.GONE) {
-                            fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_overflow));
+                            fabIcon.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_action_overflow));
                             Util.expand(editorLayout,500, null);
                         } else {
-                            fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_new));
+                            fabIcon.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_action_new));
                             Util.collapse(editorLayout,500,null);
                         }
                     }
@@ -197,7 +198,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
                             addProjectSite(response.getProjectSiteList().get(0));
                         }
                         Util.collapse(editorLayout,500,null);
-                        fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_new));
+                        fabIcon.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_action_new));
                     }
                 });
             }
@@ -396,7 +397,7 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
         AlertDialog.Builder dg = new AlertDialog.Builder(ctx);
         dg.setTitle("Confirm Position")
                 .setMessage("Are you standing at the centre of the site or as close as you can get?")
-                .setIcon(ctx.getResources().getDrawable(R.drawable.ic_action_globe))
+                .setIcon(ContextCompat.getDrawable(ctx, R.drawable.ic_action_globe))
                 .setPositiveButton(ctx.getString(R.string.yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

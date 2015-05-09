@@ -1,6 +1,7 @@
 package com.boha.monitor.library.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +11,6 @@ import android.widget.TextView;
 
 import com.boha.monitor.library.R;
 import com.boha.monitor.library.util.Statics;
-
-
-
 
 import java.util.List;
 
@@ -118,30 +116,30 @@ public class SpinnerListAdapter extends ArrayAdapter<String> {
 //        }
         switch (type) {
             case INVOICE_ACTIONS:
-                item.image.setImageDrawable(ctx.getResources().getDrawable(android.R.drawable.ic_input_add));
+                item.image.setImageDrawable(ContextCompat.getDrawable(ctx, android.R.drawable.ic_input_add));
                 break;
             case ENGINEER_LIST:
                 if (position == 0) {
-                    item.image.setImageDrawable(ctx.getResources().getDrawable(android.R.drawable.ic_menu_help));
+                    item.image.setImageDrawable(ContextCompat.getDrawable(ctx, android.R.drawable.ic_menu_help));
                 } else {
-                    item.image.setImageDrawable(ctx.getResources().getDrawable(android.R.drawable.ic_dialog_alert));
+                    item.image.setImageDrawable(ContextCompat.getDrawable(ctx, android.R.drawable.ic_dialog_alert));
                 }
                 break;
             case TASK_LIST:
                 if (position == 0) {
-                    item.image.setImageDrawable(ctx.getResources().getDrawable(android.R.drawable.ic_menu_help));
+                    item.image.setImageDrawable(ContextCompat.getDrawable(ctx, android.R.drawable.ic_menu_help));
                 } else {
-                    item.image.setImageDrawable(ctx.getResources().getDrawable(android.R.drawable.ic_dialog_alert));
+                    item.image.setImageDrawable(ContextCompat.getDrawable(ctx, android.R.drawable.ic_dialog_alert));
                 }
                 break;
             case STAFF_ACTIONS:
-                item.image.setImageDrawable(ctx.getResources().getDrawable(android.R.drawable.ic_menu_edit));
+                item.image.setImageDrawable(ContextCompat.getDrawable(ctx, android.R.drawable.ic_menu_edit));
                 break;
             case SITE_LIST:
-                item.image.setImageDrawable(ctx.getResources().getDrawable(android.R.drawable.ic_menu_edit));
+                item.image.setImageDrawable(ContextCompat.getDrawable(ctx, android.R.drawable.ic_menu_edit));
                 break;
             case PROJECT_LIST:
-                item.image.setImageDrawable(ctx.getResources().getDrawable(android.R.drawable.ic_menu_edit));
+                item.image.setImageDrawable(ContextCompat.getDrawable(ctx, android.R.drawable.ic_menu_edit));
                 break;
         }
 

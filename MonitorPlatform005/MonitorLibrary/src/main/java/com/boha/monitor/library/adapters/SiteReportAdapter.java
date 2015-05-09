@@ -1,6 +1,7 @@
 package com.boha.monitor.library.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +13,6 @@ import com.boha.monitor.library.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.library.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.library.dto.TaskStatusDTO;
 import com.boha.monitor.library.util.Statics;
-
-
-
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -110,22 +108,22 @@ public class SiteReportAdapter extends ArrayAdapter<ProjectSiteTaskDTO> {
             int color = status.getTaskStatus().getStatusColor();
             switch (color)  {
                 case TaskStatusDTO.STATUS_COLOR_GREEN:
-                    item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval));
+                    item.txtColor.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgreen_oval));
                     item.txtColor.setText(ctx.getString(R.string.green));
                     break;
                 case TaskStatusDTO.STATUS_COLOR_AMBER:
-                    item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval));
+                    item.txtColor.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xorange_oval));
                     item.txtColor.setText(ctx.getString(R.string.yellow));
                     break;
                 case TaskStatusDTO.STATUS_COLOR_RED:
-                    item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval));
+                    item.txtColor.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xred_oval));
                     item.txtColor.setText(ctx.getString(R.string.red));
                     break;
             }
         } else {
             item.txtLastStatus.setText(ctx.getString(R.string.not_avail));
             item.txtDate.setText(ctx.getString(R.string.not_avail));
-            item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xgrey_oval));
+            item.txtColor.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgrey_oval));
         }
         Statics.setRobotoFontLight(ctx, item.txtDate);
         Statics.setRobotoFontLight(ctx,item.txtLastStatus);

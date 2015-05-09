@@ -2,6 +2,7 @@ package com.boha.monitor.library.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -92,7 +93,7 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.PhotoVie
 
             @Override
             public void onLoadingFailed(String s, View view, FailReason failReason) {
-                holder.image.setImageDrawable(ctx.getResources().getDrawable(R.drawable.under_construction));
+                holder.image.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.under_construction));
             }
 
             @Override

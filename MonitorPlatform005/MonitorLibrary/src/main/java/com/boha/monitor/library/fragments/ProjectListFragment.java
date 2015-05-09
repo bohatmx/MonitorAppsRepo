@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -374,7 +375,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                             Util.collapse(editorLayout, 500, null);
                             mListView.setVisibility(View.VISIBLE);
                             headerLayout.setVisibility(View.VISIBLE);
-                            fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_new));
+                            fabIcon.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_action_new));
                         }
                     }
                 });
@@ -425,14 +426,14 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         mListView.setVisibility(View.GONE);
         Util.expand(editorLayout, 500, null);
         headerLayout.setVisibility(View.GONE);
-        fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_overflow));
+        fabIcon.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_action_overflow));
     }
 
     private void closeEditor() {
         Util.collapse(editorLayout, 500, null);
         mListView.setVisibility(View.VISIBLE);
         headerLayout.setVisibility(View.VISIBLE);
-        fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_new));
+        fabIcon.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_action_new));
     }
 
     public void sendData() {

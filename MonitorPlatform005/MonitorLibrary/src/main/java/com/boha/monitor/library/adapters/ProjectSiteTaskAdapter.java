@@ -1,6 +1,7 @@
 package com.boha.monitor.library.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +13,6 @@ import com.boha.monitor.library.R;
 import com.boha.monitor.library.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.library.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.library.util.Statics;
-
-
-
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -125,16 +123,16 @@ public class ProjectSiteTaskAdapter extends ArrayAdapter<ProjectSiteTaskDTO> {
                 int color = list.get(0).getTaskStatus().getStatusColor();
                 switch (color) {
                     case 1:
-                        item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval_small));
+                        item.txtNumber.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgreen_oval_small));
                         break;
                     case 2:
-                        item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
+                        item.txtNumber.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xorange_oval_small));
                         break;
                     case 3:
-                        item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
+                        item.txtNumber.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xred_oval_small));
                         break;
                     default:
-                        item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xgrey_oval_small));
+                        item.txtNumber.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgrey_oval_small));
                         break;
                 }
 
@@ -142,7 +140,7 @@ public class ProjectSiteTaskAdapter extends ArrayAdapter<ProjectSiteTaskDTO> {
                 item.txtLastDate.setVisibility(View.GONE);
                 item.txtStatus.setVisibility(View.GONE);
                 item.txtStaff.setVisibility(View.GONE);
-                item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xgrey_oval_small));
+                item.txtNumber.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgrey_oval_small));
             }
         }
 

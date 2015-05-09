@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -292,7 +293,7 @@ private void buildBeneficiaryList() {
 
                 name.setText(beneficiary.getFullName());
                 num.setText("" + (position + 1));
-                num.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.xgreen_oval));
+                num.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgreen_oval));
                 idnum.setText(beneficiary.getiDNumber());
                 status.setText(beneficiary.getStatus());
                 site.setText(beneficiary.getSiteNumber());

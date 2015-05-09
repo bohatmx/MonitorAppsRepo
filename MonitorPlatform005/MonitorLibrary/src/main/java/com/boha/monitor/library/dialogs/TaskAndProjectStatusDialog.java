@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,7 +100,7 @@ public class TaskAndProjectStatusDialog extends DialogFragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    txtColor.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.xgreen_oval));
+                    txtColor.setBackground(ContextCompat.getDrawable(context, R.drawable.xgreen_oval));
                     txtColor.setText("Green");
                     Util.flashSeveralTimes(txtColor, 200, 2, null);
                 }
@@ -109,7 +110,7 @@ public class TaskAndProjectStatusDialog extends DialogFragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    txtColor.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.xorange_oval));
+                    txtColor.setBackground(ContextCompat.getDrawable(context, R.drawable.xorange_oval));
                     txtColor.setText("Yellow");
                     Util.flashSeveralTimes(txtColor, 200, 2, null);
                 }
@@ -119,7 +120,7 @@ public class TaskAndProjectStatusDialog extends DialogFragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    txtColor.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.xred_oval));
+                    txtColor.setBackground(ContextCompat.getDrawable(context, R.drawable.xred_oval));
                     txtColor.setText("Red");
                     Util.flashSeveralTimes(txtColor, 200, 2, null);
                 }

@@ -2,7 +2,7 @@ package com.boha.monitor.library.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -145,22 +145,22 @@ public class ChatMessageListAdapter extends ArrayAdapter<ChatMessageDTO> {
         View inside = colorLayout.findViewById(R.id.COLOR_inside);
         switch (number) {
             case 1:
-                inside.setBackground(ctx.getResources().getDrawable(R.drawable.xindigo_oval_small));
+                inside.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xindigo_oval_small));
                 break;
             case 2:
-                inside.setBackground(ctx.getResources().getDrawable(R.drawable.xblack_oval_small));
+                inside.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xblack_oval_small));
                 break;
             case 3:
-                inside.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
+                inside.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xred_oval_small));
                 break;
             case 4:
-                inside.setBackground(ctx.getResources().getDrawable(R.drawable.xblue_oval_small));
+                inside.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xblue_oval_small));
                 break;
             case 5:
-                inside.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
+                inside.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xorange_oval_small));
                 break;
             case 6:
-                inside.setBackground(ctx.getResources().getDrawable(R.drawable.xindigo_oval_small));
+                inside.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xindigo_oval_small));
                 break;
         }
     }

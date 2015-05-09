@@ -1,6 +1,7 @@
 package com.boha.monitor.library.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +12,6 @@ import com.boha.monitor.library.R;
 import com.boha.monitor.library.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.library.dto.TaskStatusDTO;
 import com.boha.monitor.library.util.Statics;
-
-
-
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -87,15 +85,15 @@ public class StatusReportAdapter extends ArrayAdapter<ProjectSiteTaskStatusDTO> 
         }
         switch (p.getTaskStatus().getStatusColor()) {
             case TaskStatusDTO.STATUS_COLOR_GREEN:
-                item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval_small));
+                item.txtColor.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgreen_oval_small));
                 item.txtColor.setText("G");
                 break;
             case TaskStatusDTO.STATUS_COLOR_RED:
-                item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
+                item.txtColor.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xred_oval_small));
                 item.txtColor.setText("R");
                 break;
             case TaskStatusDTO.STATUS_COLOR_AMBER:
-                item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
+                item.txtColor.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xorange_oval_small));
                 item.txtColor.setText("A");
                 break;
         }

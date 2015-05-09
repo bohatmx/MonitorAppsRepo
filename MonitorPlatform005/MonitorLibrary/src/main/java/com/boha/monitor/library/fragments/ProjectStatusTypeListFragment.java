@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -142,7 +143,7 @@ public class ProjectStatusTypeListFragment extends Fragment implements PageFragm
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     txtColor.setText("A");
-                    txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xamber_oval_large));
+                    txtColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xamber_oval_large));
                     Util.flashOnce(txtColor, 200, null);
                 }
             }
@@ -152,7 +153,7 @@ public class ProjectStatusTypeListFragment extends Fragment implements PageFragm
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     txtColor.setText("R");
-                    txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_large));
+                    txtColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xred_oval_large));
                     Util.flashOnce(txtColor, 200, null);
                 }
             }
@@ -161,7 +162,7 @@ public class ProjectStatusTypeListFragment extends Fragment implements PageFragm
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval_large));
+                    txtColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xgreen_oval_large));
                     txtColor.setText("G");
                     Util.flashOnce(txtColor, 200, null);
                 }
@@ -179,14 +180,14 @@ public class ProjectStatusTypeListFragment extends Fragment implements PageFragm
                         radioGreen.setChecked(false);
                         radioAmber.setChecked(false);
                         radioRed.setChecked(false);
-                        txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xgrey_oval));
+                        txtColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xgrey_oval));
                         txtColor.setText("X");
                         if (editLayout.getVisibility() == View.GONE) {
                             Util.expand(editLayout, 500, null);
-                            fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_overflow));
+                            fabIcon.setImageDrawable(ContextCompat.getDrawable(ctx,R.drawable.ic_action_overflow));
                         } else {
                             Util.collapse(editLayout, 500, null);
-                            fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_new));
+                            fabIcon.setImageDrawable(ContextCompat.getDrawable(ctx,R.drawable.ic_action_new));
                         }
                     }
                 });
@@ -284,7 +285,7 @@ public class ProjectStatusTypeListFragment extends Fragment implements PageFragm
                             }
                             addProjectStatusType(response.getProjectStatusTypeList().get(0));
                             Util.collapse(editLayout, 500, null);
-                            fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_new));
+                            fabIcon.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_action_new));
                         }
                     });
                 }

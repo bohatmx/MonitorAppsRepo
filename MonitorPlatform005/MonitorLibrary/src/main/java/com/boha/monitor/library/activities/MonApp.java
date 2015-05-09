@@ -11,6 +11,7 @@ import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.os.SystemClock;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.android.volley.RequestQueue;
@@ -34,7 +35,6 @@ import com.nostra13.universalimageloader.utils.StorageUtils;
 import org.acra.ACRA;
 import org.acra.ReportField;
 import org.acra.annotation.ReportsCrashes;
-
 
 import java.io.File;
 import java.util.HashMap;
@@ -123,13 +123,12 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         }
         initializeVolley(getApplicationContext());
 
-        DisplayImageOptions defaultOptions =
-                new DisplayImageOptions.Builder()
-                        .cacheInMemory(true)
-                        .cacheOnDisk(true)
-                        .showImageOnFail(getApplicationContext().getResources().getDrawable(R.drawable.under_construction))
-                        .showImageOnLoading(getApplicationContext().getResources().getDrawable(R.drawable.under_construction))
-                        .build();
+        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder();
+        builder.cacheInMemory(true);
+        builder.cacheOnDisk(true);
+        builder.showImageOnFail(ContextCompat.getDrawable(getApplicationContext(),R.drawable.under_construction));
+        builder.showImageOnLoading(ContextCompat.getDrawable(getApplicationContext(), R.drawable.under_construction));
+        DisplayImageOptions defaultOptions = builder.build();
 
         File cacheDir = StorageUtils.getCacheDirectory(this, true);
         Log.d(LOG, "## onCreate, ImageLoader cacheDir, files: " + cacheDir.listFiles().length);

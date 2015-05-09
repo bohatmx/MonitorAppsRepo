@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,9 +31,6 @@ import com.boha.monitor.library.util.ErrorUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Util;
-
-
-
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -148,10 +146,10 @@ public class TaskListFragment extends Fragment implements PageFragment {
                     public void onAnimationEnded() {
                         if (editLayout.getVisibility() == View.GONE) {
                             openEditPanel();
-                            fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_overflow));
+                            fabIcon.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_action_overflow));
                         } else {
                             closeEditPanel();
-                            fabIcon.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_action_new));
+                            fabIcon.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_action_new));
                         }
                     }
                 });

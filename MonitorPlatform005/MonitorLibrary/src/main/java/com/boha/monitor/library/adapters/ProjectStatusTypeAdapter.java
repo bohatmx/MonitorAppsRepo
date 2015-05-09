@@ -1,6 +1,7 @@
 package com.boha.monitor.library.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +12,6 @@ import com.boha.monitor.library.R;
 import com.boha.monitor.library.dto.ProjectStatusTypeDTO;
 import com.boha.monitor.library.dto.TaskStatusDTO;
 import com.boha.monitor.library.util.Statics;
-
-
-
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -70,13 +68,13 @@ public class ProjectStatusTypeAdapter extends ArrayAdapter<ProjectStatusTypeDTO>
         if (p.getStatusColor() != null) {
             switch (p.getStatusColor()) {
                 case TaskStatusDTO.STATUS_COLOR_GREEN:
-                    item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval_small));
+                    item.txtNumber.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgreen_oval_small));
                     break;
                 case TaskStatusDTO.STATUS_COLOR_RED:
-                    item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
+                    item.txtNumber.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xred_oval_small));
                     break;
                 case TaskStatusDTO.STATUS_COLOR_AMBER:
-                    item.txtNumber.setBackground(ctx.getResources().getDrawable(R.drawable.xamber_oval_small));
+                    item.txtNumber.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xamber_oval_small));
                     break;
             }
         }

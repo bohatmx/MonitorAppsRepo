@@ -2,6 +2,7 @@ package com.boha.monitor.library.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,7 +111,7 @@ public class StaffAdapter extends ArrayAdapter<CompanyStaffDTO> {
 
             @Override
             public void onLoadingFailed(String s, View view, FailReason failReason) {
-                item.photo.setImageDrawable(ctx.getResources().getDrawable(R.drawable.boy));
+                item.photo.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.boy));
                 item.photo.setAlpha(0.4f);
             }
 

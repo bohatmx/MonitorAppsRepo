@@ -21,6 +21,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.text.Html;
 import android.util.DisplayMetrics;
@@ -51,9 +52,6 @@ import com.boha.monitor.library.dto.transfer.ResponseDTO;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-
-
-
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -672,7 +670,7 @@ public class Util {
         TextView ind = (TextView) view.findViewById(R.id.MONTOAST_indicator);
         ind.setText("E");
         Statics.setRobotoFontLight(ctx, txt);
-        ind.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
+        ind.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xred_oval_small));
         txt.setTextColor(ctx.getResources().getColor(R.color.absa_red));
         txt.setText(caption);
         Toast customtoast = new Toast(ctx);
@@ -691,7 +689,7 @@ public class Util {
         Statics.setRobotoFontLight(ctx, txt);
         TextView ind = (TextView) view.findViewById(R.id.MONTOAST_indicator);
         ind.setText("M");
-        ind.setBackground(ctx.getResources().getDrawable(R.drawable.xblue_oval_small));
+        ind.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xblue_oval_small));
         txt.setTextColor(ctx.getResources().getColor(R.color.blue));
         txt.setText(caption);
 
@@ -1198,61 +1196,61 @@ public class Util {
         int index = random.nextInt(17);
         switch (index) {
             case 0:
-                return ctx.getResources().getDrawable(R.drawable.banner_meeting);
+                return ContextCompat.getDrawable(ctx, R.drawable.banner_meeting);
             case 1:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction3);
             case 2:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction4);
             case 3:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction5);
             case 4:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_meeting3);
             case 5:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction7);
             case 6:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction8);
             case 7:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction9);
             case 8:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction10);
             case 9:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction11);
             case 10:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction13);
             case 11:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction14);
             case 12:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_report);
             case 13:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_meeting3);
             case 14:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_report2);
             case 15:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_report);
             case 16:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_meeting);
             case 17:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_report3);
 
         }
-        return ctx.getResources().getDrawable(
+        return ContextCompat.getDrawable(ctx,
                 R.drawable.banner_report2);
     }
 
@@ -1262,61 +1260,61 @@ public class Util {
         int index = random.nextInt(17);
         switch (index) {
             case 0:
-                return ctx.getResources().getDrawable(R.drawable.banner_construction10);
+                return ContextCompat.getDrawable(ctx, R.drawable.banner_construction10);
             case 1:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction3);
             case 2:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction4);
             case 3:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction5);
             case 4:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction5);
             case 5:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction7);
             case 6:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction8);
             case 7:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction9);
             case 8:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction10);
             case 9:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction11);
             case 10:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction13);
             case 11:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_construction14);
             case 12:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_report);
             case 13:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_report3);
             case 14:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_report2);
             case 15:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_report);
             case 16:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_report2);
             case 17:
-                return ctx.getResources().getDrawable(
+                return ContextCompat.getDrawable(ctx,
                         R.drawable.banner_report3);
 
         }
-        return ctx.getResources().getDrawable(
+        return ContextCompat.getDrawable(ctx,
                 R.drawable.banner_report2);
     }
 

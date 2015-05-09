@@ -1,6 +1,7 @@
 package com.boha.monitor.library.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +13,6 @@ import com.boha.monitor.library.R;
 import com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.boha.monitor.library.dto.TaskStatusDTO;
 import com.boha.monitor.library.util.WebCheckResult;
-
-
-
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -136,28 +134,28 @@ public class ProjectSiteLocalAdapter extends ArrayAdapter<ProjectSiteDTO> implem
             item.statLayout2.setVisibility(View.VISIBLE);
             switch (p.getLastStatus().getTaskStatus().getStatusColor()) {
                 case TaskStatusDTO.STATUS_COLOR_GREEN:
-                    item.txtStatusCount.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval));
-                    item.txtTaskCount.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval_small));
+                    item.txtStatusCount.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgreen_oval));
+                    item.txtTaskCount.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgreen_oval_small));
                     break;
                 case TaskStatusDTO.STATUS_COLOR_AMBER:
-                    item.txtStatusCount.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval));
-                    item.txtTaskCount.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
+                    item.txtStatusCount.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xorange_oval));
+                    item.txtTaskCount.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xorange_oval_small));
                     break;
                 case TaskStatusDTO.STATUS_COLOR_RED:
-                    item.txtStatusCount.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval));
-                    item.txtTaskCount.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
+                    item.txtStatusCount.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xred_oval));
+                    item.txtTaskCount.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xred_oval_small));
                     break;
                 default:
-                    item.txtStatusCount.setBackground(ctx.getResources().getDrawable(R.drawable.xgrey_oval));
-                    item.txtTaskCount.setBackground(ctx.getResources().getDrawable(R.drawable.xgrey_oval_small));
+                    item.txtStatusCount.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgrey_oval));
+                    item.txtTaskCount.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgrey_oval_small));
                     break;
             }
 
         } else {
             item.statLayout1.setVisibility(View.GONE);
             item.statLayout2.setVisibility(View.GONE);
-            item.txtStatusCount.setBackground(ctx.getResources().getDrawable(R.drawable.xgrey_oval));
-            item.txtTaskCount.setBackground(ctx.getResources().getDrawable(R.drawable.xgrey_oval_small));
+            item.txtStatusCount.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgrey_oval));
+            item.txtTaskCount.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgrey_oval_small));
         }
 
         if (p.getProjectSiteTaskList() == null) {

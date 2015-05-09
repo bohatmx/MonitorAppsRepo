@@ -1,6 +1,7 @@
 package com.boha.monitor.library.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,25 +86,25 @@ public class ChatListAdapter extends ArrayAdapter<ChatDTO> {
         if (p.getAvatarNumber() != null) {
             switch (p.getAvatarNumber()) {
                 case 1:
-                    item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval_small));
+                    item.txtColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xgreen_oval_small));
                     break;
                 case 2:
-                    item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xblack_oval_small));
+                    item.txtColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xblack_oval_small));
                     break;
                 case 3:
-                    item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
+                    item.txtColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xred_oval_small));
                     break;
                 case 4:
-                    item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xblue_oval_small));
+                    item.txtColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xblue_oval_small));
                     break;
                 case 5:
-                    item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
+                    item.txtColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xorange_oval_small));
                     break;
                 case 6:
-                    item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xindigo_oval_small));
+                    item.txtColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xindigo_oval_small));
                     break;
                 default:
-                    item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xgrey_oval_small));
+                    item.txtColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xgrey_oval_small));
                     break;
             }
         }
