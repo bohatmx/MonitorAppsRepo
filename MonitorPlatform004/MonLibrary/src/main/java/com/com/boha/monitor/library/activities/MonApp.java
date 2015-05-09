@@ -59,26 +59,21 @@ import java.util.HashMap;
         socketTimeout = 10000
 )
 public class MonApp extends Application implements Application.ActivityLifecycleCallbacks {
+    RequestQueue requestQueue;
+    BitmapLruCache bitmapLruCache;
+    static final String PROPERTY_ID = "UA-53661372-2";
+    HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
+    private AlarmManager alarmMgr;
+    private PendingIntent alarmIntent;
+    private ChatMessageListActivity chatMessageListActivity;
+    private  boolean messageActivityVisible;
+    static final String LOG = MonApp.class.getSimpleName();
 
-
-    /**
-     * Enum used to identify the tracker that needs to be used for tracking.
-     * A single tracker is usually enough for most purposes. In case you do need multiple trackers,
-     * storing them all in Application object helps ensure that they are created only once per
-     * application instance.
-     */
     public enum TrackerName {
         APP_TRACKER, // Tracker used only in this app.
         GLOBAL_TRACKER, // Tracker used by all the apps from a company. eg: roll-up tracking.
         ECOMMERCE_TRACKER, // Tracker used by all ecommerce transactions from a company.
     }
-
-    static final String PROPERTY_ID = "UA-53661372-2";
-    HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
-    private AlarmManager alarmMgr;
-    private PendingIntent alarmIntent;
-    private  boolean chatActivityVisible;
-
     public synchronized Tracker getTracker(TrackerName trackerId) {
         if (!mTrackers.containsKey(trackerId)) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
@@ -102,7 +97,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         sb.append("\n\n\n#######################################\n");
         sb.append("#######################################\n");
         sb.append("###\n");
-        sb.append("###  Monitor App has started\n");
+        sb.append("###  Monitor App has started, setting up resources ...............\n");
         sb.append("###\n");
         sb.append("#######################################\n\n");
 
@@ -158,7 +153,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
                 SystemClock.elapsedRealtime(), HOUR, alarmIntent);
 
 
-        Log.e(LOG, "###### AlarmManager: alarm set: ONE_MINUTE");
+        Log.e(LOG, "###### AlarmManager: alarm set to pull the trigger in: HOUR");
     }
 
     static final int
@@ -206,55 +201,55 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         return bitmapLruCache;
     }
 
-    RequestQueue requestQueue;
-    BitmapLruCache bitmapLruCache;
-    ChatActivity chatActivity;
-    static final String LOG = "MonApp";
-
-    public ChatActivity getChatActivity() {
-        return chatActivity;
+    public ChatMessageListActivity getChatMessageListActivity() {
+        return chatMessageListActivity;
+    }
+    public void refreshChatMessages() {
+        if (chatMessageListActivity != null) {
+            chatMessageListActivity.refreshMessages();
+        }
     }
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        if (activity instanceof ChatActivity) {
-            chatActivity = (ChatActivity)activity;
-            chatActivityVisible = true;
-            Log.d(LOG,"ChatActivity onActivityCreated, chatActivityVisible: " + chatActivityVisible);
+        if (activity instanceof ChatMessageListActivity) {
+            chatMessageListActivity = (ChatMessageListActivity)activity;
+            messageActivityVisible = true;
+            Log.d(LOG,"ChatMessageListActivity onActivityCreated, messageActivityVisible: " + messageActivityVisible);
         }
     }
 
     @Override
     public void onActivityStarted(Activity activity) {
-        if (activity instanceof ChatActivity) {
-            chatActivityVisible = true;
-            chatActivity = (ChatActivity)activity;
-            Log.d(LOG,"ChatActivity onActivityStarted, chatActivityVisible: " + chatActivityVisible);
+        if (activity instanceof ChatMessageListActivity) {
+            messageActivityVisible = true;
+            chatMessageListActivity = (ChatMessageListActivity)activity;
+            Log.d(LOG,"ChatMessageListActivity onActivityStarted, messageActivityVisible: " + messageActivityVisible);
         }
     }
 
     @Override
     public void onActivityResumed(Activity activity) {
-        if (activity instanceof ChatActivity) {
-            chatActivityVisible = true;
-            chatActivity = (ChatActivity)activity;
-            Log.d(LOG,"ChatActivity onActivityResumed, chatActivityVisible: " + chatActivityVisible);
+        if (activity instanceof ChatMessageListActivity) {
+            messageActivityVisible = true;
+            chatMessageListActivity = (ChatMessageListActivity)activity;
+            Log.d(LOG,"ChatMessageListActivity onActivityResumed, messageActivityVisible: " + messageActivityVisible);
         }
     }
 
     @Override
     public void onActivityPaused(Activity activity) {
-        if (activity instanceof ChatActivity) {
-            chatActivityVisible = false;
-            Log.d(LOG,"ChatActivity onActivityPaused, chatActivityVisible: " + chatActivityVisible);
+        if (activity instanceof ChatMessageListActivity) {
+            messageActivityVisible = false;
+            Log.d(LOG,"ChatMessageListActivity onActivityPaused, messageActivityVisible: " + messageActivityVisible);
         }
     }
 
     @Override
     public void onActivityStopped(Activity activity) {
-        if (activity instanceof ChatActivity) {
-            chatActivityVisible = false;
-            Log.d(LOG,"ChatActivity onActivityStopped, chatActivityVisible: " + chatActivityVisible);
+        if (activity instanceof ChatMessageListActivity) {
+            messageActivityVisible = false;
+            Log.d(LOG,"ChatMessageListActivity onActivityStopped, messageActivityVisible: " + messageActivityVisible);
         }
     }
 
@@ -265,14 +260,14 @@ public class MonApp extends Application implements Application.ActivityLifecycle
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-        if (activity instanceof ChatActivity) {
-            chatActivityVisible = false;
-            Log.d(LOG,"ChatActivity onActivityDestroyed, chatActivityVisible: " + chatActivityVisible);
+        if (activity instanceof ChatMessageListActivity) {
+            messageActivityVisible = false;
+            Log.d(LOG,"ChatMessageListActivity onActivityDestroyed, messageActivityVisible: " + messageActivityVisible);
         }
     }
 
-    public boolean isChatActivityVisible() {
-        return chatActivityVisible;
+    public boolean isMessageActivityVisible() {
+        return messageActivityVisible;
     }
 }
 

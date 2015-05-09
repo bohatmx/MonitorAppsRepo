@@ -328,6 +328,10 @@
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/white</item>
     </style>
+    <style name="TextStyleWhiteSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
 
     <style name="TextStyle20" parent="@android:style/TextAppearance.Medium">
         <item name="android:textStyle">normal</item>
@@ -342,7 +346,6 @@
 
     <style name="TextStyleRedSmall" parent="@android:style/TextAppearance.Small">
         <item name="android:textStyle">normal</item>
-        <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/translucent_red</item>
     </style>
 

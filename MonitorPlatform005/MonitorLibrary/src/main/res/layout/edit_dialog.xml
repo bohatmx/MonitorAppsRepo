@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="0dp"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/EDD_top"
+        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:layout_height="wrap_content">¬
+
+        <EditText
+            android:id="@+id/EDD_edit"
+            android:layout_marginTop="16dp"
+            style="@style/Title2TextStyleBlue"
+            android:inputType="textCapWords"
+            android:hint="@string/tap_to_enter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/EDD_desc"
+            android:layout_below="@id/EDD_edit"
+            android:visibility="gone"
+            android:layout_marginTop="10dp"
+            android:hint="Item description where appropriate and required by the business rule under consideration. Looks fine in multiple lines, eh?"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/EDD_color"
+        android:layout_below="@id/EDD_top"
+        android:text="X"
+        android:background="@drawable/xgrey_oval_small"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:layout_width="@dimen/mon_wider"
+        android:layout_height="@dimen/mon_wider" />
+
+
+    <TextView
+        android:id="@+id/EDD_label"
+        android:layout_below="@id/EDD_color"
+        android:layout_marginTop="@dimen/mon_margin"
+        android:padding="@dimen/mon_margin"
+        android:layout_marginLeft="@dimen/mon_margin"
+        android:text="@string/select_status_color"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <RadioGroup
+        android:id="@+id/EDD_radios"
+        android:layout_below="@id/EDD_label"
+        android:padding="@dimen/mon_middle"
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/mon_wide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/EDD_radioRed"
+            android:text="Red"
+            android:paddingRight="@dimen/mon_padding"
+            android:layout_weight="1"
+            android:textColor="@color/absa_red"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <RadioButton
+            android:id="@+id/EDD_radioYellow"
+            android:text="Amber"
+            android:paddingRight="@dimen/mon_padding"
+            android:layout_weight="1"
+            android:textColor="@color/amber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <RadioButton
+            android:id="@+id/EDD_radioGreen"
+            android:text="Green"
+            android:paddingRight="@dimen/mon_padding"
+            android:layout_weight="1"
+            android:textColor="@color/green"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RadioGroup>
+
+
+    <RelativeLayout
+        android:layout_below="@id/EDD_radios"
+        android:padding="@dimen/mon_wide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/EDD_btnChange"
+            android:text="@string/save"
+            style="@style/ButtonRed"
+            android:layout_marginTop="@dimen/mon_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/EDD_imgDelete"
+        android:src="@android:drawable/ic_delete"
+        android:layout_marginTop="@dimen/mon_widest"
+        android:layout_marginRight="@dimen/mon_margin"
+        android:tint="@color/indian_red"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

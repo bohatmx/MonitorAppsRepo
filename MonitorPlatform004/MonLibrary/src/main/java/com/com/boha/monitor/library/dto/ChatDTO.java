@@ -8,11 +8,37 @@ import java.util.List;
  * Created by aubreyM on 15/03/28.
  */
 public class ChatDTO implements Serializable {
-    private Integer chatID,projectID, projectSiteID;
+    private Integer chatID,projectID, projectSiteID, avatarNumber;
     private Date dateStarted;
     private String message;
+    private String chatName;
     private List<ChatMemberDTO> chatMemberList;
+    private List<ChatMessageDTO> chatMessageList;
     private CompanyStaffDTO companyStaff;
+
+    public List<ChatMessageDTO> getChatMessageList() {
+        return chatMessageList;
+    }
+
+    public void setChatMessageList(List<ChatMessageDTO> chatMessageList) {
+        this.chatMessageList = chatMessageList;
+    }
+
+    public String getChatName() {
+        return chatName;
+    }
+
+    public void setChatName(String chatName) {
+        this.chatName = chatName;
+    }
+
+    public Integer getAvatarNumber() {
+        return avatarNumber;
+    }
+
+    public void setAvatarNumber(Integer avatarNumber) {
+        this.avatarNumber = avatarNumber;
+    }
 
     public Integer getProjectID() {
         return projectID;

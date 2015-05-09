@@ -48,6 +48,7 @@ public class ChatStaffAdapter extends ArrayAdapter<CompanyStaffDTO> {
         ImageView image;
         TextView txtStaff;
         CheckBox checkBox;
+        View main;
     }
 
     @Override
@@ -58,6 +59,7 @@ public class ChatStaffAdapter extends ArrayAdapter<CompanyStaffDTO> {
             item = new ViewHolderItem();
             item.image = (ImageView)convertView.findViewById(R.id.MSTF_image);
             item.checkBox = (CheckBox)convertView.findViewById(R.id.MSTF_checkBox);
+            item.main = convertView.findViewById(R.id.MSTF_main);
 
             item.txtStaff = (TextView) convertView
                     .findViewById(R.id.MSTF_name);
@@ -74,6 +76,7 @@ public class ChatStaffAdapter extends ArrayAdapter<CompanyStaffDTO> {
         }
         if (p.getSelected()) {
             item.checkBox.setChecked(true);
+            Util.flashOnce(item.image,300,null);
         } else {
             item.checkBox.setChecked(false);
         }
@@ -86,13 +89,35 @@ public class ChatStaffAdapter extends ArrayAdapter<CompanyStaffDTO> {
         item.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onStaffSelected(p,position);
+                Util.flashOnce(item.image,300,new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        mListener.onStaffSelected(p,position);
+                    }
+                });
+            }
+        });
+        item.main.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.flashOnce(item.image,300,new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        mListener.onStaffSelected(p,position);
+                    }
+                });
+
             }
         });
         item.txtStaff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onStaffSelected(p,position);
+                Util.flashOnce(item.image,300,new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        mListener.onStaffSelected(p,position);
+                    }
+                });
             }
         });
 

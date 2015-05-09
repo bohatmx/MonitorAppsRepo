@@ -11,19 +11,16 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.boha.monitor.library.R;
-import com.com.boha.monitor.library.activities.ChatActivity;
+import com.com.boha.monitor.library.activities.ChatMemberSelectionActivity;
+import com.com.boha.monitor.library.activities.ChatMessageListActivity;
 import com.com.boha.monitor.library.activities.MonApp;
 import com.com.boha.monitor.library.activities.TaskStatusNotificationActivity;
 import com.com.boha.monitor.library.dto.ChatMessageDTO;
 import com.com.boha.monitor.library.dto.ProjectSiteTaskStatusDTO;
-import com.com.boha.monitor.library.dto.transfer.ResponseDTO;
-import com.com.boha.monitor.library.util.CacheUtil;
 import com.com.boha.monitor.library.util.GCMUtil;
 import com.google.android.gcm.GCMBaseIntentService;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.Gson;
-
-import java.util.ArrayList;
 
 public class GcmIntentService extends GCMBaseIntentService {
 	public static final int NOTIFICATION_ID = 1;
@@ -42,7 +39,7 @@ public class GcmIntentService extends GCMBaseIntentService {
 
 	@Override
 	protected void onMessage(Context arg0, Intent intent) {
-		Log.w(TAG, "onMessage ..:..gcm message here... " + intent.getExtras().toString());
+		Log.i(TAG, "onMessage: GoogleCloudMessage coming in... " + intent.getExtras().toString());
 		Bundle extras = intent.getExtras();
 		GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
 		String messageType = gcm.getMessageType(intent);
@@ -62,7 +59,7 @@ public class GcmIntentService extends GCMBaseIntentService {
 			}
 		}
 		// Release the wake lock provided by the WakefulBroadcastReceiver.
-		//GcmBroadcastReceiver.completeWakefulIntent(intent);
+		GcmBroadcastReceiver.completeWakefulIntent(intent);
 
 	}
 
@@ -80,6 +77,12 @@ public class GcmIntentService extends GCMBaseIntentService {
 	Gson gson = new Gson();
     static final int CHAT_MESSAGE = 1, STATUS_MESSAGE = 2, STRING_MESSAGE = 3;
 	private void sendNotification(Intent msgIntent) {
+        MonApp app = (MonApp) getApplication();
+        if (app.isMessageActivityVisible()) {
+            app.refreshChatMessages();
+            return;
+        }
+
 		Log.w(TAG,"## sendNotification ...");
 		mNotificationManager = (NotificationManager) this
 				.getSystemService(NOTIFICATION_SERVICE);
@@ -92,7 +95,7 @@ public class GcmIntentService extends GCMBaseIntentService {
             type = STATUS_MESSAGE;
             contentText = "Task updated";
 		} catch (Exception e) {
-			Log.d(TAG, "not a task status message ");
+			Log.d(TAG, "...not a task status message ");
 		}
 
         try {
@@ -100,58 +103,15 @@ public class GcmIntentService extends GCMBaseIntentService {
             type = CHAT_MESSAGE;
             contentText = chatMessageDTO.getMessage();
         } catch (Exception e) {
-            Log.d(TAG, "not a chat message ");
+            Log.d(TAG, "...not a chat message ");
         }
 
         Intent resultIntent = null;
         switch (type) {
             case CHAT_MESSAGE:
-                resultIntent = new Intent(this, ChatActivity.class);
+                resultIntent = new Intent(this, ChatMessageListActivity.class);
                 resultIntent.putExtra("message", chatMessageDTO);
-                Log.i(TAG,"########## this IS a chatMessage: " + chatMessageDTO.getMessage());
-                CacheUtil.getCachedData(getApplicationContext(),CacheUtil.CACHE_CHAT, new CacheUtil.CacheUtilListener() {
-                    @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
-                        if (response.getChatMessageList() == null) {
-                            response.setChatMessageList(new ArrayList<ChatMessageDTO>());
-                        }
-                        response.getChatMessageList().add(0,chatMessageDTO);
-                        CacheUtil.cacheData(getApplicationContext(),response,CacheUtil.CACHE_CHAT,new CacheUtil.CacheUtilListener() {
-                            @Override
-                            public void onFileDataDeserialized(ResponseDTO response) {
-
-                            }
-
-                            @Override
-                            public void onDataCached() {
-                                MonApp app = (MonApp) getApplication();
-                                if (app.isChatActivityVisible() && chatMessageDTO != null) {
-                                    Log.e(TAG,"****** ChatActivity is up and visible, REFRESHING!!");
-                                    ChatActivity x = app.getChatActivity();
-                                    if (x != null) {
-                                        x.refresh();
-                                    }
-                                    return;
-                                }
-                            }
-
-                            @Override
-                            public void onError() {
-
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onDataCached() {
-
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
+                Log.e(TAG,"########## this IS a chatMessage: " + chatMessageDTO.getMessage());
                 break;
             case STATUS_MESSAGE:
                 resultIntent = new Intent(this, TaskStatusNotificationActivity.class);
@@ -159,7 +119,7 @@ public class GcmIntentService extends GCMBaseIntentService {
                 Log.i(TAG,"## this IS a taskStatus");
                 break;
             case STRING_MESSAGE:
-                resultIntent = new Intent(this, ChatActivity.class);
+                resultIntent = new Intent(this, ChatMemberSelectionActivity.class);
                 resultIntent.putExtra("string", message);
                 contentText = message;
                 Log.i(TAG,"## message is just a string: " + message);
@@ -184,7 +144,7 @@ public class GcmIntentService extends GCMBaseIntentService {
 				.setContentText(contentText);
 
 		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-        Log.i(TAG,"#### sendNotification DONE!!");
+        Log.i(TAG,"#### sendNotification DONE!! - " + message);
 	}
 	
 	static final String TAG = "GcmIntentService";

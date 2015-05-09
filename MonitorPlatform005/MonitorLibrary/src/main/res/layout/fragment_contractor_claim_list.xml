@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="8dp"
+    android:background="@color/grey"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/FCC_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/FCC_hero"
+            android:src="@drawable/banner_report2"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mon_hero_height_large" />
+
+        <TextView
+            android:id="@+id/FCC_title"
+            style="@style/Title2TextStyleGrey"
+            android:text="@string/contractor_claims"
+            android:layout_marginLeft="@dimen/mon_padding"
+            android:textColor="@color/blue"
+            android:layout_marginTop="@dimen/mon_hero_height_medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_below="@id/FCC_top"
+        android:layout_marginTop="@dimen/mon_padding"
+        android:background="@color/beige_pale"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/FCC_list"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:layout_marginTop="@dimen/mon_wide"
+            android:dividerHeight="@dimen/mon_divider"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/FCC_count"
+            style="@style/BlueCircle"
+            android:text="99"
+            android:layout_marginRight="@dimen/mon_padding"
+            android:elevation="@dimen/mon_padding"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="@dimen/mon_padding"
+    android:background="@color/beige_pale"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/HIG_top"
+        android:padding="@dimen/mon_divider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/HIG_title"
+            android:text="Project Name"
+            style="@style/TextStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/HIG_bottom"
+        android:layout_below="@id/HIG_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/HIG_subtitle"
+            android:text=" Site Name"
+            style="@style/TextStyleBlueSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+    </RelativeLayout>
+    <TextView
+        android:id="@+id/HIG_imageCount"
+        android:text="00"
+        style="@style/GreenCountBoxSmall"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/mon_padding"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

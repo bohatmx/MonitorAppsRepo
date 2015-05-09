@@ -12,6 +12,7 @@ public class ChatMemberDTO implements Serializable{
     private CompanyStaffDTO companyStaff, chatOwner;
     private Integer chatID;
 
+
     public Integer getChatMemberID() {
         return chatMemberID;
     }

@@ -32,6 +32,9 @@
     <color name="navy_blue">#3399CC</color>
     <color name="opaque_red">#f00</color>
     <color name="translucent_red">#80ff0000</color>
+    <color name="translucent_x">#80ff9900</color>
+    <color name="translucent_y">#80ff6600</color>
+    <color name="translucent_z">#80ff3300</color>
     <color name="beige">#EFEDFC</color>
     <color name="purple">#800080</color>
     <color name="blue_pale">#EEEEFF</color>

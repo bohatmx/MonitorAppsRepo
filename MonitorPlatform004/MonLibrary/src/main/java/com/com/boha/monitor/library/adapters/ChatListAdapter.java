@@ -8,41 +8,36 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
-import com.com.boha.monitor.library.dto.ChatMessageDTO;
-import com.com.boha.monitor.library.dto.CompanyStaffDTO;
-import com.com.boha.monitor.library.util.SharedUtil;
+import com.com.boha.monitor.library.dto.ChatDTO;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class ChatListAdapter extends ArrayAdapter<ChatMessageDTO> {
+public class ChatListAdapter extends ArrayAdapter<ChatDTO> {
 
     private final LayoutInflater mInflater;
     private final int mLayoutRes;
-    private List<ChatMessageDTO> mList;
+    private List<ChatDTO> mList;
     private String title;
     private Context ctx;
-    private CompanyStaffDTO companyStaff;
 
     public ChatListAdapter(Context context, int textViewResourceId,
-                           List<ChatMessageDTO> list) {
+                           List<ChatDTO> list) {
         super(context, textViewResourceId, list);
         this.mLayoutRes = textViewResourceId;
         mList = list;
         ctx = context;
         this.mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        companyStaff = SharedUtil.getCompanyStaff(context);
     }
 
     View view;
 
 
     static class ViewHolderItem {
-        View fromLayout, toLayout;
-        TextView txtStaffTo, txtDateTo, txtTimeTo, txtMessageTo;
-        TextView txtStaffFrom, txtDateFrom, txtTimeFrom, txtMessageFrom;
+        View dateLayout;
+        TextView txtChatName, txtColor, txtDate, txtMessageCount,txtMemberCount;
     }
 
     @Override
@@ -51,65 +46,66 @@ public class ChatListAdapter extends ArrayAdapter<ChatMessageDTO> {
         if (convertView == null) {
             convertView = mInflater.inflate(mLayoutRes, null);
             item = new ViewHolderItem();
-            item.fromLayout = convertView.findViewById(R.id.CHATMSG_fromLayout);
-            item.toLayout = convertView.findViewById(R.id.CHATMSG_toLayout);
+            item.dateLayout = convertView.findViewById(R.id.CI_dateLayout);
 
-            item.txtStaffTo = (TextView) convertView
-                    .findViewById(R.id.CHATMSG_toStaff);
-            item.txtStaffFrom = (TextView) convertView
-                    .findViewById(R.id.CHATMSG_fromStaff);
+            item.txtChatName = (TextView) convertView
+                    .findViewById(R.id.CI_chatName);
+            item.txtColor = (TextView) convertView
+                    .findViewById(R.id.CI_color);
 
-            item.txtDateFrom = (TextView) convertView
-                    .findViewById(R.id.CHATMSG_messageFromDate);
-            item.txtDateTo = (TextView) convertView
-                    .findViewById(R.id.CHATMSG_messageToDate);
+            item.txtDate = (TextView) convertView
+                    .findViewById(R.id.CI_msgDate);
+            item.txtMessageCount = (TextView) convertView
+                    .findViewById(R.id.CI_msgCount);
 
-            item.txtTimeFrom = (TextView) convertView
-                    .findViewById(R.id.CHATMSG_messageFromTime);
-            item.txtTimeTo = (TextView) convertView
-                    .findViewById(R.id.CHATMSG_messageToTime);
-
-            item.txtMessageFrom = (TextView) convertView
-                    .findViewById(R.id.CHATMSG_messageFrom);
-            item.txtMessageTo = (TextView) convertView
-                    .findViewById(R.id.CHATMSG_messageTo);
-
+            item.txtMemberCount = (TextView) convertView
+                    .findViewById(R.id.CI_memCount);
 
             convertView.setTag(item);
         } else {
             item = (ViewHolderItem) convertView.getTag();
         }
 
-        ChatMessageDTO p = mList.get(position);
-        if (p.getCompanyStaffID().intValue() == companyStaff.getCompanyStaffID().intValue()) {
-            item.fromLayout.setVisibility(View.GONE);
-            item.toLayout.setVisibility(View.VISIBLE);
-            item.txtStaffTo.setText(p.getStaffName());
-            if (p.getDateSent() != null) {
-                item.txtDateTo.setText(sdfDate.format(p.getDateSent()));
-                item.txtTimeTo.setText(sdfTime.format(p.getDateSent()));
-            }
-            item.txtMessageTo.setText(p.getMessage());
+        ChatDTO p = mList.get(position);
+        item.txtChatName.setText(p.getChatName());
+
+        item.txtMemberCount.setText("" + p.getChatMemberList().size());
+        item.txtMessageCount.setText("" + p.getChatMessageList().size());
+        if (!p.getChatMessageList().isEmpty()) {
+            item.txtDate.setText(sdfDate.format(p.getChatMessageList().get(0).getDateSent()));
+            item.dateLayout.setVisibility(View.VISIBLE);
         } else {
-            item.fromLayout.setVisibility(View.VISIBLE);
-            item.toLayout.setVisibility(View.GONE);
-            item.txtStaffFrom.setText(p.getStaffName());
-            if (p.getDateSent() != null) {
-                item.txtDateFrom.setText(sdfDate.format(p.getDateSent()));
-                item.txtTimeFrom.setText(sdfTime.format(p.getDateSent()));
-            }
-            item.txtMessageFrom.setText(p.getMessage());
+            item.dateLayout.setVisibility(View.GONE);
         }
-
-
-
-//        Statics.setRobotoFontLight(ctx, item.txtNumber);
-//        Statics.setRobotoFontLight(ctx, item.txtName);
+        if (p.getAvatarNumber() != null) {
+            switch (p.getAvatarNumber()) {
+                case 1:
+                    item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xgreen_oval_small));
+                    break;
+                case 2:
+                    item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xblack_oval_small));
+                    break;
+                case 3:
+                    item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval_small));
+                    break;
+                case 4:
+                    item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xblue_oval_small));
+                    break;
+                case 5:
+                    item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xorange_oval_small));
+                    break;
+                case 6:
+                    item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xindigo_oval_small));
+                    break;
+                default:
+                    item.txtColor.setBackground(ctx.getResources().getDrawable(R.drawable.xgrey_oval_small));
+                    break;
+            }
+        }
 
         return (convertView);
     }
 
     static final Locale loc = Locale.getDefault();
-    static final SimpleDateFormat sdfDate = new SimpleDateFormat("EEEE, dd MMMM yyyy", loc);
-    static final SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm:ss", loc);
+    static final SimpleDateFormat sdfDate = new SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm:ss", loc);
 }

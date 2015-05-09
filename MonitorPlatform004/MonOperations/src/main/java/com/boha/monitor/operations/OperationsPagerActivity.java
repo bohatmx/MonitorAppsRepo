@@ -27,7 +27,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.com.boha.monitor.library.activities.AppInvitationActivity;
-import com.com.boha.monitor.library.activities.ChatActivity;
+import com.com.boha.monitor.library.activities.NewChatActivity;
 import com.com.boha.monitor.library.activities.ProjectSitePagerActivity;
 import com.com.boha.monitor.library.activities.StaffActivity;
 import com.com.boha.monitor.library.activities.StaffPictureActivity;
@@ -101,6 +101,7 @@ public class OperationsPagerActivity extends ActionBarActivity
                         company = r.getCompany();
                         response = r;
                         buildPages();
+
                     }
                 }
                 for (String s : titles) {
@@ -145,7 +146,12 @@ public class OperationsPagerActivity extends ActionBarActivity
     }
 
     private void startChat() {
-        Intent intent = new Intent(this, ChatActivity.class);
+        if (SharedUtil.getLastProjectID(ctx) == null) {
+            if (projectList != null && !projectList.isEmpty()) {
+                SharedUtil.saveLastProjectID(ctx,projectList.get(0).getProjectID());
+            }
+        }
+        Intent intent = new Intent(this, NewChatActivity.class);
         startActivity(intent);
     }
 
@@ -178,6 +184,11 @@ public class OperationsPagerActivity extends ActionBarActivity
                         projectList = company.getProjectList();
                         response = r;
                         buildPages();
+                        if (SharedUtil.getLastProjectID(ctx) == null) {
+                            if (!projectList.isEmpty()) {
+                                SharedUtil.saveLastProjectID(ctx,projectList.get(0).getProjectID());
+                            }
+                        }
 
                         statusReportFragment.getProjectStatus();
 

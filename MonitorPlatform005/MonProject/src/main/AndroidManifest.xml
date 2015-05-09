@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.boha.monitor.pmanager">
+
+    <application
+        android:allowBackup="true"
+        android:label="@string/project_mgr"
+        android:name="com.com.boha.monitor.library.activities.MonApp"
+        android:icon="@drawable/ic_launcher"
+        android:theme="@style/ProjectManagerTheme">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.apps.drive.APP_ID"
+            android:value="id=166210361031" />
+        <!-- new credentials on the aubrey.malabie account -->
+        <!--
+             //88:04:df:2b:68:40:60:a3:31:81:2f:71:1f:2d:71:fb:f7:71:f9:57  - dev - AIzaSyDqUE1iyhikQzVSDzX2i5sUVZatjPV1a_o
+            //4f:72:a0:21:0f:ad:8d:6b:ec:b5:83:49:13:cb:64:75:74:62:1a:a7  - prod - AIzaSyA9Un3jxbOsTB6a8tb47Pz441yMFX2WrLc
+        -->
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyDqUE1iyhikQzVSDzX2i5sUVZatjPV1a_o" />
+        <receiver
+            android:name=".GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+                <category android:name="com.boha.monitor.pmanager" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".GcmIntentService" />
+        <activity
+            android:name=".SignInActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/pm_app">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.com.boha.monitor.library.activities.ImageActivity"
+            android:label="@string/title_activity_image" />
+        <activity
+
+            android:name="com.com.boha.monitor.library.activities.TaskAssignmentActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/assign_status" />
+        <activity
+            android:name="com.com.boha.monitor.library.activities.MonitorMapActivity"
+            android:label="@string/title_activity_monitor_map"
+            android:parentActivityName="com.com.boha.monitor.library.activities.ImageActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.com.boha.monitor.library.activities.ImageActivity" />
+        </activity>
+        <activity
+            android:name=".ProjectPagerActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="portrait"></activity>
+
+        <activity android:name="com.com.boha.monitor.library.activities.SitePictureGridActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.com.boha.monitor.library.activities.PictureActivity"
+            android:configChanges="keyboardHidden|orientation"></activity>
+
+        <activity
+            android:name="com.com.boha.monitor.library.activities.ClaimAndInvoicePagerActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.com.boha.monitor.library.activities.SiteStatusReportActivity"
+            android:label="@string/title_activity_status_report"></activity>
+        <activity
+            android:name="com.com.boha.monitor.library.activities.SubTaskActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_sub_task"></activity>
+        <activity
+            android:name="com.com.boha.monitor.library.activities.SubTaskStatusAssignmentActivity"
+            android:label="@string/title_activity_sub_task_status_assignment"
+            android:parentActivityName="com.com.boha.monitor.library.activities.TaskAssignmentActivity"></activity>
+
+
+    </application>
+    <permission
+        android:name="com.boha.monitor.pmanager.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.boha.monitor.pmanager.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Features -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false" />
+
+<!--
+    <permission
+        android:name="com.boha.monitor.pmanager.gcm.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.boha.monitor.pmanager.gcm.permission.C2D_MESSAGE" />
+-->
+</manifest>

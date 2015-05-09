@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application>
-
         <service
             android:name="com.com.boha.monitor.library.services.PhotoUploadService"
             android:exported="false" />
@@ -73,9 +72,23 @@
             android:label="@string/title_activity_staff_picture" >
         </activity>
         <activity
-            android:name="com.com.boha.monitor.library.activities.ChatActivity"
+            android:name="com.com.boha.monitor.library.activities.ChatMemberSelectionActivity"
             android:theme="@style/PagerThemeNoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name="com.com.boha.monitor.library.activities.NewChatActivity"
+            android:theme="@style/PagerThemeNoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name="com.com.boha.monitor.library.activities.ChatMessageListActivity"
+            android:theme="@style/PagerThemeNoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name="com.com.boha.monitor.library.activities.Main2Activity"
+            android:label="@string/title_activity_main2" >
         </activity>
     </application>
 

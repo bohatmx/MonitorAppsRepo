@@ -167,7 +167,8 @@ public class RequestDTO implements Serializable {
             IMPORT_BENEFICIARIES = 9,
             ADD_LOCATION_TRACKERS = 10,
             ADD_STAFF_PROJECTS = 21,
-            ADD_CHAT = 22;
+            ADD_CHAT = 22,
+            ADD_CHAT_MEMBERS = 23;
 
     //add stuff
     public static final int
@@ -204,7 +205,10 @@ public class RequestDTO implements Serializable {
             GET_LOCATION_TRACK_BY_STAFF = 122,
             GET_LOCATION_TRACK_BY_STAFF_IN_PERIOD = 123,
             GET_LOCATION_TRACK_BY_COMPANY_IN_PERIOD = 124,
-            GET_STAFF_DATA = 125;
+            GET_STAFF_DATA = 125,
+            GET_CHATS_BY_PROJECT = 126,
+            GET_CHATS_BY_PROJECT_AND_STAFF = 127,
+            GET_MESSAGES_BY_PROJECT = 128;
     //login's
     public static final int
             LOGIN = 200,

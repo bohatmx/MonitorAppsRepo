@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:id="@+id/TASK_STAT_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/TASK_STAT_hero"
+            android:src="@drawable/banner_meeting"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mon_hero_height_medium" />
+
+        <TextView
+            android:id="@+id/TASK_STAT_title"
+            style="@style/Title1TextStyleWhite"
+            android:text="@string/task_status"
+            android:layout_marginTop="@dimen/mon_widest"
+            android:layout_marginLeft="@dimen/mon_padding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/TASK_STAT_subtitle"
+            style="@style/TextStyleBlue"
+            android:textColor="@color/white"
+            android:layout_below="@id/TASK_STAT_title"
+            android:text="Indicators for Monitored Tasks"
+            android:layout_marginLeft="@dimen/mon_padding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ProgressBar
+            android:id="@+id/TASK_STAT_progress"
+            android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/mon_wide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_below="@id/TASK_STAT_top"
+        android:id="@+id/TASK_STAT_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/TASK_STAT_editor"
+            android:layout_below="@id/TASK_STAT_top"
+            android:visibility="gone"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include layout="@layout/edit_dialog" />
+
+        </RelativeLayout>
+    </ScrollView>
+
+
+    <ListView
+        android:id="@+id/TASK_STAT_list"
+        android:layout_below="@id/TASK_STAT_scroll"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/mon_divider"
+        android:dividerHeight="@dimen/mon_divider"
+        android:background="@color/white"
+        android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/mon_middle"
+        android:layout_marginTop="@dimen/mon_hero_height_medium_lite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/fab_blue" />
+    </RelativeLayout>
+
+
+</RelativeLayout>

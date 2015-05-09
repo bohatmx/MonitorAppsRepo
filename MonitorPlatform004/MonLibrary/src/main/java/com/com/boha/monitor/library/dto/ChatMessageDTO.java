@@ -7,11 +7,35 @@ import java.util.Date;
  * Created by aubreyM on 15/03/29.
  */
 public class ChatMessageDTO implements Serializable {
-    private Integer chatID, companyStaffID, chatMessageID;
-    private String staffName, message, address;
+    private Integer chatID, companyStaffID, chatMessageID, projectID, chatColor;
+    private String staffName, message, address, chatName;
     private Date dateSent;
     private Double latitude, longitude;
     private String pictureFileName;
+
+    public Integer getChatColor() {
+        return chatColor;
+    }
+
+    public void setChatColor(Integer chatColor) {
+        this.chatColor = chatColor;
+    }
+
+    public String getChatName() {
+        return chatName;
+    }
+
+    public void setChatName(String chatName) {
+        this.chatName = chatName;
+    }
+
+    public Integer getProjectID() {
+        return projectID;
+    }
+
+    public void setProjectID(Integer projectID) {
+        this.projectID = projectID;
+    }
 
     public Integer getChatID() {
         return chatID;

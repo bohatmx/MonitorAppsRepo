@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="@dimen/mon_margin"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/CI_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/CI_color"
+            android:background="@drawable/xgrey_oval_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/CI_chatName"
+            android:text="ThisIsTheChatName"
+            android:layout_toRightOf="@id/CI_color"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/CI_middle"
+        android:layout_below="@id/CI_top"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/mon_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/CI_label1"
+            android:text="Messages"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/CI_msgCount"
+            style="@style/BlackCircleSmall"
+            android:text="3"
+            android:layout_toRightOf="@id/CI_label1"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/CI_bottom"
+        android:layout_below="@id/CI_middle"
+        android:layout_marginTop="@dimen/mon_padding"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/mon_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/CI_label2"
+            android:text="Members"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/CI_memCount"
+            style="@style/IndigoCircleSmall"
+            android:text="3"
+            android:layout_toRightOf="@id/CI_label2"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/CI_dateLayout"
+        android:layout_below="@id/CI_bottom"
+        android:layout_marginTop="@dimen/mon_padding"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/mon_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/CI_label3"
+            android:text="Last Message"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/CI_msgDate"
+            style="@style/TextStyleGreenSmall"
+            android:text="23 December 2099 10:33"
+            android:layout_toRightOf="@id/CI_label3"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

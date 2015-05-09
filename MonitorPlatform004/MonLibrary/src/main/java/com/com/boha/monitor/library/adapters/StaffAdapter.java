@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
@@ -21,6 +20,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class StaffAdapter extends ArrayAdapter<CompanyStaffDTO> {
 
@@ -52,7 +53,7 @@ public class StaffAdapter extends ArrayAdapter<CompanyStaffDTO> {
 
     static class ViewHolderItem {
         TextView txtName;
-        ImageView photo;
+        CircleImageView photo;
         TextView txtNumber, txtCount;
     }
 
@@ -69,7 +70,7 @@ public class StaffAdapter extends ArrayAdapter<CompanyStaffDTO> {
                     .findViewById(R.id.PSN_txtCounter);
             item.txtNumber = (TextView) convertView
                     .findViewById(R.id.PSN_txtNum);
-            item.photo = (ImageView) convertView
+            item.photo = (CircleImageView) convertView
                     .findViewById(R.id.PSN_imagex);
 
             convertView.setTag(item);

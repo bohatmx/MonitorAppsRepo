@@ -64,7 +64,7 @@ public class CacheUtil {
     static RequestCache requestCache;
     static final String JSON_DATA = "data.json", JSON_COUNTRIES = "countries.json",
             JSON_PROJECT_DATA = "project_data", JSON_PROJECT_STATUS = "project_status",
-            JSON_REQUEST = "requestCache.json", JSON_SITE = "site", JSON_TRACKER = "tracker.json", JSON_CHAT = "chat.json";
+            JSON_REQUEST = "requestCache.json", JSON_SITE = "site", JSON_TRACKER = "tracker.json", JSON_CHAT = "chat";
 
 
     public static void cacheRequest(Context context, RequestCache cache, CacheRequestListener listener) {
@@ -86,6 +86,15 @@ public class CacheUtil {
 
     public static void cacheProjectData(Context context, ResponseDTO r, Integer pID, CacheUtilListener cacheUtilListener) {
         dataType = CACHE_PROJECT;
+        response = r;
+        response.setLastCacheDate(new Date());
+        utilListener = cacheUtilListener;
+        projectID = pID;
+        ctx = context;
+        new CacheTask().execute();
+    }
+    public static void cacheProjectChats(Context context, ResponseDTO r, Integer pID, CacheUtilListener cacheUtilListener) {
+        dataType = CACHE_CHAT;
         response = r;
         response.setLastCacheDate(new Date());
         utilListener = cacheUtilListener;
@@ -149,6 +158,14 @@ public class CacheUtil {
     public static void getCachedProjectData(Context context, Integer id, CacheUtilListener cacheUtilListener) {
         Log.d(LOG, "################ getting cached project data ..................");
         dataType = CACHE_PROJECT;
+        utilListener = cacheUtilListener;
+        ctx = context;
+        projectID = id;
+        new CacheRetrieveTask().execute();
+    }
+
+    public static void getCachedProjectChats(Context context, Integer id, CacheUtilListener cacheUtilListener) {
+        dataType = CACHE_CHAT;
         utilListener = cacheUtilListener;
         ctx = context;
         projectID = id;
@@ -247,9 +264,9 @@ public class CacheUtil {
                         break;
                     case CACHE_CHAT:
                         json = gson.toJson(response);
-                        outputStream = ctx.openFileOutput(JSON_CHAT, Context.MODE_PRIVATE);
+                        outputStream = ctx.openFileOutput(JSON_CHAT + projectID + ".json", Context.MODE_PRIVATE);
                         write(outputStream, json);
-                        file = ctx.getFileStreamPath(JSON_CHAT);
+                        file = ctx.getFileStreamPath(JSON_CHAT + projectID + ".json");
                         if (file != null) {
                             Log.e(LOG, "Data cache written, path: " + file.getAbsolutePath() +
                                     " - length: " + file.length());
@@ -329,6 +346,11 @@ public class CacheUtil {
                         response = getData(stream);
                         Log.i(LOG, "++ project cache retrieved");
                         break;
+                    case CACHE_CHAT:
+                        stream = ctx.openFileInput(JSON_CHAT + projectID + ".json");
+                        response = getData(stream);
+                        Log.i(LOG, "++ project cache retrieved");
+                        break;
                     case CACHE_PROJECT_STATUS:
                         stream = ctx.openFileInput(JSON_PROJECT_STATUS + projectID + ".json");
                         response = getData(stream);
@@ -350,11 +372,7 @@ public class CacheUtil {
                         response = getData(stream);
                         Log.i(LOG, "++ company data cache retrieved");
                         break;
-                    case CACHE_CHAT:
-                        stream = ctx.openFileInput(JSON_CHAT);
-                        response = getData(stream);
-                        Log.i(LOG, "++ chat data cache retrieved");
-                        break;
+
                     case CACHE_COUNTRIES:
                         stream = ctx.openFileInput(JSON_COUNTRIES);
                         response = getData(stream);
