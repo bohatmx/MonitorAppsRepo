@@ -19,8 +19,8 @@ import java.util.List;
 public class ProjectSiteTaskStatusDTO implements Serializable, Comparable<ProjectSiteTaskStatusDTO> {
     private static final long serialVersionUID = 1L;
     private Integer projectSiteTaskStatusID;
-    private Date dateUpdated;
-    private Date statusDate;
+    private Long dateUpdated;
+    private Long statusDate;
     private TaskStatusDTO taskStatus;
     private TaskDTO task;
     private Integer projectSiteTaskID, projectID,projectSiteID;
@@ -63,7 +63,22 @@ public class ProjectSiteTaskStatusDTO implements Serializable, Comparable<Projec
         this.task = task;
     }
 
-    
+    public Long getDateUpdated() {
+        return dateUpdated;
+    }
+
+    public void setDateUpdated(Long dateUpdated) {
+        this.dateUpdated = dateUpdated;
+    }
+
+    public Long getStatusDate() {
+        return statusDate;
+    }
+
+    public void setStatusDate(Long statusDate) {
+        this.statusDate = statusDate;
+    }
+
     public Integer getCompanyStaffID() {
         return companyStaffID;
     }
@@ -72,21 +87,6 @@ public class ProjectSiteTaskStatusDTO implements Serializable, Comparable<Projec
         this.companyStaffID = companyStaffID;
     }
 
-    public Date getDateUpdated() {
-        return dateUpdated;
-    }
-
-    public void setDateUpdated(Date dateUpdated) {
-        this.dateUpdated = dateUpdated;
-    }
-
-    public Date getStatusDate() {
-        return statusDate;
-    }
-
-    public void setStatusDate(Date statusDate) {
-        this.statusDate = statusDate;
-    }
 
     public String getProjectSiteName() {
         return projectSiteName;
@@ -159,10 +159,10 @@ public class ProjectSiteTaskStatusDTO implements Serializable, Comparable<Projec
      */
     @Override
     public int compareTo( ProjectSiteTaskStatusDTO another) {
-        if (this.statusDate.before(another.statusDate)) {
+        if (this.statusDate.longValue() < another.statusDate.longValue()) {
             return 1;
         }
-        if (this.statusDate.after(another.statusDate)) {
+        if (this.statusDate.longValue() > another.statusDate.longValue()) {
             return -1;
         }
         return 0;

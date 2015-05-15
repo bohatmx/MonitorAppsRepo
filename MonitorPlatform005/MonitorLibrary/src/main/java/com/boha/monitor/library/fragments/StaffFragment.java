@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 
 import com.boha.monitor.library.R;
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.dto.CompanyStaffDTO;
 import com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.boha.monitor.library.dto.transfer.ResponseDTO;
@@ -21,8 +22,7 @@ import com.boha.monitor.library.util.ErrorUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Util;
-
-
+import com.squareup.leakcanary.RefWatcher;
 
 
 import static com.boha.monitor.library.util.Util.showErrorToast;
@@ -236,6 +236,11 @@ public class StaffFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         listener = null;
+    }
+    @Override public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+        refWatcher.watch(this);
     }
 
     public interface StaffFragmentListener {

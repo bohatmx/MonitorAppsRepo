@@ -20,7 +20,7 @@ public class ProjectSiteStaffDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private Integer projectSiteStaffID, activeFlag;
-    private Date dateRegistered;
+    private Long dateRegistered;
     private List<ProjectDiaryRecordDTO> projectDiaryRecordList = new ArrayList<>();
     private List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList = new ArrayList<>();
     private Integer projectSiteID;
@@ -79,11 +79,11 @@ public class ProjectSiteStaffDTO implements Serializable {
         this.projectSiteTaskStatusList = projectSiteTaskStatusList;
     }
 
-    public Date getDateRegistered() {
+    public Long getDateRegistered() {
         return dateRegistered;
     }
 
-    public void setDateRegistered(Date dateRegistered) {
+    public void setDateRegistered(Long dateRegistered) {
         this.dateRegistered = dateRegistered;
     }
 

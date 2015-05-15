@@ -14,6 +14,7 @@ import com.boha.monitor.library.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.library.dto.TaskStatusDTO;
 import com.boha.monitor.library.util.Statics;
 
+import java.sql.Date;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -103,7 +104,7 @@ public class SiteReportAdapter extends ArrayAdapter<ProjectSiteTaskDTO> {
         if (!p.getProjectSiteTaskStatusList().isEmpty()) {
             ProjectSiteTaskStatusDTO status = p.getProjectSiteTaskStatusList().get(0);
             item.txtLastStatus.setText(status.getTaskStatus().getTaskStatusName());
-            item.txtDate.setText(sdf.format(status.getStatusDate()));
+            item.txtDate.setText(sdf.format(new Date(status.getStatusDate())));
             item.txtStaff.setText(status.getStaffName());
             int color = status.getTaskStatus().getStatusColor();
             switch (color)  {

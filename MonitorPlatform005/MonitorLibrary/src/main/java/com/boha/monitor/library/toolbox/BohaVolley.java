@@ -31,8 +31,8 @@ public class BohaVolley {
      */
     public static RequestQueue initialize( Context context) {
     	Log.e(LOG, "initializing Volley Networking ...");
-        mRequestQueue = Volley.newRequestQueue(context);
-        mStatsRequestQueue = Volley.newRequestQueue(context);
+        mRequestQueue = Volley.newRequestQueue(context, new OkHttpStack());
+        mStatsRequestQueue = Volley.newRequestQueue(context, new OkHttpStack());
         int memClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE))
                 .getMemoryClass();
         

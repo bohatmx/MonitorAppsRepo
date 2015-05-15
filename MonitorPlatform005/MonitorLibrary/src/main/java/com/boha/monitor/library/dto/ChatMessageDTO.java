@@ -9,7 +9,7 @@ import java.util.Date;
 public class ChatMessageDTO implements Serializable {
     private Integer chatID, companyStaffID, chatMessageID, projectID, chatColor;
     private String staffName, message, address, chatName;
-    private Date dateSent;
+    private Long dateSent;
     private Double latitude, longitude;
     private String pictureFileName;
 
@@ -85,11 +85,11 @@ public class ChatMessageDTO implements Serializable {
         this.address = address;
     }
 
-    public Date getDateSent() {
+    public Long getDateSent() {
         return dateSent;
     }
 
-    public void setDateSent(Date dateSent) {
+    public void setDateSent(Long dateSent) {
         this.dateSent = dateSent;
     }
 

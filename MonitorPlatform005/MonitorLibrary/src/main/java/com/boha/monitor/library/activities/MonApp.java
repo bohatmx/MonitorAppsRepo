@@ -31,6 +31,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.utils.L;
 import com.nostra13.universalimageloader.utils.StorageUtils;
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 
 import org.acra.ACRA;
 import org.acra.ReportField;
@@ -92,6 +94,12 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         Log.i(LOG, "## analytics tracker ID: " + trackerId.toString());
         return mTrackers.get(trackerId);
     }
+    public static RefWatcher getRefWatcher(Context context) {
+        MonApp application = (MonApp) context.getApplicationContext();
+        return application.refWatcher;
+    }
+
+    private RefWatcher refWatcher;
 
     @Override
     public void onCreate() {
@@ -105,7 +113,10 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         sb.append("#######################################\n\n");
 
         Log.d(LOG, sb.toString());
+        refWatcher = LeakCanary.install(this);
         registerActivityLifecycleCallbacks(this);
+
+
         boolean isDebuggable = 0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
         if (!isDebuggable) {
             StrictMode.enableDefaults();

@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.SiteStatusReportActivity;
 import com.boha.monitor.library.adapters.ProjectSiteAdapter;
 import com.boha.monitor.library.adapters.SiteAdapterInterface;
@@ -36,8 +37,7 @@ import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.Util;
-
-
+import com.squareup.leakcanary.RefWatcher;
 
 
 import java.util.ArrayList;
@@ -560,6 +560,11 @@ public class ProjectSiteListFragment extends Fragment implements PageFragment {
     public void onDetach() {
         super.onDetach();
         //mListener = null;
+    }
+    @Override public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+        refWatcher.watch(this);
     }
 
     public void setLocationConfirmed( ProjectSiteDTO ps) {

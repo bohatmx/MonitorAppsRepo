@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.StatusReportAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectSiteDTO;
@@ -30,8 +31,7 @@ import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.library.util.WebSocketUtil;
-
-
+import com.squareup.leakcanary.RefWatcher;
 
 
 import java.text.SimpleDateFormat;
@@ -194,7 +194,7 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
         progressBar.setVisibility(View.VISIBLE);
         NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
-            public void onResponse( final ResponseDTO response) {
+            public void onResponse(final ResponseDTO response) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -286,6 +286,11 @@ public class SiteStatusReportFragment extends Fragment implements PageFragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+    @Override public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+        refWatcher.watch(this);
     }
 
     SiteStatusReportListener listener;

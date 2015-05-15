@@ -8,7 +8,7 @@ import java.util.Date;
  */
 public class ChatMemberDTO implements Serializable{
     private Integer chatMemberID;
-    private Date dateJoined;
+    private Long dateJoined;
     private CompanyStaffDTO companyStaff, chatOwner;
     private Integer chatID;
 
@@ -29,11 +29,11 @@ public class ChatMemberDTO implements Serializable{
         this.chatMemberID = chatMemberID;
     }
 
-    public Date getDateJoined() {
+    public Long getDateJoined() {
         return dateJoined;
     }
 
-    public void setDateJoined(Date dateJoined) {
+    public void setDateJoined(Long dateJoined) {
         this.dateJoined = dateJoined;
     }
 

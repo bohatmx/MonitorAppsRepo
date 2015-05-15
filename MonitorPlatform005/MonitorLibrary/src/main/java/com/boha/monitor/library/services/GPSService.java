@@ -123,24 +123,25 @@ public class GPSService extends Service implements LocationListener,
             stopLocationUpdates();
             CacheUtil.getCachedTrackerData(getApplicationContext(), new CacheUtil.CacheUtilListener() {
                 @Override
-                public void onFileDataDeserialized( final ResponseDTO response) {
-                    if (response.getLocationTrackerList() == null) {
-                        response.setLocationTrackerList(new ArrayList<LocationTrackerDTO>());
+                public void onFileDataDeserialized(final ResponseDTO r) {
+                    if (r.getLocationTrackerList() == null) {
+                        r.setLocationTrackerList(new ArrayList<LocationTrackerDTO>());
                     }
                     LocationTrackerDTO dto = new LocationTrackerDTO();
                     dto.setCompanyStaffID(SharedUtil.getCompanyStaff(
                             getApplicationContext()).getCompanyStaffID());
                     dto.setAccuracy(mLocation.getAccuracy());
-                    dto.setDateTracked(new Date());
+                    dto.setDateTracked(new Date().getTime());
                     dto.setLatitude(mLocation.getLatitude());
                     dto.setLongitude(mLocation.getLongitude());
                     dto.setGeocodedAddress(getAddress());
                     if (dto.getGeocodedAddress() == null) {
                         dto.setGeocodedAddress(getString(R.string.no_address));
                     }
-                    response.getLocationTrackerList().add(dto);
+                    r.getLocationTrackerList().add(dto);
+                    response = r;
                     CacheUtil.cacheTrackerData(getApplicationContext(),
-                            response, new CacheUtil.CacheUtilListener() {
+                            r, new CacheUtil.CacheUtilListener() {
                                 @Override
                                 public void onFileDataDeserialized(ResponseDTO response) {
 
@@ -148,7 +149,19 @@ public class GPSService extends Service implements LocationListener,
 
                                 @Override
                                 public void onDataCached() {
-                                    sendData(response);
+                                    if (response.getLocationTrackerList().size() < MINIMUM_TRACKER_EVENTS) {
+                                        Log.d(LOG, "## tracker locations < " + MINIMUM_TRACKER_EVENTS
+                                                + ", list has: "
+                                                + response.getLocationTrackerList().size() + " ==> Bypassing send for now: " + new Date().toString());
+                                        return;
+                                    }
+                                    index = 0;
+                                    batches = response.getLocationTrackerList().size() / BATCH_SIZE;
+                                    int rem = response.getLocationTrackerList().size() % BATCH_SIZE;
+                                    if (rem > 0) {
+                                        batches++;
+                                    }
+                                    sendData();
                                 }
 
                                 @Override
@@ -203,29 +216,42 @@ public class GPSService extends Service implements LocationListener,
         }
     }
 
-    private void sendData( ResponseDTO response) {
-        if (response.getLocationTrackerList().size() < MINIMUM_TRACKER_EVENTS) {
-            Log.d(LOG, "## tracker locations < " + MINIMUM_TRACKER_EVENTS
-                    + ", list has: "
-                    + response.getLocationTrackerList().size() + " ==> Bypassing send for now: " + new Date().toString());
-            return;
+    private int index, mainIndex, batches;
+    private ResponseDTO response;
+    private void sendData() {
+
+        if (index < batches) {
+            List<LocationTrackerDTO> mList = new ArrayList<>();
+            int startIndex = index * BATCH_SIZE;
+            int endIndex = startIndex + BATCH_SIZE;
+
+            for (int x = startIndex; x < endIndex; x++) {
+                mList.add(response.getLocationTrackerList().get(x));
+            }
+
+            send(mList);
+        } else {
+            response.setLocationTrackerList(new ArrayList<LocationTrackerDTO>());
+            CacheUtil.cacheTrackerData(getApplicationContext(), response, null);
+            Log.w(LOG, "### Tracker cache emptied after upload");
         }
-        Log.e(LOG, "### sending location tracks to server: " + response.getLocationTrackerList().size());
+
+
+
+
+    }
+
+    private void send(List<LocationTrackerDTO> list) {
         RequestDTO dto = new RequestDTO(RequestDTO.ADD_LOCATION_TRACKERS);
-        dto.setLocationTrackerList(response.getLocationTrackerList());
-
-        for (LocationTrackerDTO x : dto.getLocationTrackerList()) {
-
-        }
-
+        dto.setLocationTrackerList(list);
+        Log.e(LOG, "### sending location tracks to server: " + list.size());
         NetUtil.sendRequest(getApplicationContext(), dto, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse( ResponseDTO response) {
                 Log.e(LOG, response.getMessage());
                 if (response.getStatusCode() == 0) {
-                    response.setLocationTrackerList(new ArrayList<LocationTrackerDTO>());
-                    CacheUtil.cacheTrackerData(getApplicationContext(), response, null);
-                    Log.w(LOG, "### Tracker cache emptied after upload");
+                    index++;
+                    sendData();
                 }
             }
 
@@ -240,9 +266,8 @@ public class GPSService extends Service implements LocationListener,
             }
         });
     }
-
     static final float ACCURACY_THRESHOLD = 25;
-    static final int MINIMUM_TRACKER_EVENTS = 1;
+    static final int MINIMUM_TRACKER_EVENTS = 2, BATCH_SIZE = 2;
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -250,4 +275,8 @@ public class GPSService extends Service implements LocationListener,
     }
 
     static final String LOG = GPSService.class.getSimpleName();
+
+    class Batch {
+
+    }
 }

@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class ChatDTO implements Serializable {
     private Integer chatID,projectID, projectSiteID, avatarNumber;
-    private Date dateStarted;
+    private Long dateStarted;
     private String message;
     private String chatName;
     private List<ChatMemberDTO> chatMemberList;
@@ -72,11 +72,11 @@ public class ChatDTO implements Serializable {
         this.chatID = chatID;
     }
 
-    public Date getDateStarted() {
+    public Long getDateStarted() {
         return dateStarted;
     }
 
-    public void setDateStarted(Date dateStarted) {
+    public void setDateStarted(Long dateStarted) {
         this.dateStarted = dateStarted;
     }
 

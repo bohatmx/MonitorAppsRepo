@@ -11,7 +11,7 @@ public class SiteLocation implements Serializable {
     private Integer projectSiteID;
     private double latitude, longitude;
     private float accuracy;
-    private Date dateTaken;
+    private Long dateTaken;
 
     public Integer getProjectSiteID() {
         return projectSiteID;
@@ -45,11 +45,11 @@ public class SiteLocation implements Serializable {
         this.accuracy = accuracy;
     }
 
-    public Date getDateTaken() {
+    public Long getDateTaken() {
         return dateTaken;
     }
 
-    public void setDateTaken(Date dateTaken) {
+    public void setDateTaken(Long dateTaken) {
         this.dateTaken = dateTaken;
     }
 }

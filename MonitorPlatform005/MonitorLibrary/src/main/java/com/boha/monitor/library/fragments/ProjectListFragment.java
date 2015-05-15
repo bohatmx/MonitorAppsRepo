@@ -20,7 +20,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.internal.util.Predicate;
 import com.boha.monitor.library.R;
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.MonitorMapActivity;
 import com.boha.monitor.library.activities.PictureActivity;
 import com.boha.monitor.library.adapters.ProjectAdapter;
@@ -33,9 +35,7 @@ import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Util;
-
-
-
+import com.squareup.leakcanary.RefWatcher;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -127,6 +127,23 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         return view;
     }
 
+    private void doThis() {
+
+        Predicate<ProjectDTO> predicate = new Predicate<ProjectDTO>() {
+            @Override
+            public boolean apply(ProjectDTO projectDTO) {
+                if (projectDTO.getCompleteFlag() == null || projectDTO.getCompleteFlag() > 0) {
+                    return true;
+                }
+                return false;
+            }
+        };
+        for (ProjectDTO dto: projectList) {
+            if (predicate.apply(dto)) {
+                Log.e(LOG, "#### project is active: " + dto.getProjectName());
+            }
+        }
+    }
     public void updateStatusCount(int count) {
         Log.w(LOG, "### incrementing status count by " + count);
         statusCountInPeriod = count;
@@ -555,6 +572,11 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+    @Override public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+        refWatcher.watch(this);
     }
 
 

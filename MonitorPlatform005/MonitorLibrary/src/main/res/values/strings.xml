@@ -57,7 +57,7 @@
     <string name="error_network_unavailable">Network unavailable. Check settings and signal strength</string>
     <string name="error_server_unavailable">Server is unavailable due to maintenance. Please try later.</string>
     <string name="error_encoding">Error encoding request. Contact support</string>
-    <string name="error_server_comms">Problem communicating with the server. Please try again or contact mgGolf support</string>
+    <string name="error_server_comms">Problem communicating with the server. Please try again or contact MonitorPlatform support</string>
     <string name="error_duplicate">Attempting to put duplicate data in database, ignored</string>
     <string name="welcome_aboard">Welcome Aboard!</string>
     <string name="app_name">Operations</string>

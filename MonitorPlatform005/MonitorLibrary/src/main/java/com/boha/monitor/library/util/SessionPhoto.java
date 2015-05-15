@@ -7,7 +7,7 @@ import java.util.Date;
  */
 public class SessionPhoto {
     private String uri;
-    private Date dateTaken;
+    private Long dateTaken;
     private Integer projectSiteID, projectID, projectSiteTaskID;
     private String projectName, projectSiteName;
 
@@ -27,11 +27,11 @@ public class SessionPhoto {
         this.projectSiteName = projectSiteName;
     }
 
-    public Date getDateTaken() {
+    public Long getDateTaken() {
         return dateTaken;
     }
 
-    public void setDateTaken(Date dateTaken) {
+    public void setDateTaken(Long dateTaken) {
         this.dateTaken = dateTaken;
     }
 

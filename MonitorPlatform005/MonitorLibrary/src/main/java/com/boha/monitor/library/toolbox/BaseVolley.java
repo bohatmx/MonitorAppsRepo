@@ -18,8 +18,7 @@ import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.WebCheck;
 import com.boha.monitor.library.util.WebCheckResult;
 import com.google.gson.Gson;
-
-
+import com.google.gson.GsonBuilder;
 
 
 import java.io.UnsupportedEncodingException;
@@ -86,7 +85,9 @@ public class BaseVolley {
         }
         String json = null, jj = null;
 
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .create();
         try {
             jj = gson.toJson(request);
             json = URLEncoder.encode(jj, "UTF-8");
@@ -103,9 +104,10 @@ public class BaseVolley {
         bohaRequest = new BohaRequest(Method.POST, url,
                 onSuccessListener(), onErrorListener());
         bohaRequest.setRetryPolicy(new DefaultRetryPolicy((int) TimeUnit.SECONDS.toMillis(120),
-                0, 0));
+                MAX_RETRIES, BACK_OFF_MULTIPLIER));
         requestQueue.add(bohaRequest);
     }
+
 
     public static void getUploadUrl(Context context, BohaVolleyListener listener) {
 
@@ -154,7 +156,7 @@ public class BaseVolley {
         bohaRequest = new BohaRequest(Method.POST, x,
                 onSuccessListener(), onErrorListener());
         bohaRequest.setRetryPolicy(new DefaultRetryPolicy((int) TimeUnit.SECONDS.toMillis(timeOutSeconds),
-                0, 0));
+                MAX_RETRIES, BACK_OFF_MULTIPLIER));
         requestQueue.add(bohaRequest);
     }
 
@@ -233,7 +235,7 @@ public class BaseVolley {
     protected ImageLoader imageLoader;
     protected static String suff;
     static final String LOG = "BaseVolley";
-    static final int MAX_RETRIES = 10;
+    static final int MAX_RETRIES = 10, BACK_OFF_MULTIPLIER = 2;
     static final long SLEEP_TIME = 3000;
 
 

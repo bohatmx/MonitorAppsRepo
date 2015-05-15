@@ -14,6 +14,7 @@ import com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.boha.monitor.library.dto.TaskStatusDTO;
 import com.boha.monitor.library.util.WebCheckResult;
 
+import java.sql.Date;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -127,7 +128,7 @@ public class ProjectSiteLocalAdapter extends ArrayAdapter<ProjectSiteDTO> implem
             if (p.getLastStatus().getStatusDate() == null) {
                 item.txtDate.setText("Date not available");
             } else {
-                item.txtDate.setText(sdf.format(p.getLastStatus().getStatusDate()));
+                item.txtDate.setText(sdf.format(new Date(p.getLastStatus().getStatusDate())));
             }
 
             item.statLayout1.setVisibility(View.VISIBLE);
@@ -168,7 +169,7 @@ public class ProjectSiteLocalAdapter extends ArrayAdapter<ProjectSiteDTO> implem
             if (p.getLastStatus().getStatusDate() == null) {
                 item.txtDate.setText("Date not available");
             } else {
-                item.txtDate.setText(sdf.format(p.getLastStatus().getStatusDate()));
+                item.txtDate.setText(sdf.format(new Date(p.getLastStatus().getStatusDate())));
                 item.txtDate.setVisibility(View.VISIBLE);
             }
         }

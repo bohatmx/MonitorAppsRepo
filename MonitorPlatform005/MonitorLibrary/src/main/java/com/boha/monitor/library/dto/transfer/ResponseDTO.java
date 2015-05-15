@@ -54,7 +54,8 @@ public class ResponseDTO implements Serializable {
 
     private Double elapsedRequestTimeInSeconds;
     private PhotoCache photoCache;
-    private Date lastCacheDate, startDate, endDate;
+    private Long  startDate, endDate;
+    private Date lastCacheDate;
     private Integer statusCode,statusCountInPeriod,goodCount, badCount,gcmSuccess, gcmFailure;
     private String message, sessionID, GCMRegistrationID,fileString, log;
     private List<String> taskImageFileNameList;
@@ -166,19 +167,19 @@ public class ResponseDTO implements Serializable {
         this.log = log;
     }
 
-    public Date getStartDate() {
+    public Long getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(Long startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public Long getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(Long endDate) {
         this.endDate = endDate;
     }
 

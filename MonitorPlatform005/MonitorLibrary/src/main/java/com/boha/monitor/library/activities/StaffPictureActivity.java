@@ -263,7 +263,7 @@ public class StaffPictureActivity extends AppCompatActivity {
         dto.setCompanyStaffID(SharedUtil.getCompanyStaff(ctx).getCompanyStaffID());
         dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
         dto.setThumbFlag(1);
-        dto.setDateTaken(new Date());
+        dto.setDateTaken(new Date().getTime());
 
         dto.setTime(new Date().getTime());
         return dto;

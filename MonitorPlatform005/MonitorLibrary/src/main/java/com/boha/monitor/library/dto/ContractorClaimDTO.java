@@ -21,7 +21,7 @@ public class ContractorClaimDTO implements Serializable {
     private Integer contractorClaimID, projectEngineerID,
             engineerID, projectID, taskID, siteCount;
     private String claimNumber, projectName, engineerName, taskName;
-    private Date claimDate;
+    private Long claimDate;
     private List<ContractorClaimSiteDTO> contractorClaimSiteList;
 
     public Integer getSiteCount() {
@@ -59,11 +59,11 @@ public class ContractorClaimDTO implements Serializable {
         this.claimNumber = claimNumber;
     }
 
-    public Date getClaimDate() {
+    public Long getClaimDate() {
         return claimDate;
     }
 
-    public void setClaimDate(Date claimDate) {
+    public void setClaimDate(Long claimDate) {
         this.claimDate = claimDate;
     }
 

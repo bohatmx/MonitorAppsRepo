@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.PopupListAdapter;
 import com.boha.monitor.library.adapters.ProjectSiteTaskAdapter;
 import com.boha.monitor.library.adapters.SubTaskStatusAdapter;
@@ -46,8 +47,7 @@ import com.boha.monitor.library.util.Util;
 import com.boha.monitor.library.util.WebCheck;
 import com.boha.monitor.library.util.WebCheckResult;
 import com.boha.monitor.library.util.WebSocketUtil;
-
-
+import com.squareup.leakcanary.RefWatcher;
 
 
 import java.util.ArrayList;
@@ -205,7 +205,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
         taskStatus.setCompanyStaffID(SharedUtil.getCompanyStaff(ctx).getCompanyStaffID());
         taskStatus.setTaskStatus(this.taskStatus);
         taskStatus.setTask(task);
-        taskStatus.setStatusDate(new Date());
+        taskStatus.setStatusDate(new Date().getTime());
         w.setProjectSiteTaskStatus(taskStatus);
 
         switch (this.taskStatus.getStatusColor()) {
@@ -647,6 +647,11 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+    @Override public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+        refWatcher.watch(this);
     }
 
     TaskDTO task;

@@ -843,7 +843,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         dto.setCompanyStaffID(SharedUtil.getCompanyStaff(ctx).getCompanyStaffID());
         dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
         dto.setThumbFlag(1);
-        dto.setDateTaken(new Date());
+        dto.setDateTaken(new Date().getTime());
         dto.setLatitude(location.getLatitude());
         dto.setLongitude(location.getLongitude());
         dto.setAccuracy(location.getAccuracy());

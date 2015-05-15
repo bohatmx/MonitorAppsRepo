@@ -16,8 +16,8 @@ import java.util.Date;
 public class SubTaskStatusDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer subTaskStatusID;
-    private Date statusDate;
-    private Date dateUpdated;
+    private Long statusDate;
+    private Long dateUpdated;
     private TaskStatusDTO taskStatus;
     private Integer subTaskID,taskID, projectSiteTaskID;
     private Integer companyStaffID;
@@ -59,19 +59,19 @@ public class SubTaskStatusDTO implements Serializable {
         this.subTaskStatusID = subTaskStatusID;
     }
 
-    public Date getStatusDate() {
+    public Long getStatusDate() {
         return statusDate;
     }
 
-    public void setStatusDate(Date statusDate) {
+    public void setStatusDate(Long statusDate) {
         this.statusDate = statusDate;
     }
 
-    public Date getDateUpdated() {
+    public Long getDateUpdated() {
         return dateUpdated;
     }
 
-    public void setDateUpdated(Date dateUpdated) {
+    public void setDateUpdated(Long dateUpdated) {
         this.dateUpdated = dateUpdated;
     }
 

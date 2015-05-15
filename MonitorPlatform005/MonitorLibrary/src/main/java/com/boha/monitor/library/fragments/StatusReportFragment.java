@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.SitePictureGridActivity;
 import com.boha.monitor.library.adapters.PopupListAdapter;
 import com.boha.monitor.library.adapters.StatusReportAdapter;
@@ -34,7 +35,7 @@ import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.Util;
-
+import com.squareup.leakcanary.RefWatcher;
 
 
 import org.joda.time.DateTime;
@@ -231,8 +232,8 @@ public class StatusReportFragment extends Fragment implements PageFragment {
         final long start = System.currentTimeMillis();
         RequestDTO w = new RequestDTO(RequestDTO.GET_PROJECT_STATUS_IN_PERIOD);
         w.setProjectID(project.getProjectID());
-        w.setEndDate(endDate);
-        w.setStartDate(startDate);
+        w.setEndDate(endDate.getTime());
+        w.setStartDate(startDate.getTime());
         final Activity act = getActivity();
 
         progressBar.setVisibility(View.VISIBLE);
@@ -255,8 +256,8 @@ public class StatusReportFragment extends Fragment implements PageFragment {
                         txtCount.setText("" + projectSiteTaskStatusList.size());
 
                         setList();
-                        response.setStartDate(startDate);
-                        response.setEndDate(endDate);
+                        response.setStartDate(startDate.getTime());
+                        response.setEndDate(endDate.getTime());
                         CacheUtil.cacheProjectStatus(ctx, response, project.getProjectID(), new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
@@ -317,8 +318,8 @@ public class StatusReportFragment extends Fragment implements PageFragment {
                     if (response.getStartDate() != null) {
                         btnStart.setText(sdf.format(response.getStartDate()));
                         btnEnd.setText(sdf.format(response.getEndDate()));
-                        startDate = response.getStartDate();
-                        endDate = response.getEndDate();
+                        startDate = new Date(response.getStartDate());
+                        endDate = new Date(response.getEndDate());
                     }
                     txtCount.setText("" + projectSiteTaskStatusList.size());
                     setList();
@@ -512,6 +513,11 @@ public class StatusReportFragment extends Fragment implements PageFragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+    @Override public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+        refWatcher.watch(this);
     }
 
     TaskDTO task;

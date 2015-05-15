@@ -189,7 +189,7 @@ public class ChatMemberSelectionFragment extends Fragment implements PageFragmen
         cm.setCompanyStaff(member);
 
         cm.setChatID(chat.getChatID());
-        cm.setDateJoined(new Date());
+        cm.setDateJoined(new Date().getTime());
         chatMemberList.add(cm);
     }
     private void sendMemberSelections() {

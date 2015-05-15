@@ -17,8 +17,10 @@
 
         <!-- new credentials on the aubrey.malabie account -->
         <!--
-             //88:04:df:2b:68:40:60:a3:31:81:2f:71:1f:2d:71:fb:f7:71:f9:57  - dev - AIzaSyCsgtnrR5JXX_w5jTYIZiFZv7aZX52iwgo
-            //4f:72:a0:21:0f:ad:8d:6b:ec:b5:83:49:13:cb:64:75:74:62:1a:a7  - prod - AIzaSyBG9wbuf9x0ipJt4gf2OAm_LY-4zqw8ymg
+             //88:04:df:2b:68:40:60:a3:31:81:2f:71:1f:2d:71:fb:f7:71:f9:57
+             - dev - AIzaSyCsgtnrR5JXX_w5jTYIZiFZv7aZX52iwgo
+            //4f:72:a0:21:0f:ad:8d:6b:ec:b5:83:49:13:cb:64:75:74:62:1a:a7
+            - prod - AIzaSyBG9wbuf9x0ipJt4gf2OAm_LY-4zqw8ymg
         -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"

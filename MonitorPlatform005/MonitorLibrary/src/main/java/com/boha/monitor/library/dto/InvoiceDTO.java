@@ -18,9 +18,9 @@ import java.util.List;
 public class InvoiceDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer invoiceID;
-    private Date invoiceDate;
-    private Date invoiceDueDate;
-    private Date dateRegistered, invoicePaidDate;
+    private Long invoiceDate;
+    private Long invoiceDueDate;
+    private Long dateRegistered, invoicePaidDate;
     private String reference;
     private String documentURI;
     private Double totalAmount;
@@ -31,10 +31,7 @@ public class InvoiceDTO implements Serializable {
 
     public InvoiceDTO() {
     }
-    public InvoiceDTO(Integer invoiceID, Date invoiceDate) {
-        this.invoiceID = invoiceID;
-        this.invoiceDate = invoiceDate;
-    }
+
 
     public String getDocumentURI() {
         return documentURI;
@@ -52,11 +49,35 @@ public class InvoiceDTO implements Serializable {
         this.invoiceID = invoiceID;
     }
 
-    public Date getInvoicePaidDate() {
+    public Long getInvoiceDate() {
+        return invoiceDate;
+    }
+
+    public void setInvoiceDate(Long invoiceDate) {
+        this.invoiceDate = invoiceDate;
+    }
+
+    public Long getInvoiceDueDate() {
+        return invoiceDueDate;
+    }
+
+    public void setInvoiceDueDate(Long invoiceDueDate) {
+        this.invoiceDueDate = invoiceDueDate;
+    }
+
+    public Long getDateRegistered() {
+        return dateRegistered;
+    }
+
+    public void setDateRegistered(Long dateRegistered) {
+        this.dateRegistered = dateRegistered;
+    }
+
+    public Long getInvoicePaidDate() {
         return invoicePaidDate;
     }
 
-    public void setInvoicePaidDate(Date invoicePaidDate) {
+    public void setInvoicePaidDate(Long invoicePaidDate) {
         this.invoicePaidDate = invoicePaidDate;
     }
 
@@ -98,30 +119,6 @@ public class InvoiceDTO implements Serializable {
 
     public void setProject(ProjectDTO project) {
         this.project = project;
-    }
-
-    public Date getInvoiceDate() {
-        return invoiceDate;
-    }
-
-    public void setInvoiceDate(Date invoiceDate) {
-        this.invoiceDate = invoiceDate;
-    }
-
-    public Date getInvoiceDueDate() {
-        return invoiceDueDate;
-    }
-
-    public void setInvoiceDueDate(Date invoiceDueDate) {
-        this.invoiceDueDate = invoiceDueDate;
-    }
-
-    public Date getDateRegistered() {
-        return dateRegistered;
-    }
-
-    public void setDateRegistered(Date dateRegistered) {
-        this.dateRegistered = dateRegistered;
     }
 
     public List<InvoiceItemDTO> getInvoiceItemList() {

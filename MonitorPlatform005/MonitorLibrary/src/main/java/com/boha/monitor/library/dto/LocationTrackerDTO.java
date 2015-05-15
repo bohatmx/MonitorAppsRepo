@@ -10,13 +10,13 @@ public class LocationTrackerDTO implements Serializable{
     private static final long serialVersionUID = 1L;
     private Integer locationTrackerID;
     private int companyStaffID;
-    private Date dateTracked;
+    private Long dateTracked;
     private double latitude;
     private double longitude;
     private float accuracy;
 
     private String geocodedAddress,staffName;
-    private Date dateAdded;
+    private Long dateAdded;
 
     public String getGeocodedAddress() {
         return geocodedAddress;
@@ -34,13 +34,6 @@ public class LocationTrackerDTO implements Serializable{
         this.staffName = staffName;
     }
 
-    public Date getDateAdded() {
-        return dateAdded;
-    }
-
-    public void setDateAdded(Date dateAdded) {
-        this.dateAdded = dateAdded;
-    }
 
     public Integer getLocationTrackerID() {
         return locationTrackerID;
@@ -58,12 +51,20 @@ public class LocationTrackerDTO implements Serializable{
         this.companyStaffID = companyStaffID;
     }
 
-    public Date getDateTracked() {
+    public Long getDateTracked() {
         return dateTracked;
     }
 
-    public void setDateTracked(Date dateTracked) {
+    public void setDateTracked(Long dateTracked) {
         this.dateTracked = dateTracked;
+    }
+
+    public Long getDateAdded() {
+        return dateAdded;
+    }
+
+    public void setDateAdded(Long dateAdded) {
+        this.dateAdded = dateAdded;
     }
 
     public double getLatitude() {

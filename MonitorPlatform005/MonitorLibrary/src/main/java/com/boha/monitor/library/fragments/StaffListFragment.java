@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.StaffTrackerActivity;
 import com.boha.monitor.library.adapters.StaffAdapter;
 import com.boha.monitor.library.dto.CompanyStaffDTO;
@@ -24,8 +25,7 @@ import com.boha.monitor.library.util.Util;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.utils.DiskCacheUtils;
 import com.nostra13.universalimageloader.utils.MemoryCacheUtils;
-
-
+import com.squareup.leakcanary.RefWatcher;
 
 
 import java.util.ArrayList;
@@ -132,6 +132,11 @@ public class StaffListFragment extends Fragment
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+    @Override public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+        refWatcher.watch(this);
     }
 
     List<String> list;

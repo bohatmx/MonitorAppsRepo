@@ -26,7 +26,7 @@ public class BeneficiaryDTO implements Serializable, Comparable<BeneficiaryDTO> 
     private String cellphone, status;
     private boolean selected;
     private Double amountAuthorized, amountPaid;
-    private Date dateRegistered, phbDate;
+    private Long dateRegistered, phbDate;
     private CompanyDTO company;
     private String townshipName;
     private ProjectSiteDTO projectSite;
@@ -102,14 +102,6 @@ public class BeneficiaryDTO implements Serializable, Comparable<BeneficiaryDTO> 
         this.beneficiaryID = beneficiaryID;
     }
 
-    public Date getPhbDate() {
-        return phbDate;
-    }
-
-    public void setPhbDate(Date phbDate) {
-        this.phbDate = phbDate;
-    }
-
 
     public CompanyDTO getCompany() {
         return company;
@@ -167,12 +159,20 @@ public class BeneficiaryDTO implements Serializable, Comparable<BeneficiaryDTO> 
         this.cellphone = cellphone;
     }
 
-    public Date getDateRegistered() {
+    public Long getDateRegistered() {
         return dateRegistered;
     }
 
-    public void setDateRegistered(Date dateRegistered) {
+    public void setDateRegistered(Long dateRegistered) {
         this.dateRegistered = dateRegistered;
+    }
+
+    public Long getPhbDate() {
+        return phbDate;
+    }
+
+    public void setPhbDate(Long phbDate) {
+        this.phbDate = phbDate;
     }
 
     public String getiDNumber() {

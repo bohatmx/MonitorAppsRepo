@@ -108,7 +108,7 @@ public class PhotoUploadDTO implements Serializable{
         this.accuracy = accuracy;
     }
 
-    private Date dateThumbUploaded, dateFullPictureUploaded, dateTaken, dateUploaded;
+    private Long dateThumbUploaded, dateFullPictureUploaded, dateTaken, dateUploaded;
 
     public String getProjectName() {
         return projectName;
@@ -150,15 +150,6 @@ public class PhotoUploadDTO implements Serializable{
         this.thumbFlag = thumbFlag;
     }
 
-    public Date getDateUploaded() {
-        return dateUploaded;
-    }
-
-    public void setDateUploaded(Date dateUploaded) {
-        this.dateUploaded = dateUploaded;
-    }
-
-
     public Integer getIndex() {
         return index;
     }
@@ -189,30 +180,6 @@ public class PhotoUploadDTO implements Serializable{
 
     public void setThumbFilePath(String thumbFilePath) {
         this.thumbFilePath = thumbFilePath;
-    }
-
-    public Date getDateThumbUploaded() {
-        return dateThumbUploaded;
-    }
-
-    public void setDateThumbUploaded(Date dateThumbUploaded) {
-        this.dateThumbUploaded = dateThumbUploaded;
-    }
-
-    public Date getDateFullPictureUploaded() {
-        return dateFullPictureUploaded;
-    }
-
-    public void setDateFullPictureUploaded(Date dateFullPictureUploaded) {
-        this.dateFullPictureUploaded = dateFullPictureUploaded;
-    }
-
-    public Date getDateTaken() {
-        return dateTaken;
-    }
-
-    public void setDateTaken(Date dateTaken) {
-        this.dateTaken = dateTaken;
     }
 
     public Integer getPictureType() {
@@ -255,7 +222,37 @@ public class PhotoUploadDTO implements Serializable{
         this.projectSiteTaskID = projectSiteTaskID;
     }
 
-    
+    public Long getDateThumbUploaded() {
+        return dateThumbUploaded;
+    }
+
+    public void setDateThumbUploaded(Long dateThumbUploaded) {
+        this.dateThumbUploaded = dateThumbUploaded;
+    }
+
+    public Long getDateFullPictureUploaded() {
+        return dateFullPictureUploaded;
+    }
+
+    public void setDateFullPictureUploaded(Long dateFullPictureUploaded) {
+        this.dateFullPictureUploaded = dateFullPictureUploaded;
+    }
+
+    public Long getDateTaken() {
+        return dateTaken;
+    }
+
+    public void setDateTaken(Long dateTaken) {
+        this.dateTaken = dateTaken;
+    }
+
+    public Long getDateUploaded() {
+        return dateUploaded;
+    }
+
+    public void setDateUploaded(Long dateUploaded) {
+        this.dateUploaded = dateUploaded;
+    }
 
     public List<String> getTags() {
         return tags;

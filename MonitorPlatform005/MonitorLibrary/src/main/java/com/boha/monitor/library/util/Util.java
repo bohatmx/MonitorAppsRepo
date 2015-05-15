@@ -532,7 +532,7 @@ public class Util {
         //update app date
 
         CompanyStaffDTO cs = new CompanyStaffDTO();
-        cs.setAppInvitationDate(new Date());
+        cs.setAppInvitationDate(new Date().getTime());
         cs.setCompanyStaffID(companyStaff.getCompanyStaffID());
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.UPDATE_COMPANY_STAFF);

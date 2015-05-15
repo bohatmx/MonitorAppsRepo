@@ -12,9 +12,9 @@ import java.util.Date;
 public class TaskPriceDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer taskPriceID;
-    private Date startDate;
+    private Long startDate;
     String taskName;
-    private Date endDate;
+    private Long endDate;
     private double price;
     private Integer taskID, projectID;
 
@@ -42,19 +42,19 @@ public class TaskPriceDTO implements Serializable {
         this.taskPriceID = taskPriceID;
     }
 
-    public Date getStartDate() {
+    public Long getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(Long startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public Long getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(Long endDate) {
         this.endDate = endDate;
     }
 

@@ -19,6 +19,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.boha.monitor.library.R;
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.TaskStatusAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.TaskStatusDTO;
@@ -28,6 +29,7 @@ import com.boha.monitor.library.util.ErrorUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Util;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -211,6 +213,11 @@ public class TaskStatusListFragment extends Fragment implements PageFragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+    @Override public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+        refWatcher.watch(this);
     }
 
     TaskStatusDTO taskStatus;

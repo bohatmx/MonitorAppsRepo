@@ -114,14 +114,7 @@ public class TaskAssignmentActivity extends AppCompatActivity implements
 
     @Override
     public void onSubTaskListRequested( ProjectSiteTaskDTO task, ProjectSiteTaskStatusDTO taskStatus) {
-        if (task == null)
-            throw new UnsupportedOperationException("##onSubTaskListRequested, ProjectSiteTaskDTO is null");
-        Intent i = new Intent(ctx, SubTaskStatusAssignmentActivity.class);
-        task.setProjectSiteName(site.getProjectSiteName());
-        task.setProjectName(site.getProjectName());
-        i.putExtra("projectSiteTask", task);
-        i.putExtra("projectSiteTaskStatus", taskStatus);
-        startActivityForResult(i, SUBTASK_ASSIGNMENT);
+
     }
 
     static final int SUBTASK_ASSIGNMENT = 11413;

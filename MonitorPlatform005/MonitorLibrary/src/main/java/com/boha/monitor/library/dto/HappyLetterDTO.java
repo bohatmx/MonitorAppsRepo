@@ -16,7 +16,7 @@ import java.util.Date;
 public class HappyLetterDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer happyLetterID;
-    private Date letterDate;
+    private Long letterDate;
     private BeneficiaryDTO beneficiary;
 
     public HappyLetterDTO() {
@@ -35,11 +35,11 @@ public class HappyLetterDTO implements Serializable {
         this.happyLetterID = happyLetterID;
     }
 
-    public Date getLetterDate() {
+    public Long getLetterDate() {
         return letterDate;
     }
 
-    public void setLetterDate(Date letterDate) {
+    public void setLetterDate(Long letterDate) {
         this.letterDate = letterDate;
     }
 

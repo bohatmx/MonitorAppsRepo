@@ -11,7 +11,7 @@ import java.util.Date;
 public class StaffProjectDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer staffProjectID;
-    private Date dateAssigned;
+    private Long dateAssigned;
     private boolean activeFlag;
     private Integer projectID;
     private Integer companyStaffID;
@@ -45,12 +45,16 @@ public class StaffProjectDTO implements Serializable {
         this.staffProjectID = staffProjectID;
     }
 
-    public Date getDateAssigned() {
+    public Long getDateAssigned() {
         return dateAssigned;
     }
 
-    public void setDateAssigned(Date dateAssigned) {
+    public void setDateAssigned(Long dateAssigned) {
         this.dateAssigned = dateAssigned;
+    }
+
+    public boolean isActiveFlag() {
+        return activeFlag;
     }
 
     public boolean getActiveFlag() {

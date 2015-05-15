@@ -24,7 +24,7 @@ public class ClientDTO implements Serializable, Comparable<ClientDTO> {
     private String cellphone;
     private String address;
     private String postCode;
-    private Date dateRegistered;
+    private Long dateRegistered;
     private List<ProjectDTO> projectList;
     private Integer companyID;
     public static final int ACTION_ADD = 1,
@@ -95,11 +95,11 @@ public class ClientDTO implements Serializable, Comparable<ClientDTO> {
         this.postCode = postCode;
     }
 
-    public Date getDateRegistered() {
+    public Long getDateRegistered() {
         return dateRegistered;
     }
 
-    public void setDateRegistered(Date dateRegistered) {
+    public void setDateRegistered(Long dateRegistered) {
         this.dateRegistered = dateRegistered;
     }
 

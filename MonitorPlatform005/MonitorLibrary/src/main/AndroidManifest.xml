@@ -7,87 +7,92 @@
 
     <application>
         <service
-            android:name="com.boha.monitor.library.services.PhotoUploadService"
+            android:name=".services.PhotoUploadService"
             android:exported="false" />
 
         <activity
-            android:name="com.boha.monitor.library.activities.AppInvitationActivity"
+            android:name=".activities.AppInvitationActivity"
             android:label="@string/title_activity_app_invitation" />
         <activity
-            android:name="com.boha.monitor.library.activities.StaffActivity"
+            android:name=".activities.StaffActivity"
             android:label="@string/title_activity_staff"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <service
-            android:name="com.boha.monitor.library.services.RequestSyncService"
+            android:name=".services.RequestSyncService"
             android:exported="false" />
         <service
-            android:name="com.boha.monitor.library.services.StatusSyncService"
+            android:name=".services.StatusSyncService"
             android:exported="false" />
 
         <activity
-            android:name="com.boha.monitor.library.activities.PictureActivity"
+            android:name=".activities.PictureActivity"
             android:label="@string/title_activity_picture"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.boha.monitor.library.activities.FullPhotoActivity"
+            android:name=".activities.FullPhotoActivity"
             android:label="@string/title_activity_full_photo" >
         </activity>
         <activity
-            android:name="com.boha.monitor.library.activities.ProjectSitePagerActivity"
+            android:name=".activities.ProjectSitePagerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/PagerTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <receiver
-            android:name="com.boha.monitor.library.services.LocationTrackerReceiver"
+            android:name=".services.LocationTrackerReceiver"
             android:enabled="true"
             android:exported="true" >
         </receiver>
         <receiver
-            android:name="com.boha.monitor.library.services.BootReceiver"
+            android:name=".services.BootReceiver"
             android:enabled="true"
             android:exported="true" >
         </receiver>
 
         <service
-            android:name="com.boha.monitor.library.services.GPSService"
+            android:name=".services.GPSService"
             android:enabled="true"
             android:exported="true" >
         </service>
 
         <activity
-            android:name="com.boha.monitor.library.activities.GPSActivity"
+            android:name=".activities.GPSActivity"
             android:theme="@style/PagerTheme" >
         </activity>
         <activity
-            android:name="com.boha.monitor.library.activities.StaffTrackerActivity"
+            android:name=".activities.StaffTrackerActivity"
             android:theme="@style/PagerThemeNoActionBar" >
         </activity>
         <activity
-            android:name="com.boha.monitor.library.activities.StaffPictureActivity"
+            android:name=".activities.StaffPictureActivity"
             android:label="@string/title_activity_staff_picture" >
         </activity>
         <activity
-            android:name="com.boha.monitor.library.activities.ChatMemberSelectionActivity"
+            android:name=".activities.ChatMemberSelectionActivity"
             android:theme="@style/PagerThemeNoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
         <activity
-            android:name="com.boha.monitor.library.activities.NewChatActivity"
+            android:name=".activities.NewChatActivity"
             android:theme="@style/PagerThemeNoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
         <activity
-            android:name="com.boha.monitor.library.activities.ChatMessageListActivity"
+            android:name=".activities.ChatMessageListActivity"
             android:theme="@style/PagerThemeNoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
         <activity
-            android:name="com.boha.monitor.library.activities.Main2Activity"
+            android:name=".activities.Main2Activity"
             android:label="@string/title_activity_main2" >
         </activity>
+
+        <service
+            android:name=".services.LeakSlackUploadService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

@@ -181,7 +181,7 @@ public class SharedUtil {
         sl.setLatitude(loc.getLatitude());
         sl.setLongitude(loc.getLongitude());
         sl.setProjectSiteID(dto.getProjectSiteID());
-        sl.setDateTaken(new Date());
+        sl.setDateTaken(new Date().getTime());
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);

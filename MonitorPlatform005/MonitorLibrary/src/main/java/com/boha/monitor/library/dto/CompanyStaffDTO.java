@@ -27,7 +27,7 @@ public class CompanyStaffDTO implements Serializable, Comparable<CompanyStaffDTO
     private String lastName;
     private String email, companyName;
     private String cellphone, pin;
-    private Date appInvitationDate;
+    private Long appInvitationDate;
     private Integer companyID;
     private Boolean selected;
     private GcmDeviceDTO gcmDevice;
@@ -66,11 +66,11 @@ public class CompanyStaffDTO implements Serializable, Comparable<CompanyStaffDTO
         this.staffProjectList = staffProjectList;
     }
 
-    public Date getAppInvitationDate() {
+    public Long getAppInvitationDate() {
         return appInvitationDate;
     }
 
-    public void setAppInvitationDate(Date appInvitationDate) {
+    public void setAppInvitationDate(Long appInvitationDate) {
         this.appInvitationDate = appInvitationDate;
     }
 
