@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/card_view"
+        android:padding="@dimen/mon_padding"
+        android:layout_gravity="center"
+        tools:cardCornerRadius="8dp">
+
+        <RelativeLayout
+            android:padding="@dimen/mon_padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/PSN_imagex"
+                android:layout_width="@dimen/mon_hero_height_medium_lite"
+                android:layout_height="@dimen/mon_hero_height_medium_lite"
+                android:src="@drawable/boy"
+                app:border_width="2dp"
+                app:border_color="@color/white" />
+
+            <RelativeLayout
+                android:id="@+id/PSN_top"
+                android:layout_toRightOf="@id/PSN_imagex"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txt"
+                    android:id="@+id/PSN_txtName"
+                    style="@style/Title3TextStyleBlack"
+                    android:layout_marginLeft="@dimen/mon_padding"
+                    android:layout_marginTop="@dimen/mon_wider" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/PSN_layoutCount"
+                android:layout_below="@+id/PSN_top"
+                android:layout_alignLeft="@id/PSN_top"
+                android:layout_width="wrap_content"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:layout_marginTop="@dimen/mon_margin"
+                android:layout_height="wrap_content">
+
+
+                <TextView
+                    android:id="@+id/PSN_txtCounter"
+                    android:text="@string/zero"
+                    style="@style/RedCircleSmall"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/PSN_txtCounterLabel"
+                    android:text="@string/status_updates"
+                    style="@style/TextStyleGreySmall"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_toLeftOf="@id/PSN_txtCounter"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/zero"
+                android:visibility="gone"
+                android:id="@+id/PSN_txtNum"
+                android:layout_marginTop="@dimen/mon_widest"
+                android:layout_marginLeft="@dimen/mon_padding"
+                style="@style/TransparentCircleSmall" />
+
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/MSTF_main"
+    android:layout_width="match_parent"
+    android:padding="@dimen/mon_padding"
+    android:layout_height="wrap_content">
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/MSTF_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/boy"
+        app:border_width="2dp"
+        app:border_color="@color/white" />
+
+    <RelativeLayout
+        android:layout_toRightOf="@id/MSTF_image"
+        android:padding="@dimen/mon_padding"
+        android:layout_centerVertical="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/MSTF_name"
+            android:text="Aubrey Malabie"
+            style="@style/TextStyleSmall"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <CheckBox
+            android:id="@+id/MSTF_checkBox"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/mon_padding"
+            android:enabled="true"
+            android:buttonTint="@color/teal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+</RelativeLayout>

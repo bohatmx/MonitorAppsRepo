@@ -6,10 +6,6 @@
 
 package com.boha.monitor.library.dto.transfer;
 
-
-import com.boha.monitor.library.dto.BankDTO;
-import com.boha.monitor.library.dto.BankDetailDTO;
-import com.boha.monitor.library.dto.BeneficiaryDTO;
 import com.boha.monitor.library.dto.ChatDTO;
 import com.boha.monitor.library.dto.ChatMemberDTO;
 import com.boha.monitor.library.dto.ChatMessageDTO;
@@ -17,12 +13,7 @@ import com.boha.monitor.library.dto.CityDTO;
 import com.boha.monitor.library.dto.ClientDTO;
 import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.CompanyStaffDTO;
-import com.boha.monitor.library.dto.ContractorClaimDTO;
-import com.boha.monitor.library.dto.ContractorClaimSiteDTO;
-import com.boha.monitor.library.dto.EngineerDTO;
 import com.boha.monitor.library.dto.GcmDeviceDTO;
-import com.boha.monitor.library.dto.InvoiceDTO;
-import com.boha.monitor.library.dto.InvoiceItemDTO;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectDiaryRecordDTO;
@@ -30,12 +21,8 @@ import com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.boha.monitor.library.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.library.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.library.dto.ProjectStatusTypeDTO;
-import com.boha.monitor.library.dto.SubTaskDTO;
-import com.boha.monitor.library.dto.SubTaskStatusDTO;
 import com.boha.monitor.library.dto.TaskDTO;
-import com.boha.monitor.library.dto.TaskPriceDTO;
 import com.boha.monitor.library.dto.TaskStatusDTO;
-import com.boha.monitor.library.dto.TownshipDTO;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -55,31 +42,19 @@ public class RequestDTO implements Serializable {
 
     private Integer requestType, companyID, companyStaffID, projectID,
             projectSiteID, projectSiteTaskID,loginType,
-            countryID, contractorClaimID, invoiceID,
-            beneficiaryID, engineerID;
+            countryID;
     private Boolean responseRequested,
-            useHttp = Boolean.TRUE, rideWebSocket = Boolean.FALSE;
-    private SubTaskStatusDTO subTaskStatus;
+            rideWebSocket = Boolean.TRUE;
     private Long startDate, endDate;
     private Float accuracy;
     private String email, pin, gcmRegistrationID;
     private Double latitude, longitude;
     private CompanyDTO company;
-    private SubTaskDTO subTask;
-    private TaskPriceDTO taskPrice;
     private CompanyStaffDTO companyStaff;
     private ProjectDTO project;
-    private EngineerDTO engineer;
     private CityDTO city;
-    private TownshipDTO township;
     private ProjectSiteDTO projectSite;
     private GcmDeviceDTO gcmDevice;
-    private BankDTO bank;
-    private BankDetailDTO bankDetail;
-    private ContractorClaimDTO contractorClaim;
-    private ContractorClaimSiteDTO contractorClaimSite;
-    private InvoiceDTO invoice;
-    private InvoiceItemDTO invoiceItem;
 
     private TaskDTO task;
     private TaskStatusDTO taskStatus;
@@ -91,8 +66,6 @@ public class RequestDTO implements Serializable {
     private ProjectDiaryRecordDTO projectDiaryRecord;
     private ProjectSiteTaskStatusDTO projectSiteTaskStatus;
     private ProjectStatusTypeDTO projectStatusType;
-    private BeneficiaryDTO beneficiary;
-    private List<BeneficiaryDTO> beneficiaryList;
     private List<PhotoUploadDTO> photoUploadList;
     private RequestList requestList;
     private List<LocationTrackerDTO> locationTrackerList;
@@ -277,14 +250,6 @@ public class RequestDTO implements Serializable {
     //
 
 
-    public Boolean getUseHttp() {
-        return useHttp;
-    }
-
-    public void setUseHttp(Boolean useHttp) {
-        this.useHttp = useHttp;
-    }
-
     public RequestList getRequestList() {
         return requestList;
     }
@@ -309,30 +274,6 @@ public class RequestDTO implements Serializable {
         this.accuracy = accuracy;
     }
 
-    public List<BeneficiaryDTO> getBeneficiaryList() {
-        return beneficiaryList;
-    }
-
-    public void setBeneficiaryList(List<BeneficiaryDTO> beneficiaryList) {
-        this.beneficiaryList = beneficiaryList;
-    }
-
-    public SubTaskStatusDTO getSubTaskStatus() {
-        return subTaskStatus;
-    }
-
-    public void setSubTaskStatus(SubTaskStatusDTO subTaskStatus) {
-        this.subTaskStatus = subTaskStatus;
-    }
-
-    public TaskPriceDTO getTaskPrice() {
-        return taskPrice;
-    }
-
-    public void setTaskPrice(TaskPriceDTO taskPrice) {
-        this.taskPrice = taskPrice;
-    }
-
     public Long getStartDate() {
         return startDate;
     }
@@ -347,54 +288,6 @@ public class RequestDTO implements Serializable {
 
     public void setEndDate(Long endDate) {
         this.endDate = endDate;
-    }
-
-    public SubTaskDTO getSubTask() {
-        return subTask;
-    }
-
-    public void setSubTask(SubTaskDTO subTask) {
-        this.subTask = subTask;
-    }
-
-    public EngineerDTO getEngineer() {
-        return engineer;
-    }
-
-    public void setEngineer(EngineerDTO engineer) {
-        this.engineer = engineer;
-    }
-
-    public Integer getBeneficiaryID() {
-        return beneficiaryID;
-    }
-
-    public void setBeneficiaryID(Integer beneficiaryID) {
-        this.beneficiaryID = beneficiaryID;
-    }
-
-    public Integer getEngineerID() {
-        return engineerID;
-    }
-
-    public void setEngineerID(Integer engineerID) {
-        this.engineerID = engineerID;
-    }
-
-    public Integer getContractorClaimID() {
-        return contractorClaimID;
-    }
-
-    public void setContractorClaimID(Integer contractorClaimID) {
-        this.contractorClaimID = contractorClaimID;
-    }
-
-    public Integer getInvoiceID() {
-        return invoiceID;
-    }
-
-    public void setInvoiceID(Integer invoiceID) {
-        this.invoiceID = invoiceID;
     }
 
     public Integer getRequestType() {
@@ -533,13 +426,6 @@ public class RequestDTO implements Serializable {
         this.city = city;
     }
 
-    public TownshipDTO getTownship() {
-        return township;
-    }
-
-    public void setTownship(TownshipDTO township) {
-        this.township = township;
-    }
 
     public ProjectSiteDTO getProjectSite() {
         return projectSite;
@@ -557,53 +443,6 @@ public class RequestDTO implements Serializable {
         this.gcmDevice = gcmDevice;
     }
 
-    public BankDTO getBank() {
-        return bank;
-    }
-
-    public void setBank(BankDTO bank) {
-        this.bank = bank;
-    }
-
-    public BankDetailDTO getBankDetail() {
-        return bankDetail;
-    }
-
-    public void setBankDetail(BankDetailDTO bankDetail) {
-        this.bankDetail = bankDetail;
-    }
-
-    public ContractorClaimDTO getContractorClaim() {
-        return contractorClaim;
-    }
-
-    public void setContractorClaim(ContractorClaimDTO contractorClaim) {
-        this.contractorClaim = contractorClaim;
-    }
-
-    public ContractorClaimSiteDTO getContractorClaimSite() {
-        return contractorClaimSite;
-    }
-
-    public void setContractorClaimSite(ContractorClaimSiteDTO contractorClaimSite) {
-        this.contractorClaimSite = contractorClaimSite;
-    }
-
-    public InvoiceDTO getInvoice() {
-        return invoice;
-    }
-
-    public void setInvoice(InvoiceDTO invoice) {
-        this.invoice = invoice;
-    }
-
-    public InvoiceItemDTO getInvoiceItem() {
-        return invoiceItem;
-    }
-
-    public void setInvoiceItem(InvoiceItemDTO invoiceItem) {
-        this.invoiceItem = invoiceItem;
-    }
 
     public TaskDTO getTask() {
         return task;
@@ -659,13 +498,5 @@ public class RequestDTO implements Serializable {
 
     public void setProjectStatusType(ProjectStatusTypeDTO projectStatusType) {
         this.projectStatusType = projectStatusType;
-    }
-
-    public BeneficiaryDTO getBeneficiary() {
-        return beneficiary;
-    }
-
-    public void setBeneficiary(BeneficiaryDTO beneficiary) {
-        this.beneficiary = beneficiary;
     }
 }

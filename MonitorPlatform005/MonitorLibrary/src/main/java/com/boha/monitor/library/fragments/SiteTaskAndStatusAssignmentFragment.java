@@ -23,14 +23,11 @@ import com.boha.monitor.library.R;
 import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.PopupListAdapter;
 import com.boha.monitor.library.adapters.ProjectSiteTaskAdapter;
-import com.boha.monitor.library.adapters.SubTaskStatusAdapter;
 import com.boha.monitor.library.adapters.TaskStatusAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectSiteDTO;
 import com.boha.monitor.library.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.library.dto.ProjectSiteTaskStatusDTO;
-import com.boha.monitor.library.dto.SubTaskDTO;
-import com.boha.monitor.library.dto.SubTaskStatusDTO;
 import com.boha.monitor.library.dto.TaskDTO;
 import com.boha.monitor.library.dto.TaskStatusDTO;
 import com.boha.monitor.library.dto.transfer.PhotoUploadDTO;
@@ -577,8 +574,7 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
     TaskStatusDTO taskStatus;
     ProjectSiteTaskStatusDTO projectSiteTaskStatus;
 
-    public void updateList( List<SubTaskStatusDTO> subTaskStatusList,  ProjectSiteTaskStatusDTO status) {
-        Log.d(LOG, "## updateList, subTaskStatus: " + subTaskStatusList.size());
+    public void updateList(ProjectSiteTaskStatusDTO status) {
         projectSiteTask.setStatusDone(true);
         if (projectSiteTask.getProjectSiteTaskStatusList() == null)
             projectSiteTask.setProjectSiteTaskStatusList(new ArrayList<ProjectSiteTaskStatusDTO>());
@@ -716,6 +712,4 @@ public class SiteTaskAndStatusAssignmentFragment extends Fragment implements Pag
 
     int type;
     static final int SUBTASK = 2, TASK = 1;
-    SubTaskStatusAdapter subAdapter;
-    SubTaskDTO subTask;
 }

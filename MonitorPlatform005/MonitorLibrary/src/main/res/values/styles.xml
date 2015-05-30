@@ -1,12 +1,12 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="OperationsTheme" parent="Theme.AppCompat.Light">
+    <style name="OperationsTheme" parent="Base.Theme.AppCompat.Light">
         <item name="android:windowTitleStyle">@style/actionBarStyle</item>
         <item name="colorPrimary">@color/blue</item>
         <item name="colorPrimaryDark">@color/background_floating_material_dark</item>
     </style>
 
-    <style name="ProjectManagerTheme" parent="Theme.AppCompat.Light">
+    <style name="ProjectManagerTheme" parent="Base.Theme.AppCompat.Light">
         <item name="colorPrimary">@color/teal_500</item>
         <item name="colorPrimaryDark">@color/teal_800</item>
         <item name="android:actionBarStyle">@style/actionBarStyle</item>
@@ -14,17 +14,17 @@
         <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
     </style>
 
-    <style name="ReporterTheme" parent="Theme.AppCompat.Light">
+    <style name="ReporterTheme" parent="Base.Theme.AppCompat.Light">
         <item name="colorPrimary">@color/absa_red</item>
         <item name="colorPrimaryDark">@color/background_material_dark</item>
     </style>
 
-    <style name="ExecTheme" parent="Theme.AppCompat.Light">
+    <style name="ExecTheme" parent="Base.Theme.AppCompat.Light">
         <item name="colorPrimary">@color/orange</item>
         <item name="colorPrimaryDark">@color/background_material_dark</item>
     </style>
 
-    <style name="PagerTheme" parent="Theme.AppCompat.Light">
+    <style name="PagerTheme" parent="Base.Theme.AppCompat.Light">
         <item name="colorPrimary">@color/indigo_500</item>
         <item name="colorPrimaryDark">@color/indigo_700</item>
         <item name="android:actionBarStyle">@style/actionBarStyle</item>

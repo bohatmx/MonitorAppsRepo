@@ -1,6 +1,7 @@
 package com.boha.monitor.library.fragments;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ListPopupWindow;
 import android.widget.ListView;
@@ -28,7 +30,6 @@ import com.boha.monitor.library.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.library.dto.TaskDTO;
 import com.boha.monitor.library.dto.transfer.RequestDTO;
 import com.boha.monitor.library.dto.transfer.ResponseDTO;
-import com.boha.monitor.library.fourmob.datetimepicker.date.DatePickerDialog;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.ErrorUtil;
 import com.boha.monitor.library.util.NetUtil;
@@ -46,6 +47,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+
 
 import static com.boha.monitor.library.util.Util.showErrorToast;
 
@@ -435,49 +438,45 @@ public class StatusReportFragment extends Fragment implements PageFragment {
             xMth = mMonth;
             xDay = mDay;
         }
-        dpStart = DatePickerDialog.newInstance(
-                new DatePickerDialog.OnDateSetListener() {
+        dpStart = new DatePickerDialog(ctx, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                mYear = year;
+                mMonth = monthOfYear;
+                mDay = dayOfMonth;
 
+                calendar.set(Calendar.YEAR, mYear);
+                calendar.set(Calendar.MONTH, mMonth);
+                calendar.set(Calendar.DAY_OF_MONTH, mDay);
+
+                if (isStartDate) {
+                    calendar.set(Calendar.HOUR_OF_DAY, 0);
+                    calendar.set(Calendar.MINUTE, 0);
+                    calendar.set(Calendar.SECOND, 0);
+                    startDate = calendar.getTime();
+                } else {
+                    endDate = calendar.getTime();
+                }
+                setDates();
+                Util.flashSeveralTimes(txtCount, 200, 2, new Util.UtilAnimationListener() {
                     @Override
-                    public void onDateSet(DatePickerDialog datePickerDialog,
-                                          int year, int month, int day) {
-                        mYear = year;
-                        mMonth = month;
-                        mDay = day;
-
-                        calendar.set(Calendar.YEAR, mYear);
-                        calendar.set(Calendar.MONTH, mMonth);
-                        calendar.set(Calendar.DAY_OF_MONTH, mDay);
-
-                        if (isStartDate) {
-                            calendar.set(Calendar.HOUR_OF_DAY, 0);
-                            calendar.set(Calendar.MINUTE, 0);
-                            calendar.set(Calendar.SECOND, 0);
-                            startDate = calendar.getTime();
-                        } else {
-                            endDate = calendar.getTime();
-                        }
-                        setDates();
-                        Util.flashSeveralTimes(txtCount, 200, 2, new Util.UtilAnimationListener() {
-                            @Override
-                            public void onAnimationEnded() {
-                                getProjectStatus();
-                            }
-                        });
+                    public void onAnimationEnded() {
+                        getProjectStatus();
                     }
+                });
+            }
+        }, xYear, xMth, xDay);
 
-
-                }, xYear, xMth, xDay, true
-        );
-        dpStart.setVibrate(true);
-        dpStart.setYearRange(2013, calendar.get(Calendar.YEAR));
-        Bundle args = new Bundle();
-        args.putInt("year", mYear);
-        args.putInt("month", mMonth);
-        args.putInt("day", mDay);
-
-        dpStart.setArguments(args);
-        dpStart.show(getFragmentManager(), "diagx");
+        dpStart.show();
+//
+//        dpStart.setYearRange(2013, calendar.get(Calendar.YEAR));
+//        Bundle args = new Bundle();
+//        args.putInt("year", mYear);
+//        args.putInt("month", mMonth);
+//        args.putInt("day", mDay);
+//
+//        dpStart.setArguments(args);
+//        dpStart.show(getFragmentManager(), "diagx");
 
 
     }

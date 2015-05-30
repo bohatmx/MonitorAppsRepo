@@ -85,9 +85,7 @@ public class BaseVolley {
         }
         String json = null, jj = null;
 
-        Gson gson = new GsonBuilder()
-                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                .create();
+        Gson gson = new Gson();
         try {
             jj = gson.toJson(request);
             json = URLEncoder.encode(jj, "UTF-8");
@@ -97,10 +95,10 @@ public class BaseVolley {
         retries = 0;
         //http://192.168.1.30:8080/mwp/gate{"locationTrackerList":[{"dateTracked"
         StringBuilder sb = new StringBuilder();
-        sb.append(Statics.URL).append(suffix).append("?JSON=");
+        sb.append(Statics.URL).append(suffix);
         sb.append(json);
         String url = sb.toString();
-        Log.i(LOG, "...sending remote request: ....size: "+ url.length() +"...>\n"  + Statics.URL + suffix + "?JSON=" + jj);
+        Log.d(LOG, "...sending remote request: ....size: "+ url.length() +"...>\n"  + Statics.URL + suffix  + jj);
         bohaRequest = new BohaRequest(Method.POST, url,
                 onSuccessListener(), onErrorListener());
         bohaRequest.setRetryPolicy(new DefaultRetryPolicy((int) TimeUnit.SECONDS.toMillis(120),

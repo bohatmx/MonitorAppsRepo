@@ -1,0 +1,58 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:choiceMode="singleChoice"
+    android:divider="@android:color/transparent"
+    android:dividerHeight="0dp"
+    android:background="@color/white"
+    tools:context="com.boha.staff.activities.NavigationDrawerFragment" >
+
+    <RelativeLayout
+        android:id="@+id/NAV_topLayout"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/NAV_image"
+            android:src="@drawable/back1"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mon_hero_height_medium_lite" />
+
+        <TextView
+            android:id="@+id/NAV_subtitle"
+            android:text="SubTitleHere"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_marginTop="@dimen/mon_hero_height_small"
+            style="@style/TextStyleSmall"
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/NAV_subLayout"
+        android:layout_below="@id/NAV_topLayout"
+        android:background="@color/beige_pale"
+        android:padding="@dimen/mon_padding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        </RelativeLayout>
+
+    <ListView android:id="@+id/NAV_list"
+        android:layout_below="@id/NAV_topLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        tools:context="com.boha.staff.activities.NavigationDrawerFragment" />
+
+
+
+</RelativeLayout>
+

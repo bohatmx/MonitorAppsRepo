@@ -61,7 +61,7 @@ public class TinySiteAdapter extends ArrayAdapter<ProjectSiteDTO> {
         final ProjectSiteDTO p = mList.get(position);
         item.txtNumber.setText("" +(position + 1));
         item.txtSite.setText(p.getProjectSiteName());
-        item.txtBeneficiary.setText(p.getBeneficiary().getFullName());
+//        item.txtBeneficiary.setText(p.getBeneficiary().getFullName());
 
         Statics.setRobotoFontLight(ctx,item.txtBeneficiary);
         Statics.setRobotoFontLight(ctx,item.txtSite);

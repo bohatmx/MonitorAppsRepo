@@ -12,15 +12,12 @@ import com.boha.monitor.library.dto.TaskDTO;
 import com.boha.monitor.library.util.Statics;
 
 
-
-
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class TaskAdapter extends ArrayAdapter<TaskDTO>  {
-
+public class TaskAdapter extends ArrayAdapter<TaskDTO> {
 
 
     private final LayoutInflater mInflater;
@@ -28,8 +25,8 @@ public class TaskAdapter extends ArrayAdapter<TaskDTO>  {
     private List<TaskDTO> mList;
     private Context ctx;
 
-   public TaskAdapter( Context context, int textViewResourceId,
-                      List<TaskDTO> list) {
+    public TaskAdapter(Context context, int textViewResourceId,
+                       List<TaskDTO> list) {
         super(context, textViewResourceId, list);
         this.mLayoutRes = textViewResourceId;
         mList = list;
@@ -49,7 +46,7 @@ public class TaskAdapter extends ArrayAdapter<TaskDTO>  {
 
 
     @Override
-    public View getView(int position,  View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
         final ViewHolderItem item;
         if (convertView == null) {
             convertView = mInflater.inflate(mLayoutRes, null);
@@ -70,24 +67,23 @@ public class TaskAdapter extends ArrayAdapter<TaskDTO>  {
 
         final TaskDTO p = mList.get(position);
         item.txtName.setText(p.getTaskName());
-        item.txtNumber.setText(""+(position+ 1));
+        item.txtNumber.setText("" + (position + 1));
+        item.txtPrice.setVisibility(View.GONE);
         if (p.getTaskNumber() == null) {
             item.txtSequence.setText("0");
         } else {
             item.txtSequence.setText("" + p.getTaskNumber());
-        }
-        if (p.getTaskPriceList() != null && !p.getTaskPriceList().isEmpty()) {
-            item.txtPrice.setText(df.format(p.getTaskPriceList().get(0).getPrice()));
-        } else {
-            item.txtPrice.setText("0.00");
+
         }
 
-        Statics.setRobotoFontLight(ctx,item.txtNumber);
+
+        Statics.setRobotoFontLight(ctx, item.txtNumber);
         Statics.setRobotoFontLight(ctx, item.txtName);
 
 
         return (convertView);
     }
+
     static final DecimalFormat df = new DecimalFormat("###,###,###,###,###,###,###,##0.00");
 
     static final Locale x = Locale.getDefault();

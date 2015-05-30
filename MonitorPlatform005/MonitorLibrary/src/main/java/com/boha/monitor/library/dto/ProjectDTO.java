@@ -36,30 +36,10 @@ public class ProjectDTO implements Serializable {
 
     private List<ProjectSiteDTO> projectSiteList = new ArrayList<>();
     private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
-    private List<BeneficiaryDTO> beneficiaryList = new ArrayList<>();
-    private List<InvoiceDTO> invoiceList;
-    private List<TaskPriceDTO> taskPriceList;
-    private List<ContractorClaimDTO> contractorClaimList = new ArrayList<>();
     private List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList;
-    private List<SubTaskStatusDTO> subTaskStatusList;
     public ProjectDTO() {
     }
 
-    public List<SubTaskStatusDTO> getSubTaskStatusList() {
-        return subTaskStatusList;
-    }
-
-    public void setSubTaskStatusList(List<SubTaskStatusDTO> subTaskStatusList) {
-        this.subTaskStatusList = subTaskStatusList;
-    }
-
-    public List<TaskPriceDTO> getTaskPriceList() {
-        return taskPriceList;
-    }
-
-    public void setTaskPriceList(List<TaskPriceDTO> taskPriceList) {
-        this.taskPriceList = taskPriceList;
-    }
 
     public Integer getSubTaskStatusCount() {
         return subTaskStatusCount;
@@ -89,9 +69,6 @@ public class ProjectDTO implements Serializable {
         this.projectID = projectID;
     }
 
-    public List<ContractorClaimDTO> getContractorClaimList() {
-        return contractorClaimList;
-    }
 
     public Integer getInvoiceCount() {
         return invoiceCount;
@@ -141,27 +118,7 @@ public class ProjectDTO implements Serializable {
         this.statusCount = statusCount;
     }
 
-    public void setContractorClaimList(List<ContractorClaimDTO> contractorClaimList) {
-        this.contractorClaimList = contractorClaimList;
-    }
-
-    public List<InvoiceDTO> getInvoiceList() {
-        return invoiceList;
-    }
-
-    public void setInvoiceList(List<InvoiceDTO> invoiceList) {
-        this.invoiceList = invoiceList;
-    }
-
-    public List<BeneficiaryDTO> getBeneficiaryList() {
-        return beneficiaryList;
-    }
-
-    public void setBeneficiaryList(List<BeneficiaryDTO> beneficiaryList) {
-        this.beneficiaryList = beneficiaryList;
-    }
-
-    public String getClientName() {
+        public String getClientName() {
         return clientName;
     }
 

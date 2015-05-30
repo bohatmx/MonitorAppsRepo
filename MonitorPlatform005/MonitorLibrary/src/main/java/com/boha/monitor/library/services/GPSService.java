@@ -262,12 +262,12 @@ public class GPSService extends Service implements LocationListener,
 
             @Override
             public void onWebSocketClose() {
-
+                Log.e(LOG, "### onWebSocketClose");
             }
         });
     }
-    static final float ACCURACY_THRESHOLD = 25;
-    static final int MINIMUM_TRACKER_EVENTS = 2, BATCH_SIZE = 2;
+    static final float ACCURACY_THRESHOLD = 15;
+    static final int MINIMUM_TRACKER_EVENTS = 1, BATCH_SIZE = 1;
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {

@@ -128,6 +128,7 @@ public class OperationsPagerActivity extends AppCompatActivity
                         mDrawerLayout.closeDrawers();
                     }
                 });
+                getCompanyData();
 
             }
 

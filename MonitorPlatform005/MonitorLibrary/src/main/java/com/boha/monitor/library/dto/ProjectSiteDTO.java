@@ -30,8 +30,6 @@ public class ProjectSiteDTO implements Serializable, Comparable<ProjectSiteDTO> 
     private Integer statusCount;
     private Float accuracy;
     private boolean selected;
-    private BeneficiaryDTO beneficiary;
-    private HappyLetterDTO happyLetter;
     private List<ProjectSiteTaskDTO> projectSiteTaskList = new ArrayList<>();
     private Integer projectID;
     private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
@@ -89,21 +87,6 @@ public class ProjectSiteDTO implements Serializable, Comparable<ProjectSiteDTO> 
         this.statusCount = statusCount;
     }
 
-    public BeneficiaryDTO getBeneficiary() {
-        return beneficiary;
-    }
-
-    public void setBeneficiary(BeneficiaryDTO beneficiary) {
-        this.beneficiary = beneficiary;
-    }
-
-    public HappyLetterDTO getHappyLetter() {
-        return happyLetter;
-    }
-
-    public void setHappyLetter(HappyLetterDTO happyLetter) {
-        this.happyLetter = happyLetter;
-    }
 
     public String getProjectName() {
         return projectName;

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.boha.monitor.library.fragments.ProjectSiteListFragment">
+
+    <ScrollView
+        android:id="@+id/SITE_LIST_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <RelativeLayout
+                android:id="@+id/SITE_LIST_handle"
+                android:layout_width="match_parent"
+                android:layout_height="1dp" />
+
+            <RelativeLayout
+                android:id="@+id/SITE_LIST_TOP"
+                android:background="@color/beige_pale"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <include layout="@layout/search_layout" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/SITE_LIST_editor"
+                android:layout_below="@id/SITE_LIST_TOP"
+                android:background="@color/beige_pale"
+                android:padding="@dimen/mon_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/SITE_LIST_editName"
+                    android:hint="Enter SiteName or Number"
+                    style="@style/Title2TextStyleBlue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:id="@+id/SITE_LIST_btnSave"
+                    android:text="@string/save"
+                    android:layout_below="@id/SITE_LIST_editName"
+                    android:layout_marginTop="@dimen/mon_wide"
+                    style="@style/ButtonRed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
+
+    <ListView
+        android:background="@color/white"
+        android:id="@+id/SLT_list"
+        android:layout_below="@id/SITE_LIST_scroll"
+        android:dividerHeight="@dimen/mon_divider_small"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</RelativeLayout>

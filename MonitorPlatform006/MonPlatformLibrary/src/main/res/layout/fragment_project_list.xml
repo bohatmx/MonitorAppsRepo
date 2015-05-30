@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/grey"
+    android:padding="@dimen/mon_padding"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.boha.monitor.library.fragments.ProjectListFragment">
+
+    <RelativeLayout
+        android:id="@+id/PROJ_LIST_handle"
+        android:layout_marginTop="@dimen/mon_wide"
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
+
+    <ScrollView
+        android:id="@+id/PROJ_LIST_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/PROJ_LIST_layoutZ"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <RelativeLayout
+                android:id="@+id/topTop"
+                android:background="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:id="@+id/hero_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <include layout="@layout/hero_image_project" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/PROJ_LIST_layoutx"
+                    android:layout_below="@id/hero_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/PROJ_LIST_label"
+                        style="@style/Title1TextStyleGrey"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:text="@string/company_projects"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/PROJ_LIST_count"
+                        style="@style/Title1TextStyleGreen"
+                        android:layout_toRightOf="@id/PROJ_LIST_label"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:text="0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/PROJ_LIST_layoutStatus"
+                    android:layout_below="@id/PROJ_LIST_layoutx"
+                    android:background="@color/beige_pale"
+                    android:visibility="visible"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RelativeLayout
+                        android:id="@+id/SLT_searchLayout"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/SLT_imgSearch1"
+                            android:src="@android:drawable/ic_menu_search"
+                            android:text="Find Something"
+                            android:layout_alignParentLeft="true"
+                            android:tint="@color/blue"
+                            android:visibility="gone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <EditText
+                            android:id="@+id/SLT_editSearch"
+                            android:layout_marginLeft="@dimen/mon_wider"
+                            android:layout_marginRight="@dimen/mon_wider"
+                            android:hint="Search"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <ImageView
+                            android:id="@+id/SLT_imgSearch"
+                            android:src="@android:drawable/ic_menu_search"
+                            android:text="Find Something"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="@dimen/mon_padding"
+                            android:tint="@color/blue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </RelativeLayout>
+
+
+                </RelativeLayout>
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/PROJ_LIST_editor"
+                android:layout_below="@id/topTop"
+                android:background="@color/beige_pale"
+                android:gravity="center"
+                android:padding="@dimen/mon_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/PROJ_LIST_editName"
+                    android:hint="Enter Project Name or Number"
+                    style="@style/Title2TextStyleBlue"
+                    android:inputType="textCapWords"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <EditText
+                    android:id="@+id/PROJ_LIST_editDesc"
+                    android:inputType="textCapWords"
+                    android:layout_below="@id/PROJ_LIST_editName"
+                    android:hint="Enter Project Description or Comments"
+                    style="@style/Title3TextStyleBlack"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <RelativeLayout
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/mon_margin"
+                    android:layout_below="@id/PROJ_LIST_editDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.dd.ShadowLayout
+                        android:id="@+id/PROJ_LIST_shadow1"
+                        android:layout_width="300dp"
+                        android:layout_height="wrap_content"
+                        app:sl_shadowRadius="4dp"
+                        app:sl_shadowColor="#AA000000"
+                        app:sl_dx="2dp"
+                        app:sl_dy="2dp"
+                        app:sl_cornerRadius="8dp">
+
+                        <Button
+                            android:id="@+id/PROJ_LIST_btnSave"
+                            android:text="@string/save"
+                            android:minWidth="88dp"
+                            android:minHeight="@dimen/mon_wider"
+                            android:gravity="center"
+                            android:padding="@dimen/mon_padding"
+                            android:elevation="@dimen/mon_padding"
+                            android:textColor="@android:color/white"
+                            android:background="@color/teal"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </com.dd.ShadowLayout>
+
+                    <com.dd.ShadowLayout
+                        android:id="@+id/PROJ_LIST_shadow2"
+                        android:layout_below="@id/PROJ_LIST_shadow1"
+                        android:layout_width="300dp"
+                        android:layout_height="wrap_content"
+                        app:sl_shadowRadius="4dp"
+                        app:sl_shadowColor="#AA000000"
+                        app:sl_dx="2dp"
+                        app:sl_dy="2dp"
+                        app:sl_cornerRadius="8dp">
+
+                        <Button
+                            android:id="@+id/PROJ_LIST_btnCloseProject"
+                            android:text="Close Project"
+                            android:minWidth="88dp"
+                            android:minHeight="@dimen/mon_wider"
+                            android:gravity="center"
+                            android:padding="@dimen/mon_padding"
+                            android:elevation="@dimen/mon_padding"
+                            android:textColor="@android:color/white"
+                            android:background="@color/indian_red"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </com.dd.ShadowLayout>
+                </RelativeLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
+
+    <ListView
+        android:layout_below="@id/PROJ_LIST_scroll"
+        android:id="@+id/PROJ_LIST_list"
+        android:background="@color/white"
+        android:dividerHeight="@dimen/mon_divider_small"
+        android:layout_marginTop="@dimen/mon_divider_small"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+
+
+        </ListView>
+
+
+</RelativeLayout>

@@ -47,10 +47,7 @@ public class WebSocketUtil {
 
     public static void sendRequest( Context c, final String suffix,  RequestDTO req,
                                     WebSocketListener listener) {
-        if (req.getUseHttp()) {
-            VolleyUtil.sendRequest(c, req, listener);
-            return;
-        }
+
         webSocketListener = listener;
         request = req;
         ctx = c;

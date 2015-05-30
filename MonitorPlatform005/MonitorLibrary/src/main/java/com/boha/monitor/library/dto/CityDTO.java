@@ -20,7 +20,6 @@ public class CityDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer cityID;
     private String cityName;
-    private List<TownshipDTO> townshipList = new ArrayList<>();
     private Integer provinceID;
 
     public CityDTO() {
@@ -45,14 +44,6 @@ public class CityDTO implements Serializable {
 
     public void setCityName(String cityName) {
         this.cityName = cityName;
-    }
-
-    public List<TownshipDTO> getTownshipList() {
-        return townshipList;
-    }
-
-    public void setTownshipList(List<TownshipDTO> townshipList) {
-        this.townshipList = townshipList;
     }
 
     public Integer getProvinceID() {

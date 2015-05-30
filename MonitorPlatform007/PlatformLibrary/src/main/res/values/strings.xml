@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">PlatformLibrary</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="no_address">No address computed.</string>
+    <string name="net_not_avail">Network not available</string>
+    <string name="comms_interrupt">Communications interrupted. Try again.</string>
+    <string name="invite_dialog">Are you sure you want to invite a download of this app? \nThe user will be able to add and change data in your Company\'s database.</string>
+    <string name="invite_confirm">Do you want to invite someone to download the App?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="subject">Invitation to Monitor Platform</string>
+</resources>

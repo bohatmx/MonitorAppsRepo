@@ -121,7 +121,6 @@ public class ExecProjectSiteStatusListFragment extends Fragment {
         this.projectSite = projectSite;
         projectSiteTaskList = projectSite.getProjectSiteTaskList();
         txtTitle.setText(projectSite.getProjectSiteName());
-        txtBen.setText(projectSite.getBeneficiary().getFullName());
         if (projectSite.getPhotoUploadList() != null) {
             txtPhotos.setText("" + projectSite.getPhotoUploadList().size());
         }

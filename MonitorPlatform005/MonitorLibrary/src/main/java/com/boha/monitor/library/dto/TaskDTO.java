@@ -20,26 +20,8 @@ public class TaskDTO implements Serializable, Comparable<TaskDTO> {
     private Integer taskID, companyID, taskNumber;
     private String taskName;
     private String description;
-    private List<TaskPriceDTO> taskPriceList;
-    private List<SubTaskDTO> subTaskList;
-
     public static final int ACTION_UPDATE = 2, ACTION_ADD = 1;
 
-    public List<SubTaskDTO> getSubTaskList() {
-        return subTaskList;
-    }
-
-    public void setSubTaskList(List<SubTaskDTO> subTaskList) {
-        this.subTaskList = subTaskList;
-    }
-
-    public List<TaskPriceDTO> getTaskPriceList() {
-        return taskPriceList;
-    }
-
-    public void setTaskPriceList(List<TaskPriceDTO> taskPriceList) {
-        this.taskPriceList = taskPriceList;
-    }
     public TaskDTO() {}
     public TaskDTO(Integer taskID, String taskName, String description) {
         this.taskID = taskID;

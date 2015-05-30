@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/HERO_image"
+        android:src="@drawable/house"
+        android:scaleType="centerCrop"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mon_hero_height_small"/>
+    <ImageView
+        android:id="@+id/HERO_imageSmall"
+        android:src="@drawable/house"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mon_wider"/>
+    <TextView
+        android:id="@+id/HERO_caption"
+        android:text="Operations"
+        android:textColor="@color/white"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/mon_wider"
+        android:layout_marginRight="@dimen/mon_margin"
+        style="@style/TextStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+</RelativeLayout>

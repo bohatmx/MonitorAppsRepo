@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/black"
+    android:padding="0dp"
+    android:layout_height="match_parent">
+
+
+
+    <RelativeLayout
+        android:id="@+id/CAM_projectLayout"
+        android:background="@color/beige_pale"
+        android:padding="@dimen/mon_padding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/CAM_label1"
+            style="@style/TextStyleGreySmall"
+            android:text="Project"
+            android:layout_marginLeft="@dimen/mon_divider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/CAM_projectName"
+            android:layout_toRightOf="@id/CAM_label1"
+            style="@style/Title3TextStyleGreen"
+            android:text="Project Name Here"
+            android:layout_alignBaseline="@id/CAM_label1"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/CAM_siteLayout"
+        android:layout_below="@id/CAM_projectLayout"
+        android:background="@color/white"
+        android:padding="@dimen/mon_padding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/CAM_label2"
+            style="@style/TextStyleGreySmall"
+            android:text="Site Name/Number"
+            android:layout_marginLeft="@dimen/mon_divider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/CAM_siteName"
+            android:layout_toRightOf="@id/CAM_label2"
+            style="@style/Title3TextStyleBlue"
+            android:text="Site Name Here"
+            android:layout_alignBaseline="@id/CAM_label2"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/CAM_imageLayout"
+        android:layout_width="match_parent"
+        android:background="@color/black"
+        android:layout_below="@+id/CAM_siteLayout"
+        android:layout_height="match_parent">
+        <HorizontalScrollView
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:id="@+id/CAM_imageContainer"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <include layout="@layout/scroller_image_template"/>
+                <include layout="@layout/scroller_image_template"/>
+                <include layout="@layout/scroller_image_template"/>
+
+                </LinearLayout>
+            </HorizontalScrollView>
+
+
+
+    </RelativeLayout>
+
+
+    <ImageView
+        android:id="@+id/CAM_imgCamera"
+        android:src="@android:drawable/ic_menu_camera"
+        android:tint="@color/orange"
+        android:background="@drawable/xred_oval_large"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/mon_wider"
+        android:layout_width="wrap_content"
+        android:layout_marginRight="@dimen/mon_margin"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:padding="@dimen/mon_wide"
+        android:layout_alignParentBottom="true"
+        android:background="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/CAM_btnStart"
+            style="@style/ButtonRed"
+            android:text="@string/start_pic_rep"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+
+</RelativeLayout>
