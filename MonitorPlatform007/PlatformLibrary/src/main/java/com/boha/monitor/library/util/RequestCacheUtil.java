@@ -3,7 +3,7 @@ package com.boha.monitor.library.util;
 import android.content.Context;
 import android.util.Log;
 
-import com.boha.monitor.dto.RequestDTO;
+import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.services.RequestCache;
 import com.boha.monitor.library.services.RequestCacheEntry;
 
@@ -35,7 +35,7 @@ public class RequestCacheUtil {
                 CacheUtil.cacheRequest(ctx, cache, new CacheUtil.CacheRequestListener() {
                     @Override
                     public void onDataCached() {
-                        Log.i(LOG, "*** Request has been cached");
+                        Log.i(LOG, "*** Request has been cached: requestType: " + request.getRequestType());
                         if (listener != null)
                             listener.onDataCached();
 

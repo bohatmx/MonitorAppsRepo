@@ -28,6 +28,8 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -41,12 +43,12 @@ import android.widget.ListPopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.boha.monitor.dto.LocationTrackerDTO;
-import com.boha.monitor.dto.PhotoUploadDTO;
-import com.boha.monitor.dto.ProjectDTO;
-import com.boha.monitor.dto.RequestDTO;
-import com.boha.monitor.dto.ResponseDTO;
-import com.boha.monitor.dto.StaffDTO;
+import com.boha.monitor.library.dto.LocationTrackerDTO;
+import com.boha.monitor.library.dto.PhotoUploadDTO;
+import com.boha.monitor.library.dto.ProjectDTO;
+import com.boha.monitor.library.dto.RequestDTO;
+import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.adapters.PopupListAdapter;
 import com.boha.platform.library.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -1304,6 +1306,7 @@ public class Util {
     public static Drawable getRandomBackgroundImage( Context ctx) {
         random = new Random(System.currentTimeMillis());
         int index = random.nextInt(14);
+        Log.e(LOG,"%%% getRandomBackgroundImage: " + index);
         switch (index) {
             case 0:
                 return ContextCompat.getDrawable(ctx, R.drawable.back1);
@@ -1349,10 +1352,12 @@ public class Util {
             case 14:
                 return ContextCompat.getDrawable(ctx,
                         R.drawable.back15);
+            default:
+                return ContextCompat.getDrawable(ctx,
+                        R.drawable.back3);
 
         }
-        return ContextCompat.getDrawable(ctx,
-                R.drawable.back3);
+
     }
 
     public static void writeLocationToExif(String filePath,  Location loc) {
@@ -2019,5 +2024,18 @@ public class Util {
         sb.append("/").append(p.getUri());
         String url = sb.toString();
         return url;
+    }
+
+    public static void setActionBarIconSpinning(Menu mMenu, int menuItem, final boolean refreshing) {
+        if (mMenu != null) {
+            final MenuItem refreshItem = mMenu.findItem(menuItem);
+            if (refreshItem != null) {
+                if (refreshing) {
+                    refreshItem.setActionView(R.layout.action_bar_progess);
+                } else {
+                    refreshItem.setActionView(null);
+                }
+            }
+        }
     }
 }

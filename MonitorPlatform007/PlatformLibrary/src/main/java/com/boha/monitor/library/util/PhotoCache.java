@@ -1,7 +1,7 @@
 package com.boha.monitor.library.util;
 
 
-import com.boha.monitor.dto.PhotoUploadDTO;
+import com.boha.monitor.library.dto.PhotoUploadDTO;
 
 import java.io.Serializable;
 import java.util.ArrayList;

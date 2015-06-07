@@ -9,9 +9,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.boha.monitor.dto.LocationTrackerDTO;
-import com.boha.monitor.dto.RequestDTO;
-import com.boha.monitor.dto.ResponseDTO;
+import com.boha.monitor.library.dto.LocationTrackerDTO;
+import com.boha.monitor.library.dto.RequestDTO;
+import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
@@ -214,7 +214,7 @@ public class GPSService extends Service implements LocationListener,
         }
     }
 
-    private int index, mainIndex, batches;
+    private int index, batches;
     private ResponseDTO response;
     private void sendData() {
 

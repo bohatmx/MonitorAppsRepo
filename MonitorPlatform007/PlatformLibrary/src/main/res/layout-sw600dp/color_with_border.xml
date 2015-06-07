@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/COLOR_border"
+    android:background="@drawable/xwhite_oval"
+    android:padding="2dp"
+    android:layout_width="20dp"
+    android:layout_height="20dp">
+
+    <TextView
+        android:id="@+id/COLOR_inside"
+        android:background="@drawable/xindigo_oval_small"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+</RelativeLayout>

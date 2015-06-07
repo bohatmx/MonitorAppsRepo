@@ -6,12 +6,12 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.boha.monitor.dto.PhotoUploadDTO;
-import com.boha.monitor.dto.ResponseDTO;
+import com.boha.monitor.library.dto.PhotoUploadDTO;
+import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.PhotoCacheUtil;
 import com.boha.monitor.library.util.PictureUtil;
 import com.boha.monitor.library.util.Util;
-import com.boha.monitor.library.util.WebCheckResult;
+import com.boha.monitor.library.util.WebCheck;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,10 +44,14 @@ public class PhotoUploadService extends IntentService {
     public void uploadCachedPhotos(UploadListener listener) {
         uploadListener = listener;
         Log.d(LOG, "#### uploadCachedPhotos, getting cached photos - will start uploads if wifi is up");
+        if (WebCheck.checkNetworkAvailability(getApplicationContext(),true).isNetworkUnavailable()) {
+            Log.e(LOG,"--- No Network: boolean = isNetworkUnavailable");
+            return;
+        }
         PhotoCacheUtil.getCachedPhotos(getApplicationContext(), new PhotoCacheUtil.PhotoCacheListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
-                Log.e(LOG, "##### cached photo list returned: " + response.getPhotoUploadList().size());
+                Log.d(LOG, "##### cached photo list returned: " + response.getPhotoUploadList().size());
                 list = response.getPhotoUploadList();
                 if (list.isEmpty()) {
                     Log.w(LOG, "--- no cached photos for upload");
@@ -55,13 +59,13 @@ public class PhotoUploadService extends IntentService {
                         uploadListener.onUploadsComplete(0);
                     return;
                 }
-                getLog(response);
 
+                getLog(response);
                 onHandleIntent(null);
             }
 
             @Override
-            public void onDataCached() {
+            public void onDataCached(PhotoUploadDTO p) {
 
             }
 
@@ -76,15 +80,16 @@ public class PhotoUploadService extends IntentService {
         StringBuilder sb = new StringBuilder();
         sb.append("## Photos currently in the cache: ")
                 .append(cache.getPhotoUploadList().size()).append("\n");
+        int up = 0, not = 0;
         for (PhotoUploadDTO p : cache.getPhotoUploadList()) {
-            sb.append("+++ ").append(p.getDateTaken().toString()).append(" lat: ").append(p.getLatitude());
-            sb.append(" lng: ").append(p.getLatitude()).append(" acc: ").append(p.getAccuracy());
+
             if (p.getDateUploaded() != null)
-                sb.append(" ").append(sdf.format(p.getDateUploaded())).append("\n");
+                up++;
             else
-                sb.append(" NOT UPLOADED\n");
+                not++;
 
         }
+        sb.append("photos uploaded: " + up + " pending: " + not);
         Log.w(LOG, sb.toString());
     }
 
@@ -108,11 +113,16 @@ public class PhotoUploadService extends IntentService {
 
     static List<PhotoUploadDTO> list;
     int index;
-    WebCheckResult webCheckResult;
 
     private void controlThumbUploads() {
         if (index < list.size()) {
-            executeThumbUpload(list.get(index));
+            if (list.get(index).getDateUploaded() == null) {
+                executePhotoUpload(list.get(index));
+            } else {
+                index++;
+                controlThumbUploads();
+            }
+
         } else {
             if (uploadListener != null) {
                 uploadListener.onUploadsComplete(uploadedList.size());
@@ -140,14 +150,11 @@ public class PhotoUploadService extends IntentService {
 
     }
 
-    public int getIndex() {
-        return index;
-    }
-
-    private void executeThumbUpload( final PhotoUploadDTO dto) {
-        Log.d(LOG, "** executeThumbUpload, projectID: " + dto.getProjectID());
+    private void executePhotoUpload(final PhotoUploadDTO dto) {
+        Log.d(LOG, "** executePhotoUpload, projectID: " + dto.getProjectID());
         if (dto.getPictureType() == 0)
             dto.setPictureType(PhotoUploadDTO.PROJECT_IMAGE);
+        
         final long start = System.currentTimeMillis();
         PictureUtil.uploadImage(dto, false, getApplicationContext(), new PhotoUploadDTO.PhotoUploadedListener() {
             @Override
@@ -156,7 +163,7 @@ public class PhotoUploadService extends IntentService {
                 Log.i(LOG, "---- photo uploaded, elapsed: " + Util.getElapsed(start, end) + " seconds");
                 dto.setDateUploaded(new Date().getTime());
                 uploadedList.add(dto);
-                PhotoCacheUtil.removeUploadedPhoto(getApplicationContext(), dto);
+                PhotoCacheUtil.updateUploadedPhoto(getApplicationContext(), dto);
                 index++;
                 controlThumbUploads();
             }

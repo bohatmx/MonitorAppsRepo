@@ -2,17 +2,28 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.boha.platform.library" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:allowBackup="true"
         android:label="@string/app_name" >
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <service android:name="com.boha.monitor.library.services.GPSService" />
+        <service android:name="com.boha.monitor.library.services.PhotoUploadService" />
+        <service android:name="com.boha.monitor.library.services.RequestSyncService" />
+        <service android:name="com.boha.monitor.library.services.StatusSyncService" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        <receiver android:name="com.boha.monitor.library.services.LocationTrackerReceiver" />
+        <receiver android:name="com.boha.monitor.library.services.BootReceiver" />
+
+        <activity
+            android:name="com.boha.monitor.library.activities.PhotoListActivity"
+            android:label="@string/title_activity_photo" >
         </activity>
     </application>
 

@@ -1,0 +1,118 @@
+package com.boha.monitor.library.adapters;
+
+import android.content.Context;
+import android.graphics.PorterDuff;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.boha.monitor.library.dto.ProjectTaskDTO;
+import com.boha.monitor.library.util.Util;
+import com.boha.platform.library.R;
+
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+/**
+ * Created by aubreyM on 14/12/17.
+ */
+public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
+
+    public interface TaskListener {
+        void onTaskNameClicked(ProjectTaskDTO task);
+    }
+
+    private TaskListener mListener;
+    private List<ProjectTaskDTO> projectTaskList;
+    private Context ctx;
+    int darkColor;
+
+    public TaskAdapter(List<ProjectTaskDTO> projectTaskList, int darkColor,
+                       Context context, TaskListener listener) {
+        this.projectTaskList = projectTaskList;
+        this.ctx = context;
+        this.mListener = listener;
+        this.darkColor = darkColor;
+        Log.e("TaskAdapter","### darkColor: " + darkColor);
+    }
+
+
+    @Override
+    public TaskViewHolder onCreateViewHolder( ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_item, parent, false);
+        return new TaskViewHolder(v);
+    }
+
+    @Override
+    public void onBindViewHolder( final TaskViewHolder holder, final int position) {
+
+        final ProjectTaskDTO p = projectTaskList.get(position);
+
+        if (p.getProjectTaskStatusList() != null && !p.getProjectTaskStatusList().isEmpty()) {
+            holder.txtLastDate.setText(sdf.format(new Date(p.getProjectTaskStatusList().get(0).getDateUpdated())));
+            holder.txtStatusCount.setText(df.format(p.getProjectTaskStatusList().size()));
+        } else {
+            holder.txtLastDate.setText("No Status Date");
+            holder.txtStatusCount.setText("0");
+        }
+        holder.txtTaskName.setText(p.getTask().getTaskName());
+        if (p.getPhotoUploadList() != null && !p.getPhotoUploadList().isEmpty()) {
+            holder.txtPhotos.setText(df.format(p.getPhotoUploadList().size()));
+        } else {
+            holder.txtPhotos.setText("0");
+        }
+        if (darkColor != 0) {
+            holder.image.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
+        }
+
+        holder.nameView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.flashOnce(holder.nameView, 300, new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        mListener.onTaskNameClicked(p);
+                    }
+                });
+            }
+        });
+
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return projectTaskList == null ? 0 : projectTaskList.size();
+    }
+
+    static final Locale loc = Locale.getDefault();
+    static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", loc);
+    static final DecimalFormat df = new DecimalFormat("###,###,###,###");
+
+    public class TaskViewHolder extends RecyclerView.ViewHolder  {
+        protected ImageView image;
+        protected TextView txtTaskName, txtStatusCount, txtLastDate, txtPhotos;
+        protected View nameView;
+
+
+        public TaskViewHolder(View itemView) {
+            super(itemView);
+            image = (ImageView) itemView.findViewById(R.id.TSK_icon);
+            txtTaskName = (TextView) itemView.findViewById(R.id.TSK_taskName);
+            txtPhotos = (TextView) itemView.findViewById(R.id.TSK_photoCount);
+            txtStatusCount = (TextView) itemView.findViewById(R.id.TSK_statusCount);
+            txtLastDate = (TextView) itemView.findViewById(R.id.TSK_date);
+            nameView = itemView.findViewById(R.id.TSK_top);
+        }
+
+    }
+
+    static final String LOG = TaskAdapter.class.getSimpleName();
+}

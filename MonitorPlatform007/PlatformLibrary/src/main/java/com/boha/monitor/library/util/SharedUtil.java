@@ -7,8 +7,9 @@ import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.boha.monitor.dto.CompanyDTO;
-import com.boha.monitor.dto.StaffDTO;
+import com.boha.monitor.library.dto.CompanyDTO;
+import com.boha.monitor.library.dto.MonitorDTO;
+import com.boha.monitor.library.dto.StaffDTO;
 import com.google.gson.Gson;
 
 import java.util.Calendar;
@@ -23,17 +24,34 @@ public class SharedUtil {
     public static final String
             COMPANY_STAFF_JSON = "companyStaff",
             COMPANY_JSON = "company",
-            PROJECT_SITE_ID = "siteID",
+            MONITOR_JSON = "monitor",
             PROJECT_ID = "projectID",
             GCM_REGISTRATION_ID = "gcm",
             SESSION_ID = "sessionID",
             SITE_LOCATION = "siteLocation",
             DRAWER = "drawer",
-
+            THEME = "theme",
             LOG = "SharedUtil",
             REMINDER_TIME = "reminderTime",
             APP_VERSION = "appVersion";
+    public static void setThemeSelection(Context ctx, int theme) {
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
 
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putInt(THEME, theme);
+        ed.commit();
+
+        Log.w(LOG, "#### theme saved: " + theme);
+
+    }
+    public static int getThemeSelection(Context ctx) {
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        int j = sp.getInt(THEME, -1);
+        Log.i(LOG, "#### theme retrieved: " + j);
+        return j;
+    }
     public static void setDrawerCount(Context ctx, int count) {
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -48,7 +66,7 @@ public class SharedUtil {
 
         return count;
     }
-    public static final int MAX_SLIDING_TAB_VIEWS = 40;
+    public static final int MAX_SLIDING_TAB_VIEWS = 100;
     /**
      * Stores the registration ID and app versionCode in the application's
      * {@code SharedPreferences}.
@@ -134,6 +152,30 @@ public class SharedUtil {
                 .getDefaultSharedPreferences(ctx);
         return sp.getString(SESSION_ID, null);
     }
+    public static void saveMonitor( Context ctx,  MonitorDTO dto) {
+
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        String x = gson.toJson(dto);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putString(MONITOR_JSON, x);
+        ed.commit();
+        Log.e("SharedUtil", "%%%%% Monitor: " + dto.getFirstName() + " " + dto.getLastName() + " saved in SharedPreferences");
+    }
+
+
+    public static MonitorDTO getMonitor( Context ctx) {
+
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        String mon = sp.getString(MONITOR_JSON, null);
+        MonitorDTO monitorDTO = null;
+        if (mon != null) {
+            monitorDTO = gson.fromJson(mon, MonitorDTO.class);
+
+        }
+        return monitorDTO;
+    }
     public static void saveCompanyStaff( Context ctx,  StaffDTO dto) {
 
         SharedPreferences sp = PreferenceManager
@@ -201,23 +243,7 @@ public class SharedUtil {
         }
     }
 
-    public static void saveLastSiteID( Context ctx, Integer projectSiteID) {
 
-        SharedPreferences sp = PreferenceManager
-                .getDefaultSharedPreferences(ctx);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putInt(PROJECT_SITE_ID, projectSiteID);
-        ed.commit();
-        Log.e("SharedUtil", "%%%%% projectSiteID: " + projectSiteID + " saved in SharedPreferences");
-    }
-
-    public static Integer getLastSiteID( Context ctx) {
-
-        SharedPreferences sp = PreferenceManager
-                .getDefaultSharedPreferences(ctx);
-        int id = sp.getInt(PROJECT_SITE_ID, 0);
-        return id;
-    }
     public static void saveLastProjectID( Context ctx, Integer projectID) {
 
         SharedPreferences sp = PreferenceManager

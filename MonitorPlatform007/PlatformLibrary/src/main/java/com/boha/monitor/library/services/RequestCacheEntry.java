@@ -1,7 +1,7 @@
 package com.boha.monitor.library.services;
 
 
-import com.boha.monitor.dto.RequestDTO;
+import com.boha.monitor.library.dto.RequestDTO;
 
 import java.io.Serializable;
 import java.util.Date;

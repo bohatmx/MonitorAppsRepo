@@ -12,8 +12,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.boha.monitor.dto.RequestDTO;
-import com.boha.monitor.dto.ResponseDTO;
+import com.boha.monitor.library.dto.RequestDTO;
+import com.boha.monitor.library.dto.ResponseDTO;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import java.io.IOException;
@@ -82,7 +82,7 @@ public class GCMUtil {
 
         @Override
         protected void onPostExecute(Integer result) {
-            Log.i(LOG, "onPostExecute... ending GCM registration");
+            Log.d(LOG, "onPostExecute... ending GCM registration");
             if (result > 0) {
                 gcmUtilListener.onGCMError();
                 return;

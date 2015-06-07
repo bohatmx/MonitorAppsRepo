@@ -11,9 +11,9 @@ import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
-import com.boha.monitor.dto.RequestDTO;
-import com.boha.monitor.dto.RequestList;
-import com.boha.monitor.dto.ResponseDTO;
+import com.boha.monitor.library.dto.RequestDTO;
+import com.boha.monitor.library.dto.RequestList;
+import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.WebCheck;
 import com.boha.monitor.library.util.WebCheckResult;
@@ -105,7 +105,7 @@ public class BaseVolley {
         requestQueue.add(bohaRequest);
     }
 
-    public static void getRemoteData(String suffix, RequestList request,
+    public static void getRemoteData(String suffix, RequestList requestList,
                                      Context context, BohaVolleyListener listener) {
 
         ctx = context;
@@ -120,7 +120,7 @@ public class BaseVolley {
 
         Gson gson = new Gson();
         try {
-            jj = gson.toJson(request);
+            jj = gson.toJson(requestList);
             json = URLEncoder.encode(jj, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -130,7 +130,7 @@ public class BaseVolley {
         sb.append(Statics.URL).append(suffix);
         sb.append(json);
         String url = sb.toString();
-        Log.d(LOG, "...sending remote request: ....size: "+ url.length() +"...>\n"  + Statics.URL + suffix  + jj);
+        Log.d(LOG, "...sending remote requestList: ....size: "+ url.length() +"...>\n"  + Statics.URL + suffix  + jj);
         bohaRequest = new BohaRequest(Method.POST, url,
                 onSuccessListener(), onErrorListener());
         bohaRequest.setRetryPolicy(new DefaultRetryPolicy((int) TimeUnit.SECONDS.toMillis(120),

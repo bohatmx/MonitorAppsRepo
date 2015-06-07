@@ -3,8 +3,8 @@ package com.boha.monitor.library.util;
 import android.content.Context;
 import android.util.Log;
 
-import com.boha.monitor.dto.PhotoUploadDTO;
-import com.boha.monitor.dto.ResponseDTO;
+import com.boha.monitor.library.dto.PhotoUploadDTO;
+import com.boha.monitor.library.dto.ResponseDTO;
 
 import java.io.File;
 import java.util.ArrayList;

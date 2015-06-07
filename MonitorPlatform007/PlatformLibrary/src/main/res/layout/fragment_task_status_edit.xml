@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey"
+    android:padding="@dimen/mon_divider">
+
+        <RelativeLayout
+            android:id="@+id/TSE_top"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/mon_margin">
+
+            <TextView
+                android:id="@+id/TSE_taskName"
+                style="@style/Title2TextStyleBlue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Task Name Here" />
+
+            <ImageView
+                android:id="@+id/TSE_icon"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_action_camera" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/TSE_middle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/TSE_top"
+            android:visibility="gone"
+            android:background="@color/beige_pale"
+            android:padding="@dimen/mon_padding">
+
+
+            <TextView
+                android:id="@+id/TSE_selectedColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:background="@color/grey_500"
+                android:padding="@dimen/mon_padding"
+                android:minWidth="@dimen/mon_hero_height_small"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/TSE_label1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/mon_wide"
+                android:layout_toLeftOf="@id/TSE_selectedColor"
+                android:text="Task Status Colour" />
+
+
+        </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/TSE_actionLayout"
+        android:layout_below="@id/TSE_middle"
+        android:padding="@dimen/mon_margin"
+        android:elevation="@dimen/mon_divider"
+        android:background="@color/beige_pale"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/TSE_statusType"
+            style="@style/Title3TextStyleBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Task Status Type Here" />
+        <include layout="@layout/btn_red"
+            android:layout_below="@id/TSE_statusType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_below="@id/TSE_actionLayout"
+        android:layout_marginTop="@dimen/mon_divider"
+        android:padding="@dimen/mon_padding"
+        android:scrollbars="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</RelativeLayout>

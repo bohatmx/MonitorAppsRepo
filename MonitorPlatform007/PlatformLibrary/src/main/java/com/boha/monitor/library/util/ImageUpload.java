@@ -4,8 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.boha.monitor.dto.PhotoUploadDTO;
-import com.boha.monitor.dto.ResponseDTO;
+import com.boha.monitor.library.dto.PhotoUploadDTO;
+import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.toolbox.BaseVolley;
 import com.google.gson.Gson;
 

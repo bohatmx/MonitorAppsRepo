@@ -6,8 +6,9 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.boha.monitor.dto.RequestList;
-import com.boha.monitor.dto.ResponseDTO;
+import com.boha.monitor.library.dto.RequestDTO;
+import com.boha.monitor.library.dto.RequestList;
+import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.google.gson.Gson;
@@ -100,6 +101,7 @@ public class RequestSyncService extends IntentService {
 
         Log.i(LOG, "%%% Cached requests about to be sent to cloud....");
         RequestList list = new RequestList();
+        list.setRequests(new ArrayList<RequestDTO>());
         for (RequestCacheEntry e : requestCache.getRequestCacheEntryList()) {
             list.getRequests().add(e.getRequest());
         }
@@ -152,9 +154,9 @@ public class RequestSyncService extends IntentService {
     static final String LOG = RequestSyncService.class.getSimpleName();
 
     private void print() {
-        for (RequestCacheEntry e : requestCache.getRequestCacheEntryList()) {
-            Log.w(LOG, "+++ " + e.getDateRequested() + " requestType: " + e.getRequest().getRequestType());
-        }
+//        for (RequestCacheEntry e : requestCache.getRequestCacheEntryList()) {
+//            Log.w(LOG, "+++ " + e.getDateRequested() + " requestType: " + e.getRequest().getRequestType());
+//        }
     }
 
     public class LocalBinder extends Binder {

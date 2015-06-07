@@ -15,9 +15,7 @@ public class LocationTrackerReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive( Context context, Intent intent) {
-        Log.e(LOG,"### onReceive, starting GPSService... " + new Date().toString() +
-                ", incoming intent: \n"
-                + intent);
+        Log.d(LOG,"### onReceive, starting GPSService... " + new Date().toString());
 
         Intent x = new Intent(context,GPSService.class);
         context.startService(x);

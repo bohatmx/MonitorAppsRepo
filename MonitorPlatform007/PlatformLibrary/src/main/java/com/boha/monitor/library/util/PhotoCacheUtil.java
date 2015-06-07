@@ -4,8 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.boha.monitor.dto.PhotoUploadDTO;
-import com.boha.monitor.dto.ResponseDTO;
+import com.boha.monitor.library.dto.PhotoUploadDTO;
+import com.boha.monitor.library.dto.ResponseDTO;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -27,12 +27,17 @@ public class PhotoCacheUtil {
 
     public interface PhotoCacheListener {
         public void onFileDataDeserialized(ResponseDTO response);
-        public void onDataCached();
+
+        public void onDataCached(PhotoUploadDTO photo);
+
         public void onError();
     }
+
     public interface PhotoCacheRetrieveListener {
         public void onFileDataDeserialized(ResponseDTO response);
+
         public void onDataCached();
+
         public void onError();
     }
 
@@ -75,14 +80,14 @@ public class PhotoCacheUtil {
         new CacheRetrieveTask().execute();
     }
 
-    public static void clearCache(Context context,  final List<PhotoUploadDTO> uploadedList) {
+    public static void clearCache(Context context, final List<PhotoUploadDTO> uploadedList) {
         ctx = context;
-        getCachedPhotos(context,new PhotoCacheListener() {
+        getCachedPhotos(context, new PhotoCacheListener() {
             @Override
-            public void onFileDataDeserialized( ResponseDTO r) {
+            public void onFileDataDeserialized(ResponseDTO r) {
                 List<PhotoUploadDTO> pending = new ArrayList<>();
-                for (PhotoUploadDTO p: r.getPhotoUploadList()) {
-                    for (PhotoUploadDTO ps: uploadedList) {
+                for (PhotoUploadDTO p : r.getPhotoUploadList()) {
+                    for (PhotoUploadDTO ps : uploadedList) {
                         if (ps.getThumbFilePath().equalsIgnoreCase(p.getThumbFilePath())) {
                             p.setDateUploaded(new Date().getTime());
                             File f = new File(ps.getThumbFilePath());
@@ -93,20 +98,20 @@ public class PhotoCacheUtil {
                         }
                     }
                 }
-                for (PhotoUploadDTO p: r.getPhotoUploadList()) {
+                for (PhotoUploadDTO p : r.getPhotoUploadList()) {
                     if (p.getDateUploaded() == null) {
                         pending.add(p);
                     }
                 }
                 r.setPhotoUploadList(pending);
                 response = r;
-                Log.i(LOG,"## after clearing cache, pending photos: " + pending.size() + " - writing new cache");
+                Log.i(LOG, "## after clearing cache, pending photos: " + pending.size() + " - writing new cache");
                 new CacheTask().execute();
 
             }
 
             @Override
-            public void onDataCached() {
+            public void onDataCached(PhotoUploadDTO p) {
 
             }
 
@@ -116,29 +121,38 @@ public class PhotoCacheUtil {
             }
         });
     }
-    public static void removeUploadedPhoto(Context context,  final PhotoUploadDTO photo) {
+
+    public static void updateUploadedPhoto(Context context, final PhotoUploadDTO photo) {
         ctx = context;
-        getCachedPhotos(context,new PhotoCacheListener() {
+        getCachedPhotos(context, new PhotoCacheListener() {
             @Override
-            public void onFileDataDeserialized( ResponseDTO r) {
+            public void onFileDataDeserialized(ResponseDTO r) {
                 List<PhotoUploadDTO> pending = new ArrayList<>();
 
-                for (PhotoUploadDTO p: r.getPhotoUploadList()) {
+                for (PhotoUploadDTO p : r.getPhotoUploadList()) {
                     if (photo.getThumbFilePath().equalsIgnoreCase(p.getThumbFilePath())) {
-                        continue;
+                        p.setDateUploaded(photo.getDateUploaded());
                     }
                     pending.add(p);
                 }
                 r.setPhotoUploadList(pending);
                 response = r;
-                Log.e(LOG,"## after removing uploaded file, pending photos: " + pending.size()
-                        + " - updating photo cache");
+                int uploaded = 0, pendingCount = 0;
+                for (PhotoUploadDTO pp : response.getPhotoUploadList()) {
+                    if (pp.getDateUploaded() == null) {
+                        pendingCount++;
+                    } else {
+                        uploaded++;
+                    }
+                }
+                Log.e(LOG, "## after updating uploaded file, pending uploads: " + pendingCount
+                        + " - uploaded OK: " + uploaded + " total photos in cache: " + response.getPhotoUploadList().size());
                 new CacheTask().execute();
 
             }
 
             @Override
-            public void onDataCached() {
+            public void onDataCached(PhotoUploadDTO p) {
 
             }
 
@@ -169,16 +183,11 @@ public class PhotoCacheUtil {
                 }
                 if (!response.getPhotoUploadList().isEmpty()) {
                     StringBuilder sb = new StringBuilder();
-                    sb.append("\n### Photos in cache ###\n");
-                    for (PhotoUploadDTO p : response.getPhotoUploadList()) {
-                        sb.append("+++ ").append(p.getThumbFilePath())
-                                .append(" projectID: " + p.getProjectID())
-                                .append("\n");
-                    }
-                    sb.append("#######################");
+                    sb.append("### Photos in cache ###: " + response.getPhotoUploadList().size());
+
                     Log.w(LOG, sb.toString());
                 } else {
-                    Log.w(LOG,"### no photos in cache");
+                    Log.w(LOG, "### no photos in cache");
                 }
 
             } catch (IOException e) {
@@ -188,7 +197,7 @@ public class PhotoCacheUtil {
             return 0;
         }
 
-        private void write( FileOutputStream outputStream,  String json) throws IOException {
+        private void write(FileOutputStream outputStream, String json) throws IOException {
             outputStream.write(json.getBytes());
             outputStream.close();
         }
@@ -199,7 +208,7 @@ public class PhotoCacheUtil {
                 if (v > 0) {
                     photoCacheListener.onError();
                 } else
-                    photoCacheListener.onDataCached();
+                    photoCacheListener.onDataCached(photoUpload);
             }
 
         }
@@ -207,7 +216,7 @@ public class PhotoCacheUtil {
 
     static class CacheRetrieveTask extends AsyncTask<Void, Void, ResponseDTO> {
 
-        private ResponseDTO getData( FileInputStream stream) throws IOException {
+        private ResponseDTO getData(FileInputStream stream) throws IOException {
             String json = getStringFromInputStream(stream);
             ResponseDTO response = gson.fromJson(json, ResponseDTO.class);
             return response;
@@ -237,15 +246,17 @@ public class PhotoCacheUtil {
         protected void onPostExecute(ResponseDTO v) {
             if (photoCacheListener == null)
                 return;
-            else
+            else {
+                Log.w(LOG, "############# cool, calling onFileDataDeserialized, photos: " + v.getPhotoUploadList().size());
                 photoCacheListener.onFileDataDeserialized(v);
+            }
 
 
         }
     }
 
 
-    private static String getStringFromInputStream( InputStream is) throws IOException {
+    private static String getStringFromInputStream(InputStream is) throws IOException {
 
         BufferedReader br = null;
         StringBuilder sb = new StringBuilder();
@@ -271,7 +282,7 @@ public class PhotoCacheUtil {
 
     static class CacheRetrieveForUpdateTask extends AsyncTask<Void, Void, ResponseDTO> {
 
-        private ResponseDTO getData( FileInputStream stream) throws IOException {
+        private ResponseDTO getData(FileInputStream stream) throws IOException {
             String json = getStringFromInputStream(stream);
             ResponseDTO response = gson.fromJson(json, ResponseDTO.class);
             return response;
@@ -297,7 +308,7 @@ public class PhotoCacheUtil {
         }
 
         @Override
-        protected void onPostExecute( ResponseDTO v) {
+        protected void onPostExecute(ResponseDTO v) {
 
             if (v.getPhotoUploadList() == null) {
                 v.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/apk/res-auto"
+    android:background="@color/grey"
+    tools:cardElevation="@dimen/mon_padding"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    tools:cardCornerRadius="4dp">
+
+    <RelativeLayout
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include
+            android:id="@+id/PI_top"
+            layout="@layout/project_actions_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true" />
+
+        <RelativeLayout
+            android:id="@+id/PI_middle1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/PI_top"
+            android:layout_marginTop="@dimen/mon_divider">
+
+            <TextView
+                android:id="@+id/PI_projectName"
+                style="@style/Title2TextStyleBlue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:text="ProjectName wil be placed Here" />
+
+            <RelativeLayout
+                android:layout_below="@id/PI_projectName"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/mon_divider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/PI_label1"
+                    style="@style/TextStyleGrey"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:layout_centerVertical="true"
+                    android:layout_margin="@dimen/mon_margin"
+                    android:text="Status Updates" />
+
+                <TextView
+                    android:id="@+id/PI_statusCount"
+                    style="@style/GreenCircle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/mon_margin"
+                    android:layout_toRightOf="@id/PI_label1"
+                    android:text="303" />
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/PI_middle2"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/PI_middle1">
+
+
+            <TextView
+                android:id="@+id/PI_label2"
+                style="@style/TextStyleGrey"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_margin="@dimen/mon_margin"
+                android:text="Photos" />
+
+            <TextView
+                android:id="@+id/PI_photoCount"
+                style="@style/RedCircle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/mon_margin"
+                android:layout_toRightOf="@id/PI_label2"
+                android:text="9,098" />
+
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/PI_middle3"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/PI_middle2"
+            android:layout_marginTop="@dimen/mon_padding">
+
+
+            <TextView
+                android:id="@+id/PI_label3"
+                style="@style/TextStyleGreySmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_margin="@dimen/mon_margin"
+                android:text="Last Status Update" />
+
+            <TextView
+                android:id="@+id/PI_lastStatusDate"
+                style="@style/TextStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/mon_margin"
+                android:layout_toRightOf="@id/PI_label3"
+                android:text="Saturday, 23 December 2099" />
+
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/PI_middle4"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/PI_middle3">
+
+
+            <TextView
+                android:id="@+id/PI_label4"
+                style="@style/TextStyleGreySmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_margin="@dimen/mon_margin"
+                android:text="Project Tasks" />
+
+            <TextView
+                android:id="@+id/PI_taskCount"
+                style="@style/Title2TextStyleBlue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/mon_margin"
+                android:layout_toRightOf="@id/PI_label4"
+                android:text="12" />
+
+
+        </RelativeLayout>
+        <include
+            android:id="@+id/PI_bottomActions"
+            layout="@layout/project_actions_bottom"
+            android:layout_marginTop="@dimen/mon_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/PI_middle4" />
+        <ImageView
+            android:id="@+id/PI_photo"
+            android:layout_below="@id/PI_bottomActions"
+            android:scaleType="centerCrop"
+            android:src="@drawable/banner_construction10"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mon_picture_large" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

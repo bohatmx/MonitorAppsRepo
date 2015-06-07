@@ -3,9 +3,9 @@ package com.boha.monitor.library.util;
 import android.content.Context;
 import android.util.Log;
 
-import com.boha.monitor.dto.RequestDTO;
-import com.boha.monitor.dto.RequestList;
-import com.boha.monitor.dto.ResponseDTO;
+import com.boha.monitor.library.dto.RequestDTO;
+import com.boha.monitor.library.dto.RequestList;
+import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.platform.library.R;
 import com.google.gson.Gson;
 
@@ -24,7 +24,7 @@ import de.tavendo.autobahn.WebSocketOptions;
 /**
  * Convenience class to wrap Autobahn WebSocket library. Sends RequestDTO as JSON
  * string to web application.
- * <p/>
+ * <p>
  * Created by aubreyM on 15/04/19.
  */
 public class WebSocketUtil {
@@ -62,6 +62,7 @@ public class WebSocketUtil {
             e.printStackTrace();
         }
     }
+
     public static void sendRequest(Context ctx, final String suffix,
                                    RequestList w, WebSocketListener listener) {
         webSocketListener = listener;
@@ -83,7 +84,7 @@ public class WebSocketUtil {
     }
 
     private static void connect(final String url, final String json) {
-        Log.d(LOG,"&&&&&&& CONNECT TO WEBSOCKET, retryCount: " + retryCount);
+        Log.d(LOG, "&&&&&&& CONNECT TO WEBSOCKET, retryCount: " + retryCount);
         WebSocketOptions options = new WebSocketOptions();
         options.setSocketConnectTimeout(5000);
         options.setSocketReceiveTimeout(1000);
@@ -97,7 +98,7 @@ public class WebSocketUtil {
 
                 @Override
                 public void onTextMessage(String payload) {
-                    Log.d(LOG,"+++ onTextMessage payload size: " + getSize(payload.length()));
+                    Log.d(LOG, "+++ onTextMessage payload size: " + getSize(payload.length()));
                     retryCount = 0;
                     try {
                         ResponseDTO r = GSON.fromJson(payload, ResponseDTO.class);
@@ -180,31 +181,34 @@ public class WebSocketUtil {
                     Log.w(LOG, "### response status code is 0 - OK");
                     webSocketListener.onMessage(response);
                 } else {
-                    Log.e(LOG, "--- response status code is "+response.getStatusCode()+" - server found ERROR");
+                    Log.e(LOG, "--- response status code is " + response.getStatusCode() + " - server found ERROR");
                     webSocketListener.onError(response.getMessage());
                 }
             } else {
                 Log.e(LOG, "-- Content from server failed. Response content is null");
                 try {
-                    ACRA.getErrorReporter().handleException(new UnsupportedOperationException("Response content is NULL"),false);
-                } catch (Exception ex) {}
+                    ACRA.getErrorReporter().handleException(new UnsupportedOperationException("Response content is NULL"), false);
+                } catch (Exception ex) {
+                }
                 webSocketListener.onError("Content from server failed. Response is null");
             }
 
         } catch (Exception e) {
             Log.e(LOG, "parseData Failed", e);
             try {
-                ACRA.getErrorReporter().handleException(e,false);
-            } catch (Exception ex) {}
+                ACRA.getErrorReporter().handleException(e, false);
+            } catch (Exception ex) {
+            }
             webSocketListener.onError("Failed to unpack server response. Please try again.");
         }
     }
 
     private static String getSize(int size) {
         Double x = Double.parseDouble("" + size);
-        Double y = x/Double.parseDouble("1024");
+        Double y = x / Double.parseDouble("1024");
         return df.format(y) + "KB";
     }
+
     static final DecimalFormat df = new DecimalFormat("###,###,###,###,###,##0.00");
 }
 

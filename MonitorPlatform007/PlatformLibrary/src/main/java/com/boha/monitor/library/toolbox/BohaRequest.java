@@ -9,7 +9,7 @@ import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.boha.monitor.dto.ResponseDTO;
+import com.boha.monitor.library.dto.ResponseDTO;
 import com.google.gson.Gson;
 
 import java.io.ByteArrayInputStream;

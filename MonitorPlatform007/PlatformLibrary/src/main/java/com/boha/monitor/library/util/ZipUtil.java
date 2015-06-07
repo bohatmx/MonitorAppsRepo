@@ -2,7 +2,7 @@ package com.boha.monitor.library.util;
 
 import android.util.Log;
 
-import com.boha.monitor.dto.ResponseDTO;
+import com.boha.monitor.library.dto.ResponseDTO;
 import com.google.gson.Gson;
 
 import java.io.BufferedInputStream;

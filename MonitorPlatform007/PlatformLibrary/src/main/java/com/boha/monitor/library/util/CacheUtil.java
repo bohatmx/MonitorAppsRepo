@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.boha.monitor.dto.ResponseDTO;
+import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.services.RequestCache;
 import com.google.gson.Gson;
 
@@ -39,12 +39,11 @@ public class CacheUtil {
     }
 
 
-
     static CacheUtilListener utilListener;
     static CacheRequestListener cacheListener;
     public static final int CACHE_DATA = 1, CACHE_COUNTRIES = 3, CACHE_SITE = 7,
             CACHE_PROJECT = 5, CACHE_REQUEST = 6, CACHE_PROJECT_STATUS = 4,
-            CACHE_TRACKER = 8, CACHE_CHAT = 9;
+            CACHE_TRACKER = 8, CACHE_CHAT = 9, CACHE_MONITOR_PROJECTS = 10, CACHE_TASK_STATUS = 11;
     static int dataType;
     static Integer projectID;
     static ResponseDTO response;
@@ -53,8 +52,8 @@ public class CacheUtil {
     static Context ctx;
     static RequestCache requestCache;
     static final String JSON_DATA = "data.json", JSON_COUNTRIES = "countries.json",
-            JSON_PROJECT_DATA = "project_data", JSON_PROJECT_STATUS = "project_status",
-            JSON_REQUEST = "requestCache.json", JSON_SITE = "site", JSON_TRACKER = "tracker.json", JSON_CHAT = "chat";
+            JSON_PROJECT_DATA = "project_data", JSON_PROJECT_STATUS = "project_status", JSON_MON_PROJECTS = "monprojects.json",
+            JSON_REQUEST = "requestCache.json", JSON_SITE = "site", JSON_TRACKER = "tracker.json", JSON_CHAT = "chat", JSON_STATUS = "status";
 
 
     public static void cacheRequest(Context context, RequestCache cache, CacheRequestListener listener) {
@@ -81,6 +80,15 @@ public class CacheUtil {
         ctx = context;
         new CacheTask().execute();
     }
+
+    public static void cacheMonitorProjects(Context context, ResponseDTO r, CacheUtilListener cacheUtilListener) {
+        dataType = CACHE_MONITOR_PROJECTS;
+        response = r;
+        utilListener = cacheUtilListener;
+        ctx = context;
+        new CacheTask().execute();
+    }
+
     public static void cacheProjectChats(Context context, ResponseDTO r, Integer pID, CacheUtilListener cacheUtilListener) {
         dataType = CACHE_CHAT;
         response = r;
@@ -114,6 +122,12 @@ public class CacheUtil {
         ctx = context;
         new CacheRetrieveTask().execute();
     }
+    public static void getCachedTaskStatusData(Context context, CacheUtilListener cacheUtilListener) {
+        dataType = CACHE_TASK_STATUS;
+        utilListener = cacheUtilListener;
+        ctx = context;
+        new CacheRetrieveTask().execute();
+    }
 
 
     public static void getCachedRequests(Context context, CacheRequestListener listener) {
@@ -125,6 +139,13 @@ public class CacheUtil {
 
     public static void getCachedTrackerData(Context context, CacheUtilListener cacheUtilListener) {
         dataType = CACHE_TRACKER;
+        utilListener = cacheUtilListener;
+        ctx = context;
+        new CacheRetrieveTask().execute();
+    }
+
+    public static void getCachedMonitorProjects(Context context, CacheUtilListener cacheUtilListener) {
+        dataType = CACHE_MONITOR_PROJECTS;
         utilListener = cacheUtilListener;
         ctx = context;
         new CacheRetrieveTask().execute();
@@ -168,6 +189,16 @@ public class CacheUtil {
             try {
                 switch (dataType) {
 
+                    case CACHE_TASK_STATUS:
+                        json = gson.toJson(response);
+                        outputStream = ctx.openFileOutput(JSON_STATUS, Context.MODE_PRIVATE);
+                        write(outputStream, json);
+                        file = ctx.getFileStreamPath(JSON_STATUS);
+                        if (file != null) {
+                            Log.e(LOG, "ProjectTaskStatus cache written, path: " + file.getAbsolutePath() +
+                                    " - length: " + file.length());
+                        }
+                        break;
                     case CACHE_REQUEST:
                         json = gson.toJson(requestCache);
                         outputStream = ctx.openFileOutput(JSON_REQUEST, Context.MODE_PRIVATE);
@@ -185,6 +216,16 @@ public class CacheUtil {
                         file = ctx.getFileStreamPath(JSON_TRACKER);
                         if (file != null) {
                             Log.e(LOG, "Tracker cache written, path: " + file.getAbsolutePath() +
+                                    " - length: " + file.length());
+                        }
+                        break;
+                    case CACHE_MONITOR_PROJECTS:
+                        json = gson.toJson(response);
+                        outputStream = ctx.openFileOutput(JSON_MON_PROJECTS, Context.MODE_PRIVATE);
+                        write(outputStream, json);
+                        file = ctx.getFileStreamPath(JSON_MON_PROJECTS);
+                        if (file != null) {
+                            Log.e(LOG, "Monitor projects cache written, path: " + file.getAbsolutePath() +
                                     " - length: " + file.length());
                         }
                         break;
@@ -254,7 +295,7 @@ public class CacheUtil {
             return 0;
         }
 
-        private void write( FileOutputStream outputStream,  String json) throws IOException {
+        private void write(FileOutputStream outputStream, String json) throws IOException {
             outputStream.write(json.getBytes());
             outputStream.close();
         }
@@ -280,7 +321,7 @@ public class CacheUtil {
 
     static class CacheRetrieveTask extends AsyncTask<Void, Void, ResponseDTO> {
 
-        private ResponseDTO getData( FileInputStream stream) throws IOException {
+        private ResponseDTO getData(FileInputStream stream) throws IOException {
             String json = getStringFromInputStream(stream);
             ResponseDTO response = gson.fromJson(json, ResponseDTO.class);
             return response;
@@ -308,6 +349,11 @@ public class CacheUtil {
                         response = getData(stream);
                         Log.i(LOG, "++ project status cache retrieved");
                         break;
+                    case CACHE_TASK_STATUS:
+                        stream = ctx.openFileInput(JSON_STATUS);
+                        response = getData(stream);
+                        Log.i(LOG, "++ projectTaskStatus cache retrieved");
+                        break;
                     case CACHE_REQUEST:
                         stream = ctx.openFileInput(JSON_REQUEST);
                         response = getData(stream);
@@ -317,6 +363,11 @@ public class CacheUtil {
                         stream = ctx.openFileInput(JSON_TRACKER);
                         response = getData(stream);
                         Log.i(LOG, "++ tracker cache retrieved");
+                        break;
+                    case CACHE_MONITOR_PROJECTS:
+                        stream = ctx.openFileInput(JSON_MON_PROJECTS);
+                        response = getData(stream);
+                        Log.i(LOG, "++ monitor projects cache retrieved");
                         break;
 
                     case CACHE_DATA:
@@ -356,7 +407,7 @@ public class CacheUtil {
 
     static class CacheRetrieveRequestTask extends AsyncTask<Void, Void, RequestCache> {
 
-        private RequestCache getData( FileInputStream stream) throws IOException {
+        private RequestCache getData(FileInputStream stream) throws IOException {
             String json = getStringFromInputStream(stream);
             RequestCache cache = gson.fromJson(json, RequestCache.class);
             return cache;
@@ -383,7 +434,7 @@ public class CacheUtil {
         }
 
         @Override
-        protected void onPostExecute( RequestCache v) {
+        protected void onPostExecute(RequestCache v) {
             if (cacheListener == null) return;
             if (v != null) {
                 cacheListener.onRequestCacheReturned(v);
@@ -396,8 +447,7 @@ public class CacheUtil {
     }
 
 
-
-    private static String getStringFromInputStream( InputStream is) throws IOException {
+    private static String getStringFromInputStream(InputStream is) throws IOException {
 
         BufferedReader br = null;
         StringBuilder sb = new StringBuilder();

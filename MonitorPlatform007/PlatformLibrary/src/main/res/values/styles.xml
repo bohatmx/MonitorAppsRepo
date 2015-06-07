@@ -1,72 +1,156 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="OperationsTheme" parent="Base.Theme.AppCompat.Light">
-        <item name="android:windowTitleStyle">@style/actionBarStyle</item>
-        <item name="colorPrimary">@color/blue</item>
-        <item name="colorPrimaryDark">@color/background_floating_material_dark</item>
-    </style>
-
-    <style name="ProjectManagerTheme" parent="Base.Theme.AppCompat.Light">
-        <item name="colorPrimary">@color/teal_500</item>
-        <item name="colorPrimaryDark">@color/teal_800</item>
-        <item name="android:actionBarStyle">@style/actionBarStyle</item>
+    <style name="BlueThemeOne" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/blue_700</item>
+        <item name="colorPrimaryDark">@color/blue_900</item>
+        <item name="android:actionBarStyle">@style/smallWhiteText</item>
         <item name="android:textViewStyle">@style/RobotoTextStyle</item>
         <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+
+    </style>
+    <style name="BlueGrayTheme" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/blue_gray_500</item>
+        <item name="colorPrimaryDark">@color/blue_gray_800</item>
+        <item name="android:actionBarStyle">@style/smallWhiteText</item>
+        <item name="android:textViewStyle">@style/RobotoTextStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+
     </style>
 
-    <style name="ReporterTheme" parent="Base.Theme.AppCompat.Light">
-        <item name="colorPrimary">@color/absa_red</item>
-        <item name="colorPrimaryDark">@color/background_material_dark</item>
-    </style>
 
-    <style name="ExecTheme" parent="Base.Theme.AppCompat.Light">
-        <item name="colorPrimary">@color/orange</item>
-        <item name="colorPrimaryDark">@color/background_material_dark</item>
-    </style>
 
-    <style name="PagerTheme" parent="Base.Theme.AppCompat.Light">
+    <style name="ThemeNoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/indigo_500</item>
         <item name="colorPrimaryDark">@color/indigo_700</item>
-        <item name="android:actionBarStyle">@style/actionBarStyle</item>
+        <item name="android:actionBarStyle">@style/smallWhiteText</item>
         <item name="android:textViewStyle">@style/RobotoTextStyle</item>
         <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+
+
+    <style name="RedTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTitleStyle">@style/smallWhiteText</item>
+        <item name="colorPrimary">@color/red_800</item>
+        <item name="colorPrimaryDark">@color/red_900</item>
+        <item name="android:textViewStyle">@style/RobotoTextStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+
+    <style name="TealTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowActionBar">false</item>
+        <item name="windowActionBar">false</item>
+        <item name="colorPrimary">@color/teal_800</item>
+        <item name="colorPrimaryDark">@color/teal_900</item>
+        <item name="android:textViewStyle">@style/RobotoTextStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+
+    <style name="PinkTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTitleStyle">@style/smallWhiteText</item>
+        <item name="colorPrimary">@color/pink_800</item>
+        <item name="colorPrimaryDark">@color/pink_900</item>
+        <item name="android:textViewStyle">@style/RobotoTextStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+
+    <style name="IndigoTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTitleStyle">@style/smallWhiteText</item>
+        <item name="colorPrimary">@color/indigo_500</item>
+        <item name="colorPrimaryDark">@color/indigo_700</item>
+        <item name="android:textViewStyle">@style/RobotoTextStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+
+    <style name="CyanTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTitleStyle">@style/smallWhiteText</item>
+        <item name="colorPrimary">@color/cyan_800</item>
+        <item name="colorPrimaryDark">@color/cyan_900</item>
+        <item name="android:textViewStyle">@style/RobotoTextStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+
+    <style name="OrangeTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTitleStyle">@style/smallWhiteText</item>
+        <item name="colorPrimary">@color/orange_800</item>
+        <item name="colorPrimaryDark">@color/orange_900</item>
+        <item name="android:textViewStyle">@style/RobotoTextStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+    <style name="LimeTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTitleStyle">@style/smallWhiteText</item>
+        <item name="colorPrimary">@color/lime_600</item>
+        <item name="colorPrimaryDark">@color/lime_900</item>
+        <item name="android:textViewStyle">@style/RobotoTextStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+    <style name="LightGreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTitleStyle">@style/smallWhiteText</item>
+        <item name="colorPrimary">@color/green_lite_700</item>
+        <item name="colorPrimaryDark">@color/green_lite_600</item>
+        <item name="android:textViewStyle">@style/RobotoTextStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+    <style name="AmberTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTitleStyle">@style/smallWhiteText</item>
+        <item name="colorPrimary">@color/amber_500</item>
+        <item name="colorPrimaryDark">@color/amber_900</item>
+        <item name="android:textViewStyle">@style/RobotoTextStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+
+    <style name="GreyTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTitleStyle">@style/smallWhiteText</item>
+        <item name="colorPrimary">@color/grey_600</item>
+        <item name="colorPrimaryDark">@color/grey_800</item>
+        <item name="android:textViewStyle">@style/RobotoTextStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+
+    <style name="BrownTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTitleStyle">@style/smallWhiteText</item>
+        <item name="colorPrimary">@color/brown_600</item>
+        <item name="colorPrimaryDark">@color/brown_900</item>
+        <item name="android:textViewStyle">@style/RobotoTextStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+
+    <style name="PurpleTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTitleStyle">@style/smallWhiteText</item>
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryDark">@color/purple_800</item>
+        <item name="android:textViewStyle">@style/RobotoTextStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+
+
+    <style name="GreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/green_800</item>
+        <item name="colorPrimaryDark">@color/green_900</item>
+        <item name="android:textViewStyle">@style/RobotoTextStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+
+
+
+    <style name="MasterTheme" parent="Theme.AppCompat.Light">
+        <item name="android:windowTitleStyle">@style/smallWhiteText</item>
+        <item name="android:textViewStyle">@style/RobotoTextStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+    <style name="NoActionBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTitleStyle">@style/smallWhiteText</item>
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryDark">@color/background_floating_material_dark</item>
     </style>
 
     <style name="PagerThemeNoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/indigo_500</item>
         <item name="colorPrimaryDark">@color/indigo_700</item>
-        <item name="android:actionBarStyle">@style/actionBarStyle</item>
+        <item name="android:actionBarStyle">@style/smallWhiteText</item>
         <item name="android:textViewStyle">@style/RobotoTextStyle</item>
         <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
     </style>
 
-
-    <style name="Widget.Sphinx.ActionBar.Solid" parent="@android:style/Widget.Holo.ActionBar.Solid">
-        <item name="android:background">#FFA500</item>
-    </style>
-    <!-- Local copy of android:Theme.Holo.Dialog.Alert -->
-    <style name="Theme_Holo_Dialog_Alert" parent="@android:style/Theme.Holo.Dialog">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowTitleStyle">@style/DialogWindowTitle_Holo</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
-        <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
-    </style>
-
-    <!-- Local copy of android:DialogWindowTitle.Holo -->
-    <style name="DialogWindowTitle_Holo">
-        <item name="android:maxLines">1</item>
-        <item name="android:scrollHorizontally">true</item>
-        <item name="android:textAppearance">@android:style/TextAppearance.Holo.DialogWindowTitle
-        </item>
-    </style>
-
-    <style name="Theme.Sphinx" parent="@android:style/Theme.Holo">
-        <item name="android:actionBarStyle">@style/Widget.Sphinx.ActionBar.Solid</item>
-        <item name="android:alertDialogTheme">@style/Theme_Sphinx_Dialog_Alert</item>
-    </style>
-
-    <style name="Theme_Sphinx_Dialog_Alert" parent="@style/Theme_Holo_Dialog_Alert"></style>
 
     <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
         <item name="android:fontFamily">sans-serif-light</item>
@@ -88,11 +172,6 @@
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
-    <style name="mgStyle">
-        <item name="android:backgroundDimEnabled">true</item>
-        <item name="android:cacheColorHint">@android:color/transparent</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-    </style>
 
     <style name="Pager">
         <item name="android:textColor">@color/blue</item>
@@ -103,11 +182,11 @@
     <style name="PagerSmall">
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">12sp</item>
-        <item name="android:background">@color/blue_gray_500</item>
+        <item name="android:background">@color/teal_400</item>
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="actionBarStyle" parent="@android:style/TextAppearance.Small">
+    <style name="smallWhiteText" parent="@android:style/TextAppearance.Small">
         <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">normal</item>
     </style>
@@ -161,6 +240,11 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">24sp</item>
     </style>
+    <style name="Title3TextStyleWhite" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
 
     <style name="Title3TextStyleGrey" parent="@android:style/TextAppearance.Medium">
         <item name="android:textColor">@color/grey</item>
@@ -192,6 +276,7 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">24sp</item>
     </style>
+
 
     <style name="Title3TextStyleBlack" parent="@android:style/TextAppearance.Medium">
         <item name="android:textColor">@color/black</item>

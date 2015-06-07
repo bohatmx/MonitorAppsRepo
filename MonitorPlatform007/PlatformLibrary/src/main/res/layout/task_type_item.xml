@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/apk/res-auto"
+    tools:cardElevation="@dimen/mon_padding"
+    android:layout_width="fill_parent"
+
+    android:layout_height="wrap_content"
+    tools:cardCornerRadius="8dp">
+
+    <RelativeLayout
+        android:id="@+id/TSKT_top"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/mon_margin">
+
+        <TextView
+            android:id="@+id/TSKT_number"
+            style="@style/GreyCircleSmall"
+            android:text="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:src="@android:drawable/btn_star" />
+
+        <TextView
+            android:id="@+id/TSKT_taskTypeName"
+            style="@style/Title3TextStyleBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_toRightOf="@id/TSKT_number"
+            android:text=" TaskType Name Here" />
+    </RelativeLayout>
+
+
+
+</android.support.v7.widget.CardView>

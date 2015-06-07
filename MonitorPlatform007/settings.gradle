@@ -1,1 +1,1 @@
-include ':app', ':PlatformLibrary'
+include ':PlatformLibrary', ':MonitorApp'

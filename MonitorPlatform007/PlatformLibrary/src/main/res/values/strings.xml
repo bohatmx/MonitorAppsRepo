@@ -11,4 +11,26 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="subject">Invitation to Monitor Platform</string>
+
+    <!-- monitor drawer strings -->
+    <string name="projects">Projects</string>
+    <string name="monitors">Monitors</string>
+    <string name="messaging">Messaging</string>
+    <string name="profile">Profile</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="select_email">Select email account</string>
+    <string name="monitor">Monitor</string>
+    <string name="welcome_aboard">Welcome Aboard!</string>
+    <string name="title_activity_status_update">StatusUpdateActivity</string>
+    <string name="title_activity_task_update">TaskUpdateActivity</string>
+    <string name="title_activity_task_type_list">TaskTypeListActivity</string>
+    <string name="photo_error">Error caching photo</string>
+    <string name="camera_error">Unable to process image from camera</string>
+    <string name="file_error">Error getting photo file</string>
+    <string name="status_saved">Task Status update has been saved</string>
+    <string name="open_camera">Open Camera</string>
+    <string name="title_activity_photo">PhotoActivity</string>
+
 </resources>
