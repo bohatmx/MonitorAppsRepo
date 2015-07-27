@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -74,6 +75,7 @@ public class PhotoCacheUtil {
         new CacheRetrieveForUpdateTask().execute();
     }
 
+
     public static void getCachedPhotos(Context context, PhotoCacheListener listener) {
         photoCacheListener = listener;
         ctx = context;
@@ -122,6 +124,7 @@ public class PhotoCacheUtil {
         });
     }
 
+    static final int CACHE_LIMIT = 3000;
     public static void updateUploadedPhoto(Context context, final PhotoUploadDTO photo) {
         ctx = context;
         getCachedPhotos(context, new PhotoCacheListener() {
@@ -135,7 +138,14 @@ public class PhotoCacheUtil {
                     }
                     pending.add(p);
                 }
+                Collections.sort(pending);
+                if (pending.size() > CACHE_LIMIT) {
+                    if (pending.get(pending.size() - 1).getDateUploaded() != null) {
+                        pending.remove(pending.size() - 1);
+                    }
+                }
                 r.setPhotoUploadList(pending);
+
                 response = r;
                 int uploaded = 0, pendingCount = 0;
                 for (PhotoUploadDTO pp : response.getPhotoUploadList()) {
@@ -247,7 +257,7 @@ public class PhotoCacheUtil {
             if (photoCacheListener == null)
                 return;
             else {
-                Log.w(LOG, "############# cool, calling onFileDataDeserialized, photos: " + v.getPhotoUploadList().size());
+                Log.d(LOG, "############# cool, calling onFileDataDeserialized, photos: " + v.getPhotoUploadList().size());
                 photoCacheListener.onFileDataDeserialized(v);
             }
 

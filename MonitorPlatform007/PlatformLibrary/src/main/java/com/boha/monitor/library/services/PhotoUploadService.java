@@ -8,14 +8,15 @@ import android.util.Log;
 
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.util.CDNUploader;
 import com.boha.monitor.library.util.PhotoCacheUtil;
-import com.boha.monitor.library.util.PictureUtil;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.library.util.WebCheck;
 
-import java.text.SimpleDateFormat;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,50 +40,68 @@ public class PhotoUploadService extends IntentService {
     }
 
     UploadListener uploadListener;
-    int count;
+    public static final String JSON_PHOTO = "photos.json";
 
     public void uploadCachedPhotos(UploadListener listener) {
         uploadListener = listener;
         Log.d(LOG, "#### uploadCachedPhotos, getting cached photos - will start uploads if wifi is up");
-        if (WebCheck.checkNetworkAvailability(getApplicationContext(),true).isNetworkUnavailable()) {
-            Log.e(LOG,"--- No Network: boolean = isNetworkUnavailable");
+        if (WebCheck.checkNetworkAvailability(getApplicationContext(), true).isNetworkUnavailable()) {
+            Log.e(LOG, "--- No Network: boolean = isNetworkUnavailable");
             return;
         }
-        PhotoCacheUtil.getCachedPhotos(getApplicationContext(), new PhotoCacheUtil.PhotoCacheListener() {
+
+        Thread thread = new Thread(new Runnable() {
             @Override
-            public void onFileDataDeserialized(ResponseDTO response) {
-                Log.d(LOG, "##### cached photo list returned: " + response.getPhotoUploadList().size());
-                list = response.getPhotoUploadList();
-                if (list.isEmpty()) {
-                    Log.w(LOG, "--- no cached photos for upload");
-                    if (uploadListener != null)
-                        uploadListener.onUploadsComplete(0);
-                    return;
+            public void run() {
+                ResponseDTO response = new ResponseDTO();
+                response.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
+                FileInputStream stream;
+                try {
+                    stream = getApplicationContext().openFileInput(JSON_PHOTO);
+                    response = Util.getResponseData(stream);
+                    list = response.getPhotoUploadList();
+
+                    if (list.isEmpty()) {
+                        Log.w(LOG, "--- no cached photos for upload");
+                        if (uploadListener != null)
+                            uploadListener.onUploadsComplete(0);
+                        return;
+                    }
+                    getLog(response);
+                    int pending = 0;
+                    for (PhotoUploadDTO x: list) {
+                        if (x.getDateUploaded() == null) {
+                            pending++;
+                        }
+                    }
+                    if (pending == 0) {
+                        if (uploadListener != null)
+                            uploadListener.onUploadsComplete(0);
+                        return;
+                    } else {
+                        Log.e(LOG,"### ...pending photo uploads: " + pending);
+                    }
+
+                    onHandleIntent(null);
+                } catch (FileNotFoundException e) {
+                    Log.w(LOG, "############# photo cache file not found. possibly virgin trip");
+
+                } catch (IOException e) {
+                    Log.e(LOG, "Failed", e);
                 }
-
-                getLog(response);
-                onHandleIntent(null);
-            }
-
-            @Override
-            public void onDataCached(PhotoUploadDTO p) {
-
-            }
-
-            @Override
-            public void onError() {
-
             }
         });
+        thread.start();
+
+
     }
 
-    private static void getLog( ResponseDTO cache) {
+    private static void getLog(ResponseDTO cache) {
         StringBuilder sb = new StringBuilder();
         sb.append("## Photos currently in the cache: ")
-                .append(cache.getPhotoUploadList().size()).append("\n");
+                .append(cache.getPhotoUploadList().size()).append(" - ");
         int up = 0, not = 0;
         for (PhotoUploadDTO p : cache.getPhotoUploadList()) {
-
             if (p.getDateUploaded() != null)
                 up++;
             else
@@ -90,13 +109,12 @@ public class PhotoUploadService extends IntentService {
 
         }
         sb.append("photos uploaded: " + up + " pending: " + not);
-        Log.w(LOG, sb.toString());
+        Log.i(LOG, sb.toString());
     }
 
 
     List<PhotoUploadDTO> uploadedList = new ArrayList<>();
 
-    static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -105,7 +123,7 @@ public class PhotoUploadService extends IntentService {
             uploadCachedPhotos(uploadListener);
             return;
         }
-        retryCount = 0;
+        uploadedList = new ArrayList<>();
         controlThumbUploads();
 
 
@@ -131,37 +149,13 @@ public class PhotoUploadService extends IntentService {
 
     }
 
-    static final int MAX_RETRIES = 3;
-    int retryCount;
-
-    private void attemptFailedUploads() {
-
-        retryCount++;
-        if (retryCount > MAX_RETRIES) {
-            if (uploadListener != null) {
-                uploadListener.onUploadsComplete(uploadedList.size());
-            }
-            return;
-        }
-        index = 0;
-        list = failedUploads;
-        failedUploads.clear();
-        controlThumbUploads();
-
-    }
 
     private void executePhotoUpload(final PhotoUploadDTO dto) {
         Log.d(LOG, "** executePhotoUpload, projectID: " + dto.getProjectID());
-        if (dto.getPictureType() == 0)
-            dto.setPictureType(PhotoUploadDTO.PROJECT_IMAGE);
-        
-        final long start = System.currentTimeMillis();
-        PictureUtil.uploadImage(dto, false, getApplicationContext(), new PhotoUploadDTO.PhotoUploadedListener() {
+
+        CDNUploader.uploadFile(getApplicationContext(), dto, new CDNUploader.CDNUploaderListener() {
             @Override
-            public void onPhotoUploaded() {
-                long end = System.currentTimeMillis();
-                Log.i(LOG, "---- photo uploaded, elapsed: " + Util.getElapsed(start, end) + " seconds");
-                dto.setDateUploaded(new Date().getTime());
+            public void onFileUploaded(PhotoUploadDTO photo) {
                 uploadedList.add(dto);
                 PhotoCacheUtil.updateUploadedPhoto(getApplicationContext(), dto);
                 index++;
@@ -169,19 +163,19 @@ public class PhotoUploadService extends IntentService {
             }
 
             @Override
-            public void onPhotoUploadFailed() {
-                Log.e(LOG, "------<< onPhotoUploadFailed - check and tell someone");
+            public void onError(String message) {
+                Log.e(LOG, message);
                 failedUploads.add(dto);
                 index++;
                 controlThumbUploads();
             }
         });
+
     }
 
 
     List<PhotoUploadDTO> failedUploads = new ArrayList<>();
     static final String LOG = PhotoUploadService.class.getSimpleName();
-
     public class LocalBinder extends Binder {
 
         public PhotoUploadService getService() {

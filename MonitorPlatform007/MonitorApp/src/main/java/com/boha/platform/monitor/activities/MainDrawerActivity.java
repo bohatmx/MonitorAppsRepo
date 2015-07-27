@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Resources;
+import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
@@ -20,11 +22,16 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.boha.monitor.library.activities.GPSActivity;
+import com.boha.monitor.library.activities.PhotoListActivity;
+import com.boha.monitor.library.activities.PictureActivity;
 import com.boha.monitor.library.activities.TaskTypeListActivity;
 import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.dto.ChatMessageDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
+import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
+import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.fragments.MessagingFragment;
@@ -42,12 +49,22 @@ import com.boha.platform.monitor.R;
 import com.boha.platform.monitor.fragments.MonitorProfileFragment;
 import com.boha.platform.monitor.fragments.NavigationDrawerFragment;
 import com.boha.platform.monitor.fragments.NoProjectsAssignedFragment;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainDrawerActivity extends AppCompatActivity
-        implements NavigationDrawerFragment.NavigationDrawerListener,
+        implements
+        LocationListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        NavigationDrawerFragment.NavigationDrawerListener,
         ProjectListFragment.ProjectListFragmentListener,
         MonitorListFragment.MonitorListListener,
         MessagingFragment.MessagingListener,
@@ -69,6 +86,11 @@ public class MainDrawerActivity extends AppCompatActivity
     ResponseDTO response;
     Context ctx;
 
+    Location mLocation;
+    GoogleApiClient mGoogleApiClient;
+    LocationRequest mLocationRequest;
+    boolean mRequestingLocationUpdates;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +109,12 @@ public class MainDrawerActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_drawer);
 
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavigationDrawerFragment.setPrimaryDarkColor(themeDarkColor);
@@ -101,6 +129,8 @@ public class MainDrawerActivity extends AppCompatActivity
         mPager.setOffscreenPageLimit(4);
 
         getCachedData();
+        android.support.v7.app.ActionBar bar = getSupportActionBar();
+        bar.setTitle(SharedUtil.getCompany(ctx).getCompanyName());
     }
 
 
@@ -140,14 +170,19 @@ public class MainDrawerActivity extends AppCompatActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-//                        setRefreshActionButtonState(false);
-                        Util.setActionBarIconSpinning(mMenu, R.id.action_refresh, false);
+                        setRefreshActionButtonState(false);
                         response = r;
                         if (response.getStatusCode() > 0) {
                             Util.showErrorToast(ctx,response.getMessage());
                             return;
                         }
                         buildPages();
+                        for (ProjectDTO d: response.getProjectList()) {
+                            for (ProjectTaskDTO pt: d.getProjectTaskList()) {
+                                pt.setLatitude(d.getLatitude());
+                                pt.setLongitude(d.getLongitude());
+                            }
+                        }
                         CacheUtil.cacheMonitorProjects(ctx,response,null);
                     }
                 });
@@ -172,7 +207,7 @@ public class MainDrawerActivity extends AppCompatActivity
 
 
     }
-    public void restoreActionBar() {
+    private void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
@@ -206,7 +241,7 @@ public class MainDrawerActivity extends AppCompatActivity
         } else {
             pageFragmentList.add(noProjectsAssignedFragment);
         }
-//        pageFragmentList.add(monitorListFragment);
+        pageFragmentList.add(monitorListFragment);
 //        pageFragmentList.add(messagingFragment);
 //        pageFragmentList.add(monitorProfileFragment);
 
@@ -284,7 +319,7 @@ public class MainDrawerActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    static final int REQUEST_THEME_CHANGE = 9631;
+    static final int REQUEST_THEME_CHANGE = 9631, LOCATION_REQUESTED = 6754;
     static final String LOG = MainDrawerActivity.class.getSimpleName();
     @Override
     public void onActivityResult(int reqCode, int resCode, Intent data) {
@@ -296,6 +331,9 @@ public class MainDrawerActivity extends AppCompatActivity
                 finish();
                 Intent w = new Intent(this,MainDrawerActivity.class);
                 startActivity(w);
+
+                break;
+            case REQUEST_CAMERA:
 
                 break;
         }
@@ -316,13 +354,28 @@ public class MainDrawerActivity extends AppCompatActivity
     }
 
     @Override
-    public void onProfileUpdated() {
+    public void onMonitorPhotoRequired(MonitorDTO monitor) {
 
     }
 
     @Override
+    public void onMonitorEditRequested(MonitorDTO monitor) {
+
+    }
+
+    @Override
+    public void onProfileUpdated() {
+
+    }
+
+    static final int REQUEST_CAMERA = 3329;
+    @Override
     public void onCameraRequired(ProjectDTO project) {
 
+        Intent w = new Intent(this, PictureActivity.class);
+        w.putExtra("project",project);
+        w.putExtra("type", PhotoUploadDTO.PROJECT_IMAGE);
+        startActivityForResult(w, REQUEST_CAMERA);
     }
 
     @Override
@@ -338,11 +391,25 @@ public class MainDrawerActivity extends AppCompatActivity
     @Override
     public void onLocationRequired(ProjectDTO project) {
 
+
+        Intent w = new Intent(this, GPSActivity.class);
+        w.putExtra("project",project);
+        startActivityForResult(w,LOCATION_REQUESTED);
     }
 
     @Override
     public void onDirectionsRequired(ProjectDTO project) {
-
+        if (project.getLatitude() == null) {
+            Util.showErrorToast(ctx,"Project has not been located yet!");
+            return;
+        }
+        Log.i(LOG, "startDirectionsMap ..........");
+        String url = "http://maps.google.com/maps?saddr="
+                + mLocation.getLatitude() + "," + mLocation.getLongitude()
+                + "&daddr=" + project.getLatitude() + "," + project.getLongitude() + "&mode=driving";
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+        startActivity(intent);
     }
 
     @Override
@@ -353,6 +420,9 @@ public class MainDrawerActivity extends AppCompatActivity
     @Override
     public void onGalleryRequired(ProjectDTO project) {
 
+        Intent w = new Intent(this, PhotoListActivity.class);
+        w.putExtra("project",project);
+        startActivity(w);
     }
 
     @Override
@@ -365,6 +435,65 @@ public class MainDrawerActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.i(LOG,
+                "+++  onConnected() -  requestLocationUpdates ...");
+        mLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLocation != null) {
+            Log.w(LOG, "## requesting location updates ....lastLocation: "
+                    + mLocation.getLatitude() + " "
+                    + mLocation.getLongitude() + " acc: "
+                    + mLocation.getAccuracy());
+        }
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setFastestInterval(1000);
+        startLocationUpdates();
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    protected void startLocationUpdates() {
+        Log.w(LOG, "###### startLocationUpdates: " + new Date().toString());
+        if (mGoogleApiClient.isConnected()) {
+            mRequestingLocationUpdates = true;
+            LocationServices.FusedLocationApi.requestLocationUpdates(
+                    mGoogleApiClient, mLocationRequest, this);
+        }
+    }
+
+    protected void stopLocationUpdates() {
+        Log.w(LOG, "###### stopLocationUpdates - " + new Date().toString());
+        if (mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(
+                    mGoogleApiClient, this);
+        }
+    }
+
+
+    @Override
+    public void onLocationChanged( Location loc) {
+        Log.d(LOG, "## onLocationChanged accuracy = " + loc.getAccuracy()
+                + " - " + new Date().toString());
+
+        if (loc.getAccuracy() <= ACCURACY) {
+            mLocation = loc;
+            stopLocationUpdates();
+        }
+    }
+
+    static final int ACCURACY = 15;
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
     private class PagerAdapter extends FragmentStatePagerAdapter {
 
         public PagerAdapter(FragmentManager fm) {
@@ -432,6 +561,9 @@ public class MainDrawerActivity extends AppCompatActivity
 
         Intent intentw = new Intent(this, RequestSyncService.class);
         bindService(intentw, rConnection, Context.BIND_AUTO_CREATE);
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
     }
     @Override
     public void onStop() {

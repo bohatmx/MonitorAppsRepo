@@ -51,14 +51,18 @@ import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.adapters.PopupListAdapter;
 import com.boha.platform.library.R;
+import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -2037,5 +2041,32 @@ public class Util {
                 }
             }
         }
+    }
+
+    private static String getStringFromInputStream(InputStream is) throws IOException {
+
+        BufferedReader br = null;
+        StringBuilder sb = new StringBuilder();
+        String line;
+        try {
+            br = new BufferedReader(new InputStreamReader(is));
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+
+        } finally {
+            if (br != null) {
+                br.close();
+            }
+        }
+        String json = sb.toString();
+        return json;
+
+    }
+    static final Gson GSON = new Gson();
+    public  static ResponseDTO getResponseData(FileInputStream stream) throws IOException {
+        String json = getStringFromInputStream(stream);
+        ResponseDTO response = GSON.fromJson(json, ResponseDTO.class);
+        return response;
     }
 }

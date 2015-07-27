@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.boha.monitor.setup" >
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/BlueThemeTwo"
+        tools:replace="theme" >
+        <activity
+            android:name=".activities.FileImportActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".activities.CompanyListActivity" >
+        </activity>
+        <activity
+            android:name=".activities.MainPagerActivity"
+            android:label="@string/title_activity_data_import" >
+        </activity>
+        <activity
+            android:name=".activities.TaskTypeListActivity"
+            android:label="@string/title_activity_task_type_list"
+            android:parentActivityName=".activities.CompanyListActivity" >
+        </activity>
+        <activity
+            android:name=".activities.TaskListActivity"
+            android:label="@string/title_activity_task" >
+        </activity>
+        <activity android:name=".activities.ProgrammeListActivity"/>
+        <activity
+            android:name=".activities.CompanyListActivity"
+            android:label="@string/title_activity_main" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.PortfolioListActivity"
+            android:label="@string/title_activity_portfolio_list" >
+        </activity>
+        <activity android:name=".activities.ProjectDataListActivity"/>
+    </application>
+
+</manifest>

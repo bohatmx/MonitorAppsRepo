@@ -22,22 +22,39 @@ public class TaskTypeListActivity extends AppCompatActivity implements TaskTypeL
 
     ProjectDTO projectDTO;
     TaskTypeListFragment taskTypeListFragment;
-    int themeDarkColor, themePrimaryColor;
+    int themeDarkColor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.w(LOG,"## onCreate");
         ThemeChooser.setTheme(this);
         setContentView(R.layout.activity_task_type_list);
 
-         themeDarkColor = getIntent().getIntExtra("darkColor", R.color.teal_900);
-         projectDTO = (ProjectDTO)getIntent().getSerializableExtra("project");
+        if (savedInstanceState != null) {
+            Log.w(LOG,"## saveInstanceState is not NULL");
+            projectDTO = (ProjectDTO)savedInstanceState.getSerializable("project");
+            themeDarkColor = savedInstanceState.getInt("themeDarkColor");
+        } else {
+            themeDarkColor = getIntent().getIntExtra("darkColor", R.color.teal_900);
+            projectDTO = (ProjectDTO) getIntent().getSerializableExtra("project");
+        }
          taskTypeListFragment = (TaskTypeListFragment)
                 getSupportFragmentManager().findFragmentById(R.id.fragment);
         Log.d("TaskTypeListActivity", "### onCreate, setting project: " + projectDTO.getProjectName());
         taskTypeListFragment.setProject(projectDTO);
         taskTypeListFragment.setDarkColor(themeDarkColor);
+
+        android.support.v7.app.ActionBar bar = getSupportActionBar();
+        bar.setTitle(projectDTO.getProjectName());
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle b) {
+        Log.w(LOG,"## onSaveInstanceState");
+        b.putSerializable("project",projectDTO);
+        b.putInt("themeDarkColor",themeDarkColor);
+        super.onSaveInstanceState(b);
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

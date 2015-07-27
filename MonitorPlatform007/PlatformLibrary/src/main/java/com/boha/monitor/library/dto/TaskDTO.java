@@ -20,12 +20,19 @@ public class TaskDTO implements Serializable {
     private Integer taskNumber;
     private String description;
     private List<ProjectTaskDTO> projectTaskList;
-    private Integer companyID;
-    private TaskTypeDTO taskType;
+    private Integer companyID, taskTypeID;
+    private List<SubTaskDTO> subTaskList;
 
     public TaskDTO() {
     }
 
+    public List<SubTaskDTO> getSubTaskList() {
+        return subTaskList;
+    }
+
+    public void setSubTaskList(List<SubTaskDTO> subTaskList) {
+        this.subTaskList = subTaskList;
+    }
 
     public Integer getCompanyID() {
         return companyID;
@@ -35,12 +42,12 @@ public class TaskDTO implements Serializable {
         this.companyID = companyID;
     }
 
-    public TaskTypeDTO getTaskType() {
-        return taskType;
+    public Integer getTaskTypeID() {
+        return taskTypeID;
     }
 
-    public void setTaskType(TaskTypeDTO taskType) {
-        this.taskType = taskType;
+    public void setTaskTypeID(Integer taskTypeID) {
+        this.taskTypeID = taskTypeID;
     }
 
     public Integer getTaskID() {

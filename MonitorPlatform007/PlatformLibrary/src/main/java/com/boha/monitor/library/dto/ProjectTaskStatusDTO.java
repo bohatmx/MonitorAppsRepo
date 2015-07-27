@@ -21,6 +21,7 @@ public class ProjectTaskStatusDTO implements Serializable {
     private TaskStatusTypeDTO taskStatusType;
     private Integer staffID;
     private Integer monitorID;
+    private String staffName, monitorName;
 
     public ProjectTaskStatusDTO() {
     }
@@ -31,6 +32,22 @@ public class ProjectTaskStatusDTO implements Serializable {
 
     public void setProjectTaskStatusID(Integer projectTaskStatusID) {
         this.projectTaskStatusID = projectTaskStatusID;
+    }
+
+    public String getStaffName() {
+        return staffName;
+    }
+
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
+    }
+
+    public String getMonitorName() {
+        return monitorName;
+    }
+
+    public void setMonitorName(String monitorName) {
+        this.monitorName = monitorName;
     }
 
     public Long getLocalID() {

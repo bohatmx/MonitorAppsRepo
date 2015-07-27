@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.boha.monitor.library.adapters.PictureAdapter;
+import com.boha.monitor.library.adapters.PhotoAdapter;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.SpacesItemDecoration;
 import com.boha.platform.library.R;
@@ -20,7 +20,7 @@ public class PhotoGridFragment extends Fragment implements PageFragment {
     ResponseDTO response;
     RecyclerView mRecyclerView;
     View view;
-    PictureAdapter adapter;
+    PhotoAdapter adapter;
     static final String LOG = PhotoGridFragment.class.getSimpleName();
 
     public static PhotoGridFragment newInstance(ResponseDTO r) {
@@ -53,9 +53,9 @@ public class PhotoGridFragment extends Fragment implements PageFragment {
         StaggeredGridLayoutManager x = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.addItemDecoration(new SpacesItemDecoration(2));
         mRecyclerView.setLayoutManager(x);
-        
+
         if (response != null) {
-            adapter = new PictureAdapter(response.getPhotoUploadList(), getActivity(), new PictureAdapter.PictureListener() {
+            adapter = new PhotoAdapter(response.getPhotoUploadList(), PhotoAdapter.FULL_IMAGE, getActivity(), new PhotoAdapter.PictureListener() {
                 @Override
                 public void onPictureClicked(int position) {
 

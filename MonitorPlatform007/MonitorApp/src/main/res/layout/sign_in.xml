@@ -99,15 +99,7 @@
                 android:layout_height="wrap_content">
 
 
-                <Button
-                    android:id="@+id/SI_btnSave"
-                    style="@style/ButtonRed"
-                    android:layout_weight="3"
-                    android:layout_alignParentRight="true"
-                    android:text="Sign In"
-                    android:layout_width="wrap_content"
-                    android:textStyle="normal"
-                    android:layout_height="wrap_content"/>
+                <include layout="@layout/btn_red" />
 
             </LinearLayout>
         </RelativeLayout>

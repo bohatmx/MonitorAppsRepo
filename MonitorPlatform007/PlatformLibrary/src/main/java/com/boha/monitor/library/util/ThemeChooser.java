@@ -20,7 +20,7 @@ public class ThemeChooser {
         switch (theme) {
 
             case MonApp.THEME_BLUE:
-                activity.setTheme(R.style.BlueThemeOne);
+                activity.setTheme(R.style.BlueThemeTwo);
                 break;
             case MonApp.THEME_INDIGO:
                 activity.setTheme(R.style.IndigoTheme);

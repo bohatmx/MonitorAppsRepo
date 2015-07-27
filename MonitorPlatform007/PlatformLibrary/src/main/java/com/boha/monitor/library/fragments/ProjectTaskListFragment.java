@@ -41,7 +41,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
         projectTaskList = project.getProjectTaskList();
         List<ProjectTaskDTO> list = new ArrayList<>();
         for (ProjectTaskDTO pt: projectTaskList) {
-            if (pt.getTask().getTaskType().getTaskTypeID().intValue() == taskType.getTaskTypeID().intValue()) {
+            if (pt.getTask().getTaskTypeID().intValue() == taskType.getTaskTypeID().intValue()) {
                 list.add(pt);
             }
         }

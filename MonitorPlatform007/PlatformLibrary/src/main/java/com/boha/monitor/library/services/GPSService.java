@@ -10,8 +10,10 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.boha.monitor.library.dto.LocationTrackerDTO;
+import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
@@ -55,7 +57,7 @@ public class GPSService extends Service implements LocationListener,
 
 
     @Override
-    public IBinder onBind( Intent intent) {
+    public IBinder onBind(Intent intent) {
         Log.i(LOG, "### onBind, intent: " + intent.toString());
         throw new UnsupportedOperationException("not done yet");
     }
@@ -105,14 +107,10 @@ public class GPSService extends Service implements LocationListener,
 
 
     @Override
-    public void onLocationChanged( Location loc) {
+    public void onLocationChanged(Location loc) {
         Log.d(LOG, "## onLocationChanged accuracy = " + loc.getAccuracy()
                 + " - " + new Date().toString());
-        if (SharedUtil.getCompanyStaff(
-                getApplicationContext()) == null) {
-            stopLocationUpdates();
-            return;
-        }
+
         if (this.mLocation == null) {
             this.mLocation = loc;
         }
@@ -126,8 +124,14 @@ public class GPSService extends Service implements LocationListener,
                         r.setLocationTrackerList(new ArrayList<LocationTrackerDTO>());
                     }
                     LocationTrackerDTO dto = new LocationTrackerDTO();
-                    dto.setStaffID(SharedUtil.getCompanyStaff(
-                            getApplicationContext()).getStaffID());
+                    StaffDTO s = SharedUtil.getCompanyStaff(
+                            getApplicationContext());
+                    if (s != null)
+                        dto.setStaffID(s.getStaffID());
+                    MonitorDTO m = SharedUtil.getMonitor(
+                            getApplicationContext());
+                    if (m != null)
+                        dto.setMonitorID(m.getMonitorID());
                     dto.setAccuracy(mLocation.getAccuracy());
                     dto.setDateTracked(new Date().getTime());
                     dto.setLatitude(mLocation.getLatitude());
@@ -153,13 +157,8 @@ public class GPSService extends Service implements LocationListener,
                                                 + response.getLocationTrackerList().size() + " ==> Bypassing send for now: " + new Date().toString());
                                         return;
                                     }
-                                    index = 0;
-                                    batches = response.getLocationTrackerList().size() / BATCH_SIZE;
-                                    int rem = response.getLocationTrackerList().size() % BATCH_SIZE;
-                                    if (rem > 0) {
-                                        batches++;
-                                    }
-                                    sendData();
+
+                                    send(response.getLocationTrackerList());
                                 }
 
                                 @Override
@@ -216,28 +215,7 @@ public class GPSService extends Service implements LocationListener,
 
     private int index, batches;
     private ResponseDTO response;
-    private void sendData() {
 
-        if (index < batches) {
-            List<LocationTrackerDTO> mList = new ArrayList<>();
-            int startIndex = index * BATCH_SIZE;
-            int endIndex = startIndex + BATCH_SIZE;
-
-            for (int x = startIndex; x < endIndex; x++) {
-                mList.add(response.getLocationTrackerList().get(x));
-            }
-
-            send(mList);
-        } else {
-            response.setLocationTrackerList(new ArrayList<LocationTrackerDTO>());
-            CacheUtil.cacheTrackerData(getApplicationContext(), response, null);
-            Log.w(LOG, "### Tracker cache emptied after upload");
-        }
-
-
-
-
-    }
 
     private void send(List<LocationTrackerDTO> list) {
         RequestDTO dto = new RequestDTO(RequestDTO.ADD_LOCATION_TRACKERS);
@@ -248,8 +226,9 @@ public class GPSService extends Service implements LocationListener,
             public void onResponse(ResponseDTO response) {
                 Log.e(LOG, response.getMessage());
                 if (response.getStatusCode() == 0) {
-                    index++;
-                    sendData();
+                    ResponseDTO w = new ResponseDTO();
+                    w.setLocationTrackerList(new ArrayList<LocationTrackerDTO>());
+                    CacheUtil.cacheTrackerData(getApplicationContext(),w, null);
                 }
             }
 
@@ -264,8 +243,9 @@ public class GPSService extends Service implements LocationListener,
             }
         });
     }
+
     static final float ACCURACY_THRESHOLD = 15;
-    static final int MINIMUM_TRACKER_EVENTS = 1, BATCH_SIZE = 1;
+    static final int MINIMUM_TRACKER_EVENTS = 4;
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {

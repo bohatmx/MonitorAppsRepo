@@ -14,16 +14,44 @@ public class VideoClipDTO implements Serializable, Comparable<VideoClipDTO> {
             comment,
             filePath,
             youTubeID,
-            tournamentName, golfGroupName;
-    private int tournamentID, videoClipID;
-    private int golfGroupID, sortType;
+            projectName, taskNamw;
+    private Integer projectTaskID, projectID, videoClipID;
+    private int sortType;
 
-    public String getGolfGroupName() {
-        return golfGroupName;
+    public String getProjectName() {
+        return projectName;
     }
 
-    public void setGolfGroupName(String golfGroupName) {
-        this.golfGroupName = golfGroupName;
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public String getTaskNamw() {
+        return taskNamw;
+    }
+
+    public void setTaskNamw(String taskNamw) {
+        this.taskNamw = taskNamw;
+    }
+
+    public Integer getProjectTaskID() {
+        return projectTaskID;
+    }
+
+    public void setProjectTaskID(Integer projectTaskID) {
+        this.projectTaskID = projectTaskID;
+    }
+
+    public Integer getProjectID() {
+        return projectID;
+    }
+
+    public void setProjectID(Integer projectID) {
+        this.projectID = projectID;
+    }
+
+    public void setVideoClipID(Integer videoClipID) {
+        this.videoClipID = videoClipID;
     }
 
     public long getDateUploaded() {
@@ -58,13 +86,6 @@ public class VideoClipDTO implements Serializable, Comparable<VideoClipDTO> {
         this.videoClipID = videoClipID;
     }
 
-    public String getTournamentName() {
-        return tournamentName;
-    }
-
-    public void setTournamentName(String tournamentName) {
-        this.tournamentName = tournamentName;
-    }
 
     public int getSortType() {
         return sortType;
@@ -107,23 +128,6 @@ public class VideoClipDTO implements Serializable, Comparable<VideoClipDTO> {
         this.comment = comment;
     }
 
-    public int getTournamentID() {
-        return tournamentID;
-    }
-
-    public void setTournamentID(int tournamentID) {
-        this.tournamentID = tournamentID;
-    }
-
-    public int getGolfGroupID() {
-        return golfGroupID;
-    }
-
-    public void setGolfGroupID(int golfGroupID) {
-        this.golfGroupID = golfGroupID;
-    }
-
-
     @Override
     public int compareTo( VideoClipDTO v) {
 
@@ -143,14 +147,12 @@ public class VideoClipDTO implements Serializable, Comparable<VideoClipDTO> {
                 if (videoDate < v.videoDate) return -1;
                 if (videoDate > v.videoDate) return 1;
                 break;
-            case SORT_BY_TOURNAMENT:
-                return tournamentName.compareTo(v.tournamentName);
 
         }
         return 0;
     }
 
-    public static  final int SORT_BY_DATE_DESC = 1, SORT_BY_DATE_ASC = 2, SORT_BY_TOURNAMENT = 3;
+    public static  final int SORT_BY_DATE_DESC = 1, SORT_BY_DATE_ASC = 2;
 
 
 }

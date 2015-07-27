@@ -1,7 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:padding="@dimen/mon_divider"
     android:layout_height="match_parent"
     tools:context="com.boha.monitor.library.fragments.ProjectListFragment">
 
@@ -21,7 +20,7 @@
     </RelativeLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler"
-        android:layout_marginTop="@dimen/mon_padding"
+        android:layout_marginTop="@dimen/mon_divider"
         android:layout_below="@id/topBox"
         android:scrollbars="vertical"
         android:layout_width="match_parent"

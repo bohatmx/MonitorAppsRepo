@@ -13,6 +13,10 @@ public class VideoClipContainer implements Serializable {
 
     List<VideoClipDTO> videoClips = new ArrayList<VideoClipDTO>();
 
+    public void addVideo(VideoClipDTO clip) {
+        videoClips.add(clip);
+    }
+
     public List<VideoClipDTO> getVideoClips() {
         return videoClips;
     }

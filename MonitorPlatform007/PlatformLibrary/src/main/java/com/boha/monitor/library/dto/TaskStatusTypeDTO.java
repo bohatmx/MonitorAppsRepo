@@ -21,8 +21,8 @@ public class TaskStatusTypeDTO implements Serializable {
     private Integer companyID;
     public static final int
             STATUS_COLOR_RED = 1,
-            STATUS_COLOR_GREEN = 3,
-            STATUS_COLOR_AMBER = 2;
+            STATUS_COLOR_AMBER = 2,
+            STATUS_COLOR_GREEN = 3;
 
     public TaskStatusTypeDTO() {
     }

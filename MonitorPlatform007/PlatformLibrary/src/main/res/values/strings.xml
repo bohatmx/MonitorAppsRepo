@@ -17,6 +17,11 @@
     <string name="monitors">Monitors</string>
     <string name="messaging">Messaging</string>
     <string name="profile">Profile</string>
+    <string name="get_status">Get Status</string>
+    <string name="take_picture">Take Photo</string>
+    <string name="send_app_link">Send App Invitation Link</string>
+    <string name="edit">Edit Details</string>
+    <string name="under_cons">Under Construction</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -32,5 +37,14 @@
     <string name="status_saved">Task Status update has been saved</string>
     <string name="open_camera">Open Camera</string>
     <string name="title_activity_photo">PhotoActivity</string>
+    <string name="title_activity_test">TestActivity</string>
+    <string name="select_account">Select email account</string>
+    <string name="no_prev_photos">No previous photos found. Tap to start</string>
+    <string name="start_scan">Start Scan</string>
+    <string name="stop_scan">Stop Scan</string>
+    <string name="select_action">Select Action</string>
+    <string name="status_updates">Status Updates</string>
+    <string name="select_proj">Select Project</string>
+    <string name="status_rept">Status Report</string>
 
 </resources>

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/apk/res-auto"
-    android:background="@color/grey"
-    tools:cardElevation="@dimen/mon_padding"
+    tools:cardElevation="@dimen/mon_divider"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     tools:cardCornerRadius="4dp">
@@ -153,6 +152,7 @@
             android:id="@+id/PI_bottomActions"
             layout="@layout/project_actions_bottom"
             android:layout_marginTop="@dimen/mon_margin"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/PI_middle4" />

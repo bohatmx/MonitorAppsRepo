@@ -1,6 +1,7 @@
 package com.boha.monitor.library.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,11 +13,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.MonitorMapActivity;
 import com.boha.monitor.library.adapters.ProjectAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.SharedUtil;
-import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
 import java.util.List;
@@ -55,7 +56,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(LOG, "### onCreate");
         if (getArguments() != null) {
             mResponse = (ResponseDTO) getArguments().getSerializable("response");
             projectList = mResponse.getProjectList();
@@ -73,25 +73,10 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(LOG, "### onCreateView");
         view = inflater.inflate(R.layout.fragment_project_list, container, false);
-//        txtProgramme = (TextView) view.findViewById(R.id.PRH_programme);
-//        txtProjectCount = (TextView) view.findViewById(R.id.PRH_count);
-//        image = (ImageView) view.findViewById(R.id.PRH_image);
-//        txtProjectCount.setText("0");
-//        txtProgramme.setText("");
-//        image.setImageDrawable(Util.getRandomBackgroundImage(getActivity()));
-
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
-//        mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getActivity())
-//                .color(getResources().getColor(R.color.blue_gray_400))
-//                .sizeResId(R.dimen.mon_divider)
-//                .marginResId(R.dimen.mon_padding)
-//                .build());
-
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(llm);
-
         mRecyclerView.setHasFixedSize(true);
 
         setList();
@@ -101,13 +86,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     ProjectAdapter projectAdapter;
 
     private void setList() {
-        Log.e(LOG,"### setList");
-//        txtProjectCount.setText("" + projectList.size());
-//        if (projectList.get(0).getProgrammeName() != null) {
-//            txtProgramme.setText(projectList.get(0).getProgrammeName());
-//        }
-
-
 
         projectAdapter = new ProjectAdapter(projectList, getActivity(), darkColor,new ProjectListFragmentListener() {
             @Override
@@ -155,6 +133,9 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             @Override
             public void onMapRequired(ProjectDTO project) {
                 Log.i(LOG, "### onMapRequired");
+                Intent w = new Intent(getActivity(), MonitorMapActivity.class);
+                w.putExtra("project",project);
+                startActivity(w);
             }
         });
         mRecyclerView.setAdapter(projectAdapter);
@@ -164,7 +145,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        Log.d(LOG, "### onAttach");
         try {
             mListener = (ProjectListFragmentListener) activity;
         } catch (ClassCastException e) {
@@ -183,7 +163,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public void animateHeroHeight() {
         if (getActivity() != null) {
-            image.setImageDrawable(Util.getRandomBackgroundImage(getActivity()));
+//            image.setImageDrawable(Util.getRandomBackgroundImage(getActivity()));
         }
     }
 

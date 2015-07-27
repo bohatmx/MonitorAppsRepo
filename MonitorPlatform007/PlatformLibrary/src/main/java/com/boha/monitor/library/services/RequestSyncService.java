@@ -9,18 +9,10 @@ import android.util.Log;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.RequestList;
 import com.boha.monitor.library.dto.ResponseDTO;
-import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
-import com.google.gson.Gson;
+import com.boha.monitor.library.util.RequestCacheUtil;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -48,85 +40,131 @@ public class RequestSyncService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.w(LOG, "### RequestSyncService onHandleIntent");
-        FileInputStream stream;
-        try {
-            stream = getApplicationContext().openFileInput("requestCache.json");
-            String json = getStringFromInputStream(stream);
-            RequestCache cache = gson.fromJson(json, RequestCache.class);
-            if (cache != null) {
-                requestCache = cache;
+        RequestCacheUtil.getRequests(getApplicationContext(), new RequestCacheUtil.RequestCacheListener() {
+            @Override
+            public void onError(String message) {}
+
+            @Override
+            public void onRequestAdded() {}
+
+            @Override
+            public void onRequestsRetrieved(RequestList list) {
+                requestList = list;
                 Log.i(LOG, "++ RequestCache returned from disk, entries: "
-                        + requestCache.getRequestCacheEntryList().size());
-                print();
-                controlRequestUpload();
-            } else {
-                Log.e(LOG, "-- requestCache is null");
-                requestSyncListener.onTasksSynced(0, 0);
+                        + requestList.getRequests().size());
+                if (requestList.getRequests().isEmpty()) {
+                    if (requestSyncListener != null) {
+                        requestSyncListener.onTasksSynced(0,0);
+                    }
+                    return;
+
+                }
+                if (requestList.isRideWebSocket()) {
+                    NetUtil.sendRequest(getApplicationContext(), list, new NetUtil.NetUtilListener() {
+                        @Override
+                        public void onResponse(ResponseDTO response) {
+                            Log.i(LOG, "** cached requests sent up via websocket! good responses: " + response.getGoodCount() +
+                                    " bad responses: " + response.getBadCount());
+                            RequestCacheUtil.clearCache(getApplicationContext(),null);
+                            if (requestSyncListener != null) {
+                                requestSyncListener.onTasksSynced(response.getGoodCount(),response.getBadCount());
+                            }
+                        }
+
+                        @Override
+                        public void onError(String message) {
+                            if (requestSyncListener != null)
+                                requestSyncListener.onError(message);
+                        }
+
+                        @Override
+                        public void onWebSocketClose() {
+
+                        }
+                    });
+                } else {
+                    controlRequestUpload();
+                }
             }
-        } catch (FileNotFoundException e) {
-            Log.i(LOG, "--- FileNotFoundException, requestCache does not exist yet");
-            requestSyncListener.onTasksSynced(0, 0);
-        } catch (Exception e) {
-            Log.e(LOG, "problem with sync", e);
-            requestSyncListener.onTasksSynced(0, 0);
-        }
+
+        });
+
     }
 
-    int currentIndex;
-    static final Gson gson = new Gson();
-
-
-    private static String getStringFromInputStream( InputStream is) throws IOException {
-
-        BufferedReader br = null;
-        StringBuilder sb = new StringBuilder();
-        String line;
-        try {
-            br = new BufferedReader(new InputStreamReader(is));
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-
-        } finally {
-            if (br != null) {
-                br.close();
-            }
-        }
-        String json = sb.toString();
-        return json;
-
-    }
+    int index, batches, batchIndex;
+    static final int BATCH_SIZE = 12;
 
     private void controlRequestUpload() {
 
-        Log.i(LOG, "%%% Cached requests about to be sent to cloud....");
-        RequestList list = new RequestList();
-        list.setRequests(new ArrayList<RequestDTO>());
-        for (RequestCacheEntry e : requestCache.getRequestCacheEntryList()) {
-            list.getRequests().add(e.getRequest());
-        }
-        if (list.getRequests().isEmpty()) {
+        if (requestList.getRequests().isEmpty()) {
             Log.d(LOG, "#### no requests cached, quitting...");
             requestSyncListener.onTasksSynced(0, 0);
             return;
         }
-        Log.w(LOG, "### sending list of cached requests: " + list.getRequests().size());
+
+        index = 0;
+        batches = requestList.getRequests().size() / BATCH_SIZE;
+        int rem = requestList.getRequests().size() % BATCH_SIZE;
+        if (rem > 0) {
+            batches++;
+        }
+        lists = new ArrayList<>();
+        for (int i = 0; i < batches; i++) {
+            lists.add(new RequestList());
+        }
+        batchIndex = 0;
+        prepareBatch();
+
+    }
+
+    List<RequestList> lists;
+    RequestList requestList;
+
+    private void prepareBatch() {
+
+        RequestList rex = new RequestList();
+        rex.setRequests(new ArrayList<RequestDTO>());
+        for (RequestDTO x: requestList.getRequests()) {
+            rex.getRequests().add(x);
+            if ((index + 1) % BATCH_SIZE == 0) {
+                lists.get(batchIndex).setRequests(rex.getRequests());
+                rex.setRequests(new ArrayList<RequestDTO>());
+                batchIndex++;
+            }
+            index++;
+        }
+
+        batchIndex = 0;
+        controlBatch();
+    }
+
+    int good, bad;
+    private void controlBatch() {
+        if (batchIndex < lists.size()) {
+            sendBatch(lists.get(batchIndex));
+            return;
+        }
+        RequestCacheUtil.clearCache(getApplicationContext(),null);
+        if (requestSyncListener != null)
+            requestSyncListener.onTasksSynced(good, bad);
+    }
+    private void sendBatch (final RequestList list) {
         NetUtil.sendRequest(getApplicationContext(), list, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(ResponseDTO response) {
                 Log.i(LOG, "** cached requests sent up! good responses: " + response.getGoodCount() +
                         " bad responses: " + response.getBadCount());
-                for (RequestCacheEntry e : requestCache.getRequestCacheEntryList()) {
-                    e.setDateUploaded(new Date());
-                }
-                cleanupCache();
-                requestSyncListener.onTasksSynced(response.getGoodCount(), response.getBadCount());
+                good += response.getGoodCount();
+                bad += response.getBadCount();
+                batchIndex++;
+                controlBatch();
 
             }
 
             @Override
             public void onError(String message) {
-                requestSyncListener.onError(message);
+                if (requestSyncListener != null)
+                    requestSyncListener.onError(message);
             }
 
             @Override
@@ -135,29 +173,10 @@ public class RequestSyncService extends IntentService {
             }
         });
 
-
     }
 
-    private void cleanupCache() {
-        List<RequestCacheEntry> list = new ArrayList<>();
-        for (RequestCacheEntry e : requestCache.getRequestCacheEntryList()) {
-            if (e.getDateUploaded() == null) {
-                list.add(e);
-            }
-        }
-        Log.i(LOG, "cache cleaned up, pending: " + list.size());
-        requestCache.setRequestCacheEntryList(list);
-        CacheUtil.cacheRequest(getApplicationContext(), requestCache, null);
-    }
 
-    RequestCache requestCache;
     static final String LOG = RequestSyncService.class.getSimpleName();
-
-    private void print() {
-//        for (RequestCacheEntry e : requestCache.getRequestCacheEntryList()) {
-//            Log.w(LOG, "+++ " + e.getDateRequested() + " requestType: " + e.getRequest().getRequestType());
-//        }
-    }
 
     public class LocalBinder extends Binder {
 

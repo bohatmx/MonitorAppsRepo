@@ -1,0 +1,62 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/grey"
+    android:padding="@dimen/mon_padding"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.boha.monitor.setup.fragments.CompanyListFragment">
+
+    <RelativeLayout
+        android:id="@+id/FCL_topLayout"
+        android:background="@color/beige_pale"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/mon_padding">
+
+        <TextView
+            android:id="@+id/FCL_count"
+            style="@style/BlackCountBoxSmall"
+            android:text="00"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/FCL_title"
+            style="@style/Title2TextStyleBlue"
+            android:text="Title"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/FCL_count"
+            android:layout_marginRight="@dimen/mon_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <LinearLayout
+            android:id="@+id/FCL_emptyLayout"
+            android:layout_below="@id/FCL_title"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/FCL_list"
+        android:layout_marginTop="@dimen/mon_padding"
+        android:layout_below="@id/FCL_topLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/mon_padding"
+        android:elevation="@dimen/mon_padding"
+        android:src="@drawable/ic_action_add_circle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+
+</RelativeLayout>

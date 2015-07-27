@@ -79,8 +79,6 @@ public class BaseVolley {
         if (requestQueue == null) {
             Log.w(LOG, "getRemoteData requestQueue is null, getting it ...: ");
             requestQueue = BohaVolley.getRequestQueue(ctx);
-        } else {
-            Log.e(LOG, "********** getRemoteData requestQueue is NOT NULL - Kool");
         }
         String json = null, jj = null;
 
@@ -92,7 +90,6 @@ public class BaseVolley {
             e.printStackTrace();
         }
         retries = 0;
-        //http://192.168.1.30:8080/mwp/gate{"locationTrackerList":[{"dateTracked"
         StringBuilder sb = new StringBuilder();
         sb.append(Statics.URL).append(suffix);
         sb.append(json);
@@ -199,7 +196,7 @@ public class BaseVolley {
             @Override
             public void onResponse( ResponseDTO r) {
                 response = r;
-                Log.e(LOG, "Yup! ...response object received, status code: " + r.getStatusCode());
+                Log.d(LOG, "Yup! ...response object received, status code: " + r.getStatusCode());
                 if (r.getStatusCode() > 0) {
                     try {
                         Log.w(LOG, response.getMessage());

@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.dto.PhotoUploadDTO;
-import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -58,9 +58,6 @@ public class PhotoFragment extends Fragment implements PageFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.image_full, container, false);
-        if (getArguments() != null) {
-            photo = (PhotoUploadDTO) getArguments().getSerializable("photo");
-        }
         setFields();
 
         return view;
@@ -129,7 +126,7 @@ public class PhotoFragment extends Fragment implements PageFragment {
         });
     }
     private void setRemoteImage() {
-        String u = Util.getPhotoURL(photo);
+        String u = photo.getUri();
         ImageLoader.getInstance().displayImage(u, image, new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
@@ -138,7 +135,11 @@ public class PhotoFragment extends Fragment implements PageFragment {
 
             @Override
             public void onLoadingFailed(String s, View view, FailReason failReason) {
-                image.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.under_construction));
+                try {
+                    image.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.under_construction));
+                } catch (Exception e) {
+                    Log.w("PhotoFragment", "image failed", e);
+                }
             }
 
             @Override

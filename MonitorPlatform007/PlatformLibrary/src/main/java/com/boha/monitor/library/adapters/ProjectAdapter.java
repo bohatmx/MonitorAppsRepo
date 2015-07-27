@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.dto.ProjectDTO;
+import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
@@ -31,7 +32,7 @@ import java.util.Locale;
  */
 public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-   
+
     private ProjectListFragment.ProjectListFragmentListener listener;
     private List<ProjectDTO> projectList;
     private Context ctx;
@@ -55,8 +56,9 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             return ITEM;
         }
     }
+
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder( ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == HEADER) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.project_list_header, parent, false);
             return new HeaderViewHolder(v);
@@ -69,45 +71,51 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
 
     @Override
-    public void onBindViewHolder( final RecyclerView.ViewHolder holder, final int position) {
-
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 
 
         if (holder instanceof HeaderViewHolder) {
             final ProjectDTO p = projectList.get(0);
-            final HeaderViewHolder hvh = (HeaderViewHolder)holder;
+            final HeaderViewHolder hvh = (HeaderViewHolder) holder;
             hvh.txtProgramme.setText(p.getProgrammeName());
             hvh.txtCount.setText("" + projectList.size());
             hvh.image.setImageDrawable(Util.getRandomHeroImage(ctx));
         }
         if (holder instanceof ProjectViewHolder) {
             final ProjectDTO p = projectList.get(position - 1);
-            final ProjectViewHolder pvh = (ProjectViewHolder)holder;
+            final ProjectViewHolder pvh = (ProjectViewHolder) holder;
             if (p.getLastStatus() != null) {
                 pvh.txtLastDate.setText(sdf.format(new Date(p.getLastStatus().getStatusDate())));
             } else {
                 pvh.txtLastDate.setText("No Status Date");
             }
             pvh.txtProjectName.setText(p.getProjectName());
-            if (p.getPhotoCount() != null) {
-                pvh.txtPhotos.setText(df.format(p.getPhotoCount()));
-            } else {
-                pvh.txtPhotos.setText("0");
+            int count = 0, status = 0;
+            if (p.getPhotoUploadList() != null) {
+                count = p.getPhotoUploadList().size();
             }
-            if (p.getStatusCount() != null) {
-                pvh.txtStatusCount.setText(df.format(p.getStatusCount()));
-            } else {
-                pvh.txtStatusCount.setText("0");
+            for (ProjectTaskDTO d : p.getProjectTaskList()) {
+                if (d.getPhotoUploadList() != null)
+                    count += d.getPhotoUploadList().size();
+                if (d.getProjectTaskStatusList() != null) {
+                    status += d.getProjectTaskStatusList().size();
+                }
             }
-            if (darkColor != 0) {
-                pvh.iconCamera.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-                pvh.iconDirections.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-                pvh.iconDoStatus.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-                pvh.iconGallery.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-                pvh.iconLocation.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-                pvh.iconMap.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-                pvh.iconMessaging.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-            }
+            pvh.txtPhotos.setText(df.format(count));
+            pvh.txtStatusCount.setText(df.format(status));
+
+            pvh.txtPhotos.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Util.flashOnce(pvh.txtPhotos, 300, new Util.UtilAnimationListener() {
+                        @Override
+                        public void onAnimationEnded() {
+                            listener.onGalleryRequired(p);
+                        }
+                    });
+                }
+            });
+            
             pvh.iconCamera.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -223,7 +231,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             }
                             pvh.imageIndex = index;
                             String url = Util.getPhotoURL(p.getPhotoUploadList().get(index));
-                            ImageLoader.getInstance().displayImage(url,pvh.image);
+                            ImageLoader.getInstance().displayImage(url, pvh.image);
                         }
 
                     }
@@ -243,7 +251,6 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
 
-
     }
 
     @Override
@@ -255,7 +262,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", loc);
     static final DecimalFormat df = new DecimalFormat("###,###,###,###");
 
-    public class ProjectViewHolder extends RecyclerView.ViewHolder  {
+    public class ProjectViewHolder extends RecyclerView.ViewHolder {
         protected ImageView image;
         protected TextView txtProjectName, txtStatusCount, txtLastDate, txtPhotos;
         protected ImageView
@@ -286,10 +293,10 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
     }
-    public class HeaderViewHolder extends RecyclerView.ViewHolder  {
+
+    public class HeaderViewHolder extends RecyclerView.ViewHolder {
         protected ImageView image;
         protected TextView txtProgramme, txtCount;
-
 
 
         public HeaderViewHolder(View itemView) {

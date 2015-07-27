@@ -59,6 +59,13 @@ public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> 
     private Integer projectTaskID;
     private Integer staffID ;
 
+    private String secureUrl;
+    private String eTag;
+    private String signature;
+    private Integer width;
+    private Integer height;
+    private Integer bytes;
+
     public PhotoUploadDTO() {
     }
     public static final int TASK_IMAGE = 2, PROJECT_IMAGE = 3, STAFF_IMAGE = 4, MONITOR_IMAGE = 5;
@@ -67,6 +74,53 @@ public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> 
         this.photoUploadID = photoUploadID;
     }
 
+    public String getSecureUrl() {
+        return secureUrl;
+    }
+
+    public void setSecureUrl(String secureUrl) {
+        this.secureUrl = secureUrl;
+    }
+
+    public String geteTag() {
+        return eTag;
+    }
+
+    public void seteTag(String eTag) {
+        this.eTag = eTag;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public Integer getWidth() {
+        return width;
+    }
+
+    public void setWidth(Integer width) {
+        this.width = width;
+    }
+
+    public Integer getHeight() {
+        return height;
+    }
+
+    public void setHeight(Integer height) {
+        this.height = height;
+    }
+
+    public Integer getBytes() {
+        return bytes;
+    }
+
+    public void setBytes(Integer bytes) {
+        this.bytes = bytes;
+    }
 
     public boolean isIsFullPicture() {
         return isFullPicture;

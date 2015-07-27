@@ -170,10 +170,10 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intentx, 0);
 
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), HALF_HOUR, alarmIntent);
+                SystemClock.elapsedRealtime(), FIFTEEN_MINUTES, alarmIntent);
 
 
-        Log.e(LOG, "###### AlarmManager: alarm set to pull the trigger in: HALF_HOUR");
+        Log.e(LOG, "###### AlarmManager: alarm set to pull the trigger in: FIFTEEN_MINUTES");
     }
 
     static final int

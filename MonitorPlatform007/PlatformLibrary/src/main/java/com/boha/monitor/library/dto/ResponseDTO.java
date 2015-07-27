@@ -6,6 +6,7 @@
 package com.boha.monitor.library.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,6 +20,7 @@ public class ResponseDTO implements Serializable{
     private String message = "Request is KOOL!",
             sessionID, GCMRegistrationID, fileString;
     private Double elapsedRequestTimeInSeconds;
+    private Long startDate, endDate;
     private String log;
     private ChatDTO chat;
     private List<ChatDTO> chatList;
@@ -37,13 +39,68 @@ public class ResponseDTO implements Serializable{
     private List<ProjectTaskDTO> projectTaskList;
     private List<PhotoUploadDTO> photoUploadList;
     private List<TaskTypeDTO> taskTypeList;
+    private List<PortfolioDTO> portfolioList;
+    private List<SubTaskDTO> subTaskList;
+    private List<CompanyDTO> companyList;
     //
     private CompanyDTO company;
     private List<MonitorDTO> monitorList;
     private List<StaffDTO> staffList;
     private ProjectTaskStatusDTO lastStatus;
 
+    public List<SubTaskDTO> getSubTaskList() {
+        if (subTaskList == null) {
+            subTaskList = new ArrayList<>();
+        }
+        return subTaskList;
+    }
+
+    public void setSubTaskList(List<SubTaskDTO> subTaskList) {
+        this.subTaskList = subTaskList;
+    }
+
+    public List<PortfolioDTO> getPortfolioList() {
+        if (portfolioList == null) {
+            portfolioList = new ArrayList<>();
+        }
+        return portfolioList;
+    }
+
+    public void setPortfolioList(List<PortfolioDTO> portfolioList) {
+        this.portfolioList = portfolioList;
+    }
+
+    public List<CompanyDTO> getCompanyList() {
+        if (companyList == null) {
+            companyList = new ArrayList<>();
+        }
+        return companyList;
+    }
+
+    public void setCompanyList(List<CompanyDTO> companyList) {
+        this.companyList = companyList;
+    }
+
+    public Long getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Long startDate) {
+        this.startDate = startDate;
+    }
+
+    public Long getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Long endDate) {
+        this.endDate = endDate;
+    }
+
     public List<TaskTypeDTO> getTaskTypeList() {
+        if (taskTypeList == null) {
+            taskTypeList = new ArrayList<>();
+        }
         return taskTypeList;
     }
 
@@ -52,14 +109,21 @@ public class ResponseDTO implements Serializable{
     }
 
     public List<PhotoUploadDTO> getPhotoUploadList() {
+        if (photoUploadList == null) {
+            photoUploadList = new ArrayList<>();
+        }
         return photoUploadList;
     }
 
     public void setPhotoUploadList(List<PhotoUploadDTO> photoUploadList) {
+
         this.photoUploadList = photoUploadList;
     }
 
     public List<ProjectTaskDTO> getProjectTaskList() {
+        if (projectTaskList == null) {
+            projectTaskList = new ArrayList<>();
+        }
         return projectTaskList;
     }
 
@@ -68,6 +132,9 @@ public class ResponseDTO implements Serializable{
     }
 
     public List<TaskStatusTypeDTO> getTaskStatusTypeList() {
+        if (taskStatusTypeList == null) {
+            taskStatusTypeList = new ArrayList<>();
+        }
         return taskStatusTypeList;
     }
 
@@ -76,6 +143,9 @@ public class ResponseDTO implements Serializable{
     }
 
     public List<ProjectTaskStatusDTO> getProjectTaskStatusList() {
+        if (projectStatusTypeList == null) {
+            projectStatusTypeList = new ArrayList<>();
+        }
         return projectTaskStatusList;
     }
 
@@ -84,6 +154,9 @@ public class ResponseDTO implements Serializable{
     }
 
     public List<MonitorDTO> getMonitorList() {
+        if (monitorList == null) {
+            monitorList = new ArrayList<>();
+        }
         return monitorList;
     }
 
@@ -92,6 +165,9 @@ public class ResponseDTO implements Serializable{
     }
 
     public List<StaffDTO> getStaffList() {
+        if (staffList == null) {
+            staffList = new ArrayList<>();
+        }
         return staffList;
     }
 
@@ -212,6 +288,9 @@ public class ResponseDTO implements Serializable{
     }
 
     public List<ChatDTO> getChatList() {
+        if (chatList == null) {
+            chatList = new ArrayList<>();
+        }
         return chatList;
     }
 
@@ -220,6 +299,9 @@ public class ResponseDTO implements Serializable{
     }
 
     public List<LocationTrackerDTO> getLocationTrackerList() {
+        if (locationTrackerList == null) {
+            locationTrackerList = new ArrayList<>();
+        }
         return locationTrackerList;
     }
 
@@ -236,6 +318,9 @@ public class ResponseDTO implements Serializable{
     }
 
     public List<ChatMessageDTO> getChatMessageList() {
+        if (chatMessageList == null) {
+            chatMessageList = new ArrayList<>();
+        }
         return chatMessageList;
     }
 
@@ -244,6 +329,9 @@ public class ResponseDTO implements Serializable{
     }
 
     public List<StaffProjectDTO> getStaffProjectList() {
+        if (staffProjectList == null) {
+            staffProjectList = new ArrayList<>();
+        }
         return staffProjectList;
     }
 
@@ -260,6 +348,9 @@ public class ResponseDTO implements Serializable{
     }
 
     public List<ProjectStatusTypeDTO> getProjectStatusTypeList() {
+        if (projectStatusTypeList == null) {
+            projectStatusTypeList = new ArrayList<>();
+        }
         return projectStatusTypeList;
     }
 
@@ -268,6 +359,9 @@ public class ResponseDTO implements Serializable{
     }
 
     public List<ProjectDTO> getProjectList() {
+        if (projectList == null) {
+            projectList = new ArrayList<>();
+        }
         return projectList;
     }
 
@@ -276,6 +370,9 @@ public class ResponseDTO implements Serializable{
     }
 
     public List<ErrorStoreDTO> getErrorStoreList() {
+        if (errorStoreList == null) {
+            errorStoreList = new ArrayList<>();
+        }
         return errorStoreList;
     }
 
@@ -284,6 +381,9 @@ public class ResponseDTO implements Serializable{
     }
 
     public List<ErrorStoreAndroidDTO> getErrorStoreAndroidList() {
+        if (errorStoreAndroidList == null) {
+            errorStoreAndroidList = new ArrayList<>();
+        }
         return errorStoreAndroidList;
     }
 
@@ -292,6 +392,9 @@ public class ResponseDTO implements Serializable{
     }
 
     public List<TaskDTO> getTaskList() {
+        if (taskList == null) {
+            taskList = new ArrayList<>();
+        }
         return taskList;
     }
 

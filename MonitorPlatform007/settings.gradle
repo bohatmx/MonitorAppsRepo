@@ -1,1 +1,1 @@
-include ':PlatformLibrary', ':MonitorApp'
+include ':PlatformLibrary', ':MonitorApp', ':StaffApp', ':DataSetupApp'

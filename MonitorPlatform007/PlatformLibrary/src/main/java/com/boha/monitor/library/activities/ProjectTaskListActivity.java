@@ -37,6 +37,9 @@ public class ProjectTaskListActivity extends AppCompatActivity implements Projec
 
         projectTaskListFragment.setTaskType(taskType);
         projectTaskListFragment.setProject(project);
+
+        android.support.v7.app.ActionBar bar = getSupportActionBar();
+        bar.setTitle(project.getProjectName());
     }
 
     @Override
@@ -71,6 +74,7 @@ public class ProjectTaskListActivity extends AppCompatActivity implements Projec
     public void onStatusUpdateRequested(ProjectTaskDTO task) {
         Intent w = new Intent(this, TaskUpdateActivity.class);
         w.putExtra("projectTask",task);
+        w.putExtra("project",project);
         startActivityForResult(w,TASK_UPDATE_REQUEST);
     }
 

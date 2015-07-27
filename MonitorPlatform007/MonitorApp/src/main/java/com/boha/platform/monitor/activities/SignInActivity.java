@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -31,8 +32,6 @@ import com.boha.monitor.library.util.GCMUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Util;
-import com.boha.monitor.library.util.WebCheck;
-import com.boha.monitor.library.util.WebCheckResult;
 import com.boha.platform.monitor.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -66,15 +65,6 @@ public class SignInActivity extends AppCompatActivity {
         ctx = getApplicationContext();
         activity = this;
         banner = (ImageView)findViewById(R.id.SI_banner);
-//        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//
-//        //setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//
-//        CollapsingToolbarLayout collapsingToolbar =
-//                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-//        collapsingToolbar.setTitle("Monitor Sign In");
-
         setFields();
         getEmail();
     }
@@ -95,7 +85,6 @@ public class SignInActivity extends AppCompatActivity {
             }
 
             Intent intent = new Intent(ctx, MainDrawerActivity.class);
-//            Intent intent = new Intent(ctx, CameraActivity.class);
             startActivity(intent);
             //
             finish();
@@ -106,19 +95,24 @@ public class SignInActivity extends AppCompatActivity {
 
     private void registerGCMDevice() {
         boolean ok = checkPlayServices();
+        Snackbar.make(btnSave, "Just a second, checking services ...",Snackbar.LENGTH_LONG)
+                .setAction("CLOSE", null)
+                .show();
         if (ok) {
             Log.e(LOG, "############# Starting Google Cloud Messaging registration");
             GCMUtil.startGCMRegistration(getApplicationContext(), new GCMUtil.GCMUtilListener() {
                 @Override
                 public void onDeviceRegistered(String id) {
-                    Log.e(LOG, "############# GCM - we cool, cool.....: " + id);
+                    Log.i(LOG, "############# GCM - we cool, GcmDeviceDTO waiting to be sent with signin .....: " + id);
                     gcmDevice = new GcmDeviceDTO();
                     gcmDevice.setManufacturer(Build.MANUFACTURER);
                     gcmDevice.setModel(Build.MODEL);
                     gcmDevice.setSerialNumber(Build.SERIAL);
-                    gcmDevice.setProduct(Build.PRODUCT);
+//                    gcmDevice.setProduct(Build.PRODUCT);
                     gcmDevice.setAndroidVersion(Build.VERSION.RELEASE);
                     gcmDevice.setRegistrationID(id);
+                    btnSave.setEnabled(true);
+
 
                 }
 
@@ -131,17 +125,12 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
     private void sendSignIn() {
-        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
-        if (!wcr.isWifiConnected() && !wcr.isMobileConnected()) {
-            Util.showToast(ctx,ctx.getString(R.string.net_not_avail));
-            return;
-        }
         if (ePin.getText().toString().isEmpty()) {
             showErrorToast(ctx, "Enter PIN");
             return;
         }
         if (email == null) {
-            showErrorToast(ctx, "Select email account");
+            showErrorToast(ctx, getString(R.string.select_account));
             return;
         }
         RequestDTO r = new RequestDTO();
@@ -217,12 +206,17 @@ public class SignInActivity extends AppCompatActivity {
         ePin = (EditText) findViewById(R.id.SI_pin);
         txtEmail = (TextView) findViewById(R.id.SI_txtEmail);
         txtApp = (TextView)findViewById(R.id.SI_app);
-        btnSave = (Button)findViewById(R.id.SI_btnSave);
+        btnSave = (Button)findViewById(R.id.btnRed);
         txtApp.setText(R.string.monitor);
+        btnSave.setText("Sign In");
+        btnSave.setEnabled(false);
+        btnSave.setTextColor(getResources().getColor(R.color.white));
 
         txtEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                Intent w = new Intent(getApplicationContext(), TestActivity.class);
+//                startActivity(w);
                 Util.flashOnce(txtEmail,300, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {

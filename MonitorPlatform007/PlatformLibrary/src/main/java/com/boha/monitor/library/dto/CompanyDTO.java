@@ -7,6 +7,7 @@
 package com.boha.monitor.library.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,28 +15,16 @@ import java.util.List;
  * @author aubreyM
  */public class CompanyDTO implements Serializable {
    private static final long serialVersionUID = 1L;
-    private Integer companyID, countryID;
+    private Integer companyID;
     private String companyName;
     private String address, email, cellphone;
 
-    private List<ProjectDTO> projectList;
     private List<ProjectStatusTypeDTO> projectStatusTypeList;
     private List<StaffDTO> staffList;
-    private List<ProjectTaskDTO> projectTaskList;
-    private List<ProjectTaskStatusDTO> projectTaskStatusList;
-    private List<TaskDTO> taskList;
-    private List<TaskTypeDTO> taskTypeList;
     private List<StaffTypeDTO> staffTypeList;
     private List<TaskStatusTypeDTO> taskStatusTypeList;
     private List<MonitorDTO> monitorList;
-    private List<PhotoUploadDTO> photoUploadList;
     private List<PortfolioDTO> portfolioList;
-    private List<GcmDeviceDTO> gcmDeviceList;
-    private List<StaffProjectDTO> staffProjectlist;
-    
-    public CompanyDTO() {
-    }
-
 
     public Integer getCompanyID() {
         return companyID;
@@ -43,14 +32,6 @@ import java.util.List;
 
     public void setCompanyID(Integer companyID) {
         this.companyID = companyID;
-    }
-
-    public Integer getCountryID() {
-        return countryID;
-    }
-
-    public void setCountryID(Integer countryID) {
-        this.countryID = countryID;
     }
 
     public String getCompanyName() {
@@ -85,14 +66,6 @@ import java.util.List;
         this.cellphone = cellphone;
     }
 
-    public List<ProjectDTO> getProjectList() {
-        return projectList;
-    }
-
-    public void setProjectList(List<ProjectDTO> projectList) {
-        this.projectList = projectList;
-    }
-
     public List<ProjectStatusTypeDTO> getProjectStatusTypeList() {
         return projectStatusTypeList;
     }
@@ -102,6 +75,9 @@ import java.util.List;
     }
 
     public List<StaffDTO> getStaffList() {
+        if (staffList == null) {
+            staffList = new ArrayList<>();
+        }
         return staffList;
     }
 
@@ -109,39 +85,10 @@ import java.util.List;
         this.staffList = staffList;
     }
 
-    public List<ProjectTaskDTO> getProjectTaskList() {
-        return projectTaskList;
-    }
-
-    public void setProjectTaskList(List<ProjectTaskDTO> projectTaskList) {
-        this.projectTaskList = projectTaskList;
-    }
-
-    public List<ProjectTaskStatusDTO> getProjectTaskStatusList() {
-        return projectTaskStatusList;
-    }
-
-    public void setProjectTaskStatusList(List<ProjectTaskStatusDTO> projectTaskStatusList) {
-        this.projectTaskStatusList = projectTaskStatusList;
-    }
-
-    public List<TaskDTO> getTaskList() {
-        return taskList;
-    }
-
-    public void setTaskList(List<TaskDTO> taskList) {
-        this.taskList = taskList;
-    }
-
-    public List<TaskTypeDTO> getTaskTypeList() {
-        return taskTypeList;
-    }
-
-    public void setTaskTypeList(List<TaskTypeDTO> taskTypeList) {
-        this.taskTypeList = taskTypeList;
-    }
-
     public List<StaffTypeDTO> getStaffTypeList() {
+        if (staffTypeList == null) {
+            staffTypeList = new ArrayList<>();
+        }
         return staffTypeList;
     }
 
@@ -150,6 +97,9 @@ import java.util.List;
     }
 
     public List<TaskStatusTypeDTO> getTaskStatusTypeList() {
+        if (taskStatusTypeList == null) {
+            taskStatusTypeList = new ArrayList<>();
+        }
         return taskStatusTypeList;
     }
 
@@ -158,6 +108,9 @@ import java.util.List;
     }
 
     public List<MonitorDTO> getMonitorList() {
+        if (monitorList == null) {
+            monitorList = new ArrayList<>();
+        }
         return monitorList;
     }
 
@@ -165,36 +118,14 @@ import java.util.List;
         this.monitorList = monitorList;
     }
 
-    public List<PhotoUploadDTO> getPhotoUploadList() {
-        return photoUploadList;
-    }
-
-    public void setPhotoUploadList(List<PhotoUploadDTO> photoUploadList) {
-        this.photoUploadList = photoUploadList;
-    }
-
     public List<PortfolioDTO> getPortfolioList() {
+        if (portfolioList == null) {
+            portfolioList = new ArrayList<>();
+        }
         return portfolioList;
     }
 
     public void setPortfolioList(List<PortfolioDTO> portfolioList) {
         this.portfolioList = portfolioList;
     }
-
-    public List<GcmDeviceDTO> getGcmDeviceList() {
-        return gcmDeviceList;
-    }
-
-    public void setGcmDeviceList(List<GcmDeviceDTO> gcmDeviceList) {
-        this.gcmDeviceList = gcmDeviceList;
-    }
-
-    public List<StaffProjectDTO> getStaffProjectlist() {
-        return staffProjectlist;
-    }
-
-    public void setStaffProjectlist(List<StaffProjectDTO> staffProjectlist) {
-        this.staffProjectlist = staffProjectlist;
-    }
-    
 }

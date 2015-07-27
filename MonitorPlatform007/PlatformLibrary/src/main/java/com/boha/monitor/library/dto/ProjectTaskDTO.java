@@ -18,6 +18,8 @@ public class ProjectTaskDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer projectTaskID;
     private Long dateRegistered;
+    private Double latitude;
+    private Double longitude;
     private Integer projectID;
     private TaskDTO task;
     private String projectName;
@@ -31,6 +33,21 @@ public class ProjectTaskDTO implements Serializable {
         return task;
     }
 
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
 
     public void setTask(TaskDTO task) {
         this.task = task;

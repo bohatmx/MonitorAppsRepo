@@ -6,15 +6,12 @@ import android.util.Log;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.RequestList;
 import com.boha.monitor.library.dto.ResponseDTO;
-import com.boha.platform.library.R;
 import com.google.gson.Gson;
 
 import org.acra.ACRA;
 
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
@@ -87,13 +84,17 @@ public class WebSocketUtil {
         Log.d(LOG, "&&&&&&& CONNECT TO WEBSOCKET, retryCount: " + retryCount);
         WebSocketOptions options = new WebSocketOptions();
         options.setSocketConnectTimeout(5000);
-        options.setSocketReceiveTimeout(1000);
+        options.setSocketReceiveTimeout(5000);
         try {
             mConnection.connect(url, new WebSocketHandler() {
                 @Override
                 public void onOpen() {
-                    Log.e(LOG, "OnOpen: Connected to " + url + " sending...: \n" + json);
-                    mConnection.sendTextMessage(json);
+                    Log.w(LOG, "OnOpen: Connected to " + url + " sending...: \n" + json);
+                    if (mConnection.isConnected()) {
+                        mConnection.sendTextMessage(json);
+                    } else {
+                        Log.e(LOG,"-- mConnection is not connected. wtf?");
+                    }
                 }
 
                 @Override
@@ -126,33 +127,36 @@ public class WebSocketUtil {
                 @Override
                 public void onClose(int code, String reason) {
                     Log.e(LOG, "Connection lost. " + reason + ". will issue disconnect");
-                    mConnection.disconnect();
-                    mConnection = new WebSocketConnection();
-                    try {
-                        if (retryCount < CONNECT_RETRIES) {
-                            retryCount++;
-                            final Timer timer = new Timer();
-                            timer.schedule(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    timer.cancel();
-                                    connect(url, json);
-                                }
-                            }, retryCount * WAIT_INTERVAL);
-
-                        } else {
-                            webSocketListener.onError(context.getString(R.string.comms_interrupt));
-                        }
-                    } catch (Exception e) {
-
-                    }
+//                    connect(url,json);
+//                    mConnection.disconnect();
+//                    mConnection = new WebSocketConnection();
+//                    try {
+//                        if (retryCount < CONNECT_RETRIES) {
+//                            retryCount++;
+//                            final Timer timer = new Timer();
+//                            timer.schedule(new TimerTask() {
+//                                @Override
+//                                public void run() {
+//                                    timer.cancel();
+//                                    connect(url, json);
+//                                }
+//                            }, retryCount * WAIT_INTERVAL);
+//
+//                        } else {
+//                            webSocketListener.onError(context.getString(R.string.comms_interrupt));
+//                        }
+//                    } catch (Exception e) {
+//
+//                    }
 
 
                 }
             }, options);
 
+        } catch (IllegalStateException e) {
+            Log.e(LOG, "IllegalStateException .", e);
         } catch (WebSocketException e) {
-            Log.e(LOG, "WebSocket failed.", e);
+            Log.e(LOG, "WebSocketException failed.", e);
             webSocketListener.onError(e.getMessage());
         }
     }

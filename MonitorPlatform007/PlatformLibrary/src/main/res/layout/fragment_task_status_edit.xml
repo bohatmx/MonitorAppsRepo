@@ -84,7 +84,7 @@
         android:id="@+id/recycler"
         android:layout_below="@id/TSE_actionLayout"
         android:layout_marginTop="@dimen/mon_divider"
-        android:padding="@dimen/mon_padding"
+        android:padding="@dimen/mon_divider"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

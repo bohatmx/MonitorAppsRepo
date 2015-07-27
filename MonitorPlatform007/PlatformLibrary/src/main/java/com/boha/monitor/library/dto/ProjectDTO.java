@@ -7,6 +7,7 @@
 package com.boha.monitor.library.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,18 +17,17 @@ import java.util.List;
 public class ProjectDTO implements Serializable {
     private List<PhotoUploadDTO> photoUploadList;
     private static final long serialVersionUID = 1L;
-    private Integer projectID;
-    private Integer programmeID, statusCount, photoCount;
+    private Integer projectID, cityID;
+    private Integer programmeID, portfolioID, statusCount, photoCount;
     private String projectName;
     private Double latitude;
     private Double longitude;
     private Float accuracy;
     private Boolean activeFlag;
     private Boolean locationConfirmed;
-    private String address;
-    private String description,programmeName;
+    private String address,cityName, municipalityName;
+    private String description, programmeName, portfolioName;
     private List<ProjectTaskDTO> projectTaskList;
-    private Integer companyID;
     private List<ProjectStatusDTO> projectStatusList;
     private List<GcmDeviceDTO> gcmDeviceList;
     private List<ChatDTO> chatList;
@@ -36,6 +36,38 @@ public class ProjectDTO implements Serializable {
     private ProjectTaskStatusDTO lastStatus;
 
     public ProjectDTO() {
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+
+    public String getMunicipalityName() {
+        return municipalityName;
+    }
+
+    public void setMunicipalityName(String municipalityName) {
+        this.municipalityName = municipalityName;
+    }
+
+    public Integer getPortfolioID() {
+        return portfolioID;
+    }
+
+    public void setPortfolioID(Integer portfolioID) {
+        this.portfolioID = portfolioID;
+    }
+
+    public String getPortfolioName() {
+        return portfolioName;
+    }
+
+    public void setPortfolioName(String portfolioName) {
+        this.portfolioName = portfolioName;
     }
 
     public Integer getPhotoCount() {
@@ -72,6 +104,9 @@ public class ProjectDTO implements Serializable {
 
     
     public List<PhotoUploadDTO> getPhotoUploadList() {
+        if (photoUploadList == null) {
+            photoUploadList = new ArrayList<>();
+        }
         return photoUploadList;
     }
 
@@ -79,13 +114,14 @@ public class ProjectDTO implements Serializable {
         this.photoUploadList = photoUploadList;
     }
 
-    public Integer getCompanyID() {
-        return companyID;
+    public Integer getCityID() {
+        return cityID;
     }
 
-    public void setCompanyID(Integer companyID) {
-        this.companyID = companyID;
+    public void setCityID(Integer cityID) {
+        this.cityID = cityID;
     }
+
 
     public Integer getProjectID() {
         return projectID;
@@ -168,6 +204,9 @@ public class ProjectDTO implements Serializable {
     }
 
     public List<ProjectTaskDTO> getProjectTaskList() {
+        if (projectTaskList == null) {
+            projectTaskList = new ArrayList<>();
+        }
         return projectTaskList;
     }
 
@@ -185,10 +224,14 @@ public class ProjectDTO implements Serializable {
     }
 
     public List<GcmDeviceDTO> getGcmDeviceList() {
+        if (gcmDeviceList == null) {
+            gcmDeviceList = new ArrayList<>();
+        }
         return gcmDeviceList;
     }
 
     public void setGcmDeviceList(List<GcmDeviceDTO> gcmDeviceList) {
+       
         this.gcmDeviceList = gcmDeviceList;
     }
 
@@ -201,6 +244,9 @@ public class ProjectDTO implements Serializable {
     }
 
     public List<MonitorProjectDTO> getMonitorProjectList() {
+        if (monitorProjectList == null) {
+            monitorProjectList = new ArrayList<>();
+        }
         return monitorProjectList;
     }
 
@@ -209,6 +255,9 @@ public class ProjectDTO implements Serializable {
     }
 
     public List<StaffProjectDTO> getStaffProjectList() {
+        if (staffProjectList == null) {
+            staffProjectList = new ArrayList<>();
+        }
         return staffProjectList;
     }
 

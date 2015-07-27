@@ -28,16 +28,13 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.android.support:appcompat-v7:22.1.1'
-
-//    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3'
-//    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3'
-
-    compile 'com.android.support:support-v4:22.1.1'
-    compile 'com.android.support:cardview-v7:22.1.1'
+    compile 'com.android.support:appcompat-v7:22.2.0'
+    //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3'
+    //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3'
+    compile 'com.android.support:support-v4:22.2.0'
+    compile 'com.android.support:cardview-v7:22.2.0'
     compile 'com.google.android.gms:play-services:7.0.0'
-    compile 'com.android.support:recyclerview-v7:22.1.1'
+    compile 'com.android.support:recyclerview-v7:22.2.0'
     compile 'com.android.support:design:22.2.0'
 
     compile 'joda-time:joda-time:2.3'
@@ -50,16 +47,20 @@ dependencies {
     compile 'ch.acra:acra:4.5.0'
     compile 'com.yqritc:recyclerview-flexibledivider:1.2.4'
     compile 'jp.wasabeef:recyclerview-animators:1.2.0@aar'
-    compile 'com.karumi:headerrecyclerview:1.0.0'
-
+    compile 'com.github.clans:fab:1.5.0'
+    compile 'com.sothree.slidinguppanel:library:3.0.0'
+    compile 'com.squareup.picasso:picasso:2.3.2'
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.daimajia.slider:library:1.1.5@aar'
+    compile 'net.the4thdimension:android-utils:3.0.1'
 
     compile files('libs/gcm.jar')
     compile files('libs/universal-image-loader-1.9.3.jar')
     compile files('libs/khandroid-httpclient-4.2.3.jar')
-
     compile files('libs/autobahn-0.5.0.jar')
     compile files('libs/jackson-core-2.1.3.jar')
     compile files('libs/jackson-mapper-asl-1.9.7.jar')
-
     compile 'com.android.support:multidex:'
+    compile files('libs/cloudinary-core-1.2.0.jar')
+    compile files('libs/cloudinary-android-1.2.0.jar')
 }

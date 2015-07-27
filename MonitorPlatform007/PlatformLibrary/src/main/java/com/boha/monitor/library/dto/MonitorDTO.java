@@ -7,6 +7,7 @@
 package com.boha.monitor.library.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +31,9 @@ public class MonitorDTO implements Serializable {
     public MonitorDTO() {
     }
 
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 
     public Integer getMonitorID() {
         return monitorID;
@@ -120,6 +124,9 @@ public class MonitorDTO implements Serializable {
     }
 
     public List<PhotoUploadDTO> getPhotoUploadList() {
+        if (photoUploadList == null) {
+            photoUploadList = new ArrayList<>();
+        }
         return photoUploadList;
     }
 
@@ -128,6 +135,9 @@ public class MonitorDTO implements Serializable {
     }
 
     public List<LocationTrackerDTO> getLocationTrackerList() {
+        if (locationTrackerList == null) {
+            locationTrackerList = new ArrayList<>();
+        }
         return locationTrackerList;
     }
 
@@ -136,6 +146,9 @@ public class MonitorDTO implements Serializable {
     }
 
     public List<StaffProjectDTO> getStaffProjectList() {
+        if (staffProjectList == null) {
+            staffProjectList = new ArrayList<>();
+        }
         return staffProjectList;
     }
 

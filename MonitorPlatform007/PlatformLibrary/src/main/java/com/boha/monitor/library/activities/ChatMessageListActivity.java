@@ -39,14 +39,14 @@ public class ChatMessageListActivity extends AppCompatActivity {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
                 if (response.getCompany() != null) {
-                    for (ProjectDTO f : response.getCompany().getProjectList()) {
+//                    for (ProjectDTO f : response.getCompany().getProjectList()) {
 //                        if (chatMessage.getProjectID().intValue() == f.getProjectID().intValue()) {
 //                            project = f;
 //                            chatMessageListFragment.setChatID(chatMessage.getChatID());
 //                            chatMessageListFragment.setProject(project);
 //                            break;
 //                        }
-                    }
+//                    }
                 }
             }
 

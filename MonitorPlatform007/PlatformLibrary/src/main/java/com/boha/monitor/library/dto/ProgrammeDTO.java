@@ -7,6 +7,7 @@
 package com.boha.monitor.library.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,10 +20,10 @@ public class ProgrammeDTO implements Serializable {
     private String programmeName;
     private String description;
     private Long dateRegistered;
-    private Integer completeFlag;
+    private Integer completeFlag,portfolioID;
     private List<PhotoUploadDTO> photoUploadList;
     private List<ProjectDTO> projectList;
-    private PortfolioDTO portfolio;
+    private List<TaskTypeDTO> taskTypeList;
 
     public ProgrammeDTO() {
     }
@@ -31,6 +32,16 @@ public class ProgrammeDTO implements Serializable {
         this.programmeID = programmeID;
     }
 
+    public List<TaskTypeDTO> getTaskTypeList() {
+        if (taskTypeList == null) {
+            taskTypeList = new ArrayList<>();
+        }
+        return taskTypeList;
+    }
+
+    public void setTaskTypeList(List<TaskTypeDTO> taskTypeList) {
+        this.taskTypeList = taskTypeList;
+    }
 
     public Long getDateRegistered() {
         return dateRegistered;
@@ -73,6 +84,9 @@ public class ProgrammeDTO implements Serializable {
     }
 
     public List<PhotoUploadDTO> getPhotoUploadList() {
+        if (photoUploadList == null) {
+            photoUploadList = new ArrayList<>();
+        }
         return photoUploadList;
     }
 
@@ -81,6 +95,9 @@ public class ProgrammeDTO implements Serializable {
     }
 
     public List<ProjectDTO> getProjectList() {
+        if (projectList == null) {
+            projectList = new ArrayList<>();
+        }
         return projectList;
     }
 
@@ -88,14 +105,13 @@ public class ProgrammeDTO implements Serializable {
         this.projectList = projectList;
     }
 
-    public PortfolioDTO getPortfolio() {
-        return portfolio;
+    public Integer getPortfolioID() {
+        return portfolioID;
     }
 
-    public void setPortfolio(PortfolioDTO portfolio) {
-        this.portfolio = portfolio;
+    public void setPortfolioID(Integer portfolioID) {
+        this.portfolioID = portfolioID;
     }
-
 
     @Override
     public int hashCode() {

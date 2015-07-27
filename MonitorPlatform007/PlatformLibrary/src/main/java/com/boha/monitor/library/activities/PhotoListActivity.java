@@ -10,8 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.boha.monitor.library.dto.PhotoUploadDTO;
+import com.boha.monitor.library.dto.ProjectDTO;
+import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.fragments.PageFragment;
 import com.boha.monitor.library.fragments.PhotoFragment;
@@ -31,20 +34,45 @@ public class PhotoListActivity extends AppCompatActivity {
     PagerAdapter adapter;
     ViewPager mPager;
     Context ctx;
+    TextView txtCaption;
     int index;
-
+    ProjectDTO project;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo);
         ctx = getApplicationContext();
         mPager = (ViewPager)findViewById(R.id.pager);
+
+
+        project = (ProjectDTO) getIntent().getSerializableExtra("project");
         response = (ResponseDTO) getIntent().getSerializableExtra("response");
         index = getIntent().getIntExtra("index", 0);
 
-        if (response.getPhotoUploadList() == null || response.getPhotoUploadList().isEmpty()) {
-            Log.w("PhotoActivity", "--- no photos to display");
-            finish();
+        if (project != null) {
+            setTitle(project.getProjectName());
+            response = new ResponseDTO();
+            response.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
+            if (project.getPhotoUploadList() != null) {
+                for (PhotoUploadDTO x : project.getPhotoUploadList()) {
+                    response.getPhotoUploadList().add(x);
+
+                }
+            }
+
+            for (ProjectTaskDTO s: project.getProjectTaskList()) {
+                if (s.getPhotoUploadList() != null) {
+                    for (PhotoUploadDTO z : s.getPhotoUploadList()) {
+                        response.getPhotoUploadList().add(z);
+                    }
+                }
+            }
+        }
+        if (response != null) {
+            if (response.getPhotoUploadList() == null || response.getPhotoUploadList().isEmpty()) {
+                Log.w("PhotoActivity", "--- no photos to display");
+                finish();
+            }
         }
 
         buildPhotoPages();

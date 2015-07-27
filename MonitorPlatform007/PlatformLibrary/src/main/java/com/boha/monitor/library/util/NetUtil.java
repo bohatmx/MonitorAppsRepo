@@ -33,6 +33,7 @@ public class NetUtil {
             return;
         }
 
+        request.setRequestCacheID(null);
         if (request.isRideWebSocket()) {
             sendViaWebSocket(ctx,request);
         } else {

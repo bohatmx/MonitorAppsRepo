@@ -7,6 +7,8 @@
 package com.boha.monitor.library.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -14,10 +16,11 @@ import java.io.Serializable;
  */
 public class PortfolioDTO implements Serializable {
     private static final long serialVersionUID = 1L;
-  private Integer portfolioID;
+    private Integer portfolioID;
     private String portfolioName;
     private Long dateRegistered;
-    private CompanyDTO company;
+    private Integer companyID;
+    private List<ProgrammeDTO> programmeList;
 
     public PortfolioDTO() {
     }
@@ -26,6 +29,16 @@ public class PortfolioDTO implements Serializable {
         this.portfolioID = portfolioID;
     }
 
+    public List<ProgrammeDTO> getProgrammeList() {
+        if (programmeList == null) {
+            programmeList = new ArrayList<>();
+        }
+        return programmeList;
+    }
+
+    public void setProgrammeList(List<ProgrammeDTO> programmeList) {
+        this.programmeList = programmeList;
+    }
 
     public Integer getPortfolioID() {
         return portfolioID;
@@ -51,16 +64,14 @@ public class PortfolioDTO implements Serializable {
         this.dateRegistered = dateRegistered;
     }
 
-
-    public CompanyDTO getCompany() {
-        return company;
+    public Integer getCompanyID() {
+        return companyID;
     }
 
-    public void setCompany(CompanyDTO company) {
-        this.company = company;
+    public void setCompanyID(Integer companyID) {
+        this.companyID = companyID;
     }
 
-    
     @Override
     public int hashCode() {
         int hash = 0;

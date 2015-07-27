@@ -22,6 +22,7 @@ import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.dto.RequestDTO;
+import com.boha.monitor.library.dto.RequestList;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.dto.TaskStatusTypeDTO;
@@ -51,7 +52,6 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
     private RecyclerView mRecyclerView;
     private ImageView imgCamera;
 
-    static final int RED = 1, AMBER = 2, GREEN = 3;
     static final String LOG = TaskStatusUpdateFragment.class.getSimpleName();
 
     public void setProjectTask(ProjectTaskDTO projectTask) {
@@ -208,9 +208,12 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         imgCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (btnSubmit.getVisibility() == View.VISIBLE) {
-                    Log.e("TaskStatusFragment", "camera requested");
-                }
+                Util.flashOnce(imgCamera, 300, new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        mListener.onCameraRequested(projectTask);
+                    }
+                });
             }
         });
     }
@@ -239,13 +242,29 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         TaskStatusTypeDTO r = new TaskStatusTypeDTO();
         r.setTaskStatusTypeID(taskStatusType.getTaskStatusTypeID());
         projectTaskStatus.setTaskStatusType(r);
-
+        projectTaskStatus.setStatusDate(new Date().getTime());
         projectTaskStatus.setProjectTask(projectTask);
         //
         RequestDTO request = new RequestDTO(RequestDTO.ADD_PROJECT_TASK_STATUS);
         request.setProjectTaskStatus(projectTaskStatus);
 
-        RequestCacheUtil.addRequest(getActivity(), request, null);
+        RequestCacheUtil.addRequest(getActivity(), request, new RequestCacheUtil.RequestCacheListener() {
+            @Override
+            public void onError(String message) {
+
+            }
+
+            @Override
+            public void onRequestAdded() {
+
+            }
+
+            @Override
+            public void onRequestsRetrieved(RequestList requestList) {
+
+            }
+        });
+
         mListener.onCameraRequested(this.projectTask);
     }
 

@@ -5,11 +5,11 @@
     android:layout_height="wrap_content">
 
     <com.dd.ShadowLayout
-        app:sl_shadowRadius="8dp"
+        app:sl_shadowRadius="2dp"
         app:sl_shadowColor="#AA000000"
         app:sl_dx="2dp"
         app:sl_dy="2dp"
-        app:sl_cornerRadius="8dp"
+        app:sl_cornerRadius="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

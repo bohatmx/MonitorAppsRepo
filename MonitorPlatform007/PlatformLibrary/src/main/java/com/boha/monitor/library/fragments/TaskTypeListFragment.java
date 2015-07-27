@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -66,16 +65,10 @@ public class TaskTypeListFragment extends Fragment {
         hero = (ImageView)view.findViewById(R.id.PRH_image);
         hero.setImageDrawable(Util.getRandomHeroImage(getActivity()));
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+//        LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         GridLayoutManager glm = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
 
         mRecyclerView.setItemAnimator(new FadeInAnimator());
-//        mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getActivity())
-//                .color(getResources().getColor(R.color.blue_gray_400))
-//                .sizeResId(R.dimen.mon_divider)
-//                .marginResId(R.dimen.mon_padding)
-//                .build());
-//        mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.mon_divider);
         mRecyclerView.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
         mRecyclerView.setHasFixedSize(true);
@@ -86,7 +79,7 @@ public class TaskTypeListFragment extends Fragment {
 
     private void getCachedTypes() {
         Log.d("TaskTypeListFragment","### getCachedTypes");
-        CacheUtil.getCachedData(getActivity(), CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
+        CacheUtil.getCachedMonitorProjects(getActivity(), new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
                 if (response.getTaskTypeList() != null) {

@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -17,6 +18,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,10 +28,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.boha.monitor.library.adapters.PictureAdapter;
+import com.boha.monitor.library.adapters.PhotoAdapter;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
@@ -48,6 +50,7 @@ import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.library.util.VideoClipContainer;
 import com.boha.platform.library.R;
+import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -57,6 +60,8 @@ import com.google.android.gms.location.LocationServices;
 import org.acra.ACRA;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,9 +77,10 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     GoogleApiClient googleApiClient;
     LayoutInflater inflater;
     TextView txtProject, txtTaskName;
-    View siteLayout;
     MonitorDTO monitor;
     Long localID;
+    int darkColor;
+    RadioButton radioPhoto, radioVideo;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,17 +91,15 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         setContentView(R.layout.camera);
 
         if (savedInstanceState != null) {
-            Log.d(LOG,"## savedInstanceState is not null: ");
+            Log.d(LOG, "## savedInstanceState is not null: ");
         }
 
+        darkColor = getIntent().getIntExtra("darkColor", R.color.red_900);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler);
-        txtProject = (TextView)findViewById(R.id.CAM_projectName);
-        txtTaskName = (TextView)findViewById(R.id.CAM_siteName);
-        txtProject.setText("");
-        txtTaskName.setText("");
+
 
 //        StaggeredGridLayoutManager x = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this,2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.mon_divider_small);
         mRecyclerView.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
         mRecyclerView.setLayoutManager(gridLayoutManager);
@@ -184,44 +188,42 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         super.onRestoreInstanceState(savedInstanceState);
     }
 
-    ImageView imgCamera;
     Button btnStart;
-    ResponseDTO response;
+    FloatingActionButton fab;
 
     private void setFields() {
         activity = this;
+        radioPhoto = (RadioButton) findViewById(R.id.CAM_radioPhoto);
+        radioVideo = (RadioButton) findViewById(R.id.CAM_radioVideo);
+
         txtProject = (TextView) findViewById(R.id.CAM_projectName);
         txtTaskName = (TextView) findViewById(R.id.CAM_siteName);
         btnStart = (Button) findViewById(R.id.CAM_btnStart);
-        imgCamera = (ImageView) findViewById(R.id.CAM_imgCamera);
-        imgCamera.setVisibility(View.GONE);
+
+        txtProject = (TextView) findViewById(R.id.CAM_projectName);
+        txtTaskName = (TextView) findViewById(R.id.CAM_siteName);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setBackgroundColor(darkColor);
+        txtProject.setText("");
+        txtTaskName.setText("");
 
 
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.flashOnce(btnStart, 200, new Util.UtilAnimationListener() {
-                    @Override
-                    public void onAnimationEnded() {
-                        btnStart.setVisibility(View.GONE);
-                        dispatchTakePictureIntent();
-                    }
-                });
-
+                dispatchTakePictureIntent();
             }
         });
 
-        imgCamera.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.flashOnce(imgCamera, 200, new Util.UtilAnimationListener() {
-                    @Override
-                    public void onAnimationEnded() {
-
-                        dispatchTakePictureIntent();
-                    }
-                });
-
+                if (radioPhoto.isChecked()) {
+                    dispatchTakePictureIntent();
+                }
+                if (radioVideo.isChecked()) {
+                    dispatchTakeVideoIntent();
+                }
             }
         });
 
@@ -231,7 +233,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     public void onActivityResult(final int requestCode, final int resultCode,
                                  final Intent data) {
         Log.e(LOG, "##### onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
-        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        //
         switch (requestCode) {
             case CAPTURE_IMAGE:
                 if (resultCode == Activity.RESULT_OK) {
@@ -247,10 +249,11 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                 }
                 break;
             case REQUEST_VIDEO_CAPTURE:
-
-                Uri videoUri = data.getData();
-                new FileTask().execute(videoUri);
-                //mVideoView.setVideoURI(videoUri);
+                if (resultCode == Activity.RESULT_OK) {
+                    Uri videoUri = data.getData();
+                    new FileTask(videoUri);
+                    //mVideoView.setVideoURI(videoUri);
+                }
                 break;
         }
     }
@@ -299,7 +302,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     }
 
     Location location;
-    static final float ACCURACY_THRESHOLD = 20;
+    static final float ACCURACY_THRESHOLD = 15;
     PictureActivity activity;
     boolean mRequestingLocationUpdates;
 
@@ -346,21 +349,48 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     }
 
 
-    class FileTask extends AsyncTask<Uri, Void, Integer> {
+    class FileTask {
+        Uri uri;
 
+        public FileTask(Uri uri) {
+            this.uri = uri;
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    int res = getVideo();
+                    if (res == 0) {
 
-        @Override
-        protected Integer doInBackground(Uri... uris) {
-            Uri uri = uris[0];
+                    }
+                }
+            });
+            thread.start();
+
+        }
+
+        protected int getVideo() {
             VideoClipDTO clip = new VideoClipDTO();
+            clip.setVideoDate(new Date().getTime());
             clip.setUriString(uri.toString());
             File f;
             try {
                 f = ImageUtil.getFileFromUri(ctx, uri);
                 clip.setFilePath(f.getAbsolutePath());
                 clip.setLength(f.length());
+                if (projectTask != null) {
+                    clip.setProjectID(projectTask.getProjectID());
+                    clip.setProjectTaskID(projectTask.getProjectTaskID());
+                }
+                if (project != null) {
+                    clip.setProjectID(project.getProjectID());
+                }
+                if (vcc == null) {
+                    vcc = new VideoClipContainer();
+                }
+                vcc.addVideo(clip);
+                CacheVideoUtil.cacheVideo(ctx, vcc);
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(LOG,"Video file save failed", e);
+                return 9;
             }
 
             return 0;
@@ -370,6 +400,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     VideoClipContainer vcc;
 
     private void dispatchTakeVideoIntent() {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         final Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 
         CacheVideoUtil.getCachedVideo(ctx, new CacheVideoUtil.CacheVideoListener() {
@@ -622,7 +653,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         }
     }
 
-    PictureAdapter pictureAdapter;
+    PhotoAdapter photoAdapter;
     RecyclerView mRecyclerView;
     List<PhotoUploadDTO> photoList;
 
@@ -631,7 +662,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         if (photoList == null) {
             photoList = new ArrayList<>();
         } else {
-            Log.d(LOG," ### photos in list: " + photoList.size());
+            Log.d(LOG, " ### photos in list: " + photoList.size());
         }
         switch (type) {
             case PhotoUploadDTO.TASK_IMAGE:
@@ -715,49 +746,81 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
     }
 
+    ResponseDTO response;
 
     private void showCachedPhotos() {
         if (mBound) {
             mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
                 @Override
                 public void onUploadsComplete(int count) {
-                    Log.e(LOG,"### onUploadsComplete: " + count);
+                    Log.e(LOG, "### onUploadsComplete: " + count);
+                    Snackbar.make(mRecyclerView, "Photo has been uploaded", Snackbar.LENGTH_SHORT).show();
                 }
             });
         }
-        PhotoCacheUtil.getCachedPhotos(ctx, new PhotoCacheUtil.PhotoCacheListener() {
+        Thread thread = new Thread(new Runnable() {
             @Override
-            public void onFileDataDeserialized(final ResponseDTO response) {
-                photoList = response.getPhotoUploadList();
-                Collections.sort(photoList);
-                if (pictureAdapter == null) {
-                    pictureAdapter = new PictureAdapter(photoList, getApplicationContext(), new PictureAdapter.PictureListener() {
-                        @Override
-                        public void onPictureClicked(int position) {
-                            Log.e(LOG, "onPictureClicked: " + position);
-                            Intent w = new Intent(ctx,PhotoListActivity.class);
-                            w.putExtra("index",position);
-                            w.putExtra("response", response);
+            public void run() {
+                FileInputStream stream;
+                try {
+                    stream = getApplicationContext().openFileInput(PhotoUploadService.JSON_PHOTO);
+                    response = Util.getResponseData(stream);
+                    photoList = new ArrayList<>();
+                    for (PhotoUploadDTO c : response.getPhotoUploadList()) {
 
-                            startActivity(w);
+                        switch (type) {
+                            case PhotoUploadDTO.TASK_IMAGE:
+                                if (projectTask.getProjectID().intValue() == c.getProjectID().intValue()) {
+                                    photoList.add(c);
+                                }
+                                break;
+                            case PhotoUploadDTO.PROJECT_IMAGE:
+                                if (project.getProjectID().intValue() == c.getProjectID().intValue()) {
+                                    photoList.add(c);
+                                }
+                                break;
+                        }
+                    }
+
+                    if (photoList.isEmpty()) {
+                        Snackbar.make(mRecyclerView, getString(R.string.no_prev_photos),
+                                Snackbar.LENGTH_LONG).show();
+
+                        return;
+                    }
+                    Collections.sort(photoList);
+                    Log.i(LOG, "++ showCachedPhotos - photo cache retrieved, photos: " + response.getPhotoUploadList().size());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (photoAdapter == null) {
+                                photoAdapter = new PhotoAdapter(photoList, PhotoAdapter.THUMB, getApplicationContext(), new PhotoAdapter.PictureListener() {
+                                    @Override
+                                    public void onPictureClicked(int position) {
+                                        Log.e(LOG, "onPictureClicked: " + position);
+                                        Intent w = new Intent(ctx, PhotoListActivity.class);
+                                        w.putExtra("index", position);
+                                        w.putExtra("response", response);
+
+                                        startActivity(w);
+
+                                    }
+                                });
+                                mRecyclerView.setAdapter(photoAdapter);
+                            } else {
+                                photoAdapter.notifyDataSetChanged();
+                            }
                         }
                     });
-                    mRecyclerView.setAdapter(pictureAdapter);
-                } else {
-                    pictureAdapter.notifyDataSetChanged();
+                } catch (FileNotFoundException e) {
+                    Log.w(LOG, "############# cache file not found.", e);
+
+                } catch (IOException e) {
+                    Log.e(LOG, "Failed", e);
                 }
             }
-
-            @Override
-            public void onDataCached(PhotoUploadDTO photo) {
-
-            }
-
-            @Override
-            public void onError() {
-                Log.e(LOG,"###### cache error");
-            }
         });
+        thread.start();
 
     }
 

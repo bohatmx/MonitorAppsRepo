@@ -81,7 +81,7 @@ public class BohaRequest extends Request<ResponseDTO> {
             return Response.error(new VolleyError(dto.getMessage()));
         }
         end = System.currentTimeMillis();
-        Log.e(LOG,"#### comms elapsed time in seconds: " + getElapsed(start,end));
+        Log.w(LOG,"#### comms elapsed time in seconds: " + getElapsed(start,end));
         return Response.success(dto,
                 HttpHeaderParser.parseCacheHeaders(response));
     }
