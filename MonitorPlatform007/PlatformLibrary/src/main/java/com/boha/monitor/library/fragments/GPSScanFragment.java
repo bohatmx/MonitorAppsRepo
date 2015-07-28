@@ -215,39 +215,47 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         });
     }
     private void confirmLocation() {
-        RequestDTO w = new RequestDTO(RequestDTO.CONFIRM_LOCATION);
+        final RequestDTO w = new RequestDTO(RequestDTO.CONFIRM_LOCATION);
         w.setProjectID(project.getProjectID());
         w.setLatitude(project.getLatitude());
         w.setLongitude(project.getLongitude());
         w.setAccuracy(project.getAccuracy());
-        sendRequest(w);
 
-    }
-
-    private void sendRequest( final RequestDTO request) {
-        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, request, new WebSocketUtil.WebSocketListener() {
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
-            public void onMessage( final ResponseDTO response) {
+            public void onResponse(final ResponseDTO response) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (response.getStatusCode() > 0) {
-                            addRequestToCache(request);
+                            addRequestToCache(w);
                         } else {
                             btnScan.setVisibility(View.GONE);
                             gpsMessage.setVisibility(View.VISIBLE);
-                            Util.flashSeveralTimes(gpsMessage,200,3,null);
+                            Util.flashSeveralTimes(gpsMessage, 200, 3, new Util.UtilAnimationListener() {
+                                @Override
+                                public void onAnimationEnded() {
+                                    listener.onLocationConfirmed(project);
+                                }
+                            });
                         }
                     }
                 });
-
             }
+
             @Override
             public void onError(String message) {
-                addRequestToCache(request);
+                addRequestToCache(w);
+            }
+
+            @Override
+            public void onWebSocketClose() {
+
             }
         });
+
     }
+
     private void addRequestToCache(RequestDTO request) {
         RequestCacheUtil.addRequest(ctx, request, new RequestCacheUtil.RequestCacheListener() {
             @Override
@@ -271,8 +279,6 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         });
 
     }
-
-
 
     private void sendGPSData() {
 

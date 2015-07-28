@@ -73,15 +73,15 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
     public void animateHeroHeight() {
 
     }
-
+    String pageTitle;
     @Override
     public void setPageTitle(String title) {
-
+        pageTitle = title;
     }
 
     @Override
     public String getPageTitle() {
-        return null;
+        return pageTitle;
     }
 
     public interface MonitorProfileListener {

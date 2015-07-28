@@ -214,15 +214,15 @@ public class StaffListFragment extends Fragment
         });
 
     }
-
+    String pageTitle;
     @Override
     public void setPageTitle(String title) {
-
+        pageTitle = title;
     }
 
     @Override
     public String getPageTitle() {
-        return null;
+        return pageTitle;
     }
 
     public void addCompanyStaff( StaffDTO staff) {

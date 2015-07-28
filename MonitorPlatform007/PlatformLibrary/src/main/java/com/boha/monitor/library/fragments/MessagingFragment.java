@@ -73,17 +73,16 @@ public class MessagingFragment extends Fragment implements PageFragment{
     public void animateHeroHeight() {
 
     }
-
+    String pageTitle;
     @Override
     public void setPageTitle(String title) {
-
+        pageTitle = title;
     }
 
     @Override
     public String getPageTitle() {
-        return null;
+        return pageTitle;
     }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

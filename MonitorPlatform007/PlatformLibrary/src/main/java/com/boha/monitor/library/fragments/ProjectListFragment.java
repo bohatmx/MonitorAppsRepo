@@ -167,9 +167,10 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         }
     }
 
+    String pageTitle;
     @Override
     public void setPageTitle(String title) {
-
+        pageTitle = title;
     }
 
     public void setLastProject() {
@@ -192,7 +193,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
     @Override
     public String getPageTitle() {
-        return null;
+        return pageTitle;
     }
 
     /**

@@ -92,11 +92,12 @@ public class GPSActivity extends AppCompatActivity
     }
 
     @Override
-    public void onLocationConfirmed(ProjectDTO projectSite) {
+    public void onLocationConfirmed(ProjectDTO project) {
         Log.e(LOG, "######### onLocationConfirmed");
-        project = projectSite;
+        this.project = project;
         project.setLocationConfirmed(true);
         siteLocationConfirmed = true;
+        onBackPressed();
     }
 
     @Override

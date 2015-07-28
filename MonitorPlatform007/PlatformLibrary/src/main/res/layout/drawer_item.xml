@@ -9,11 +9,11 @@
         android:src="@drawable/ic_action_new"
         android:padding="@dimen/mon_padding"
         android:tint="@color/teal"
-        android:layout_width="48dp"
-        android:layout_height="48dp" />
+        android:layout_width="56dp"
+        android:layout_height="56dp" />
     <TextView
         android:id="@+id/DI_txtTitle"
-        style="@style/TextStyleSmall"
+        style="@style/Title3TextStyleBlack"
         android:layout_toRightOf="@id/DI_icon"
         android:text="Name of Action"
         android:layout_marginLeft="10dp"

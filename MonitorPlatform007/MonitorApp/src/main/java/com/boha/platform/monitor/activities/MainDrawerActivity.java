@@ -176,13 +176,14 @@ public class MainDrawerActivity extends AppCompatActivity
                             Util.showErrorToast(ctx,response.getMessage());
                             return;
                         }
-                        buildPages();
+
                         for (ProjectDTO d: response.getProjectList()) {
                             for (ProjectTaskDTO pt: d.getProjectTaskList()) {
                                 pt.setLatitude(d.getLatitude());
                                 pt.setLongitude(d.getLongitude());
                             }
                         }
+                        buildPages();
                         CacheUtil.cacheMonitorProjects(ctx,response,null);
                     }
                 });
@@ -243,7 +244,7 @@ public class MainDrawerActivity extends AppCompatActivity
             pageFragmentList.add(noProjectsAssignedFragment);
         }
         pageFragmentList.add(monitorListFragment);
-//        pageFragmentList.add(messagingFragment);
+        pageFragmentList.add(messagingFragment);
         pageFragmentList.add(monitorProfileFragment);
 
         pagerAdapter = new PagerAdapter(getSupportFragmentManager());
@@ -342,6 +343,14 @@ public class MainDrawerActivity extends AppCompatActivity
     @Override
     public void onDestinationSelected(int position, String text) {
 
+        int index = 0;
+        for (PageFragment d: pageFragmentList) {
+            if (d.getPageTitle().equalsIgnoreCase(text)) {
+                mPager.setCurrentItem(index,true);
+                break;
+            }
+            index++;
+        }
     }
 
     @Override

@@ -90,14 +90,15 @@ public class PhotoGridFragment extends Fragment implements PageFragment {
 
     }
 
+    String pageTitle;
     @Override
     public void setPageTitle(String title) {
-
+        pageTitle = title;
     }
 
     @Override
     public String getPageTitle() {
-        return null;
+        return pageTitle;
     }
 
 }
