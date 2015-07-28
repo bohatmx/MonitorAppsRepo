@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.boha.monitor.library.adapters.TaskAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
+import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.dto.TaskTypeDTO;
 import com.boha.platform.library.R;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
@@ -115,8 +116,9 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
 
         taskAdapter = new TaskAdapter(projectTaskList, darkColor, getActivity(), new TaskAdapter.TaskListener() {
             @Override
-            public void onTaskNameClicked(ProjectTaskDTO task) {
-                mListener.onStatusUpdateRequested(task);
+            public void onTaskNameClicked(ProjectTaskDTO projTask, int position) {
+                projectTask = projTask;
+                mListener.onStatusUpdateRequested(projTask,position);
             }
 
 
@@ -124,6 +126,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
         mRecyclerView.setAdapter(taskAdapter);
 
     }
+    private ProjectTaskDTO projectTask;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -158,12 +161,22 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
     }
     int darkColor;
 
+    public void refreshProjectTask(ProjectTaskDTO projectTask) {
+
+        for (ProjectTaskDTO x: projectTaskList) {
+            if (x.getProjectTaskID().intValue() == projectTask.getProjectTaskID().intValue()) {
+                x = projectTask;
+                taskAdapter.notifyDataSetChanged();
+                break;
+            }
+        }
+    }
     public void setDarkColor(int darkColor) {
         this.darkColor = darkColor;
     }
 
     public interface StatusUpdateListener {
-        void onStatusUpdateRequested(ProjectTaskDTO task);
+        void onStatusUpdateRequested(ProjectTaskDTO task, int position);
         void onCameraRequested(ProjectTaskDTO task);
     }
 }

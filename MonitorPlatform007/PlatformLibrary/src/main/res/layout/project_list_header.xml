@@ -4,37 +4,40 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/PRH_image"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/mon_hero_height_medium"
-        android:scaleType="centerCrop"
-        android:src="@drawable/back1" />
+
 
     <RelativeLayout
         android:id="@+id/PRH_top"
         android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
+        android:layout_height="@dimen/mon_hero_height_small">
+        <ImageView
+            android:id="@+id/PRH_image"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mon_hero_height_medium"
+            android:scaleType="centerCrop"
+            android:src="@drawable/back1" />
         <TextView
             android:id="@+id/PRH_programme"
             style="@style/Title3TextStyleWhite"
-            android:layout_marginTop="@dimen/mon_margin"
-
-            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@color/transparent_black"
+            android:padding="@dimen/mon_padding"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Programme Name" />
+        <TextView
+            android:id="@+id/PRH_count"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="@dimen/mon_margin"
+            android:layout_marginRight="@dimen/mon_wide"
+            style="@style/TransparentCircle"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:text="9,778" />
     </RelativeLayout>
-    <TextView
-        android:id="@+id/PRH_count"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
 
-        android:layout_margin="@dimen/mon_margin"
-        style="@style/TransparentCircle"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:text="9,778" />
 
 </RelativeLayout>

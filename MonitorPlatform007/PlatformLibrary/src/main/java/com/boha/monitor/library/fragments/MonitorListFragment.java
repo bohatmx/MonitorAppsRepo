@@ -15,12 +15,16 @@ import android.widget.TextView;
 
 import com.boha.monitor.library.adapters.MonitorAdapter;
 import com.boha.monitor.library.dto.MonitorDTO;
+import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,13 +67,28 @@ public class MonitorListFragment extends Fragment implements PageFragment{
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             response = (ResponseDTO) getArguments().getSerializable("response");
-            monitorList = response.getMonitorList();
+            monitorList = new ArrayList<>();
+            HashMap<Integer,MonitorDTO> map = new HashMap<>();
+            for (ProjectDTO x: response.getProjectList()) {
+                if (x.getMonitorList() != null) {
+                    for (MonitorDTO y: x.getMonitorList()) {
+                        if (!map.containsKey(y.getMonitorID())) {
+                            map.put(y.getMonitorID(),y);
+                        }
+                    }
+                }
+            }
+            Set<Integer> set = map.keySet();
+            for (Integer integer : set) {
+                monitorList.add(map.get(integer));
+            }
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        ctx = getActivity();
         view = inflater.inflate(R.layout.fragment_monitor_list, container, false);
         txtCount = (TextView) view.findViewById(R.id.FAB_text);
         txtName = (TextView) view.findViewById(R.id.MONITOR_LIST_label);
@@ -77,6 +96,7 @@ public class MonitorListFragment extends Fragment implements PageFragment{
         fab = view.findViewById(R.id.FAB);
         icon = (ImageView)view.findViewById(R.id.MONITOR_LIST_icon);
         mListView = (ListView) view.findViewById(R.id.MONITOR_LIST_list);
+        setList();
         return view;
     }
 
@@ -85,7 +105,7 @@ public class MonitorListFragment extends Fragment implements PageFragment{
     private void setList() {
 
         if (monitorList == null) {
-            Log.w("StaffListFragment", "-- monitorList is null, quittin...");
+            Log.w("MonitorListFragment", "-- monitorList is null, quittin...");
             return;
         }
 

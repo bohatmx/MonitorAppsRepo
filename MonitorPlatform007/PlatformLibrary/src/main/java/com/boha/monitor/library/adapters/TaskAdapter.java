@@ -26,7 +26,7 @@ import java.util.Locale;
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
     public interface TaskListener {
-        void onTaskNameClicked(ProjectTaskDTO task);
+        void onTaskNameClicked(ProjectTaskDTO task, int position);
     }
 
     private TaskListener mListener;
@@ -78,7 +78,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 Util.flashOnce(holder.nameView, 300, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
-                        mListener.onTaskNameClicked(p);
+                        mListener.onTaskNameClicked(p,position);
                     }
                 });
             }

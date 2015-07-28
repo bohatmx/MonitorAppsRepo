@@ -9,10 +9,13 @@ import android.view.MenuItem;
 
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
+import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.dto.TaskTypeDTO;
 import com.boha.monitor.library.fragments.ProjectTaskListFragment;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.platform.library.R;
+
+import java.util.ArrayList;
 
 public class ProjectTaskListActivity extends AppCompatActivity implements ProjectTaskListFragment.StatusUpdateListener{
 
@@ -71,17 +74,33 @@ public class ProjectTaskListActivity extends AppCompatActivity implements Projec
     }
 
     @Override
-    public void onStatusUpdateRequested(ProjectTaskDTO task) {
+    public void onStatusUpdateRequested(ProjectTaskDTO task, int position) {
+        projectTask = task;
         Intent w = new Intent(this, TaskUpdateActivity.class);
         w.putExtra("projectTask",task);
         w.putExtra("project",project);
         startActivityForResult(w,TASK_UPDATE_REQUEST);
     }
 
+    ProjectTaskDTO projectTask;
     @Override
     public void onCameraRequested(ProjectTaskDTO task) {
         Log.e("StatusUpdateActivity", "### onCameraRequested ...");
     }
 
     static final int TASK_UPDATE_REQUEST = 2119;
+    @Override
+    public void onActivityResult(int reqCode, int resultCode, Intent data) {
+        switch (reqCode) {
+            case TASK_UPDATE_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    ProjectTaskStatusDTO x = (ProjectTaskStatusDTO)data.getSerializableExtra("projectTaskStatus");
+                    if (projectTask.getProjectTaskStatusList() == null) {
+                        projectTask.setProjectTaskStatusList(new ArrayList<ProjectTaskStatusDTO>());
+                    }
+                    projectTask.getProjectTaskStatusList().add(x);
+                    projectTaskListFragment.refreshProjectTask(projectTask);
+                }
+        }
+    }
 }

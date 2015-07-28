@@ -217,6 +217,7 @@ public class MainDrawerActivity extends AppCompatActivity
     private void buildPages() {
         pageFragmentList = new ArrayList<>();
 
+
         if (!response.getProjectList().isEmpty()) {
             projectListFragment = ProjectListFragment.newInstance(response);
             projectListFragment.setPageTitle(getString(R.string.projects));
@@ -243,7 +244,7 @@ public class MainDrawerActivity extends AppCompatActivity
         }
         pageFragmentList.add(monitorListFragment);
 //        pageFragmentList.add(messagingFragment);
-//        pageFragmentList.add(monitorProfileFragment);
+        pageFragmentList.add(monitorProfileFragment);
 
         pagerAdapter = new PagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(pagerAdapter);

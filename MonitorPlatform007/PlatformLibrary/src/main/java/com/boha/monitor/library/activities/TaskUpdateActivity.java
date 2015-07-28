@@ -20,6 +20,8 @@ import android.view.View;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
+import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
+import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.fragments.TaskStatusUpdateFragment;
 import com.boha.monitor.library.services.RequestSyncService;
 import com.boha.monitor.library.util.ThemeChooser;
@@ -32,7 +34,9 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class TaskUpdateActivity extends AppCompatActivity
         implements TaskStatusUpdateFragment.TaskStatusUpdateListener,
@@ -46,6 +50,7 @@ public class TaskUpdateActivity extends AppCompatActivity
     TaskStatusUpdateFragment taskStatusUpdateFragment;
     View layout;
     ProjectDTO project;
+    List<ProjectTaskStatusDTO> projectTaskStatusList = new ArrayList<>();
 
     static final String LOG = TaskUpdateActivity.class.getSimpleName();
 
@@ -93,29 +98,28 @@ public class TaskUpdateActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public static final int DISTANCE_MINIMUM_METRES = 500;
+    public static final int DISTANCE_MINIMUM_METRES = 1000;
+
     @Override
     public void onCameraRequested(final ProjectTaskDTO projectTask) {
         Log.e("TaskUpdateActivity", "onCameraRequested, projectTask coming in ");
         //todo Check that the device is near the project location
 
-        if (projectTask.getLatitude() != null) {
+        if (project.getLatitude() != null) {
             Location x = new Location(LocationManager.GPS_PROVIDER);
-
             x.setLatitude(projectTask.getLatitude());
             x.setLongitude(projectTask.getLongitude());
             float dist = mLocation.distanceTo(x);
-            Log.e(LOG,"#### distance from project: " + dist);
+            Log.e(LOG, "#### distance from project: " + dist);
 
             if (dist > DISTANCE_MINIMUM_METRES) {
-//                Util.showErrorToast(ctx, "Photo cannot be taken. You may not be at the site of the project. The project site is " + df.format(getKM(dist)) + " kilometres away");
                 AlertDialog.Builder diag = new AlertDialog.Builder(this);
                 diag.setTitle("Project Task Photo")
                         .setMessage("You may not be at the site of the project. The project site is " + df.format(getKM(dist)) + " kilometres away.\n\nDo you still want to add a photo for this project?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                startPictureActivity(projectTask);
+                                startTaskPictureActivity(projectTask);
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -127,11 +131,66 @@ public class TaskUpdateActivity extends AppCompatActivity
                         .show();
 
             }
+        } else {
+            AlertDialog.Builder diag = new AlertDialog.Builder(this);
+            diag.setTitle("Project Task Photo")
+                    .setMessage("The project has no location data. Do you want to take a Project picture?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startProjectPictureActivity();
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            return;
+                        }
+                    })
+                    .show();
         }
 
     }
 
-    private void startPictureActivity(ProjectTaskDTO projectTask) {
+    @Override
+    public void onStatusReturned(ProjectTaskStatusDTO projectTaskStatus) {
+        projectTaskStatusList.add(projectTaskStatus);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!projectTaskStatusList.isEmpty()) {
+            ResponseDTO w = new ResponseDTO();
+            w.setProjectTaskStatusList(projectTaskStatusList);
+            Intent d = new Intent();
+            d.putExtra("projectTaskStatusList", w);
+            setResult(RESULT_OK, d);
+        }
+        finish();
+    }
+
+    private void startProjectPictureActivity() {
+        Intent w = new Intent(this, PictureActivity.class);
+        w.putExtra("type", PhotoUploadDTO.PROJECT_IMAGE);
+        w.putExtra("project", project);
+        startActivityForResult(w, REQUEST_CAMERA);
+        if (mBound) {
+            mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
+                @Override
+                public void onTasksSynced(int goodResponses, int badResponses) {
+                    Log.e(LOG, "+++ onTasksSynced goodResponses: " + goodResponses + " badResponses: " + badResponses);
+                    Snackbar.make(layout, "Task updates synced. Good responses: " + goodResponses, Snackbar.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onError(String message) {
+
+                }
+            });
+        }
+    }
+
+    private void startTaskPictureActivity(ProjectTaskDTO projectTask) {
         Intent w = new Intent(this, PictureActivity.class);
         w.putExtra("type", PhotoUploadDTO.TASK_IMAGE);
         w.putExtra("projectTask", projectTask);
@@ -151,13 +210,16 @@ public class TaskUpdateActivity extends AppCompatActivity
             });
         }
     }
+
     static final DecimalFormat df = new DecimalFormat("###,###,###,##0.0");
+
     private double getKM(float dist) {
         Double d = Double.parseDouble("" + dist);
         Double e = d / 1000;
 
         return e.doubleValue();
     }
+
     static final int REQUEST_CAMERA = 1432;
 
     @Override

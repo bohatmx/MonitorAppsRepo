@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,9 +28,11 @@ import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.dto.TaskStatusTypeDTO;
 import com.boha.monitor.library.util.CacheUtil;
+import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.RequestCacheUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Util;
+import com.boha.monitor.library.util.WebCheck;
 import com.boha.platform.library.R;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
@@ -43,14 +46,15 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
     public interface TaskStatusUpdateListener {
         void onCameraRequested(ProjectTaskDTO projectTask);
+        void onStatusReturned(ProjectTaskStatusDTO projectTaskStatus);
     }
     ProjectDTO project;
     private View view, actionView;
-    private TextView txtTaskName, txtStatusType;
+    private TextView txtTaskName, txtStatusType, txtResult;
     private ProjectTaskDTO projectTask;
     private Button  btnSubmit;
     private RecyclerView mRecyclerView;
-    private ImageView imgCamera;
+    private ImageView imgCamera, iconClose;
 
     static final String LOG = TaskStatusUpdateFragment.class.getSimpleName();
 
@@ -100,7 +104,6 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
     List<TaskStatusTypeDTO> taskStatusTypeList;
 
     private void getStatusTypes() {
-
         CacheUtil.getCachedData(getActivity(), CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
@@ -157,6 +160,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         imgCamera = (ImageView)view.findViewById(R.id.TSE_icon);
+        iconClose = (ImageView)view.findViewById(R.id.TSE_closeIcon);
         mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getActivity())
                 .color(getResources().getColor(R.color.blue_gray_500))
                 .sizeResId(R.dimen.mon_divider)
@@ -176,7 +180,12 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         btnSubmit.setText("Submit Task Status");
         txtStatusType.setText("");
 
-
+        iconClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.collapse(actionView, 1000, null);
+            }
+        });
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -190,7 +199,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
                                 .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        saveRequestInCache();
+                                        processRequest();
                                     }
                                 })
                                 .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
@@ -220,7 +229,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
     TaskStatusTypeDTO taskStatusType;
 
-    private void saveRequestInCache() {
+    private void processRequest() {
 
         ProjectTaskStatusDTO projectTaskStatus = new ProjectTaskStatusDTO();
         MonitorDTO m = SharedUtil.getMonitor(getActivity());
@@ -235,28 +244,74 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
         projectTaskStatus.setStatusDate(new Date().getTime());
 
-        ProjectTaskDTO projectTask = new ProjectTaskDTO();
-        projectTask.setProjectID(this.projectTask.getProjectID());
-        projectTask.setProjectTaskID(this.projectTask.getProjectTaskID());
+        ProjectTaskDTO pt = new ProjectTaskDTO();
+        pt.setProjectID(this.projectTask.getProjectID());
+        pt.setProjectTaskID(this.projectTask.getProjectTaskID());
 
         TaskStatusTypeDTO r = new TaskStatusTypeDTO();
         r.setTaskStatusTypeID(taskStatusType.getTaskStatusTypeID());
         projectTaskStatus.setTaskStatusType(r);
         projectTaskStatus.setStatusDate(new Date().getTime());
-        projectTaskStatus.setProjectTask(projectTask);
+        projectTaskStatus.setProjectTask(pt);
         //
-        RequestDTO request = new RequestDTO(RequestDTO.ADD_PROJECT_TASK_STATUS);
+        final RequestDTO request = new RequestDTO(RequestDTO.ADD_PROJECT_TASK_STATUS);
         request.setProjectTaskStatus(projectTaskStatus);
 
-        RequestCacheUtil.addRequest(getActivity(), request, new RequestCacheUtil.RequestCacheListener() {
+        if (WebCheck.checkNetworkAvailability(getActivity(),true).isNetworkUnavailable()) {
+            saveRequestInCache(request);
+            return;
+        }
+
+        NetUtil.sendRequest(getActivity(), request, new NetUtil.NetUtilListener() {
             @Override
-            public void onError(String message) {
+            public void onResponse(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (response.getProjectTaskStatusList() != null && !response.getProjectTaskStatusList().isEmpty()) {
+                            returnedStatus = response.getProjectTaskStatusList().get(0);
+                            mListener.onStatusReturned(returnedStatus);
+                            Snackbar.make(mRecyclerView, "The task status update has been sent", Snackbar.LENGTH_LONG).show();
+                            mListener.onCameraRequested(projectTask);
+                        }
+                    }
+                });
 
             }
 
             @Override
-            public void onRequestAdded() {
+            public void onError(final String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        saveRequestInCache(request);
+                        Util.showErrorToast(getActivity(), message);
+                    }
+                });
 
+            }
+
+            @Override
+            public void onWebSocketClose() {
+
+            }
+        });
+
+
+    }
+
+    private ProjectTaskStatusDTO returnedStatus;
+    private void saveRequestInCache(RequestDTO request) {
+        RequestCacheUtil.addRequest(getActivity(), request, new RequestCacheUtil.RequestCacheListener() {
+            @Override
+            public void onError(String message) {
+                Log.e(LOG,message);
+            }
+
+            @Override
+            public void onRequestAdded() {
+                Snackbar.make(mRecyclerView,"The task status update has been saved",Snackbar.LENGTH_LONG).show();
+                mListener.onCameraRequested(projectTask);
             }
 
             @Override
@@ -264,10 +319,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
             }
         });
-
-        mListener.onCameraRequested(this.projectTask);
     }
-
     TaskStatusUpdateListener mListener;
     @Override
     public void onAttach(Activity activity) {

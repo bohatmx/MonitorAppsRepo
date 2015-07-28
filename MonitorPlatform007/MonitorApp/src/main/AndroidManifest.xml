@@ -49,29 +49,36 @@
 
         <activity
             android:name=".activities.MainDrawerActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_main_drawer" >
         </activity>
         <activity
             android:name="com.boha.monitor.library.activities.ProjectTaskListActivity"
+            android:screenOrientation="portrait"
             android:parentActivityName="com.boha.monitor.library.activities.TaskTypeListActivity" >
         </activity>
         <activity android:name="com.boha.monitor.library.activities.CameraActivity"/>
-        <activity android:name="com.boha.monitor.library.activities.ThemeSelectorActivity"/>
+        <activity android:name="com.boha.monitor.library.activities.ThemeSelectorActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.boha.monitor.library.activities.TaskUpdateActivity"
+            android:screenOrientation="portrait"
             android:parentActivityName="com.boha.monitor.library.activities.TaskTypeListActivity"
             android:label="@string/title_activity_task_update" >
         </activity>
         <activity
             android:name="com.boha.monitor.library.activities.TaskTypeListActivity"
+            android:screenOrientation="portrait"
             android:parentActivityName=".activities.MainDrawerActivity" >
         </activity>
         <activity android:name="com.boha.monitor.library.activities.PictureActivity"/>
         <activity android:name="com.boha.monitor.library.activities.TestActivity"/>
         <activity android:name="com.boha.monitor.library.activities.GPSActivity"
+            android:screenOrientation="portrait"
             android:parentActivityName=".activities.MainDrawerActivity"/>
         <activity
             android:name="com.boha.monitor.library.activities.PhotoListActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_photo" >
         </activity>
         <activity android:name="com.boha.monitor.library.activities.MonitorMapActivity"
