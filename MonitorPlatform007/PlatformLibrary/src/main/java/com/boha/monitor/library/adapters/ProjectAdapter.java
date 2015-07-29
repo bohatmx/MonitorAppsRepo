@@ -82,27 +82,33 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             hvh.image.setImageDrawable(Util.getRandomHeroImage(ctx));
         }
         if (holder instanceof ProjectViewHolder) {
-            final ProjectDTO p = projectList.get(position - 1);
+            final ProjectDTO project = projectList.get(position - 1);
             final ProjectViewHolder pvh = (ProjectViewHolder) holder;
-            if (p.getLastStatus() != null) {
-                pvh.txtLastDate.setText(sdf.format(new Date(p.getLastStatus().getStatusDate())));
+            if (project.getLastStatus() != null) {
+                pvh.txtLastDate.setText(sdf.format(new Date(project.getLastStatus().getStatusDate())));
             } else {
                 pvh.txtLastDate.setText("No Status Date");
             }
-            pvh.txtProjectName.setText(p.getProjectName());
-            int count = 0, status = 0;
-            if (p.getPhotoUploadList() != null) {
-                count = p.getPhotoUploadList().size();
+            pvh.txtProjectName.setText(project.getProjectName());
+            if (project.getProjectTaskList() != null) {
+                pvh.txtTasks.setText("" + project.getProjectTaskList().size());
+            } else {
+                pvh.txtTasks.setText("0");
             }
-            for (ProjectTaskDTO d : p.getProjectTaskList()) {
-                if (d.getPhotoUploadList() != null)
-                    count += d.getPhotoUploadList().size();
-                if (d.getProjectTaskStatusList() != null) {
-                    status += d.getProjectTaskStatusList().size();
+            int photoCount = 0, statusCount = 0;
+            if (project.getPhotoUploadList() != null) {
+                photoCount = project.getPhotoUploadList().size();
+            }
+            for (ProjectTaskDTO task : project.getProjectTaskList()) {
+                if (task.getPhotoUploadList() != null)
+                    photoCount += task.getPhotoUploadList().size();
+                if (task.getProjectTaskStatusList() != null) {
+                    statusCount += task.getProjectTaskStatusList().size();
                 }
             }
-            pvh.txtPhotos.setText(df.format(count));
-            pvh.txtStatusCount.setText(df.format(status));
+            pvh.txtPhotos.setText(df.format(photoCount));
+            pvh.txtStatusCount.setText(df.format(statusCount));
+
 
             pvh.txtPhotos.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -110,7 +116,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     Util.flashOnce(pvh.txtPhotos, 300, new Util.UtilAnimationListener() {
                         @Override
                         public void onAnimationEnded() {
-                            listener.onGalleryRequired(p);
+                            listener.onGalleryRequired(project);
                         }
                     });
                 }
@@ -122,7 +128,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     Util.flashOnce(pvh.iconCamera, 300, new Util.UtilAnimationListener() {
                         @Override
                         public void onAnimationEnded() {
-                            listener.onCameraRequired(p);
+                            listener.onCameraRequired(project);
                         }
                     });
                 }
@@ -133,7 +139,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     Util.flashOnce(pvh.iconDirections, 300, new Util.UtilAnimationListener() {
                         @Override
                         public void onAnimationEnded() {
-                            listener.onDirectionsRequired(p);
+                            listener.onDirectionsRequired(project);
                         }
                     });
                 }
@@ -144,7 +150,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     Util.flashOnce(pvh.iconDoStatus, 300, new Util.UtilAnimationListener() {
                         @Override
                         public void onAnimationEnded() {
-                            listener.onStatusUpdateRequired(p);
+                            listener.onStatusUpdateRequired(project);
                         }
                     });
                 }
@@ -155,7 +161,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     Util.flashOnce(pvh.iconGallery, 300, new Util.UtilAnimationListener() {
                         @Override
                         public void onAnimationEnded() {
-                            listener.onGalleryRequired(p);
+                            listener.onGalleryRequired(project);
                         }
                     });
                 }
@@ -166,7 +172,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     Util.flashOnce(pvh.iconLocation, 300, new Util.UtilAnimationListener() {
                         @Override
                         public void onAnimationEnded() {
-                            listener.onLocationRequired(p);
+                            listener.onLocationRequired(project);
                         }
                     });
                 }
@@ -177,7 +183,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     Util.flashOnce(pvh.iconMap, 300, new Util.UtilAnimationListener() {
                         @Override
                         public void onAnimationEnded() {
-                            listener.onMapRequired(p);
+                            listener.onMapRequired(project);
                         }
                     });
                 }
@@ -188,17 +194,17 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     Util.flashOnce(pvh.iconMessaging, 300, new Util.UtilAnimationListener() {
                         @Override
                         public void onAnimationEnded() {
-                            listener.onMessagingRequired(p);
+                            listener.onMessagingRequired(project);
                         }
                     });
                 }
             });
 
-            if (p.getPhotoUploadList() == null || p.getPhotoUploadList().isEmpty()) {
+            if (project.getPhotoUploadList() == null || project.getPhotoUploadList().isEmpty()) {
                 pvh.image.setVisibility(View.GONE);
             } else {
                 pvh.image.setVisibility(View.VISIBLE);
-                String url = Util.getPhotoURL(p.getPhotoUploadList().get(pvh.imageIndex));
+                String url = project.getPhotoUploadList().get(0).getUri();
                 Log.w(LOG, "## photo url: " + url);
                 ImageLoader.getInstance().displayImage(url, pvh.image, new ImageLoadingListener() {
                     @Override
@@ -221,21 +227,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                     }
                 });
-                pvh.image.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (p.getPhotoUploadList().size() > 1) {
-                            int index = pvh.imageIndex + 1;
-                            if (index == p.getPhotoUploadList().size()) {
-                                index = 0;
-                            }
-                            pvh.imageIndex = index;
-                            String url = Util.getPhotoURL(p.getPhotoUploadList().get(index));
-                            ImageLoader.getInstance().displayImage(url, pvh.image);
-                        }
 
-                    }
-                });
             }
             if (darkColor != 0) {
                 pvh.iconCamera.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
@@ -264,7 +256,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public class ProjectViewHolder extends RecyclerView.ViewHolder {
         protected ImageView image;
-        protected TextView txtProjectName, txtStatusCount, txtLastDate, txtPhotos;
+        protected TextView txtProjectName, txtStatusCount, txtLastDate, txtPhotos, txtTasks;
         protected ImageView
                 iconCamera, iconDirections, iconDoStatus,
                 iconMap, iconGallery, iconLocation, iconStatusRpt,
@@ -279,6 +271,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             txtPhotos = (TextView) itemView.findViewById(R.id.PI_photoCount);
             txtStatusCount = (TextView) itemView.findViewById(R.id.PI_statusCount);
             txtLastDate = (TextView) itemView.findViewById(R.id.PI_lastStatusDate);
+            txtTasks = (TextView) itemView.findViewById(R.id.PI_taskCount);
 
             iconCamera = (ImageView) itemView.findViewById(R.id.PA_camera);
             iconDirections = (ImageView) itemView.findViewById(R.id.PA_directions);

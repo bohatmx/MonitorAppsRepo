@@ -144,7 +144,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/mon_margin"
                 android:layout_toRightOf="@id/PI_label4"
-                android:text="12" />
+                android:text="0" />
 
 
         </RelativeLayout>

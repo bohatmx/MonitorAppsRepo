@@ -2019,17 +2019,6 @@ public class Util {
     }
 
 
-    public static String getPhotoURL( PhotoUploadDTO p) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(Statics.IMAGE_URL).append("company")
-                .append(p.getCompanyID())
-                .append("/project").append(p.getProjectID());
-
-        sb.append("/").append(p.getUri());
-        String url = sb.toString();
-        return url;
-    }
-
     public static void setActionBarIconSpinning(Menu mMenu, int menuItem, final boolean refreshing) {
         if (mMenu != null) {
             final MenuItem refreshItem = mMenu.findItem(menuItem);

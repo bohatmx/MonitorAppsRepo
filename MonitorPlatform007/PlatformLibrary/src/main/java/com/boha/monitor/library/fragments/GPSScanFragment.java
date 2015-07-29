@@ -224,23 +224,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(final ResponseDTO response) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (response.getStatusCode() > 0) {
-                            addRequestToCache(w);
-                        } else {
-                            btnScan.setVisibility(View.GONE);
-                            gpsMessage.setVisibility(View.VISIBLE);
-                            Util.flashSeveralTimes(gpsMessage, 200, 3, new Util.UtilAnimationListener() {
-                                @Override
-                                public void onAnimationEnded() {
-                                    listener.onLocationConfirmed(project);
-                                }
-                            });
-                        }
-                    }
-                });
+                listener.onLocationConfirmed(project);
             }
 
             @Override
