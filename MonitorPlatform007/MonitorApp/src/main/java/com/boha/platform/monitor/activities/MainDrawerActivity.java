@@ -1,7 +1,10 @@
 package com.boha.platform.monitor.activities;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Resources;
@@ -9,6 +12,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -23,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.boha.monitor.library.activities.GPSActivity;
+import com.boha.monitor.library.activities.MonitorMapActivity;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.activities.PictureActivity;
 import com.boha.monitor.library.activities.TaskTypeListActivity;
@@ -335,6 +340,12 @@ public class MainDrawerActivity extends AppCompatActivity
                 startActivity(w);
 
                 break;
+
+            case LOCATION_REQUESTED:
+                if (resCode == RESULT_OK) {
+                    Snackbar.make(mPager, "Project location confirmed",Snackbar.LENGTH_LONG).show();
+                }
+                break;
             case REQUEST_CAMERA:
 
                 break;
@@ -398,13 +409,38 @@ public class MainDrawerActivity extends AppCompatActivity
 
     }
 
+    private Activity activity;
     @Override
-    public void onLocationRequired(ProjectDTO project) {
+    public void onLocationRequired(final ProjectDTO project) {
 
+        activity = this;
+        if (project.getLatitude() != null) {
+            Intent w = new Intent(this, MonitorMapActivity.class);
+            w.putExtra("project", project);
+            startActivity(w);
+            return;
+        }
 
-        Intent w = new Intent(this, GPSActivity.class);
-        w.putExtra("project",project);
-        startActivityForResult(w,LOCATION_REQUESTED);
+        AlertDialog.Builder c = new AlertDialog.Builder(this);
+        c.setTitle("Project Location")
+                .setMessage("You are about to set the location coordinates of the project: " + project.getProjectName() +
+                ". Please step as close as possible to the project and begin GPS scan.")
+                .setPositiveButton("Start Scan", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent w = new Intent(activity, GPSActivity.class);
+                        w.putExtra("project",project);
+                        startActivityForResult(w,LOCATION_REQUESTED);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+
     }
 
     @Override

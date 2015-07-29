@@ -1,6 +1,5 @@
 package com.boha.monitor.library.fragments;
 
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
@@ -25,7 +24,6 @@ import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.RequestCacheUtil;
 import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.Util;
-import com.boha.monitor.library.util.WebSocketUtil;
 import com.boha.platform.library.R;
 
 import java.text.DecimalFormat;
@@ -90,23 +88,18 @@ public class GPSScanFragment extends Fragment implements PageFragment {
 
     TextView desiredAccuracy, txtLat, txtCount,
             gpsMessage, txtLng, txtAccuracy, txtName;
-    Button btnScan, btnSave;
     View view;
     SeekBar seekBar;
     boolean isScanning;
-
     ProjectDTO project;
     ImageView imgLogo, hero;
     Context ctx;
-    ObjectAnimator logoAnimator;
-    long start, end;
     Chronometer chronometer;
 
     @Override
     public View onCreateView( LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.w(LOG,"###### onCreateView");
-
         view = inflater.inflate(R.layout.fragment_gps, container, false);
         ctx = getActivity();
         setFields();
@@ -123,8 +116,6 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         txtLng = (TextView) view.findViewById(R.id.GPS_longitude);
         txtCount = (TextView) view.findViewById(R.id.GPS_count);
         gpsMessage = (TextView) view.findViewById(R.id.GPS_message);
-        btnSave = (Button) view.findViewById(R.id.GPS_btnSave);
-        btnScan = (Button) view.findViewById(R.id.GPS_btnStop);
         seekBar = (SeekBar) view.findViewById(R.id.GPS_seekBar);
         imgLogo = (ImageView) view.findViewById(R.id.GPS_imgLogo);
         hero = (ImageView) view.findViewById(R.id.GPS_hero);
@@ -132,17 +123,14 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         chronometer = (Chronometer)view.findViewById(R.id.GPS_chrono);
         gpsMessage.setVisibility(View.GONE);
 
-        btnSave.setVisibility(View.GONE);
-        Statics.setRobotoFontBold(ctx, txtLat);
-        Statics.setRobotoFontBold(ctx, txtLng);
 
         imgLogo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.flashOnce(imgLogo,100,new Util.UtilAnimationListener() {
+                Util.flashOnce(imgLogo, 100, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
-                       listener.onMapRequested(project);
+                        listener.onMapRequested(project);
                     }
                 });
             }
@@ -177,42 +165,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
 
             }
         });
-        btnScan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Util.flashOnce(btnScan,100,new Util.UtilAnimationListener() {
-                    @Override
-                    public void onAnimationEnded() {
-                        if (isScanning) {
-                            listener.onEndScanRequested();
-                            isScanning = false;
-                            btnScan.setText(ctx.getString(R.string.start_scan));
-                            chronometer.stop();
-                        } else {
-                            listener.onStartScanRequested();
-                            isScanning = true;
-                            btnScan.setText(R.string.stop_scan);
-                            chronometer.setBase(SystemClock.elapsedRealtime());
-                            chronometer.start();
-                            Util.collapse(btnSave,300,null);
-                        }
-                    }
-                });
 
-            }
-        });
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Util.flashOnce(btnSave,100,new Util.UtilAnimationListener() {
-                    @Override
-                    public void onAnimationEnded() {
-                        sendGPSData();
-                    }
-                });
-
-            }
-        });
     }
     private void confirmLocation() {
         final RequestDTO w = new RequestDTO(RequestDTO.CONFIRM_LOCATION);
@@ -264,61 +217,9 @@ public class GPSScanFragment extends Fragment implements PageFragment {
 
     }
 
-    private void sendGPSData() {
-
-        RequestDTO w = new RequestDTO(RequestDTO.UPDATE_PROJECT);
-        final ProjectDTO project = new ProjectDTO();
-        project.setProjectID(this.project.getProjectID());
-        project.setLatitude(location.getLatitude());
-        project.setLongitude(location.getLongitude());
-        project.setAccuracy(location.getAccuracy());
-
-        w.setProject(project);
-        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
-            @Override
-            public void onResponse(final ResponseDTO response) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        listener.onEndScanRequested();
-                        project.setLocationConfirmed(true);
-                        listener.onLocationConfirmed(project);
-                        Log.w(LOG, "++++++++++++ project site location updated");
-                    }
-                });
-            }
-
-            @Override
-            public void onError(final String message) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //progressBar.setVisibility(View.GONE);
-                        showErrorToast(ctx, message);
-
-                    }
-                });
-            }
-
-            @Override
-            public void onWebSocketClose() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //progressBar.setVisibility(View.GONE);
-                    }
-                });
-            }
-        });
-    }
-
     int count;
+
     public void setLocation( Location location) {
-        if (project == null) {
-            Log.e(LOG,"#### project is NULL, verboten!");
-            return;
-        }
         count++;
         txtCount.setText("" + count);
         this.location = location;
@@ -326,22 +227,24 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         txtLng.setText("" + location.getLongitude());
         txtAccuracy.setText("" + location.getAccuracy());
 
-        if (location.getAccuracy() == seekBar.getProgress()
-                || location.getAccuracy() < seekBar.getProgress()) {
+        if (location.getAccuracy() <= seekBar.getProgress()) {
             isScanning = false;
             chronometer.stop();
-            btnScan.setText(R.string.start_scan);
             project.setLatitude(location.getLatitude());
             project.setLongitude(location.getLongitude());
             project.setAccuracy(location.getAccuracy());
             //
             listener.onEndScanRequested();
-            listener.onLocationConfirmed(project);
-            confirmLocation();
-            return;
+            Util.flashSeveralTimes(hero, 300, 2, new Util.UtilAnimationListener() {
+                @Override
+                public void onAnimationEnded() {
+                    confirmLocation();
+                }
+            });
         }
-        Util.flashSeveralTimes(hero,200,2, null);
+
     }
+
 
     static final DecimalFormat df = new DecimalFormat("###,###,###,##0.00");
     @Override
@@ -351,7 +254,8 @@ public class GPSScanFragment extends Fragment implements PageFragment {
             listener = (GPSScanFragmentListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " - Host activity" + activity.getLocalClassName() + " must implement GPSScanFragmentListener");
+                    + " - Host activity" + activity.getLocalClassName()
+                    + " must implement GPSScanFragmentListener");
         }
     }
 
@@ -368,10 +272,8 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         this.project = project;
         if (project != null)
             txtName.setText(project.getProjectName());
+
     }
 
 
-    public ProjectDTO getProject() {
-        return project;
-    }
 }

@@ -48,16 +48,14 @@ public class CDNUploader {
                 config.put("cloud_name", CLOUD_NAME);
                 config.put("api_key", API_KEY);
                 config.put("api_secret", API_SECRET);
-                config.put("public_id", getPublicID(ctx,dto));
 
                 Cloudinary cloudinary = new Cloudinary(config);
-
                 File file = new File(dto.getThumbFilePath());
                 Map map = null;
                 try {
                     map = cloudinary.uploader().upload(file, config);
                 } catch (Exception e) {
-                    Log.e(LOG, "CDN Failed", e);
+                    Log.e(LOG, "CDN upload Failed", e);
                     mListener.onError("Error uploading image to CDN");
                 }
 

@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
+import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
@@ -23,6 +24,8 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -84,14 +87,11 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (holder instanceof ProjectViewHolder) {
             final ProjectDTO project = projectList.get(position - 1);
             final ProjectViewHolder pvh = (ProjectViewHolder) holder;
-            if (project.getLastStatus() != null) {
-                pvh.txtLastDate.setText(sdf.format(new Date(project.getLastStatus().getStatusDate())));
-            } else {
-                pvh.txtLastDate.setText("No Status Date");
-            }
+
             pvh.txtProjectName.setText(project.getProjectName());
             if (project.getProjectTaskList() != null) {
                 pvh.txtTasks.setText("" + project.getProjectTaskList().size());
+
             } else {
                 pvh.txtTasks.setText("0");
             }
@@ -99,12 +99,20 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (project.getPhotoUploadList() != null) {
                 photoCount = project.getPhotoUploadList().size();
             }
+            List<ProjectTaskStatusDTO> statusList = new ArrayList<>();
             for (ProjectTaskDTO task : project.getProjectTaskList()) {
                 if (task.getPhotoUploadList() != null)
                     photoCount += task.getPhotoUploadList().size();
                 if (task.getProjectTaskStatusList() != null) {
                     statusCount += task.getProjectTaskStatusList().size();
+                    statusList.addAll(task.getProjectTaskStatusList());
                 }
+            }
+            Collections.sort(statusList);
+            if (!statusList.isEmpty()) {
+                pvh.txtLastDate.setText(sdf.format(new Date(statusList.get(0).getDateUpdated())));
+            } else {
+                pvh.txtLastDate.setText("No Status Date");
             }
             pvh.txtPhotos.setText(df.format(photoCount));
             pvh.txtStatusCount.setText(df.format(statusCount));
@@ -229,15 +237,20 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 });
 
             }
+
             if (darkColor != 0) {
                 pvh.iconCamera.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
                 pvh.iconDirections.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
                 pvh.iconDoStatus.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
                 pvh.iconGallery.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
                 pvh.iconLocation.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-                pvh.iconMap.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
                 pvh.iconMessaging.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
                 pvh.iconStatusRpt.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
+            }
+            if (project.getLatitude() != null) {
+                pvh.iconLocation.setColorFilter(R.color.green_700, PorterDuff.Mode.SRC_IN);
+            } else {
+                pvh.iconLocation.setColorFilter(R.color.red_700, PorterDuff.Mode.SRC_IN);
             }
 
         }

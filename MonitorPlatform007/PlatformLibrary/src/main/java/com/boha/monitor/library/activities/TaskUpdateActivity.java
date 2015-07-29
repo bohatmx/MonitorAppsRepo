@@ -130,25 +130,29 @@ public class TaskUpdateActivity extends AppCompatActivity
                         })
                         .show();
 
+            } else {
+                startTaskPictureActivity(projectTask);
             }
-        } else {
-            AlertDialog.Builder diag = new AlertDialog.Builder(this);
-            diag.setTitle("Project Task Photo")
-                    .setMessage("The project has no location data. Do you want to take a Project picture?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            startProjectPictureActivity();
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            return;
-                        }
-                    })
-                    .show();
+            return;
         }
+
+        AlertDialog.Builder diag = new AlertDialog.Builder(this);
+        diag.setTitle("Project Task Photo")
+                .setMessage("The project has no location data. Do you want to take a Project picture?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startProjectPictureActivity();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        return;
+                    }
+                })
+                .show();
+
 
     }
 

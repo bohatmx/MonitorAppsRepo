@@ -21,6 +21,9 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class PhotoFragment extends Fragment implements PageFragment {
 
@@ -68,39 +71,16 @@ public class PhotoFragment extends Fragment implements PageFragment {
         txtCap2 = (TextView)view.findViewById(R.id.IMI_caption2);
         txtCap1.setText("");
         txtCap2.setText("");
-        setCaptions();
 
         if (photo.getThumbFilePath() != null) {
             setLocalImage();
         } else {
             setRemoteImage();
         }
+        txtCap1.setText(df.format(new Date(photo.getDateTaken())));
 
-        if (caption1 != null) {
-            txtCap1.setText(caption1);
-        }
-        if (caption2 != null) {
-            txtCap2.setText(caption2);
-        }
     }
-    private void setCaptions() {
-        if (photo.getStaffID() != null) {
-            caption1 = "Staff Profile Picture";
-            caption2 = "";
-        }
-        if (photo.getProjectTaskID() != null) {
-            caption1 = "Project Task Status";
-            caption2 = "";
-        }
-        if (photo.getMonitorID() != null) {
-            caption1 = "Monitor Profile Picture";
-            caption2 = "";
-        }
-        if (photo.getProjectID() != null) {
-            caption1 = "Project Image";
-            caption2 = "";
-        }
-    }
+
     private void setLocalImage() {
         File file = new File(photo.getThumbFilePath());
         ImageLoader.getInstance().displayImage(Uri.fromFile(file).toString(), image, new ImageLoadingListener() {
@@ -154,7 +134,7 @@ public class PhotoFragment extends Fragment implements PageFragment {
         });
     }
 
-
+    static final SimpleDateFormat df = new SimpleDateFormat("EEEE dd MMMM yyyy HH:mm");
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

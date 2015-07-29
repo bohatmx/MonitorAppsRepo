@@ -2,6 +2,7 @@ package com.boha.monitor.library.adapters;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.provider.Settings;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -56,7 +57,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         final ProjectTaskDTO p = projectTaskList.get(position);
 
         if (p.getProjectTaskStatusList() != null && !p.getProjectTaskStatusList().isEmpty()) {
-            holder.txtLastDate.setText(sdf.format(new Date(p.getProjectTaskStatusList().get(0).getDateUpdated())));
+            if (p.getProjectTaskStatusList().get(0) == null) {
+                Log.e("TaskAdapter", "--- p.getProjectTaskStatusList().get(0) is NULL");
+            } else {
+                holder.txtLastDate.setText(sdf.format(new Date(p.getProjectTaskStatusList().get(0).getDateUpdated())));
+            }
             holder.txtStatusCount.setText(df.format(p.getProjectTaskStatusList().size()));
         } else {
             holder.txtLastDate.setText("No Status Date");

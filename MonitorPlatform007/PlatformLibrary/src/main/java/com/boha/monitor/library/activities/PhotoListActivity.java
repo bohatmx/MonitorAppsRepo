@@ -22,6 +22,7 @@ import com.boha.monitor.library.fragments.PhotoGridFragment;
 import com.boha.platform.library.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PhotoListActivity extends AppCompatActivity {
@@ -84,6 +85,7 @@ public class PhotoListActivity extends AppCompatActivity {
             pageFragmentList = new ArrayList<>();
         }
 
+        Collections.sort(response.getPhotoUploadList());
         pageFragmentList.add(PhotoGridFragment.newInstance(response));
 
         for (PhotoUploadDTO dto: response.getPhotoUploadList()) {
@@ -92,7 +94,7 @@ public class PhotoListActivity extends AppCompatActivity {
         adapter = new PagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(adapter);
 
-        mPager.setCurrentItem(index + 1,true);
+        mPager.setCurrentItem(index,true);
     }
 
     @Override
@@ -138,7 +140,7 @@ public class PhotoListActivity extends AppCompatActivity {
             if (position == 0) {
                 return "Photo Gallery";
             }
-            return "Project Photo # " + (position + 1);
+            return "Photo No. " + (response.getPhotoUploadList().size() - position + 1);
         }
     }
 
