@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
@@ -84,6 +85,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             hvh.txtCount.setText("" + projectList.size());
             hvh.image.setImageDrawable(Util.getRandomHeroImage(ctx));
         }
+
         if (holder instanceof ProjectViewHolder) {
             final ProjectDTO project = projectList.get(position - 1);
             final ProjectViewHolder pvh = (ProjectViewHolder) holder;
@@ -99,16 +101,20 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (project.getPhotoUploadList() != null) {
                 photoCount = project.getPhotoUploadList().size();
             }
+            List<PhotoUploadDTO> photoList = new ArrayList<>();
             List<ProjectTaskStatusDTO> statusList = new ArrayList<>();
             for (ProjectTaskDTO task : project.getProjectTaskList()) {
-                if (task.getPhotoUploadList() != null)
+                if (task.getPhotoUploadList() != null) {
                     photoCount += task.getPhotoUploadList().size();
+                    photoList.addAll(task.getPhotoUploadList());
+                }
                 if (task.getProjectTaskStatusList() != null) {
                     statusCount += task.getProjectTaskStatusList().size();
                     statusList.addAll(task.getProjectTaskStatusList());
                 }
             }
             Collections.sort(statusList);
+            Collections.sort(photoList);
             if (!statusList.isEmpty()) {
                 pvh.txtLastDate.setText(sdf.format(new Date(statusList.get(0).getDateUpdated())));
             } else {
@@ -208,11 +214,11 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             });
 
-            if (project.getPhotoUploadList() == null || project.getPhotoUploadList().isEmpty()) {
+            if (photoList.isEmpty()) {
                 pvh.image.setVisibility(View.GONE);
             } else {
                 pvh.image.setVisibility(View.VISIBLE);
-                String url = project.getPhotoUploadList().get(0).getUri();
+                String url = photoList.get(0).getUri();
                 Log.w(LOG, "## photo url: " + url);
                 ImageLoader.getInstance().displayImage(url, pvh.image, new ImageLoadingListener() {
                     @Override
