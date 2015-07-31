@@ -674,7 +674,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
                     @Override
                     public void onDataCached(PhotoUploadDTO photo) {
-                        photoList.add(photo);
+                        photoList.add(0,photo);
                         showCachedPhotos();
                     }
 
@@ -693,7 +693,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
                     @Override
                     public void onDataCached(PhotoUploadDTO photo) {
-                        photoList.add(photo);
+                        photoList.add(0,photo);
                         showCachedPhotos();
                     }
 
@@ -712,7 +712,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
                     @Override
                     public void onDataCached(PhotoUploadDTO photo) {
-                        photoList.add(photo);
+                        photoList.add(0,photo);
                         showCachedPhotos();
                     }
 
@@ -731,7 +731,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
                     @Override
                     public void onDataCached(PhotoUploadDTO photo) {
-                        photoList.add(photo);
+                        photoList.add(0,photo);
                         showCachedPhotos();
                     }
 

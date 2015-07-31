@@ -40,6 +40,7 @@ public class RequestDTO implements Serializable {
     private GcmDeviceDTO gcmDevice;
     private ChatMessageDTO chatMessage;
     private ProjectTaskDTO projectTask;
+    private VideoUploadDTO videoUpload;
 
     private List<TaskDTO> taskList;
     private List<StaffProjectDTO> staffProjectList;
@@ -175,6 +176,14 @@ public class RequestDTO implements Serializable {
     public static final String TASK_DIR = "task";
     //
 
+
+    public VideoUploadDTO getVideoUpload() {
+        return videoUpload;
+    }
+
+    public void setVideoUpload(VideoUploadDTO videoUpload) {
+        this.videoUpload = videoUpload;
+    }
 
     public boolean isRideWebSocket() {
         return rideWebSocket;

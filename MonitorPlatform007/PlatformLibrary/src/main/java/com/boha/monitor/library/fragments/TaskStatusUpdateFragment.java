@@ -47,6 +47,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
     public interface TaskStatusUpdateListener {
         void onCameraRequested(ProjectTaskDTO projectTask);
         void onStatusReturned(ProjectTaskStatusDTO projectTaskStatus);
+        void setBusy(boolean busy);
     }
     ProjectDTO project;
     private View view, actionView;

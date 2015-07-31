@@ -25,6 +25,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -98,8 +99,9 @@ public class GPSService extends Service implements LocationListener,
     }
 
     protected void stopLocationUpdates() {
-        Log.e(LOG, "###### stopLocationUpdates - " + new Date().toString());
+
         if (mGoogleApiClient.isConnected()) {
+            Log.e(LOG, "###### stopLocationUpdates - " + new Date().toString());
             LocationServices.FusedLocationApi.removeLocationUpdates(
                     mGoogleApiClient, this);
         }
@@ -221,6 +223,16 @@ public class GPSService extends Service implements LocationListener,
         RequestDTO dto = new RequestDTO(RequestDTO.ADD_LOCATION_TRACKERS);
         dto.setLocationTrackerList(list);
         Log.e(LOG, "### sending location tracks to server: " + list.size());
+        //todo remove code when done test
+        StringBuilder sb = new StringBuilder();
+        for (LocationTrackerDTO x: list) {
+            sb.append("\nTracked: ").append(sdf.format(new Date(x.getDateTracked().longValue())));
+            sb.append(" - ").append(x.getLatitude()).append(" ").append(x.getLongitude());
+            if (x.getGeocodedAddress() != null) {
+                sb.append(" - ").append(x.getGeocodedAddress());
+            }
+        }
+        Log.d(LOG,sb.toString());
         NetUtil.sendRequest(getApplicationContext(), dto, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(ResponseDTO response) {
@@ -244,8 +256,9 @@ public class GPSService extends Service implements LocationListener,
         });
     }
 
-    static final float ACCURACY_THRESHOLD = 15;
-    static final int MINIMUM_TRACKER_EVENTS = 4;
+    static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    static final float ACCURACY_THRESHOLD = 25;
+    static final int MINIMUM_TRACKER_EVENTS = 3;
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {

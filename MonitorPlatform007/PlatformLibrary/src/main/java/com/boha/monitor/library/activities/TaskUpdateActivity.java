@@ -78,8 +78,8 @@ public class TaskUpdateActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_task_update, menu);
+        mMenu = menu;
         return true;
     }
 
@@ -159,6 +159,11 @@ public class TaskUpdateActivity extends AppCompatActivity
     @Override
     public void onStatusReturned(ProjectTaskStatusDTO projectTaskStatus) {
         projectTaskStatusList.add(projectTaskStatus);
+    }
+
+    @Override
+    public void setBusy(boolean busy) {
+        setRefreshActionButtonState(busy);
     }
 
     @Override
@@ -351,5 +356,18 @@ public class TaskUpdateActivity extends AppCompatActivity
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
+    }
+    Menu mMenu;
+    public void setRefreshActionButtonState(final boolean refreshing) {
+        if (mMenu != null) {
+            final MenuItem refreshItem = mMenu.findItem(R.id.action_refresh);
+            if (refreshItem != null) {
+                if (refreshing) {
+                    refreshItem.setActionView(R.layout.action_bar_progess);
+                } else {
+                    refreshItem.setActionView(null);
+                }
+            }
+        }
     }
 }

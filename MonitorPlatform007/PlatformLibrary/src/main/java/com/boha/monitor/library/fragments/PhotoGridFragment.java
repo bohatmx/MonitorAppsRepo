@@ -58,7 +58,7 @@ public class PhotoGridFragment extends Fragment implements PageFragment {
             adapter = new PhotoAdapter(response.getPhotoUploadList(), PhotoAdapter.FULL_IMAGE, getActivity(), new PhotoAdapter.PictureListener() {
                 @Override
                 public void onPictureClicked(int position) {
-
+                    mListener.onPictureClicked(position);
                 }
             });
             mRecyclerView.setAdapter(adapter);
@@ -68,16 +68,17 @@ public class PhotoGridFragment extends Fragment implements PageFragment {
         return view;
     }
 
+    PhotoAdapter.PictureListener mListener;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         Log.d(LOG,"### onAttach");
-//        try {
-//            mListener = (OnFragmentInteractionListener) activity;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(activity.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
+        try {
+            mListener = (PhotoAdapter.PictureListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override

@@ -146,9 +146,10 @@ public class MainDrawerActivity extends AppCompatActivity
                 if (r.getProjectList() != null && !r.getProjectList().isEmpty()) {
                     response = r;
                     buildPages();
-                } else {
-                    getRemoteData();
                 }
+                //
+                getRemoteData();
+
             }
 
             @Override

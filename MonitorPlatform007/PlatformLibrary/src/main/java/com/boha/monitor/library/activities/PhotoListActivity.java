@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.boha.monitor.library.adapters.PhotoAdapter;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PhotoListActivity extends AppCompatActivity {
+public class PhotoListActivity extends AppCompatActivity implements PhotoAdapter.PictureListener{
 
     public static final int
             PHOTO_LOCAL = 1,
@@ -118,6 +119,13 @@ public class PhotoListActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onPictureClicked(int position) {
+
+        mPager.setCurrentItem(position);
+    }
+
     private class PagerAdapter extends FragmentStatePagerAdapter {
 
         public PagerAdapter(FragmentManager fm) {
