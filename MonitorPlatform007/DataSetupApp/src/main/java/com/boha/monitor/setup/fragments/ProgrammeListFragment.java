@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.boha.monitor.library.dto.PortfolioDTO;
 import com.boha.monitor.library.dto.ProgrammeDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.setup.R;
@@ -44,13 +46,7 @@ public class ProgrammeListFragment extends Fragment {
     private ProgrammeAdapter adapter;
     private List<ProgrammeDTO> programmeList;
 
-    public static ProgrammeListFragment newInstance(PortfolioDTO portfolio) {
-        ProgrammeListFragment fragment = new ProgrammeListFragment();
-        Bundle args = new Bundle();
-        args.putSerializable("portfolio", portfolio);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    Integer portfolioID;
 
     public ProgrammeListFragment() {
     }
@@ -64,24 +60,52 @@ public class ProgrammeListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            portfolio = (PortfolioDTO) getArguments().getSerializable("portfolio");
-            programmeList = portfolio.getProgrammeList();
-        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(LOG, "ProgrammeListFragment onCreateView");
         ctx = getActivity();
         this.inflater = inflater;
         view = inflater.inflate(R.layout.fragment_list, container, false);
         setFields();
-        if (portfolio != null) {
-            programmeList = portfolio.getProgrammeList();
-            setList();
-        }
+        getCachedData();
         return view;
+    }
+
+    private void getCachedData() {
+        CacheUtil.getCachedPortfolioList(getActivity(), new CacheUtil.CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO response) {
+                Log.e(LOG,"getCachedData onFileDataDeserialized");
+                if (response.getPortfolioList() != null) {
+                        for (PortfolioDTO y : response.getPortfolioList()) {
+                            if (y.getPortfolioID().intValue() == portfolioID.intValue()) {
+                                setPortfolio(y);
+                            }
+                        }
+                }
+            }
+
+            @Override
+            public void onDataCached() {
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+
+    }
+
+    public void setPortfolioID(Integer portfolioID) {
+        this.portfolioID = portfolioID;
+        Log.d(LOG, "setPortfolioID");
+
     }
 
     private void setFields() {
@@ -110,7 +134,7 @@ public class ProgrammeListFragment extends Fragment {
             public void onClick(View v) {
                 View view = inflater.inflate(R.layout.edit_name, null);
                 editName = (EditText) view.findViewById(R.id.ENAME_editName);
-                btn = (Button) view.findViewById(R.id.ENAME_btn);
+                btn = (Button) view.findViewById(R.id.ENAME_btnSubmit);
                 btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -246,7 +270,7 @@ public class ProgrammeListFragment extends Fragment {
     }
 
     public void refreshProgramme(ProgrammeDTO programme) {
-        for (ProgrammeDTO x: programmeList) {
+        for (ProgrammeDTO x : programmeList) {
             if (x.getProgrammeID().intValue() == programme.getProgrammeID().intValue()) {
                 x = programme;
                 adapter.notifyDataSetChanged();
@@ -254,4 +278,6 @@ public class ProgrammeListFragment extends Fragment {
             }
         }
     }
+
+    static final String LOG = ProgrammeListFragment.class.getSimpleName();
 }

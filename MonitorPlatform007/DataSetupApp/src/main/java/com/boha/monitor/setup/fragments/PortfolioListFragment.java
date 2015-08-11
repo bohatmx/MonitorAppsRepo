@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +16,13 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.PortfolioDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.fragments.PageFragment;
+import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
+import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.setup.R;
 import com.boha.monitor.setup.adapters.PortfolioAdapter;
@@ -36,10 +39,9 @@ import java.util.List;
  * Use the {@link PortfolioListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PortfolioListFragment extends Fragment {
+public class PortfolioListFragment extends Fragment implements PageFragment {
 
     private PortfolioFragmentListener mListener;
-    private CompanyDTO company;
     private RecyclerView recyclerView;
     private TextView txtHeader, txtCount;
     private View view;
@@ -52,60 +54,73 @@ public class PortfolioListFragment extends Fragment {
     private PortfolioAdapter adapter;
     private List<PortfolioDTO> portfolioList;
 
-    public static PortfolioListFragment newInstance(CompanyDTO company) {
+    public static PortfolioListFragment newInstance() {
         PortfolioListFragment fragment = new PortfolioListFragment();
-        Bundle args = new Bundle();
-        args.putSerializable("company", company);
-        fragment.setArguments(args);
+//        Bundle args = new Bundle();
+//        ResponseDTO response = new ResponseDTO();
+//        response.setPortfolioList(list);
+//        args.putSerializable("response", response);
+//        fragment.setArguments(args);
         return fragment;
     }
 
     public PortfolioListFragment() {
     }
 
-    public void setCompany(CompanyDTO company) {
-        this.company = company;
-        portfolioList = company.getPortfolioList();
-        setList();
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            company = (CompanyDTO) getArguments().getSerializable("company");
-            portfolioList = company.getPortfolioList();
+            ResponseDTO w = (ResponseDTO)getArguments().getSerializable("response");
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.i(LOG,"PortfolioListFragment onCreateView");
         ctx = getActivity();
         this.inflater = inflater;
-        view = inflater.inflate(R.layout.fragment_list, container, false);
+        view = inflater.inflate(R.layout.fragment_portfolio_coord, container, false);
         setFields();
-        if (company != null) {
-            setList();
-        }
+        getCachedData();
         return view;
     }
 
+    private void getCachedData() {
+        CacheUtil.getCachedPortfolioList(getActivity(), new CacheUtil.CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO response) {
+                Log.d(LOG,"getCachedData onFileDataDeserialized");
+                if (response.getPortfolioList() != null) {
+                    portfolioList = response.getPortfolioList();
+                    setList();
+                }
+            }
+
+            @Override
+            public void onDataCached() {
+
+            }
+
+            @Override
+            public void onError() {
+                Log.e(LOG,"### getCachedData onError");
+            }
+        });
+    }
     private void setFields() {
         fab = (FloatingActionButton)view.findViewById(R.id.fab);
-        subLayout = (LinearLayout)view.findViewById(R.id.FCL_emptyLayout);
-        recyclerView = (RecyclerView) view.findViewById(R.id.FCL_list);
-        txtCount = (TextView) view.findViewById(R.id.FCL_count);
-        txtHeader = (TextView) view.findViewById(R.id.FCL_title);
+        subLayout = (LinearLayout)view.findViewById(R.id.emptyLayout);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
+        txtCount = (TextView) view.findViewById(R.id.count);
+        txtHeader = (TextView) view.findViewById(R.id.headerText);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ctx, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setRecyclerListener(new RecyclerView.RecyclerListener() {
-            @Override
-            public void onViewRecycled(RecyclerView.ViewHolder holder) {
-            }
-        });
+
         recyclerView.addItemDecoration(
                 new HorizontalDividerItemDecoration.Builder(getActivity())
                         .color(R.color.green_100)
@@ -115,13 +130,21 @@ public class PortfolioListFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View view = inflater.inflate(R.layout.edit_name, null);
+                final View view = inflater.inflate(R.layout.edit_name, null);
+                view.setVisibility(View.VISIBLE);
                 editName = (EditText) view.findViewById(R.id.ENAME_editName);
-                btn = (Button) view.findViewById(R.id.ENAME_btn);
+                btn = (Button) view.findViewById(R.id.ENAME_btnSubmit);
+                Button btnCancel = (Button) view.findViewById(R.id.ENAME_btnCancel);
                 btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         sendData();
+                    }
+                });
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        view.setVisibility(View.GONE);
                     }
                 });
                 subLayout.removeAllViews();
@@ -130,13 +153,16 @@ public class PortfolioListFragment extends Fragment {
         });
     }
 
-
+    public void setPortfolioList(List<PortfolioDTO> portfolioList) {
+        this.portfolioList = portfolioList;
+        setList();
+    }
 
     private void sendData() {
         RequestDTO w = new RequestDTO(RequestDTO.ADD_PORTFOLOIOS);
         w.setPortfolioList(new ArrayList<PortfolioDTO>());
         final PortfolioDTO portfolio = new PortfolioDTO();
-        portfolio.setCompanyID(company.getCompanyID());
+        portfolio.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
         portfolio.setPortfolioName(editName.getText().toString());
         w.getPortfolioList().add(portfolio);
 
@@ -175,7 +201,7 @@ public class PortfolioListFragment extends Fragment {
         });
     }
     private void setList() {
-        adapter = new PortfolioAdapter(company.getPortfolioList(), ctx, new PortfolioAdapter.PortfolioAdapterListener() {
+        adapter = new PortfolioAdapter(portfolioList, ctx, new PortfolioAdapter.PortfolioAdapterListener() {
             @Override
             public void onPortfolioClicked(PortfolioDTO portfolio) {
                 mListener.onPortfolioClicked(portfolio);
@@ -196,8 +222,8 @@ public class PortfolioListFragment extends Fragment {
                 mListener.onIconEditClicked(portfolio, position);
             }
         });
-        txtHeader.setText("Portfolios: ");
-        txtCount.setText("" + company.getPortfolioList().size());
+//        txtHeader.setText(SharedUtil.getCompany(ctx).getCompanyName());
+        txtCount.setText("" + portfolioList.size());
         recyclerView.setAdapter(adapter);
     }
 
@@ -216,6 +242,21 @@ public class PortfolioListFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void animateHeroHeight() {
+
+    }
+    String pageTitle = "Portfolios";
+    @Override
+    public void setPageTitle(String title) {
+        pageTitle = title;
+    }
+
+    @Override
+    public String getPageTitle() {
+        return pageTitle;
     }
 
     /**
@@ -237,5 +278,7 @@ public class PortfolioListFragment extends Fragment {
 
         void onIconEditClicked(PortfolioDTO portfolio, int position);
     }
+
+    static final String LOG = PortfolioListFragment.class.getSimpleName();
 
 }

@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.util.Statics;
-import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -56,7 +55,7 @@ public class StaffAdapter extends ArrayAdapter<StaffDTO> {
     static class ViewHolderItem {
         TextView txtName;
         CircleImageView photo;
-        TextView txtNumber, txtCount;
+        TextView txtCount;
     }
 
 
@@ -71,8 +70,7 @@ public class StaffAdapter extends ArrayAdapter<StaffDTO> {
 
             item.txtCount = (TextView) convertView
                     .findViewById(R.id.PSN_txtCounter);
-            item.txtNumber = (TextView) convertView
-                    .findViewById(R.id.PSN_txtNum);
+
             item.photo = (CircleImageView) convertView
                     .findViewById(R.id.PSN_imagex);
 
@@ -83,7 +81,6 @@ public class StaffAdapter extends ArrayAdapter<StaffDTO> {
 
         final StaffDTO p = mList.get(position);
         item.txtName.setText(p.getFirstName() + " " + p.getLastName());
-        item.txtNumber.setText("" + (position + 1));
         item.txtCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,32 +93,35 @@ public class StaffAdapter extends ArrayAdapter<StaffDTO> {
                 listener.onPictureRequested(p);
             }
         });
-        Statics.setRobotoFontLight(ctx, item.txtNumber);
         Statics.setRobotoFontLight(ctx, item.txtName);
-        String url = Util.getStaffImageURL(ctx, p.getStaffID());
+        item.photo.setAlpha(0.4f);
+        if (p.getPhotoUploadList() != null && !p.getPhotoUploadList().isEmpty()) {
+            String url = p.getPhotoUploadList().get(0).getUri();
+            ImageLoader.getInstance().displayImage(url,item.photo, new ImageLoadingListener() {
+                @Override
+                public void onLoadingStarted(String s, View view) {
 
-        ImageLoader.getInstance().displayImage(url,item.photo, new ImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String s, View view) {
+                }
 
-            }
+                @Override
+                public void onLoadingFailed(String s, View view, FailReason failReason) {
+                    item.photo.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.boy));
+                    item.photo.setAlpha(0.4f);
+                }
 
-            @Override
-            public void onLoadingFailed(String s, View view, FailReason failReason) {
-                item.photo.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.boy));
-                item.photo.setAlpha(0.4f);
-            }
+                @Override
+                public void onLoadingComplete(String s, View view, Bitmap bitmap) {
+                    item.photo.setAlpha(1.0f);
+                }
 
-            @Override
-            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-                item.photo.setAlpha(1.0f);
-            }
+                @Override
+                public void onLoadingCancelled(String s, View view) {
 
-            @Override
-            public void onLoadingCancelled(String s, View view) {
+                }
+            });
+        }
 
-            }
-        });
+
 
 
         return (convertView);

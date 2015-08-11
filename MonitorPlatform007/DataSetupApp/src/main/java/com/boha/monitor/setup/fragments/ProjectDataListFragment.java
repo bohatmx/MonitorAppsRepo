@@ -20,6 +20,7 @@ import com.boha.monitor.library.dto.ProgrammeDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.setup.R;
@@ -39,27 +40,23 @@ public class ProjectDataListFragment extends Fragment {
     private EditText editName;
     private Button btn;
     private LinearLayout subLayout;
+    private Integer programmeID;
     private Context ctx;
     private FloatingActionButton fab;
     private LayoutInflater inflater;
     private ProjectDataAdapter adapter;
     private List<ProjectDTO> projectList;
+    private Integer portfolioID;
 
-    public static ProjectDataListFragment newInstance(ProgrammeDTO programme) {
+    public static ProjectDataListFragment newInstance() {
         ProjectDataListFragment fragment = new ProjectDataListFragment();
-        Bundle args = new Bundle();
-        args.putSerializable("programme", programme);
-        fragment.setArguments(args);
+//        Bundle args = new Bundle();
+//        args.putSerializable("programme", programme);
+//        fragment.setArguments(args);
         return fragment;
     }
 
     public ProjectDataListFragment() {
-    }
-
-    public void setProgramme(ProgrammeDTO programme) {
-        this.programme = programme;
-        projectList = programme.getProjectList();
-        setList();
     }
 
     @Override
@@ -78,10 +75,7 @@ public class ProjectDataListFragment extends Fragment {
         this.inflater = inflater;
         view = inflater.inflate(R.layout.fragment_list, container, false);
         setFields();
-        if (programme != null) {
-            projectList = programme.getProjectList();
-            setList();
-        }
+
         return view;
     }
 
@@ -111,7 +105,7 @@ public class ProjectDataListFragment extends Fragment {
             public void onClick(View v) {
                 View view = inflater.inflate(R.layout.edit_name, null);
                 editName = (EditText) view.findViewById(R.id.ENAME_editName);
-                btn = (Button) view.findViewById(R.id.ENAME_btn);
+                btn = (Button) view.findViewById(R.id.ENAME_btnSubmit);
                 btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -222,7 +216,6 @@ public class ProjectDataListFragment extends Fragment {
 
             }
         });
-
         txtHeader.setText("Projects: ");
         txtCount.setText("" + projectList.size());
         recyclerView.setAdapter(adapter);
@@ -245,5 +238,39 @@ public class ProjectDataListFragment extends Fragment {
         mListener = null;
     }
 
+    public void setPortfolioAndProgrammeID(final Integer portfolioID, final Integer programmeID) {
+        this.programmeID = programmeID;
+        this.portfolioID = portfolioID;
+
+        CacheUtil.getCachedPortfolioList(ctx, new CacheUtil.CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO response) {
+                if (response.getPortfolioList() != null) {
+                    for (PortfolioDTO x: response.getPortfolioList()) {
+                        if (x.getPortfolioID().intValue() == portfolioID.intValue()) {
+                            for (ProgrammeDTO y: x.getProgrammeList()) {
+                                if (y.getProgrammeID().intValue() == programmeID.intValue()){
+                                    projectList = y.getProjectList();
+                                    setList();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onDataCached() {
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+
+    }
 
 }

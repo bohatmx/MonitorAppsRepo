@@ -35,7 +35,8 @@ public class CacheUtil {
     static CacheUtilListener utilListener;
     public static final int CACHE_DATA = 1, CACHE_COUNTRIES = 3, CACHE_SITE = 7,
             CACHE_PROJECT = 5, CACHE_REQUEST = 6, CACHE_PROJECT_STATUS = 4,
-            CACHE_TRACKER = 8, CACHE_CHAT = 9, CACHE_MONITOR_PROJECTS = 10, CACHE_TASK_STATUS = 11, CACHE_COMPANY = 12;
+            CACHE_TRACKER = 8, CACHE_CHAT = 9, CACHE_MONITOR_PROJECTS = 10,
+            CACHE_TASK_STATUS = 11, CACHE_COMPANY = 12, CACHE_PORTFOLIOS = 14;
     static int dataType;
     static Integer projectID;
     static ResponseDTO response;
@@ -44,7 +45,8 @@ public class CacheUtil {
     static Context ctx;
     static final String JSON_DATA = "data.json", JSON_COUNTRIES = "countries.json", JSON_COMPANY_DATA = "company_data",
             JSON_PROJECT_DATA = "project_data", JSON_PROJECT_STATUS = "project_status", JSON_MON_PROJECTS = "monprojects.json",
-            JSON_REQUEST = "requestCache.json", JSON_SITE = "site", JSON_TRACKER = "tracker.json", JSON_CHAT = "chat", JSON_STATUS = "status";
+            JSON_REQUEST = "requestCache.json", JSON_SITE = "site", JSON_PORTFOLIOS = "portfolios.json",
+            JSON_TRACKER = "tracker.json", JSON_CHAT = "chat", JSON_STATUS = "status";
 
 
     public static void cacheData(Context context, ResponseDTO r, int type, CacheUtilListener cacheUtilListener) {
@@ -64,7 +66,13 @@ public class CacheUtil {
         ctx = context;
         new CacheTask().execute();
     }
-
+    public static void cachePortfolios(Context context, ResponseDTO r, CacheUtilListener cacheUtilListener) {
+        dataType = CACHE_PORTFOLIOS;
+        response = r;
+        utilListener = cacheUtilListener;
+        ctx = context;
+        new CacheTask().execute();
+    }
     public static void cacheProjectData(Context context, ResponseDTO r, Integer pID, CacheUtilListener cacheUtilListener) {
         dataType = CACHE_PROJECT;
         response = r;
@@ -209,6 +217,12 @@ public class CacheUtil {
         projectID = id;
         new CacheRetrieveTask().execute();
     }
+    public static void getCachedPortfolioList(Context context, CacheUtilListener cacheUtilListener) {
+        dataType = CACHE_PORTFOLIOS;
+        utilListener = cacheUtilListener;
+        ctx = context;
+        new CacheRetrieveTask().execute();
+    }
 
 
     static class CacheTask extends AsyncTask<Void, Void, Integer> {
@@ -285,6 +299,16 @@ public class CacheUtil {
                         break;
 
 
+                    case CACHE_PORTFOLIOS:
+                        json = gson.toJson(response);
+                        outputStream = ctx.openFileOutput(JSON_PORTFOLIOS, Context.MODE_PRIVATE);
+                        write(outputStream, json);
+                        file = ctx.getFileStreamPath(JSON_PORTFOLIOS);
+                        if (file != null) {
+                            Log.e(LOG, "Data cache written, path: " + file.getAbsolutePath() +
+                                    " - length: " + file.length());
+                        }
+                        break;
                     case CACHE_DATA:
                         json = gson.toJson(response);
                         outputStream = ctx.openFileOutput(JSON_DATA, Context.MODE_PRIVATE);
@@ -361,6 +385,11 @@ public class CacheUtil {
             try {
                 switch (dataType) {
 
+                    case CACHE_PORTFOLIOS:
+                        stream = ctx.openFileInput(JSON_PORTFOLIOS);
+                        response = getData(stream);
+                        Log.i(LOG, "++ portfolios cache retrieved");
+                        break;
                     case CACHE_COMPANY:
                         stream = ctx.openFileInput(JSON_COMPANY_DATA + companyID + ".json");
                         response = getData(stream);

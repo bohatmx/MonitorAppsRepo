@@ -23,12 +23,19 @@ public class ProjectDataAdapter extends RecyclerView.Adapter<ProjectDataAdapter.
 
     public interface ProjectListener {
         void onProjectClicked(ProjectDTO project);
+
         void onTaskCountClicked(ProjectDTO project);
+
         void onStaffCount(ProjectDTO project);
+
         void onMonitorCount(ProjectDTO project);
+
         void onIconGetLocationClicked(ProjectDTO project);
+
         void onIconDeleteClicked(ProjectDTO project, int position);
+
         void onIconEditClicked(ProjectDTO project, int position);
+
         void setBusy(boolean busy);
     }
 
@@ -58,9 +65,15 @@ public class ProjectDataAdapter extends RecyclerView.Adapter<ProjectDataAdapter.
         vh.number.setText("" + (position + 1));
         vh.name.setText(p.getProjectName());
         vh.position = position;
-        vh.taskCount.setText("" + p.getProjectTaskList().size());
-        vh.staffCount.setText("" + p.getStaffProjectList().size());
-        vh.monCount.setText("" + p.getMonitorProjectList().size());
+        if (p.getProjectTaskList() != null)
+            vh.taskCount.setText("" + p.getProjectTaskList().size());
+        else vh.taskCount.setText("0");
+        if (p.getStaffList() != null)
+            vh.staffCount.setText("" + p.getStaffList().size());
+        else vh.staffCount.setText("0");
+        if (p.getMonitorList() != null)
+            vh.monCount.setText("" + p.getMonitorList().size());
+        else vh.monCount.setText("0");
 
         if (p.getCityName() != null) {
             vh.city.setVisibility(View.VISIBLE);
@@ -127,7 +140,7 @@ public class ProjectDataAdapter extends RecyclerView.Adapter<ProjectDataAdapter.
             vh.iconDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onIconDeleteClicked(p,position);
+                    listener.onIconDeleteClicked(p, position);
                 }
             });
         } else {
@@ -137,7 +150,7 @@ public class ProjectDataAdapter extends RecyclerView.Adapter<ProjectDataAdapter.
         vh.iconEDit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onIconEditClicked(p,position);
+                listener.onIconEditClicked(p, position);
             }
         });
         if (p.getLatitude() != null) {
@@ -158,6 +171,7 @@ public class ProjectDataAdapter extends RecyclerView.Adapter<ProjectDataAdapter.
             }
         });
     }
+
     public int getItemCount() {
         return projectList == null ? 0 : projectList.size();
     }

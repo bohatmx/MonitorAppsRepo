@@ -1,7 +1,5 @@
 package com.boha.monitor.setup.activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -69,7 +67,7 @@ public class CompanyListActivity extends AppCompatActivity
                 Gson gson = new Gson();
                 String json = gson.toJson(company);
                 Log.e("CompanyListActivity", "json length of company: " + json.length());
-                Intent w = new Intent(getApplicationContext(), PortfolioListActivity.class);
+                Intent w = new Intent(getApplicationContext(), CompanyDrawerActivity.class);
                 w.putExtra("companyID", company.getCompanyID());
                 startActivityForResult(w, CHECK_FOR_REFRESHED_DATA);
             }

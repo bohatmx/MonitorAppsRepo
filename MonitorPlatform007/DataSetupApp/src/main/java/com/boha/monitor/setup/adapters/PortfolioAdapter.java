@@ -61,9 +61,14 @@ public class PortfolioAdapter extends RecyclerView.Adapter<PortfolioAdapter.Port
         vh.projectCount.setText("" + mCount);
         setListener(vh.name, p);
         setListener(vh.number, p);
-        setListener(vh.programCount, p);
 
         vh.programLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onProgramCountClicked(p);
+            }
+        });
+        vh.projectLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.onProgramCountClicked(p);

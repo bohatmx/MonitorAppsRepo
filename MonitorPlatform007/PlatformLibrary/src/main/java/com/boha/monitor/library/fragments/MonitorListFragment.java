@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,17 +13,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.adapters.MonitorAdapter;
+import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
-import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,42 +44,20 @@ public class MonitorListFragment extends Fragment implements PageFragment{
     TextView txtCount, txtName;
     View view, topView, fab;
     ImageView icon;
-    public static MonitorListFragment newInstance(ResponseDTO response) {
+    public static MonitorListFragment newInstance() {
         MonitorListFragment fragment = new MonitorListFragment();
         Bundle args = new Bundle();
-        args.putSerializable("response", response);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public void setMonitorList(List<MonitorDTO> monitorList) {
-        this.monitorList = monitorList;
-    }
-
     public MonitorListFragment() {
     }
-
+    CompanyDTO company;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            response = (ResponseDTO) getArguments().getSerializable("response");
-            monitorList = new ArrayList<>();
-            HashMap<Integer,MonitorDTO> map = new HashMap<>();
-            for (ProjectDTO x: response.getProjectList()) {
-                if (x.getMonitorList() != null) {
-                    for (MonitorDTO y: x.getMonitorList()) {
-                        if (!map.containsKey(y.getMonitorID())) {
-                            map.put(y.getMonitorID(),y);
-                        }
-                    }
-                }
-            }
-            Set<Integer> set = map.keySet();
-            for (Integer integer : set) {
-                monitorList.add(map.get(integer));
-            }
-        }
+
     }
 
     @Override
@@ -96,18 +71,35 @@ public class MonitorListFragment extends Fragment implements PageFragment{
         fab = view.findViewById(R.id.FAB);
         icon = (ImageView)view.findViewById(R.id.MONITOR_LIST_icon);
         mListView = (ListView) view.findViewById(R.id.MONITOR_LIST_list);
-        setList();
+
+        getCachedData();
         return view;
     }
 
 
+    private void getCachedData() {
+        CacheUtil.getCachedPortfolioList(getActivity(), new CacheUtil.CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO response) {
+                if (response.getMonitorList() != null) {
+                    monitorList = response.getMonitorList();
+                    setList();
+                }
+            }
+
+            @Override
+            public void onDataCached() {
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+    }
 
     private void setList() {
-
-        if (monitorList == null) {
-            Log.w("MonitorListFragment", "-- monitorList is null, quittin...");
-            return;
-        }
 
         monitorAdapter = new MonitorAdapter(ctx, R.layout.monitor_card, monitorList, new MonitorAdapter.MonitorAdapterListener() {
             @Override
@@ -120,7 +112,6 @@ public class MonitorListFragment extends Fragment implements PageFragment{
 
             }
         });
-
 
         mListView.setAdapter(monitorAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -187,7 +178,7 @@ public class MonitorListFragment extends Fragment implements PageFragment{
 
     }
 
-    String pageTitle;
+    String pageTitle = "Monitors";
     @Override
     public void setPageTitle(String title) {
         pageTitle = title;

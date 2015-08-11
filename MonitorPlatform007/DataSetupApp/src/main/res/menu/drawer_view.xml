@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_portfolio"
+            android:icon="@drawable/ic_action_content_paste"
+            android:title="Portfolio List" />
+
+        <item
+            android:id="@+id/nav_dashboard"
+            android:icon="@drawable/ic_action_picture"
+            android:title="Data Dashboard" />
+
+        <item
+            android:id="@+id/nav_projectMaps"
+            android:visible="false"
+            android:icon="@drawable/ic_action_map"
+            android:title="Project Maps" />
+
+    </group>
+    <item android:title="Project Assignments"
+        android:icon="@drawable/ic_action_face">
+        <menu>
+            <item
+                android:id="@+id/nav_staffProjects"
+                android:icon="@drawable/ic_action_globe"
+                android:title="Staff to Projects" />
+            <item
+                android:id="@+id/nav_monProjects"
+                android:icon="@drawable/ic_action_assessment"
+                android:title="Monitor to Projects" />
+        </menu>
+    </item>
+    <item android:title="People"
+        android:icon="@drawable/ic_action_face">
+        <menu>
+            <item
+                android:id="@+id/nav_staff"
+                android:icon="@drawable/ic_action_person"
+                android:title="Staff" />
+            <item
+                android:id="@+id/nav_monitors"
+                android:icon="@drawable/ic_action_videocam"
+                android:title="Monitors" />
+        </menu>
+    </item>
+
+</menu>

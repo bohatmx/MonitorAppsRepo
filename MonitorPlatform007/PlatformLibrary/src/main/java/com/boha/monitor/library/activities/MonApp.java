@@ -94,12 +94,6 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         Log.i(LOG, "## analytics tracker ID: " + trackerId.toString());
         return mTrackers.get(trackerId);
     }
-//    public static RefWatcher getRefWatcher(Context context) {
-//        MonApp application = (MonApp) context.getApplicationContext();
-//        return application.refWatcher;
-//    }
-//
-//    private RefWatcher refWatcher;
 
     @Override
     public void onCreate() {
@@ -113,14 +107,11 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         sb.append("#######################################\n\n");
 
         Log.d(LOG, sb.toString());
-//        refWatcher = LeakCanary.install(this);
         registerActivityLifecycleCallbacks(this);
-
 
         boolean isDebuggable = 0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
         if (!isDebuggable) {
             StrictMode.enableDefaults();
-
             Log.e(LOG, "###### StrictMode defaults enabled");
                     ACRA.init(this);
             StaffDTO staff = SharedUtil.getCompanyStaff(getApplicationContext());
@@ -170,10 +161,9 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intentx, 0);
 
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), FIFTEEN_MINUTES, alarmIntent);
+                SystemClock.elapsedRealtime(), HALF_HOUR, alarmIntent);
 
-
-        Log.e(LOG, "###### AlarmManager: alarm set to pull the trigger in: FIFTEEN_MINUTES");
+        Log.e(LOG, "###### AlarmManager: alarm set to pull the trigger every: HALF_HOUR");
     }
 
     static final int

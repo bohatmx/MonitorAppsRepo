@@ -17,6 +17,7 @@ import com.boha.monitor.library.adapters.StaffAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
+import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -49,6 +50,11 @@ public class StaffListFragment extends Fragment
     public StaffListFragment() {
     }
 
+    public static StaffListFragment newInstance() {
+        StaffListFragment d = new StaffListFragment();
+        return d;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,11 +73,6 @@ public class StaffListFragment extends Fragment
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_staff_list, container, false);
         ctx = getActivity();
-        Bundle b = getArguments();
-        if (b != null) {
-            response = (ResponseDTO) b.getSerializable("response");
-            companyStaffList = response.getStaffList();
-        }
 
         txtCount = (TextView) view.findViewById(R.id.FAB_text);
         txtName = (TextView) view.findViewById(R.id.STAFF_LIST_label);
@@ -91,26 +92,32 @@ public class StaffListFragment extends Fragment
                 });
             }
         });
-        icon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Util.flashOnce(icon,300,new Util.UtilAnimationListener() {
-                    @Override
-                    public void onAnimationEnded() {
-//                        Intent c = new Intent(ctx, StaffTrackerActivity.class);
-//                        c.putExtra("staffList",response);
-//                        ctx.startActivity(c);
-                    }
-                });
-            }
-        });
 
-        setList();
+
+        getCachedData();
         return view;
     }
 
-    public void setCompanyStaffList(List<StaffDTO> companyStaffList) {
-        this.companyStaffList = companyStaffList;
+    private void getCachedData() {
+        CacheUtil.getCachedPortfolioList(getActivity(), new CacheUtil.CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO response) {
+                if (response.getStaffList() != null) {
+                    staffList = response.getStaffList();
+                    setList();
+                }
+            }
+
+            @Override
+            public void onDataCached() {
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
     }
 
     @Override
@@ -138,13 +145,8 @@ public class StaffListFragment extends Fragment
 
     List<String> list;
     private void setList() {
-
-        if (companyStaffList == null) {
-            Log.w("StaffListFragment", "-- monitorList is null, quittin...");
-            return;
-        }
         staffAdapter = new StaffAdapter(ctx, R.layout.staff_card,
-                companyStaffList, new StaffAdapter.StaffAdapterListener() {
+                staffList, new StaffAdapter.StaffAdapterListener() {
             @Override
             public void onPictureRequested(StaffDTO staff) {
                 mListener.onCompanyStaffPictureRequested(staff);
@@ -161,7 +163,7 @@ public class StaffListFragment extends Fragment
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (null != mListener) {
-                    staff = companyStaffList.get(position);
+                    staff = staffList.get(position);
                     list = new ArrayList<>();
                     list.add(ctx.getString(R.string.get_status));
                     list.add(ctx.getString(R.string.take_picture));
@@ -181,13 +183,13 @@ public class StaffListFragment extends Fragment
                                     break;
                                 case 2:
                                     int index2 = 0;
-                                    for (StaffDTO s: companyStaffList) {
+                                    for (StaffDTO s: staffList) {
                                         if (s.getStaffID().intValue() == staff.getStaffID().intValue()) {
                                             break;
                                         }
                                         index2++;
                                     }
-                                    mListener.onCompanyStaffInvitationRequested(companyStaffList,index2);
+                                    mListener.onCompanyStaffInvitationRequested(staffList,index2);
                                     break;
                                 case 3:
                                     mListener.onCompanyStaffEditRequested(staff);
@@ -214,7 +216,7 @@ public class StaffListFragment extends Fragment
         });
 
     }
-    String pageTitle;
+    String pageTitle = "Staff";
     @Override
     public void setPageTitle(String title) {
         pageTitle = title;
@@ -226,13 +228,13 @@ public class StaffListFragment extends Fragment
     }
 
     public void addCompanyStaff( StaffDTO staff) {
-        if (companyStaffList == null) {
-            companyStaffList = new ArrayList<>();
+        if (staffList == null) {
+            staffList = new ArrayList<>();
         }
-        companyStaffList.add(staff);
+        staffList.add(staff);
 //        Collections.sort(monitorList);
         staffAdapter.notifyDataSetChanged();
-        txtCount.setText("" + companyStaffList.size());
+        txtCount.setText("" + staffList.size());
         Util.preen(txtCount, 300, 4, new Util.UtilAnimationListener() {
             @Override
             public void onAnimationEnded() {
@@ -240,7 +242,7 @@ public class StaffListFragment extends Fragment
             }
         });
         int index = 0;
-        for (StaffDTO s: companyStaffList) {
+        for (StaffDTO s: staffList) {
             if (s.getStaffID().intValue() == staff.getStaffID().intValue()) {
                 break;
             }
@@ -259,13 +261,13 @@ public class StaffListFragment extends Fragment
         setList();
 
         int index = 0;
-        for (StaffDTO c: companyStaffList) {
+        for (StaffDTO c: staffList) {
             if (staff.getStaffID() == c.getStaffID()) {
                 break;
             }
             index++;
         }
-        if (index < companyStaffList.size()) {
+        if (index < staffList.size()) {
             mListView.setSelection(index);
         }
     }
@@ -278,6 +280,6 @@ public class StaffListFragment extends Fragment
 
     }
     ProjectDTO project;
-    List<StaffDTO> companyStaffList;
+    List<StaffDTO> staffList;
     StaffAdapter staffAdapter;
 }

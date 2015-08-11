@@ -8,16 +8,23 @@
 
     <RelativeLayout
         android:id="@+id/STAFF_LIST_top"
-        android:background="@color/indigo_500"
+        android:background="?attr/colorAccent"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mon_hero_height_medium">
+
+        <ImageView
+            android:id="@+id/MONITOR_LIST_backDrop"
+            android:src="@drawable/back1"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <TextView
             android:id="@+id/STAFF_LIST_label"
             style="@style/Title1TextStyleWhite"
             android:layout_marginTop="@dimen/mon_wider"
             android:textColor="@color/white"
-            android:text="Monitoring Team"
+            android:text="Staff Team"
             android:layout_marginLeft="@dimen/mon_wide"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

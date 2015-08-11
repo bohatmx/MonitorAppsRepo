@@ -1,24 +1,27 @@
 package com.boha.monitor.setup.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
-import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.PortfolioDTO;
 import com.boha.monitor.library.dto.ProgrammeDTO;
-import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.CacheUtil;
-import com.boha.monitor.library.util.NetUtil;
-import com.boha.monitor.library.util.Util;
+import com.boha.monitor.library.util.DividerItemDecoration;
 import com.boha.monitor.setup.R;
 import com.boha.monitor.setup.adapters.ProgrammeAdapter;
 import com.boha.monitor.setup.fragments.FileImportFragment;
 import com.boha.monitor.setup.fragments.ProgrammeListFragment;
+
+import java.util.List;
 
 public class ProgrammeListActivity extends AppCompatActivity
         implements ProgrammeAdapter.ProgrammeListener {
@@ -26,27 +29,98 @@ public class ProgrammeListActivity extends AppCompatActivity
     ProgrammeListFragment programmeListFragment;
     PortfolioDTO portfolio;
     Integer portfolioID;
+    List<ProgrammeDTO> programmeList;
+    RecyclerView recyclerView;
+    TextView txt;
+    ProgrammeAdapter adapter;
+    Context ctx;
 
     Menu mMenu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_programme_list);
-
+        setContentView(R.layout.activity_programme_data);
+        ctx = getApplicationContext();
+        recyclerView = (RecyclerView)findViewById(R.id.recycler);
+        txt = (TextView)findViewById(R.id.text);
         portfolioID = getIntent().getIntExtra("portfolioID",0);
-        CacheUtil.getCachedData(getApplicationContext(), CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
+        getCachedPortfolioData();
+        setTitle("Programme List");
+
+    }
+
+    private void setList() {
+        LinearLayoutManager llm = new LinearLayoutManager(ctx,LinearLayoutManager.VERTICAL,false);
+        adapter = new ProgrammeAdapter(programmeList, ctx, new ProgrammeAdapter.ProgrammeListener() {
+            @Override
+            public void onProgrammeClicked(ProgrammeDTO programme) {
+
+            }
+
+            @Override
+            public void onProjectCountClicked(ProgrammeDTO programme) {
+                Intent w = new Intent(ctx, ProjectDataListActivity.class);
+                w.putExtra("portfolioID", programme.getPortfolioID() );
+                w.putExtra("programmeID", programme.getProgrammeID());
+
+                startActivityForResult(w, 1324);
+            }
+
+            @Override
+            public void onTaskTypeCountClicked(ProgrammeDTO programme) {
+
+            }
+
+            @Override
+            public void onTaskImportRequested(ProgrammeDTO programme) {
+
+            }
+
+            @Override
+            public void onProjectImportRequested(ProgrammeDTO programme) {
+
+            }
+
+            @Override
+            public void onIconDeleteClicked(ProgrammeDTO programme, int position) {
+
+            }
+
+            @Override
+            public void onIconEditClicked(ProgrammeDTO programme, int position) {
+
+            }
+
+            @Override
+            public void onCompanyDataRefreshed(ResponseDTO response, Integer companyID) {
+
+            }
+
+            @Override
+            public void setBusy(boolean busy) {
+
+            }
+        });
+
+        recyclerView.setLayoutManager(llm);
+        recyclerView.addItemDecoration(new DividerItemDecoration(ctx, DividerItemDecoration.VERTICAL_LIST ));
+        recyclerView.setAdapter(adapter);
+    }
+
+    private void getCachedPortfolioData() {
+        CacheUtil.getCachedPortfolioList(getApplicationContext(), new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
-                if (response.getCompanyList() != null) {
-                    for (CompanyDTO x : response.getCompanyList()) {
-                        for (PortfolioDTO y : x.getPortfolioList()) {
-                            if (y.getPortfolioID().intValue() == portfolioID.intValue()) {
-                                programmeListFragment = (ProgrammeListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-                                programmeListFragment.setPortfolio(y);
 
-                                setTitle("Portfolio Programmes");
-                                getSupportActionBar().setSubtitle(y.getPortfolioName());
-                            }
+                if (response.getPortfolioList() == null || response.getPortfolioList().isEmpty()) {
+                    return;
+                } else {
+                    for (PortfolioDTO v : response.getPortfolioList()) {
+                        if (v.getPortfolioID().intValue() == portfolioID.intValue()) {
+                            programmeList = v.getProgrammeList();
+                            txt.setText(v.getPortfolioName());
+                            portfolio = v;
+                            setList();
                         }
                     }
                 }
@@ -62,52 +136,11 @@ public class ProgrammeListActivity extends AppCompatActivity
 
             }
         });
-
     }
 
-
-
-    private void refreshCompanyData() {
-        RequestDTO w = new RequestDTO(RequestDTO.GET_COMPANY_DATA);
-        w.setCompanyID(portfolio.getCompanyID());
-
-        companyDataRefreshed = false;
-        setRefreshActionButtonState(true);
-        NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {
-            @Override
-            public void onResponse(final ResponseDTO response) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setRefreshActionButtonState(false);
-
-                        companyDataRefreshed = true;
-                    }
-                });
-
-            }
-
-            @Override
-            public void onError(final String message) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Util.showErrorToast(getApplicationContext(),message);
-                    }
-                });
-            }
-
-            @Override
-            public void onWebSocketClose() {
-
-            }
-        });
-    }
     boolean companyDataRefreshed;
 
-    public void refreshProgramme(ProgrammeDTO programme) {
 
-    }
     @Override
     public void onBackPressed() {
         if (companyDataRefreshed) {
@@ -130,7 +163,6 @@ public class ProgrammeListActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
          int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            refreshCompanyData();
             return true;
         }
         if (id == R.id.action_help) {
@@ -155,6 +187,7 @@ public class ProgrammeListActivity extends AppCompatActivity
         selectedProgramme = programme;
         Intent w = new Intent(this,ProjectDataListActivity.class);
         w.putExtra("programmeID",programme.getProgrammeID());
+        w.putExtra("portfolioID",programme.getPortfolioID());
         startActivityForResult(w,PROJECTS_REQUESTED);
     }
 
@@ -163,6 +196,7 @@ public class ProgrammeListActivity extends AppCompatActivity
         selectedProgramme = programme;
         Intent w = new Intent(this,TaskTypeListActivity.class);
         w.putExtra("programmeID",programme.getProgrammeID());
+        w.putExtra("portfolioID", programme.getPortfolioID());
         startActivityForResult(w, TASK_TYPES_REQUESTED);
     }
 

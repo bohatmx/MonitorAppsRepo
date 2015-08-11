@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.ProgrammeDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
@@ -25,13 +24,21 @@ public class ProgrammeAdapter extends RecyclerView.Adapter<ProgrammeAdapter.Prog
 
     public interface ProgrammeListener {
         void onProgrammeClicked(ProgrammeDTO programme);
+
         void onProjectCountClicked(ProgrammeDTO programme);
+
         void onTaskTypeCountClicked(ProgrammeDTO programme);
+
         void onTaskImportRequested(ProgrammeDTO programme);
+
         void onProjectImportRequested(ProgrammeDTO programme);
+
         void onIconDeleteClicked(ProgrammeDTO programme, int position);
+
         void onIconEditClicked(ProgrammeDTO programme, int position);
+
         void onCompanyDataRefreshed(ResponseDTO response, Integer companyID);
+
         void setBusy(boolean busy);
     }
 
@@ -61,13 +68,21 @@ public class ProgrammeAdapter extends RecyclerView.Adapter<ProgrammeAdapter.Prog
         vh.number.setText("" + (position + 1));
         vh.name.setText(p.getProgrammeName());
         vh.position = position;
-        vh.projectCount.setText("" + p.getProjectList().size());
-        vh.taskTypeCount.setText("" + p.getTaskTypeList().size());
+        if (p.getProjectList() != null)
+            vh.projectCount.setText("" + p.getProjectList().size());
+        else
+            vh.projectCount.setText("0");
+        if (p.getTaskTypeList() != null)
+            vh.taskTypeCount.setText("" + p.getTaskTypeList().size());
+        else
+            vh.taskTypeCount.setText("0");
 
         int mCount = 0, sCount = 0;
-        for (ProjectDTO c: p.getProjectList()) {
-            mCount += c.getMonitorProjectList().size();
-            sCount += c.getStaffProjectList().size();
+        for (ProjectDTO c : p.getProjectList()) {
+            if (c.getMonitorList() != null)
+                mCount += c.getMonitorList().size();
+            if (c.getStaffList() != null)
+                sCount += c.getStaffList().size();
         }
         vh.monCount.setText("" + mCount);
         vh.staffCount.setText("" + sCount);
@@ -81,7 +96,7 @@ public class ProgrammeAdapter extends RecyclerView.Adapter<ProgrammeAdapter.Prog
             vh.iconDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onIconDeleteClicked(p,position);
+                    listener.onIconDeleteClicked(p, position);
                 }
             });
         } else {
@@ -90,7 +105,7 @@ public class ProgrammeAdapter extends RecyclerView.Adapter<ProgrammeAdapter.Prog
         vh.iconEDit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onIconEditClicked(p,position);
+                listener.onIconEditClicked(p, position);
             }
         });
         vh.projectCountLayout.setOnClickListener(new View.OnClickListener() {
@@ -128,6 +143,7 @@ public class ProgrammeAdapter extends RecyclerView.Adapter<ProgrammeAdapter.Prog
             }
         });
     }
+
     public int getItemCount() {
         return programmeList == null ? 0 : programmeList.size();
     }
@@ -136,7 +152,7 @@ public class ProgrammeAdapter extends RecyclerView.Adapter<ProgrammeAdapter.Prog
     static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", loc);
 
     public class ProgrammeViewHolder extends RecyclerView.ViewHolder {
-        protected ImageView iconDelete, iconEDit, iconImportProjects,iconImportTasks;
+        protected ImageView iconDelete, iconEDit, iconImportProjects, iconImportTasks;
         protected TextView name, number, projectCount, monCount, staffCount, taskTypeCount;
         protected int position;
         protected View taskTypeLayout, projectCountLayout;

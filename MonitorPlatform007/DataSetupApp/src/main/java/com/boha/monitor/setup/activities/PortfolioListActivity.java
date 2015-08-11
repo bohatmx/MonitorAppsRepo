@@ -11,7 +11,6 @@ import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.PortfolioDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
-import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.setup.R;
@@ -28,30 +27,6 @@ public class PortfolioListActivity extends AppCompatActivity implements Portfoli
         super.onCreate(savedInstanceState);
         Log.e("PortfolioListActivity", "##### onCreate");
         setContentView(R.layout.activity_portfolio_list);
-
-        companyID = getIntent().getIntExtra("companyID",0);
-        CacheUtil.getCachedCompanyData(getApplicationContext(), companyID, new CacheUtil.CacheUtilListener() {
-            @Override
-            public void onFileDataDeserialized(ResponseDTO response) {
-                if (response.getCompany() != null) {
-                    portfolioListFragment = (PortfolioListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-                    portfolioListFragment.setCompany(response.getCompany());
-
-                    setTitle("Company Portfolios");
-                    getSupportActionBar().setSubtitle(response.getCompany().getCompanyName());
-                }
-            }
-
-            @Override
-            public void onDataCached() {
-
-            }
-
-            @Override
-            public void onError() {
-
-            }
-        });
 
     }
 
@@ -74,7 +49,6 @@ public class PortfolioListActivity extends AppCompatActivity implements Portfoli
                         company.setProjectStatusTypeList(response.getProjectStatusTypeList());
                         company.setTaskStatusTypeList(response.getTaskStatusTypeList());
                         company.setPortfolioList(response.getPortfolioList());
-                        portfolioListFragment.setCompany(company);
                         companyDataRefreshed = true;
                     }
                 });
