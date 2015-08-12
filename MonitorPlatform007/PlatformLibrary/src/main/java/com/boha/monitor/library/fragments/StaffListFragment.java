@@ -17,7 +17,6 @@ import com.boha.monitor.library.adapters.StaffAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
-import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -50,15 +49,35 @@ public class StaffListFragment extends Fragment
     public StaffListFragment() {
     }
 
-    public static StaffListFragment newInstance() {
+    public static StaffListFragment newInstance(List<StaffDTO> list) {
         StaffListFragment d = new StaffListFragment();
+        ResponseDTO w = new ResponseDTO();
+        w.setStaffList(list);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("staffList", w);
+        d.setArguments(bundle);
         return d;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        Log.d(LOG,"StaffListFragment onCreate");
+        if (bundle != null) {
+            ResponseDTO w = (ResponseDTO)bundle.getSerializable("staffList");
+            if (w != null) {
+                staffList = w.getStaffList();
+                return;
+            }
+        }
+        Bundle c = getArguments();
+        if (c != null) {
+            ResponseDTO w = (ResponseDTO)c.getSerializable("staffList");
+            if (w != null) {
+                staffList = w.getStaffList();
+                return;
+            }
+        }
 
     }
 
@@ -71,6 +90,7 @@ public class StaffListFragment extends Fragment
     @Override
     public View onCreateView( LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(LOG, "###### StaffListFragment onCreateView");
         view = inflater.inflate(R.layout.fragment_staff_list, container, false);
         ctx = getActivity();
 
@@ -93,31 +113,24 @@ public class StaffListFragment extends Fragment
             }
         });
 
+        setList();
 
-        getCachedData();
         return view;
     }
 
-    private void getCachedData() {
-        CacheUtil.getCachedPortfolioList(getActivity(), new CacheUtil.CacheUtilListener() {
-            @Override
-            public void onFileDataDeserialized(ResponseDTO response) {
-                if (response.getStaffList() != null) {
-                    staffList = response.getStaffList();
-                    setList();
-                }
-            }
+    @Override
+    public void onSaveInstanceState(Bundle b) {
+        Log.i(LOG, "## onSaveInstanceState");
+        ResponseDTO w = new ResponseDTO();
+        w.setStaffList(staffList);
+        b.putSerializable("staffList", w);
+        super.onSaveInstanceState(b);
+    }
 
-            @Override
-            public void onDataCached() {
 
-            }
-
-            @Override
-            public void onError() {
-
-            }
-        });
+    public void setStaffList(List<StaffDTO> staffList) {
+        this.staffList = staffList;
+        setList();
     }
 
     @Override
@@ -145,7 +158,8 @@ public class StaffListFragment extends Fragment
 
     List<String> list;
     private void setList() {
-        staffAdapter = new StaffAdapter(ctx, R.layout.staff_card,
+        Log.e(LOG, "setList staffList: " + staffList.size());
+        staffAdapter = new StaffAdapter(ctx, R.layout.monitor_card,
                 staffList, new StaffAdapter.StaffAdapterListener() {
             @Override
             public void onPictureRequested(StaffDTO staff) {
@@ -282,4 +296,5 @@ public class StaffListFragment extends Fragment
     ProjectDTO project;
     List<StaffDTO> staffList;
     StaffAdapter staffAdapter;
+    static final String LOG = StaffListFragment.class.getSimpleName();
 }

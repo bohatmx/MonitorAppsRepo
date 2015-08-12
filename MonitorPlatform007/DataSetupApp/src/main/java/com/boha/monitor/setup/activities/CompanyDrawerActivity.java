@@ -40,6 +40,7 @@ import com.boha.monitor.library.fragments.PageFragment;
 import com.boha.monitor.library.fragments.StaffFragment;
 import com.boha.monitor.library.fragments.StaffListFragment;
 import com.boha.monitor.library.util.CacheUtil;
+import com.boha.monitor.library.util.DepthPageTransformer;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Util;
@@ -175,10 +176,11 @@ public class CompanyDrawerActivity extends AppCompatActivity implements
     private void getCache() {
         CacheUtil.getCachedPortfolioList(ctx, new CacheUtil.CacheUtilListener() {
             @Override
-            public void onFileDataDeserialized(ResponseDTO response) {
-                if (response.getPortfolioList() != null && !response.getPortfolioList().isEmpty()) {
+            public void onFileDataDeserialized(ResponseDTO r) {
+                if (r.getPortfolioList() != null && !r.getPortfolioList().isEmpty()) {
+                    response = r;
                     buildPages();
-                    portfolioListFragment.setPortfolioList(response.getPortfolioList());
+                    portfolioListFragment.setPortfolioList(r.getPortfolioList());
                 }
                 refreshPortfolioList();
             }
@@ -202,13 +204,14 @@ public class CompanyDrawerActivity extends AppCompatActivity implements
         setRefreshActionButtonState(true);
         NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {
             @Override
-            public void onResponse(final ResponseDTO response) {
+            public void onResponse(final ResponseDTO r) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         setRefreshActionButtonState(false);
                         companyDataRefreshed = true;
-                        CacheUtil.cachePortfolios(getApplicationContext(), response, new CacheUtil.CacheUtilListener() {
+                        response = r;
+                        CacheUtil.cachePortfolios(getApplicationContext(), r, new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
 
@@ -217,7 +220,7 @@ public class CompanyDrawerActivity extends AppCompatActivity implements
                             @Override
                             public void onDataCached() {
                                 buildPages();
-                                portfolioListFragment.setPortfolioList(response.getPortfolioList());
+                                portfolioListFragment.setPortfolioList(r.getPortfolioList());
                             }
 
                             @Override
@@ -249,17 +252,38 @@ public class CompanyDrawerActivity extends AppCompatActivity implements
 
     private void buildPages() {
         pageFragmentList = new ArrayList<>();
-        portfolioListFragment = PortfolioListFragment.newInstance();
-        monitorListFragment = MonitorListFragment.newInstance();
-        staffListFragment = StaffListFragment.newInstance();
+        portfolioListFragment = PortfolioListFragment.newInstance(response.getPortfolioList());
+        monitorListFragment = MonitorListFragment.newInstance(response.getMonitorList());
+        staffListFragment = StaffListFragment.newInstance(response.getStaffList());
 
 
         pageFragmentList.add(portfolioListFragment);
-        pageFragmentList.add(staffListFragment);
         pageFragmentList.add(monitorListFragment);
+        pageFragmentList.add(staffListFragment);
 
-        adapter = new PagerAdapter(getSupportFragmentManager());
+        adapter = new CompanyPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(adapter);
+        mPager.setPageTransformer(true, new DepthPageTransformer());
+//            mPager.setPageTransformer(true, new ZoomPageTransformer());
+
+        mPager.setCurrentItem(currentPageIndex, true);
+        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                    currentPageIndex = position;
+                pageFragmentList.get(position).animateHeroHeight();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
     }
     protected void startLocationUpdates() {
@@ -486,9 +510,9 @@ public class CompanyDrawerActivity extends AppCompatActivity implements
     /**
      * Adapter to manage fragments in view pager
      */
-    private static class PagerAdapter extends FragmentStatePagerAdapter {
+    private static class CompanyPagerAdapter extends FragmentStatePagerAdapter {
 
-        public PagerAdapter(FragmentManager fm) {
+        public CompanyPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -525,7 +549,7 @@ public class CompanyDrawerActivity extends AppCompatActivity implements
     static final String LOG = CompanyDrawerActivity.class.getSimpleName();
     static final int ACCURACY_THRESHOLD = 10;
     private DrawerLayout mDrawerLayout;
-    android.support.v4.view.PagerAdapter adapter;
+    CompanyPagerAdapter adapter;
     Context ctx;
     int currentPageIndex;
     Location mCurrentLocation;

@@ -8,7 +8,6 @@
 
     <RelativeLayout
         android:id="@+id/STAFF_LIST_top"
-        android:background="?attr/colorAccent"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mon_hero_height_medium">
 

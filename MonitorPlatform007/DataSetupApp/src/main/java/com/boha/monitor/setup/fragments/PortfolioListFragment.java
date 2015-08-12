@@ -20,7 +20,6 @@ import com.boha.monitor.library.dto.PortfolioDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.fragments.PageFragment;
-import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Util;
@@ -54,13 +53,13 @@ public class PortfolioListFragment extends Fragment implements PageFragment {
     private PortfolioAdapter adapter;
     private List<PortfolioDTO> portfolioList;
 
-    public static PortfolioListFragment newInstance() {
+    public static PortfolioListFragment newInstance(List<PortfolioDTO> list) {
         PortfolioListFragment fragment = new PortfolioListFragment();
-//        Bundle args = new Bundle();
-//        ResponseDTO response = new ResponseDTO();
-//        response.setPortfolioList(list);
-//        args.putSerializable("response", response);
-//        fragment.setArguments(args);
+        Bundle args = new Bundle();
+        ResponseDTO response = new ResponseDTO();
+        response.setPortfolioList(list);
+        args.putSerializable("portfolioList", response);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -72,43 +71,36 @@ public class PortfolioListFragment extends Fragment implements PageFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            ResponseDTO w = (ResponseDTO)getArguments().getSerializable("response");
+            ResponseDTO w = (ResponseDTO)getArguments().getSerializable("portfolioList");
+            portfolioList = w.getPortfolioList();
+            return;
+        }
+        if (savedInstanceState != null) {
+            ResponseDTO w = (ResponseDTO)savedInstanceState.getSerializable("portfolioList");
+            portfolioList = w.getPortfolioList();
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.i(LOG,"PortfolioListFragment onCreateView");
+        Log.i(LOG, "PortfolioListFragment onCreateView");
         ctx = getActivity();
         this.inflater = inflater;
         view = inflater.inflate(R.layout.fragment_portfolio_coord, container, false);
         setFields();
-        getCachedData();
+
+        setList();
         return view;
     }
 
-    private void getCachedData() {
-        CacheUtil.getCachedPortfolioList(getActivity(), new CacheUtil.CacheUtilListener() {
-            @Override
-            public void onFileDataDeserialized(ResponseDTO response) {
-                Log.d(LOG,"getCachedData onFileDataDeserialized");
-                if (response.getPortfolioList() != null) {
-                    portfolioList = response.getPortfolioList();
-                    setList();
-                }
-            }
+    @Override
+    public void onSaveInstanceState(Bundle b) {
+        ResponseDTO w = new ResponseDTO();
+        w.setPortfolioList(portfolioList);
+        b.putSerializable("portfolioList", w);
 
-            @Override
-            public void onDataCached() {
-
-            }
-
-            @Override
-            public void onError() {
-                Log.e(LOG,"### getCachedData onError");
-            }
-        });
+        super.onSaveInstanceState(b);
     }
     private void setFields() {
         fab = (FloatingActionButton)view.findViewById(R.id.fab);

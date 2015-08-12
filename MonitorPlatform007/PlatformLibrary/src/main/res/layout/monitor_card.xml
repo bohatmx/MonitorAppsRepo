@@ -10,6 +10,7 @@
 
     <RelativeLayout
         android:id="@+id/top"
+        android:layout_marginLeft="@dimen/mon_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -50,6 +51,7 @@
         android:layout_below="@+id/top"
         android:layout_marginRight="@dimen/mon_wide"
         android:layout_marginTop="@dimen/mon_wider"
+        android:layout_marginBottom="@dimen/mon_margin"
         android:visibility="visible">
 
 
