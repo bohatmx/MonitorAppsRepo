@@ -129,6 +129,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
                 if (null != mListener) {
                     monitor = monitorList.get(position);
                     list = new ArrayList<>();
+                    list.add(ctx.getString(R.string.assign_projects));
                     list.add(ctx.getString(R.string.get_status));
                     list.add(ctx.getString(R.string.take_picture));
                     list.add(ctx.getString(R.string.send_app_link));

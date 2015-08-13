@@ -43,6 +43,7 @@ public class ProgrammeListActivity extends AppCompatActivity
         ctx = getApplicationContext();
         recyclerView = (RecyclerView)findViewById(R.id.recycler);
         txt = (TextView)findViewById(R.id.text);
+        txt.setText("");
         portfolioID = getIntent().getIntExtra("portfolioID",0);
         getCachedPortfolioData();
         setTitle("Programme List");
@@ -108,10 +109,11 @@ public class ProgrammeListActivity extends AppCompatActivity
     }
 
     private void getCachedPortfolioData() {
+        setBusy(true);
         CacheUtil.getCachedPortfolioList(getApplicationContext(), new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
-
+                setBusy(true);
                 if (response.getPortfolioList() == null || response.getPortfolioList().isEmpty()) {
                     return;
                 } else {
@@ -156,6 +158,7 @@ public class ProgrammeListActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_general, menu);
+        mMenu = menu;
         return true;
     }
 

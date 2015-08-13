@@ -241,7 +241,7 @@ public class MainDrawerActivity extends AppCompatActivity
         messagingFragment = MessagingFragment.newInstance(response);
         messagingFragment.setPageTitle(getString(R.string.messaging));
 
-        monitorListFragment = MonitorListFragment.newInstance();
+        monitorListFragment = MonitorListFragment.newInstance(response.getMonitorList());
         monitorListFragment.setPageTitle(getString(R.string.monitors));
 
         if (!response.getProjectList().isEmpty()) {

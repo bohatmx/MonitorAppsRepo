@@ -20,7 +20,7 @@
         <TextView
             android:id="@+id/MONITOR_LIST_label"
             style="@style/Title1TextStyleWhite"
-            android:layout_marginTop="@dimen/mon_wider"
+            android:layout_marginTop="@dimen/mon_wide"
             android:textColor="@color/white"
             android:text="Monitoring Team"
             android:layout_marginLeft="@dimen/mon_wide"

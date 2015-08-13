@@ -48,11 +48,11 @@ dependencies {
     compile 'com.yqritc:recyclerview-flexibledivider:1.2.4'
     compile 'jp.wasabeef:recyclerview-animators:1.2.0@aar'
     compile 'com.github.clans:fab:1.5.0'
-    compile 'com.sothree.slidinguppanel:library:3.0.0'
     compile 'com.squareup.picasso:picasso:2.3.2'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.daimajia.slider:library:1.1.5@aar'
     compile 'net.the4thdimension:android-utils:3.0.1'
+    compile 'com.sothree.slidinguppanel:library:3.1.1'
 
     compile files('libs/gcm.jar')
     compile files('libs/universal-image-loader-1.9.3.jar')

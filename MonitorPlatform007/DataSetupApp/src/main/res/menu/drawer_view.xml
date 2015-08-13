@@ -26,11 +26,11 @@
             <item
                 android:id="@+id/nav_staffProjects"
                 android:icon="@drawable/ic_action_globe"
-                android:title="Staff to Projects" />
+                android:title="Staff Projects" />
             <item
                 android:id="@+id/nav_monProjects"
                 android:icon="@drawable/ic_action_assessment"
-                android:title="Monitor to Projects" />
+                android:title="Monitor Projects" />
         </menu>
     </item>
     <item android:title="People"
