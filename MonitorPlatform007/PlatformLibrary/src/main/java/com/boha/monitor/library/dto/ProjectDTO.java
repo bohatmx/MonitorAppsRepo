@@ -34,8 +34,17 @@ public class ProjectDTO implements Serializable {
     private List<MonitorDTO> monitorList;
     private List<StaffDTO> staffList;
     private ProjectTaskStatusDTO lastStatus;
+    private Boolean selected;
 
     public ProjectDTO() {
+    }
+
+    public Boolean getSelected() {
+        return selected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
     }
 
     public String getCityName() {

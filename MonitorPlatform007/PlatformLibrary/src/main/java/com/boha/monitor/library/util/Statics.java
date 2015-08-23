@@ -48,6 +48,8 @@ public class Statics {
             CACHED_REQUEST_SERVLET = "cachedRequests?JSON=";
 
     public static final String SESSION_ID = "sessionID";
+    public static final String SENT_TOKEN_TO_SERVER = "sentTokenToServer";
+    public static final String REGISTRATION_COMPLETE = "registrationComplete";
 
 
     public static void setDroidFontBold( Context ctx,  TextView txt) {

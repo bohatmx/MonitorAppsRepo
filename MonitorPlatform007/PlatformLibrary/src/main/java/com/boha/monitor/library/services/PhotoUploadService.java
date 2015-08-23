@@ -36,7 +36,7 @@ public class PhotoUploadService extends IntentService {
     }
 
     public interface UploadListener {
-        public void onUploadsComplete(int count);
+        public void onUploadsComplete(List<PhotoUploadDTO> list);
     }
 
     UploadListener uploadListener;
@@ -64,7 +64,7 @@ public class PhotoUploadService extends IntentService {
                     if (list.isEmpty()) {
                         Log.w(LOG, "--- no cached photos for upload");
                         if (uploadListener != null)
-                            uploadListener.onUploadsComplete(0);
+                            uploadListener.onUploadsComplete(new ArrayList<PhotoUploadDTO>());
                         return;
                     }
                     getLog(response);
@@ -76,7 +76,7 @@ public class PhotoUploadService extends IntentService {
                     }
                     if (pending == 0) {
                         if (uploadListener != null)
-                            uploadListener.onUploadsComplete(0);
+                            uploadListener.onUploadsComplete(new ArrayList<PhotoUploadDTO>());
                         return;
                     } else {
                         Log.e(LOG,"### ...pending photo uploads: " + pending);
@@ -143,7 +143,7 @@ public class PhotoUploadService extends IntentService {
 
         } else {
             if (uploadListener != null) {
-                uploadListener.onUploadsComplete(uploadedList.size());
+                uploadListener.onUploadsComplete(uploadedList);
             }
         }
 

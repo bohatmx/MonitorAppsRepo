@@ -114,9 +114,9 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="PagerSmall">
+    <style name="PagerSmall" parent="@android:style/TextAppearance.Medium">
         <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:padding">@dimen/mon_margin</item>
         <item name="android:background">@color/teal_400</item>
         <item name="android:textStyle">normal</item>
     </style>

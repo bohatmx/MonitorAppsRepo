@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -27,7 +28,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -50,7 +50,6 @@ import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.library.util.VideoClipContainer;
 import com.boha.platform.library.R;
-import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -188,7 +187,6 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         super.onRestoreInstanceState(savedInstanceState);
     }
 
-    Button btnStart;
     FloatingActionButton fab;
 
     private void setFields() {
@@ -198,7 +196,6 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
         txtProject = (TextView) findViewById(R.id.CAM_projectName);
         txtTaskName = (TextView) findViewById(R.id.CAM_siteName);
-        btnStart = (Button) findViewById(R.id.CAM_btnStart);
 
         txtProject = (TextView) findViewById(R.id.CAM_projectName);
         txtTaskName = (TextView) findViewById(R.id.CAM_siteName);
@@ -207,13 +204,6 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         txtProject.setText("");
         txtTaskName.setText("");
 
-
-        btnStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dispatchTakePictureIntent();
-            }
-        });
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -752,9 +742,12 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         if (mBound) {
             mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
                 @Override
-                public void onUploadsComplete(int count) {
-                    Log.e(LOG, "### onUploadsComplete: " + count);
+                public void onUploadsComplete(List<PhotoUploadDTO> photoList) {
+                    Log.e(LOG, "### onUploadsComplete: " + photoList.size());
+                    isUploaded = true;
                     Snackbar.make(mRecyclerView, "Photo has been uploaded", Snackbar.LENGTH_SHORT).show();
+
+
                 }
             });
         }
@@ -850,8 +843,8 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
             mBound = true;
             mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
                 @Override
-                public void onUploadsComplete(int count) {
-                    Log.w(LOG, "$$$ onUploadsComplete, list: " + count);
+                public void onUploadsComplete(List<PhotoUploadDTO> list) {
+                    Log.w(LOG, "$$$ onUploadsComplete, list: " + list.size());
                 }
             });
         }

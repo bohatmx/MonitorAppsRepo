@@ -28,4 +28,5 @@
     <string name="title_activity_portfolio_list">PortfolioListActivity</string>
     <string name="prog_projects">Programme Projects</string>
     <string name="title_activity_main_drawer">MainDrawerActivity</string>
+    <string name="title_activity_project_assignment">ProjectAssignmentActivity</string>
 </resources>

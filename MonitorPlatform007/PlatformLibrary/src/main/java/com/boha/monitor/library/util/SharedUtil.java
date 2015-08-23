@@ -8,7 +8,9 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.boha.monitor.library.dto.CompanyDTO;
+import com.boha.monitor.library.dto.GcmDeviceDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
+import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.google.gson.Gson;
 
@@ -24,6 +26,7 @@ public class SharedUtil {
     public static final String
             COMPANY_STAFF_JSON = "companyStaff",
             COMPANY_JSON = "company",
+            GCMDEVICE = "gcmd",
             MONITOR_JSON = "monitor",
             PROJECT_ID = "projectID",
             GCM_REGISTRATION_ID = "gcm",
@@ -31,6 +34,7 @@ public class SharedUtil {
             SITE_LOCATION = "siteLocation",
             DRAWER = "drawer",
             THEME = "theme",
+            PHOTO = "photo",
             LOG = "SharedUtil",
             REMINDER_TIME = "reminderTime",
             APP_VERSION = "appVersion";
@@ -228,6 +232,59 @@ public class SharedUtil {
         }
         return co;
     }
+
+    public static void saveGCMDevice( Context ctx,  GcmDeviceDTO dto) {
+
+
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        String x = gson.toJson(dto);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putString(GCMDEVICE, x);
+        ed.commit();
+        Log.e("SharedUtil", "%%%%% Device saved in SharedPreferences");
+    }
+
+
+    public static GcmDeviceDTO getGCMDevice( Context ctx) {
+
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        String adm = sp.getString(GCMDEVICE, null);
+        GcmDeviceDTO co = null;
+        if (adm != null) {
+            co = gson.fromJson(adm, GcmDeviceDTO.class);
+
+        }
+        return co;
+    }
+
+    public static void savePhoto( Context ctx,  PhotoUploadDTO dto) {
+
+
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        String x = gson.toJson(dto);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putString(PHOTO, x);
+        ed.commit();
+        Log.i("SharedUtil", "%%%%% Photo saved in SharedPreferences");
+    }
+
+
+    public static PhotoUploadDTO getPhoto( Context ctx) {
+
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        String adm = sp.getString(PHOTO, null);
+        PhotoUploadDTO co = null;
+        if (adm != null) {
+            co = gson.fromJson(adm, PhotoUploadDTO.class);
+
+        }
+        return co;
+    }
+
 
     /**
      * @return Application's version code from the {@code PackageManager}.

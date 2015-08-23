@@ -10,6 +10,8 @@
     <string name="invite_confirm">Do you want to invite someone to download the App?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+
+    <string name="gcm_sender_id">635788281460</string>
     <string name="subject">Invitation to Monitor Platform</string>
 
     <!-- monitor drawer strings -->

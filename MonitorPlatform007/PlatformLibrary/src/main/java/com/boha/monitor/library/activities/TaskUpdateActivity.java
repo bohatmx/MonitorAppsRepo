@@ -102,7 +102,7 @@ public class TaskUpdateActivity extends AppCompatActivity
 
     @Override
     public void onCameraRequested(final ProjectTaskDTO projectTask) {
-        Log.e("TaskUpdateActivity", "onCameraRequested, projectTask coming in ");
+        Log.e("TaskUpdateActivity", "onMonitorPictureRequested, projectTask coming in ");
         //todo Check that the device is near the project location
 
         if (project.getLatitude() != null) {

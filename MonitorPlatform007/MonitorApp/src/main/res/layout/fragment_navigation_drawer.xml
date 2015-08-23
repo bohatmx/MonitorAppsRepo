@@ -11,7 +11,6 @@
 
     <RelativeLayout
         android:id="@+id/NAV_topLayout"
-        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -20,13 +19,14 @@
             android:src="@drawable/back1"
             android:scaleType="centerCrop"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/mon_hero_height_medium_lite" />
+            android:layout_height="264dp" />
 
         <TextView
             android:id="@+id/NAV_subtitle"
             android:text="SubTitleHere"
+            style="@style/Title3TextStyleWhite"
             android:layout_marginLeft="@dimen/mon_margin"
-            android:layout_marginTop="@dimen/mon_hero_height_small"
+            android:layout_marginTop="220dp"
             android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -37,7 +37,7 @@
             android:layout_height="96dp"
             android:src="@drawable/black_woman"
             android:layout_alignParentRight="true"
-            android:layout_margin="@dimen/mon_margin"
+            android:layout_margin="@dimen/mon_wide"
             android:scaleType="centerCrop"
             app:border_width="2dp"
             app:border_color="@color/white" />
@@ -47,8 +47,8 @@
     <RelativeLayout
         android:id="@+id/NAV_subLayout"
         android:layout_below="@id/NAV_topLayout"
-        android:background="@color/beige_pale"
-        android:padding="@dimen/mon_padding"
+        android:background="@color/white"
+        android:padding="@dimen/mon_wide"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -57,11 +57,12 @@
 
     <ListView android:id="@+id/NAV_list"
         android:layout_below="@id/NAV_topLayout"
+        android:layout_marginTop="@dimen/mon_wide"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:choiceMode="singleChoice"
         android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"
+        android:dividerHeight="4dp"
         tools:context="com.boha.platform.monitor.fragments.NavigationDrawerFragment" />
 
 

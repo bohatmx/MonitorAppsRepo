@@ -3,12 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.boha.monitor.setup" >
 
+    <permission
+        android:name="com.boha.platform.monitor.gcm.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.boha.platform.monitor.gcm.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
+        android:name="com.boha.monitor.library.activities.MonApp"
         android:allowBackup="true"
         android:icon="@drawable/glasses48"
         android:label="@string/app_name"
         android:theme="@style/RedTheme"
-        android:name="com.boha.monitor.library.activities.MonApp"
         tools:replace="theme" >
         <activity
             android:name=".activities.FileImportActivity"
@@ -28,31 +36,27 @@
             android:name=".activities.TaskListActivity"
             android:label="@string/title_activity_task" >
         </activity>
-        <activity android:name=".activities.ProgrammeListActivity"
-            android:parentActivityName=".activities.CompanyDrawerActivity"/>
         <activity
-            android:name=".activities.SignInActivity" >
+            android:name=".activities.ProgrammeListActivity"
+            android:parentActivityName=".activities.CompanyDrawerActivity" />
+        <activity android:name=".activities.SignInActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".activities.ProjectDataListActivity"
-            android:parentActivityName=".activities.ProgrammeListActivity"/>
+        <activity
+            android:name=".activities.ProjectDataListActivity"
+            android:parentActivityName=".activities.ProgrammeListActivity" />
         <activity
             android:name=".activities.CompanyDrawerActivity"
             android:label="@string/title_activity_main_drawer" >
         </activity>
-
+        <activity
+            android:name=".activities.ProjectAssignmentActivity"
+            android:label="@string/title_activity_project_assignment" >
+        </activity>
     </application>
-    <permission
-        android:name="com.boha.platform.monitor.gcm.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-
-    <uses-permission android:name="com.boha.platform.monitor.gcm.permission.C2D_MESSAGE" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 </manifest>

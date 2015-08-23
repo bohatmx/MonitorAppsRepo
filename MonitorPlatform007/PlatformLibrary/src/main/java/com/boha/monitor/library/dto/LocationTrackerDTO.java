@@ -23,10 +23,18 @@ public class LocationTrackerDTO implements Serializable {
     private float accuracy;
     private String geocodedAddress, staffName;
     private Long dateAdded;
+    private GcmDeviceDTO gcmDevice;
 
     public LocationTrackerDTO() {
     }
 
+    public GcmDeviceDTO getGcmDevice() {
+        return gcmDevice;
+    }
+
+    public void setGcmDevice(GcmDeviceDTO gcmDevice) {
+        this.gcmDevice = gcmDevice;
+    }
 
     public Integer getLocationTrackerID() {
         return locationTrackerID;

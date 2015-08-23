@@ -25,7 +25,7 @@ import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
-import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -141,7 +141,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         //
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
                 .denyCacheImageMultipleSizesInMemory()
-                .diskCache(new UnlimitedDiscCache(cacheDir))
+                .diskCache(new UnlimitedDiskCache(cacheDir))
                 .memoryCache(new LruMemoryCache(16 * 1024 * 1024))
                 .defaultDisplayImageOptions(defaultOptions)
                 .build();
@@ -200,15 +200,6 @@ public class MonApp extends Application implements Application.ActivityLifecycle
                 .build();
 
         ImageLoader.getInstance().init(config);
-    }
-
-
-    public RequestQueue getRequestQueue() {
-        return requestQueue;
-    }
-
-    public BitmapLruCache getBitmapLruCache() {
-        return bitmapLruCache;
     }
 
     public ChatMessageListActivity getChatMessageListActivity() {

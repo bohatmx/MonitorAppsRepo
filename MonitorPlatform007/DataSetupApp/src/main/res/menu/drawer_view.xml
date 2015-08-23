@@ -34,11 +34,11 @@
         </menu>
     </item>
     <item android:title="People"
-        android:icon="@drawable/ic_action_face">
+        android:icon="@drawable/ic_action_person">
         <menu>
             <item
                 android:id="@+id/nav_staff"
-                android:icon="@drawable/ic_action_person"
+                android:icon="@drawable/ic_action_face"
                 android:title="Staff" />
             <item
                 android:id="@+id/nav_monitors"

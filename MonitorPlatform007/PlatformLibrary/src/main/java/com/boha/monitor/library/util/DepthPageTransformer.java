@@ -9,7 +9,7 @@ import android.view.View;
 
 public class DepthPageTransformer implements
         ViewPager.PageTransformer {
-    private static final float MIN_SCALE = 0.75f;
+    private static final float MIN_SCALE = 0.60f;
 
     public void transformPage(View view, float position) {
         int pageWidth = view.getWidth();
@@ -28,10 +28,8 @@ public class DepthPageTransformer implements
         } else if (position <= 1) { // (0,1]
             // Fade the page out.
             view.setAlpha(1 - position);
-
             // Counteract the default slide transition
             view.setTranslationX(pageWidth * -position);
-
             // Scale the page down (between MIN_SCALE and 1)
             float scaleFactor = MIN_SCALE
                     + (1 - MIN_SCALE) * (1 - Math.abs(position));

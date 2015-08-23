@@ -27,6 +27,7 @@ import com.boha.monitor.library.dto.GcmDeviceDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.services.GPSService;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.GCMUtil;
 import com.boha.monitor.library.util.NetUtil;
@@ -84,7 +85,7 @@ public class SignInActivity extends AppCompatActivity {
                 registerGCMDevice();
             }
 
-            Intent intent = new Intent(ctx, MainDrawerActivity.class);
+            Intent intent = new Intent(ctx, MonitorAppDrawerActivity.class);
             startActivity(intent);
             //
             finish();
@@ -94,10 +95,11 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void registerGCMDevice() {
-        boolean ok = checkPlayServices();
+
         Snackbar.make(btnSave, "Just a second, checking services ...",Snackbar.LENGTH_LONG)
                 .setAction("CLOSE", null)
                 .show();
+        boolean ok = checkPlayServices();
         if (ok) {
             Log.e(LOG, "############# Starting Google Cloud Messaging registration");
             GCMUtil.startGCMRegistration(getApplicationContext(), new GCMUtil.GCMUtilListener() {
@@ -108,7 +110,6 @@ public class SignInActivity extends AppCompatActivity {
                     gcmDevice.setManufacturer(Build.MANUFACTURER);
                     gcmDevice.setModel(Build.MODEL);
                     gcmDevice.setSerialNumber(Build.SERIAL);
-//                    gcmDevice.setProduct(Build.PRODUCT);
                     gcmDevice.setAndroidVersion(Build.VERSION.RELEASE);
                     gcmDevice.setRegistrationID(id);
                     btnSave.setEnabled(true);
@@ -154,7 +155,12 @@ public class SignInActivity extends AppCompatActivity {
 
                         SharedUtil.saveCompany(ctx, response.getCompany());
                         SharedUtil.saveMonitor(ctx, response.getMonitorList().get(0));
-                        Intent intent = new Intent(ctx, MainDrawerActivity.class);
+                        SharedUtil.saveGCMDevice(ctx, response.getGcmDeviceList().get(0));
+
+                        Intent w = new Intent(ctx, GPSService.class);
+                        startService(w);
+
+                        Intent intent = new Intent(ctx, MonitorAppDrawerActivity.class);
                         startActivity(intent);
 
                         try {
@@ -258,8 +264,6 @@ public class SignInActivity extends AppCompatActivity {
                 .isGooglePlayServicesAvailable(ctx);
         if (resultCode != ConnectionResult.SUCCESS) {
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                // GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-                //         PLAY_SERVICES_RESOLUTION_REQUEST).show();
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.gms")));
                 return false;
             } else {

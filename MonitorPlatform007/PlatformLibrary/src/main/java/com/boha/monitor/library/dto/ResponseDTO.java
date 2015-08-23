@@ -23,6 +23,7 @@ public class ResponseDTO implements Serializable{
     private Long startDate, endDate;
     private String log;
     private ChatDTO chat;
+    private List<GcmDeviceDTO> gcmDeviceList;
     private List<ChatDTO> chatList;
     private List<LocationTrackerDTO> locationTrackerList;
     private List<String> taskImageFileNameList;
@@ -64,6 +65,14 @@ public class ResponseDTO implements Serializable{
             portfolioList = new ArrayList<>();
         }
         return portfolioList;
+    }
+
+    public List<GcmDeviceDTO> getGcmDeviceList() {
+        return gcmDeviceList;
+    }
+
+    public void setGcmDeviceList(List<GcmDeviceDTO> gcmDeviceList) {
+        this.gcmDeviceList = gcmDeviceList;
     }
 
     public void setPortfolioList(List<PortfolioDTO> portfolioList) {

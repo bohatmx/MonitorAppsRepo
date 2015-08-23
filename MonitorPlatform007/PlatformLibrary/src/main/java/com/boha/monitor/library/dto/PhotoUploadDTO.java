@@ -49,7 +49,7 @@ public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> 
     private Double latitude;
     private Double longitude;
     private Float accuracy;
-    private String uri;
+    private String uri, name;
     private Integer thumbFlag;
     private Long dateUploaded;
     private String thumbFilePath;
@@ -72,6 +72,14 @@ public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> 
     private boolean isFullPicture, isStaffPicture;
     public PhotoUploadDTO(Integer photoUploadID) {
         this.photoUploadID = photoUploadID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getSecureUrl() {

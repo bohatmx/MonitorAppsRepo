@@ -114,7 +114,7 @@ public class CameraActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         int id = item.getItemId();
-        if (id == R.id.switch_cam) {
+        if (id == R.id.action_help) {
 
 
             // check for availability of multiple cameras

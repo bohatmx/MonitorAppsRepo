@@ -1,14 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.boha.monitor.library.fragments.ProjectListFragment">
+    android:layout_height="match_parent">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/MSG_topLayout"
+                android:layout_width="match_parent"
+                android:layout_height="160dp">
+
+                <ImageView
+                    android:id="@+id/backdrop"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/back15" />
+
+                <RelativeLayout
+                    android:id="@+id/layout0"
+                    android:layout_marginTop="@dimen/mon_margin"
+                    android:background="@color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true">
+
+                    <ImageView
+                        android:id="@+id/MSG_iconAdd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/mon_margin"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/ic_action_add_person" />
+
+                    <Spinner
+                        android:id="@+id/MSG_spinner"
+                        android:padding="@dimen/mon_padding"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/mon_margin"
+                        android:layout_toLeftOf="@id/MSG_iconAdd" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_above="@id/layout0"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/FMP_name"
+                        style="@style/Title1TextStyleWhite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_margin="@dimen/mon_margin"
+                        android:layout_marginRight="@dimen/mon_margin"
+                        android:text="MonitorChats" />
+
+                    <ImageView
+                        android:id="@+id/FMP_personImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/mon_margin"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_action_clear"
+                        android:tint="@color/white" />
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/MSG_midLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/MSG_topLayout"
+                android:padding="@dimen/mon_margin">
+
+                <ImageView
+                    android:id="@+id/MSG_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_action_camera" />
+
+                <LinearLayout
+                    android:id="@+id/MSG_peopleLayout"
+                    android:layout_width="match_parent"
+                    android:padding="@dimen/mon_margin"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/MSG_icon"
+                    android:orientation="vertical">
+
+
+
+                </LinearLayout>
+                <ListView
+                    android:id="@+id/MSG_messageList"
+                    android:padding="@dimen/mon_padding"
+                    android:layout_marginTop="@dimen/mon_margin"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/MSG_peopleLayout"/>
+
+
+
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/Title1TextStyleGreen"
-        android:text="Messaging Here" />
+        android:layout_alignParentBottom="true"
+        android:background="@color/beige_pale"
+        android:padding="@dimen/mon_margin">
+
+        <ImageView
+            android:id="@+id/MSG_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_action_upload" />
+
+        <EditText
+            android:id="@+id/MSG_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/mon_margin"
+            android:layout_toLeftOf="@id/MSG_send"
+            android:hint="Enter Message" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

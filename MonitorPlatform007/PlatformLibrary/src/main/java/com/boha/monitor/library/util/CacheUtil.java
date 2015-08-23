@@ -30,7 +30,9 @@ public class CacheUtil {
 
         public void onError();
     }
-
+    public interface AddLocationTrackerListener {
+        void onLocationTrackerAdded(ResponseDTO response);
+    }
 
     static CacheUtilListener utilListener;
     public static final int CACHE_DATA = 1, CACHE_COUNTRIES = 3, CACHE_SITE = 7,
@@ -123,6 +125,31 @@ public class CacheUtil {
         new CacheRetrieveTask().execute();
     }
 
+
+    public static void addLocationTrack(final Context ctx, final LocationTrackerDTO locationTracker, final AddLocationTrackerListener addLocationTrackerListener) {
+
+        getCachedTrackerData(ctx, new CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO response) {
+                if (response.getLocationTrackerList() == null) {
+                    response.setLocationTrackerList(new ArrayList<LocationTrackerDTO>());
+                }
+                response.getLocationTrackerList().add(locationTracker);
+                cacheTrackerData(ctx, response, null);
+                addLocationTrackerListener.onLocationTrackerAdded(response);
+            }
+
+            @Override
+            public void onDataCached() {
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+    }
 
     public static void cacheTrackerData(final Context context, final ResponseDTO r, final CacheUtilListener cacheUtilListener) {
 

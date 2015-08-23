@@ -4,6 +4,8 @@ package com.boha.monitor.library.util;
  * Created by aubreyM on 2014/10/12.
  * <p/>
  * Created by aubreyM on 2014/05/11.
+ * <p/>
+ * Created by aubreyM on 2014/05/11.
  */
 
 /**
@@ -15,6 +17,7 @@ import android.util.Log;
 
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.platform.library.R;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import java.io.IOException;
@@ -34,11 +37,11 @@ public class GCMUtil {
     static GoogleCloudMessaging gcm;
 
 
-    public static void startGCMRegistration(Context context, final GCMUtilListener listener) {
+    public static void startGCMRegistration(final Context context, final GCMUtilListener listener) {
         ctx = context;
         gcmUtilListener = listener;
 
-        Thread thread1 = new Thread(new Runnable() {
+        Thread gcmThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 Log.e(LOG, "... startin GCM registration");
@@ -46,7 +49,7 @@ public class GCMUtil {
                     if (gcm == null) {
                         gcm = GoogleCloudMessaging.getInstance(ctx);
                     }
-                    registrationID = gcm.register(GCM_SENDER_ID);
+                    registrationID = gcm.register(context.getString(R.string.gcm_sender_id));
                     msg = "Device registered, registration ID = \n" + registrationID;
                     SharedUtil.storeRegistrationId(ctx, registrationID);
                     RequestDTO w = new RequestDTO();
@@ -56,7 +59,7 @@ public class GCMUtil {
                         @Override
                         public void onResponse(final ResponseDTO response) {
                             if (response.getStatusCode() == 0) {
-                                Log.w(LOG, "############ Device registered on server GCM regime");
+                                Log.w(LOG, "############ Device registered to Google on MONITOR PLATFORM server GCM regime");
                                 listener.onDeviceRegistered(registrationID);
                             }
                         }
@@ -80,13 +83,9 @@ public class GCMUtil {
                 }
             }
         });
-        thread1.start();
+        gcmThread.start();
     }
 
-    public static final String GCM_SENDER_ID = "635788281460";
-
-
-    public static final int SHOW_GOOGLE_PLAY_DIALOG = 1, GOOGLE_PLAY_ERROR = 2, OK = 3;
 
 
 }

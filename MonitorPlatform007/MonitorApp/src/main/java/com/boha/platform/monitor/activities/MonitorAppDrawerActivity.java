@@ -25,9 +25,11 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.boha.monitor.library.activities.GPSActivity;
 import com.boha.monitor.library.activities.MonitorMapActivity;
+import com.boha.monitor.library.activities.MonitorPictureActivity;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.activities.PictureActivity;
 import com.boha.monitor.library.activities.TaskTypeListActivity;
@@ -41,17 +43,18 @@ import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.fragments.MessagingFragment;
 import com.boha.monitor.library.fragments.MonitorListFragment;
+import com.boha.monitor.library.fragments.MonitorProfileFragment;
 import com.boha.monitor.library.fragments.PageFragment;
 import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.services.RequestSyncService;
 import com.boha.monitor.library.util.CacheUtil;
+import com.boha.monitor.library.util.DepthPageTransformer;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.monitor.R;
-import com.boha.platform.monitor.fragments.MonitorProfileFragment;
 import com.boha.platform.monitor.fragments.NavigationDrawerFragment;
 import com.boha.platform.monitor.fragments.NoProjectsAssignedFragment;
 import com.google.android.gms.common.ConnectionResult;
@@ -62,9 +65,11 @@ import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
-public class MainDrawerActivity extends AppCompatActivity
+public class MonitorAppDrawerActivity extends AppCompatActivity
         implements
         LocationListener,
         GoogleApiClient.ConnectionCallbacks,
@@ -109,10 +114,14 @@ public class MainDrawerActivity extends AppCompatActivity
         theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
         themePrimaryColor = typedValue.data;
 
-        Log.d("MainDrawerActivity", "&& themeDarkColor: " + themeDarkColor);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_drawer);
+
+        final ActionBar ab = getSupportActionBar();
+        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        ab.setDisplayHomeAsUpEnabled(true);
+
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -131,6 +140,7 @@ public class MainDrawerActivity extends AppCompatActivity
         mPager = (ViewPager) findViewById(R.id.pager);
         PagerTitleStrip strip = (PagerTitleStrip)findViewById(R.id.pager_title_strip);
         strip.setBackgroundColor(themeDarkColor);
+        strip.setVisibility(View.GONE);
         mPager.setOffscreenPageLimit(4);
 
         getCachedData();
@@ -238,27 +248,48 @@ public class MainDrawerActivity extends AppCompatActivity
         monitorProfileFragment = MonitorProfileFragment.newInstance(SharedUtil.getMonitor(ctx));
         monitorProfileFragment.setPageTitle(getString(R.string.profile));
 
-        messagingFragment = MessagingFragment.newInstance(response);
-        messagingFragment.setPageTitle(getString(R.string.messaging));
 
-        monitorListFragment = MonitorListFragment.newInstance(response.getMonitorList());
+
+
+        HashMap<Integer, MonitorDTO> map = new HashMap<>();
+        for (ProjectDTO dto: response.getProjectList()) {
+            for (MonitorDTO x: dto.getMonitorList()) {
+                map.put(x.getMonitorID().intValue(),x);
+            }
+        }
+        List<MonitorDTO> list = new ArrayList<>();
+        Set<Integer> set = map.keySet();
+        for (Integer id: set) {
+            list.add(map.get(id));
+        }
+        monitorListFragment = MonitorListFragment.newInstance(list);
         monitorListFragment.setPageTitle(getString(R.string.monitors));
+
+        messagingFragment = MessagingFragment.newInstance(list);
+        messagingFragment.setPageTitle(getString(R.string.messaging));
 
         if (!response.getProjectList().isEmpty()) {
             pageFragmentList.add(projectListFragment);
         } else {
             pageFragmentList.add(noProjectsAssignedFragment);
         }
+        pageFragmentList.add(monitorProfileFragment);
         pageFragmentList.add(monitorListFragment);
         pageFragmentList.add(messagingFragment);
-        pageFragmentList.add(monitorProfileFragment);
 
         pagerAdapter = new PagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(pagerAdapter);
-        mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+        mPager.setPageTransformer(true, new DepthPageTransformer());
+        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageSelected(int arg0) {
-                currentPageIndex = arg0;
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                currentPageIndex = position;
                 PageFragment pf = pageFragmentList.get(currentPageIndex);
 
                 if (pf instanceof ProjectListFragment) {
@@ -277,27 +308,20 @@ public class MainDrawerActivity extends AppCompatActivity
                     projectListFragment.setLastProject();
                     projectListFragment.animateHeroHeight();
                 }
-
             }
 
             @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            public void onPageScrollStateChanged(int state) {
 
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int arg0) {
             }
         });
+
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
             getMenuInflater().inflate(R.menu.main_drawer, menu);
             mMenu = menu;
             restoreActionBar();
@@ -328,7 +352,7 @@ public class MainDrawerActivity extends AppCompatActivity
     }
 
     static final int REQUEST_THEME_CHANGE = 9631, LOCATION_REQUESTED = 6754;
-    static final String LOG = MainDrawerActivity.class.getSimpleName();
+    static final String LOG = MonitorAppDrawerActivity.class.getSimpleName();
     @Override
     public void onActivityResult(int reqCode, int resCode, Intent data) {
         Log.e(LOG, "##------> onActivityResult reqCode: "
@@ -337,7 +361,7 @@ public class MainDrawerActivity extends AppCompatActivity
 
             case REQUEST_THEME_CHANGE:
                 finish();
-                Intent w = new Intent(this,MainDrawerActivity.class);
+                Intent w = new Intent(this,MonitorAppDrawerActivity.class);
                 startActivity(w);
 
                 break;
@@ -347,8 +371,12 @@ public class MainDrawerActivity extends AppCompatActivity
                     Snackbar.make(mPager, "Project location confirmed",Snackbar.LENGTH_LONG).show();
                 }
                 break;
-            case REQUEST_CAMERA:
-
+            case MONITOR_PICTURE_REQUESTED:
+                if (resCode == RESULT_OK) {
+                    PhotoUploadDTO x = (PhotoUploadDTO)data.getSerializableExtra("photo");
+                    monitorProfileFragment.setPicture(x);
+                    mNavigationDrawerFragment.setPicture(x);
+                }
                 break;
         }
     }
@@ -385,10 +413,6 @@ public class MainDrawerActivity extends AppCompatActivity
 
     }
 
-    @Override
-    public void onProfileUpdated() {
-
-    }
 
     static final int REQUEST_CAMERA = 3329;
     @Override
@@ -498,7 +522,7 @@ public class MainDrawerActivity extends AppCompatActivity
         mLocationRequest.setInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setFastestInterval(1000);
-        startLocationUpdates();
+//        startLocationUpdates();
 
     }
 
@@ -536,11 +560,25 @@ public class MainDrawerActivity extends AppCompatActivity
         }
     }
 
-    static final int ACCURACY = 15;
+    static final int ACCURACY = 15, MONITOR_PICTURE_REQUESTED = 3412;
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
     }
+
+    @Override
+    public void onProfileUpdated(MonitorDTO monitor) {
+
+    }
+
+    @Override
+    public void onMonitorPictureRequested(MonitorDTO monitor) {
+
+        Intent w = new Intent(this, MonitorPictureActivity.class);
+        w.putExtra("monitor",monitor);
+        startActivityForResult(w, MONITOR_PICTURE_REQUESTED);
+    }
+
     private class PagerAdapter extends FragmentStatePagerAdapter {
 
         public PagerAdapter(FragmentManager fm) {
@@ -561,23 +599,22 @@ public class MainDrawerActivity extends AppCompatActivity
         @Override
         public CharSequence getPageTitle(int position) {
             PageFragment pf = pageFragmentList.get(position);
+            String title = "No Title";
             if (pf instanceof ProjectListFragment) {
-                return getString(R.string.projects);
-            }
-            if (pf instanceof ProjectListFragment) {
-                return getString(R.string.projects);
+                title = getString(R.string.projects);
             }
             if (pf instanceof MonitorListFragment) {
-                return getString(R.string.monitors);
+                title = getString(R.string.monitors);
             }
             if (pf instanceof MessagingFragment) {
-                return getString(R.string.messaging);
+                title = getString(R.string.messaging);
             }
-            if (pf instanceof ProjectListFragment) {
-                return getString(R.string.profile);
+            if (pf instanceof MonitorProfileFragment) {
+                title = getString(R.string.profile);
             }
 
-            return "No Title";
+            Log.i("MonitorAppDrawer", "Strip Title: " + title);
+            return title;
         }
     }
 
@@ -672,8 +709,8 @@ public class MainDrawerActivity extends AppCompatActivity
             mBound = true;
             mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
                 @Override
-                public void onUploadsComplete(int count) {
-                    Log.w(LOG, "$$$ onUploadsComplete, list: " + count);
+                public void onUploadsComplete(List<PhotoUploadDTO> list) {
+                    Log.w(LOG, "$$$ onUploadsComplete, list: " + list.size());
                 }
             });
         }

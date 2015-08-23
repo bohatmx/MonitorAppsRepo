@@ -10,6 +10,9 @@
     <!-- RELEASE API KEY
             AIzaSyDUJzuwSOkUzbx9X1_pJQspwXsDF6KoF-w
             4F:72:A0:21:0F:AD:8D:6B:EC:B5:83:49:13:CB:64:75:74:62:1A:A7;com.boha.platform.monitor
+
+     GCM Server API Key: AIzaSyCz_2aFIPJj7kGW8xdj2cXkasjCVOGa3u8
+     SenderID: 635788281460
      -->
     <application
         android:allowBackup="true"
@@ -34,21 +37,34 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".services.GcmIntentService" />
+        <service android:name="com.boha.monitor.library.services.RegistrationIntentService" />
 
         <receiver
-            android:name=".services.GcmBroadcastReceiver"
+            android:name="com.google.android.gms.gcm.GcmReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-
-                <category android:name="com.boha.citizenapp.ethekwini" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <category android:name="com.boha.platform.monitor" />
             </intent-filter>
         </receiver>
-
+        <service
+            android:name=".services.MonitorGCMListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.boha.monitor.library.services.MonInstanceIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID"/>
+            </intent-filter>
+        </service>
 
         <activity
-            android:name=".activities.MainDrawerActivity"
+            android:name=".activities.MonitorAppDrawerActivity"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_main_drawer" >
         </activity>
@@ -69,20 +85,21 @@
         <activity
             android:name="com.boha.monitor.library.activities.TaskTypeListActivity"
             android:screenOrientation="portrait"
-            android:parentActivityName=".activities.MainDrawerActivity" >
+            android:parentActivityName=".activities.MonitorAppDrawerActivity" >
         </activity>
         <activity android:name="com.boha.monitor.library.activities.PictureActivity"/>
-        <activity android:name="com.boha.monitor.library.activities.TestActivity"/>
         <activity android:name="com.boha.monitor.library.activities.GPSActivity"
             android:screenOrientation="portrait"
-            android:parentActivityName=".activities.MainDrawerActivity"/>
+            android:parentActivityName=".activities.MonitorAppDrawerActivity"/>
         <activity
             android:name="com.boha.monitor.library.activities.PhotoListActivity"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_photo" >
         </activity>
         <activity android:name="com.boha.monitor.library.activities.MonitorMapActivity"
-            android:parentActivityName=".activities.MainDrawerActivity"/>
+            android:parentActivityName=".activities.MonitorAppDrawerActivity"/>
+        <activity android:name="com.boha.monitor.library.activities.MonitorPictureActivity"
+            android:parentActivityName=".activities.MonitorAppDrawerActivity"/>
     </application>
 
     <permission

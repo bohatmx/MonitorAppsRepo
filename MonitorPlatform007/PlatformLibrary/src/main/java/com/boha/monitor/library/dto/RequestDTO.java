@@ -22,12 +22,12 @@ public class RequestDTO implements Serializable {
         this.requestType = requestType;
     }
 
-    private boolean rideWebSocket = false;
+    private Boolean rideWebSocket = false;
 
     private Long requestCacheID = new Date().getTime();
     private Integer requestType, companyID, staffID,
             projectID, projectTaskID, loginType, monitorID, taskTypeID;
-    private boolean responseRequested;
+    private Boolean responseRequested;
 
     private String email, pin, gcmRegistrationID;
     private Long startDate, endDate;
@@ -41,6 +41,7 @@ public class RequestDTO implements Serializable {
     private ChatMessageDTO chatMessage;
     private ProjectTaskDTO projectTask;
     private VideoUploadDTO videoUpload;
+    private LocationTrackerDTO locationTracker;
 
     private List<TaskDTO> taskList;
     private List<StaffProjectDTO> staffProjectList;
@@ -138,12 +139,13 @@ public class RequestDTO implements Serializable {
             ADD_LOCATION_TRACKERS = 323,
 
 
-            ADD_CHAT = 324,
+    ADD_CHAT = 324,
             ADD_CHAT_MEMBERS = 325,
             ADD_PROJECT_TASKS = 326,
             ADD_STAFF = 327,
             ADD_MONITORS = 328,
-            ADD_SUB_TASKS = 329;
+            ADD_SUB_TASKS = 329,
+            ADD_LOCATION_TRACK = 330;
 
     //updates
     public static final int
@@ -177,6 +179,14 @@ public class RequestDTO implements Serializable {
     public static final String TASK_DIR = "task";
     //
 
+
+    public LocationTrackerDTO getLocationTracker() {
+        return locationTracker;
+    }
+
+    public void setLocationTracker(LocationTrackerDTO locationTracker) {
+        this.locationTracker = locationTracker;
+    }
 
     public VideoUploadDTO getVideoUpload() {
         return videoUpload;

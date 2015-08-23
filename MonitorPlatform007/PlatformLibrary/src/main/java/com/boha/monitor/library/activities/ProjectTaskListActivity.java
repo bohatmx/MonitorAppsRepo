@@ -85,7 +85,7 @@ public class ProjectTaskListActivity extends AppCompatActivity implements Projec
     ProjectTaskDTO projectTask;
     @Override
     public void onCameraRequested(ProjectTaskDTO task) {
-        Log.e("StatusUpdateActivity", "### onCameraRequested ...");
+        Log.e("StatusUpdateActivity", "### onMonitorPictureRequested ...");
     }
 
     static final int TASK_UPDATE_REQUEST = 2119;

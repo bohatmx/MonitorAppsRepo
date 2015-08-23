@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -28,13 +30,19 @@ import android.widget.TextView;
 
 import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
+import com.boha.monitor.library.dto.PhotoUploadDTO;
+import com.boha.monitor.library.util.ImageUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.monitor.R;
 import com.boha.platform.monitor.adapters.DrawerMonitorAdapter;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -77,6 +85,7 @@ public class NavigationDrawerFragment extends Fragment {
     DrawerMonitorAdapter drawerListAdapter;
     TextView txtSubTitle;
     ImageView drawerImage;
+    CircleImageView personImage;
     Context ctx;
     CompanyDTO company;
     MonitorDTO monitor;
@@ -153,6 +162,7 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         actionBar.setHomeButtonEnabled(true);
 
         // ActionBarDrawerToggle ties together the the proper interactions
@@ -215,6 +225,7 @@ public class NavigationDrawerFragment extends Fragment {
     private void setFields() {
         mDrawerListView = (ListView) view.findViewById(R.id.NAV_list);
         drawerImage = (ImageView)view.findViewById(R.id.NAV_image);
+        personImage = (CircleImageView)view.findViewById(R.id.NAV_personImage);
         drawerImage.setImageDrawable(Util.getRandomBackgroundImage(ctx));
         txtSubTitle = (TextView) view.findViewById(R.id.NAV_subtitle);
         if (monitor != null) {
@@ -228,6 +239,30 @@ public class NavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
+
+        PhotoUploadDTO x = SharedUtil.getPhoto(getActivity());
+        if (x != null) {
+            setPicture(x);
+        }
+    }
+    public void setPicture(PhotoUploadDTO photo) {
+
+        if (photo.getThumbFilePath() == null) {
+            if (photo.getUri() != null) {
+                ImageLoader.getInstance().displayImage(photo.getUri(), personImage);
+            }
+
+        } else {
+            File f = new File(photo.getThumbFilePath());
+            if (f.exists()) {
+                try {
+                    Bitmap bm = ImageUtil.getBitmapFromUri(getActivity(), Uri.fromFile(f));
+                    personImage.setImageBitmap(bm);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     private void selectItem(int position) {
@@ -332,9 +367,10 @@ public class NavigationDrawerFragment extends Fragment {
         }
         if (monitor != null) {
             destinationList.add(ctx.getString(R.string.projects));
+            destinationList.add(ctx.getString(R.string.profile));
             destinationList.add(ctx.getString(R.string.monitors));
             destinationList.add(ctx.getString(R.string.messaging));
-            destinationList.add(ctx.getString(R.string.profile));
+
         }
 
     }

@@ -10,11 +10,11 @@
         android:id="@+id/PRH_top"
         android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/mon_hero_height_medium">
+        android:layout_height="180dp">
         <ImageView
             android:id="@+id/PRH_image"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/mon_hero_height_medium"
+            android:layout_height="180dp"
             android:scaleType="centerCrop"
             android:src="@drawable/back1" />
         <TextView

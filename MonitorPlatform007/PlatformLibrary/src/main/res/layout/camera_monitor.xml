@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:padding="0dp">
+
+    <RelativeLayout
+        android:id="@+id/CM_layout1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/CM_name"
+            style="@style/Title3TextStyleWhite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_marginTop="@dimen/mon_wide"
+            android:text="Monitor Name Here" />
+
+
+
+        <ImageView
+            android:id="@+id/CM_image"
+            android:src="@drawable/black_woman"
+            android:scaleType="centerCrop"
+            android:layout_below="@id/CM_name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:background="@color/white"
+            android:scrollbars="vertical" />
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/CM_fab"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/mon_wide"
+        android:src="@drawable/ic_action_check_circle"
+         />
+
+
+</RelativeLayout>
