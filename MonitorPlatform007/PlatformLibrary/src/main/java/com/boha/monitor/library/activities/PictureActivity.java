@@ -18,16 +18,16 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -59,8 +59,6 @@ import com.google.android.gms.location.LocationServices;
 import org.acra.ACRA;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -97,11 +95,11 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler);
 
 
-//        StaggeredGridLayoutManager x = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager x = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.mon_divider_small);
+        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.mon_divider_tiny);
         mRecyclerView.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
-        mRecyclerView.setLayoutManager(gridLayoutManager);
+        mRecyclerView.setLayoutManager(x);
         setFields();
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -124,19 +122,16 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                 project = (ProjectDTO) getIntent().getSerializableExtra("project");
                 if (project != null) {
                     txtProject.setText(project.getProjectName());
+                    setTitle(project.getProjectName());
                 }
                 break;
-            case PhotoUploadDTO.MONITOR_IMAGE:
-                monitor = (MonitorDTO) getIntent().getSerializableExtra("monitor");
-                if (monitor != null) {
-                    txtProject.setText(monitor.getFirstName() + " " + monitor.getLastName());
-                }
-                break;
+
             case PhotoUploadDTO.TASK_IMAGE:
                 projectTask = (ProjectTaskDTO) getIntent().getSerializableExtra("projectTask");
                 if (projectTask != null) {
                     txtProject.setText(projectTask.getProjectName());
                     txtTaskName.setText(projectTask.getTask().getTaskName());
+                    setTitle(projectTask.getTask().getTaskName());
                 }
                 break;
             default:
@@ -144,14 +139,16 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                 if (projectTask != null) {
                     txtProject.setText(projectTask.getProjectName());
                     txtTaskName.setText(projectTask.getTask().getTaskName());
+                    setTitle(projectTask.getTask().getTaskName());
                     break;
                 }
                 throw new UnsupportedOperationException("No data passed to activity");
         }
 
 
-        setTitle(SharedUtil.getCompany(ctx).getCompanyName());
-        showCachedPhotos();
+
+        setPhotoList();
+        dispatchTakePictureIntent();
 
 
     }
@@ -187,7 +184,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         super.onRestoreInstanceState(savedInstanceState);
     }
 
-    FloatingActionButton fab;
+    Button fab;
 
     private void setFields() {
         activity = this;
@@ -199,7 +196,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
         txtProject = (TextView) findViewById(R.id.CAM_projectName);
         txtTaskName = (TextView) findViewById(R.id.CAM_siteName);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (Button) findViewById(R.id.fab);
         fab.setBackgroundColor(darkColor);
         txtProject.setText("");
         txtTaskName.setText("");
@@ -229,13 +226,9 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                 if (resultCode == Activity.RESULT_OK) {
                     if (resultCode == Activity.RESULT_OK) {
                         if (photoFile != null) {
-                            Log.e(LOG, "++ hopefully photo file has a length: " + photoFile.length());
-
                             new PhotoTask().execute();
                         }
                     }
-                    pictureChanged = true;
-
                 }
                 break;
             case REQUEST_VIDEO_CAPTURE:
@@ -656,7 +649,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         }
         switch (type) {
             case PhotoUploadDTO.TASK_IMAGE:
-                addProjectTaskPicture(localID, new PhotoCacheUtil.PhotoCacheListener() {
+                addProjectTaskPicture(new PhotoCacheUtil.PhotoCacheListener() {
                     @Override
                     public void onFileDataDeserialized(ResponseDTO response) {
 
@@ -664,8 +657,8 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
                     @Override
                     public void onDataCached(PhotoUploadDTO photo) {
-                        photoList.add(0,photo);
-                        showCachedPhotos();
+                        photoList.add(0, photo);
+                        photoAdapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -674,44 +667,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                     }
                 });
                 break;
-            case PhotoUploadDTO.MONITOR_IMAGE:
-                addMonitorPicture(new PhotoCacheUtil.PhotoCacheListener() {
-                    @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
 
-                    }
-
-                    @Override
-                    public void onDataCached(PhotoUploadDTO photo) {
-                        photoList.add(0,photo);
-                        showCachedPhotos();
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-                break;
-            case PhotoUploadDTO.STAFF_IMAGE:
-                addStaffPicture(new PhotoCacheUtil.PhotoCacheListener() {
-                    @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
-
-                    }
-
-                    @Override
-                    public void onDataCached(PhotoUploadDTO photo) {
-                        photoList.add(0,photo);
-                        showCachedPhotos();
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-                break;
             case PhotoUploadDTO.PROJECT_IMAGE:
                 addProjectPicture(new PhotoCacheUtil.PhotoCacheListener() {
                     @Override
@@ -722,7 +678,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                     @Override
                     public void onDataCached(PhotoUploadDTO photo) {
                         photoList.add(0,photo);
-                        showCachedPhotos();
+                        photoAdapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -738,85 +694,28 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
     ResponseDTO response;
 
-    private void showCachedPhotos() {
-        if (mBound) {
-            mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
-                @Override
-                public void onUploadsComplete(List<PhotoUploadDTO> photoList) {
-                    Log.e(LOG, "### onUploadsComplete: " + photoList.size());
-                    isUploaded = true;
-                    Snackbar.make(mRecyclerView, "Photo has been uploaded", Snackbar.LENGTH_SHORT).show();
 
-
-                }
-            });
+    private void setPhotoList() {
+        if (photoList == null) {
+            photoList = new ArrayList<>();
         }
-        Thread thread = new Thread(new Runnable() {
+        Collections.sort(photoList);
+        photoAdapter = new PhotoAdapter(photoList, PhotoAdapter.THUMB, getApplicationContext(), new PhotoAdapter.PictureListener() {
             @Override
-            public void run() {
-                FileInputStream stream;
-                try {
-                    stream = getApplicationContext().openFileInput(PhotoUploadService.JSON_PHOTO);
-                    response = Util.getResponseData(stream);
-                    photoList = new ArrayList<>();
-                    for (PhotoUploadDTO c : response.getPhotoUploadList()) {
+            public void onPictureClicked(int position) {
+                Log.e(LOG, "onPictureClicked: " + position);
+                Intent w = new Intent(ctx, PhotoListActivity.class);
+                w.putExtra("index", position);
+                ResponseDTO x = new ResponseDTO();
+                x.setPhotoUploadList(photoList);
+                w.putExtra("response", x);
 
-                        switch (type) {
-                            case PhotoUploadDTO.TASK_IMAGE:
-                                if (projectTask.getProjectID().intValue() == c.getProjectID().intValue()) {
-                                    photoList.add(c);
-                                }
-                                break;
-                            case PhotoUploadDTO.PROJECT_IMAGE:
-                                if (project.getProjectID().intValue() == c.getProjectID().intValue()) {
-                                    photoList.add(c);
-                                }
-                                break;
-                        }
-                    }
+                startActivity(w);
 
-                    if (photoList.isEmpty()) {
-                        Snackbar.make(mRecyclerView, getString(R.string.no_prev_photos),
-                                Snackbar.LENGTH_LONG).show();
-
-                        return;
-                    }
-                    Collections.sort(photoList);
-                    Log.i(LOG, "++ showCachedPhotos - photo cache retrieved, photos: " + response.getPhotoUploadList().size());
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (photoAdapter == null) {
-                                photoAdapter = new PhotoAdapter(photoList, PhotoAdapter.THUMB, getApplicationContext(), new PhotoAdapter.PictureListener() {
-                                    @Override
-                                    public void onPictureClicked(int position) {
-                                        Log.e(LOG, "onPictureClicked: " + position);
-                                        Intent w = new Intent(ctx, PhotoListActivity.class);
-                                        w.putExtra("index", position);
-                                        w.putExtra("response", response);
-
-                                        startActivity(w);
-
-                                    }
-                                });
-                                mRecyclerView.setAdapter(photoAdapter);
-                            } else {
-                                photoAdapter.notifyDataSetChanged();
-                            }
-                        }
-                    });
-                } catch (FileNotFoundException e) {
-                    Log.w(LOG, "############# cache file not found.", e);
-
-                } catch (IOException e) {
-                    Log.e(LOG, "Failed", e);
-                }
             }
         });
-        thread.start();
-
+        mRecyclerView.setAdapter(photoAdapter);
     }
-
     List<String> currentSessionPhotos = new ArrayList<>();
 
     private void getLog(Bitmap bm, String which) {
@@ -881,38 +780,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     Bitmap bitmapForScreen;
 
 
-    public void addMonitorPicture(final PhotoCacheUtil.PhotoCacheListener listener) {
-        Log.w(LOG, "**** addMonitorPicture");
-        final PhotoUploadDTO dto = getObject();
-        dto.setPictureType(PhotoUploadDTO.MONITOR_IMAGE);
-        dto.setAccuracy(location.getAccuracy());
-
-        Log.w(LOG, "**** addPhotoToCache starting ... file: " + dto.getThumbFilePath());
-        PhotoCacheUtil.cachePhoto(ctx, dto, new PhotoCacheUtil.PhotoCacheListener() {
-            @Override
-            public void onFileDataDeserialized(ResponseDTO response) {
-
-            }
-
-            @Override
-            public void onDataCached(PhotoUploadDTO p) {
-                Log.w(LOG, "### photo has been cached");
-                listener.onDataCached(p);
-
-            }
-
-            @Override
-            public void onError() {
-                Util.showErrorToast(ctx, getString(R.string.photo_error));
-            }
-        });
-    }
-
-    private interface CacheListener {
-        public void onCachingDone();
-    }
-
-    public void addProjectTaskPicture(Long localID, final PhotoCacheUtil.PhotoCacheListener listener) {
+    public void addProjectTaskPicture(final PhotoCacheUtil.PhotoCacheListener listener) {
         Log.w(LOG, "**** addProjectTaskPicture");
         final PhotoUploadDTO dto = getObject();
         dto.setProjectID(projectTask.getProjectID());

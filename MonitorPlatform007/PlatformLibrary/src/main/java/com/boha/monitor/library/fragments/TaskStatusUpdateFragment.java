@@ -36,6 +36,7 @@ import com.boha.monitor.library.util.WebCheck;
 import com.boha.platform.library.R;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -175,11 +176,15 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
         txtTaskName = (TextView) view.findViewById(R.id.TSE_taskName);
         txtStatusType = (TextView) view.findViewById(R.id.TSE_statusType);
+        txtTime = (TextView) view.findViewById(R.id.TSE_time);
+        txtResult = (TextView) view.findViewById(R.id.TSE_result);
 
         btnSubmit = (Button) view.findViewById(R.id.btnRed);
         btnSubmit.setBackgroundColor(getResources().getColor(R.color.blue_gray_400));
         btnSubmit.setText("Submit Task Status");
         txtStatusType.setText("");
+        txtTime.setText("");
+        txtResult.setText("");
 
         iconClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -230,8 +235,11 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
     TaskStatusTypeDTO taskStatusType;
 
+    private TextView txtTime;
+    static final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
     private void processRequest() {
 
+        btnSubmit.setEnabled(false);
         ProjectTaskStatusDTO projectTaskStatus = new ProjectTaskStatusDTO();
         MonitorDTO m = SharedUtil.getMonitor(getActivity());
         if (m != null) {
@@ -260,6 +268,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
         if (WebCheck.checkNetworkAvailability(getActivity(),true).isNetworkUnavailable()) {
             saveRequestInCache(request);
+            btnSubmit.setEnabled(true);
             return;
         }
 
@@ -269,10 +278,13 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        btnSubmit.setEnabled(false);
                         if (response.getProjectTaskStatusList() != null && !response.getProjectTaskStatusList().isEmpty()) {
                             returnedStatus = response.getProjectTaskStatusList().get(0);
                             mListener.onStatusReturned(returnedStatus);
                             Snackbar.make(mRecyclerView, "The task status update has been sent", Snackbar.LENGTH_LONG).show();
+                            txtTime.setText(sdf.format(new Date()));
+                            txtResult.setText("Status updated: " + projectTask.getTask().getTaskName());
                             mListener.onCameraRequested(projectTask);
                         }
                     }

@@ -2,7 +2,6 @@ package com.boha.monitor.library.adapters;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
-import android.provider.Settings;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,18 +40,18 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         this.ctx = context;
         this.mListener = listener;
         this.darkColor = darkColor;
-        Log.e("TaskAdapter","### darkColor: " + darkColor);
+        Log.e("TaskAdapter", "### darkColor: " + darkColor);
     }
 
 
     @Override
-    public TaskViewHolder onCreateViewHolder( ViewGroup parent, int viewType) {
+    public TaskViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_item, parent, false);
         return new TaskViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder( final TaskViewHolder holder, final int position) {
+    public void onBindViewHolder(final TaskViewHolder holder, final int position) {
 
         final ProjectTaskDTO p = projectTaskList.get(position);
 
@@ -73,9 +72,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         } else {
             holder.txtPhotos.setText("0");
         }
-        if (darkColor != 0) {
-            holder.image.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-        }
+
+        holder.image.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
+
 
         holder.nameView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,12 +82,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 Util.flashOnce(holder.nameView, 300, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
-                        mListener.onTaskNameClicked(p,position);
+                        mListener.onTaskNameClicked(p, position);
                     }
                 });
             }
         });
-
 
     }
 
@@ -101,7 +99,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", loc);
     static final DecimalFormat df = new DecimalFormat("###,###,###,###");
 
-    public class TaskViewHolder extends RecyclerView.ViewHolder  {
+    public class TaskViewHolder extends RecyclerView.ViewHolder {
         protected ImageView image;
         protected TextView txtTaskName, txtStatusCount, txtLastDate, txtPhotos;
         protected View nameView;

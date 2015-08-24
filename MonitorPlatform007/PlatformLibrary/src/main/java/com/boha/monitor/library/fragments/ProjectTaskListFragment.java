@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.boha.monitor.library.adapters.TaskAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
-import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.dto.TaskTypeDTO;
 import com.boha.platform.library.R;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
@@ -159,7 +158,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
     public String getPageTitle() {
         return pageTitle;
     }
-    int darkColor;
+    int darkColor = R.color.black;
 
     public void refreshProjectTask(ProjectTaskDTO projectTask) {
 

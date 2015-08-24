@@ -82,6 +82,7 @@ public class TaskTypeListActivity extends AppCompatActivity implements TaskTypeL
         Intent w = new Intent(this,ProjectTaskListActivity.class);
         w.putExtra("project",projectDTO);
         w.putExtra("taskType",taskType);
+        w.putExtra("darkColor", themeDarkColor);
 
         startActivity(w);
     }

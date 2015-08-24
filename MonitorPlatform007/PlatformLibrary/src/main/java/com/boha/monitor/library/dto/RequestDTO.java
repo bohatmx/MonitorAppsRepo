@@ -111,7 +111,8 @@ public class RequestDTO implements Serializable {
             GET_CHATS_BY_PROJECT_AND_STAFF = 127,
             GET_MESSAGES_BY_PROJECT = 128,
             GET_MONITOR_PROJECTS = 129,
-            GET_PORTFOLIO_LIST = 130;
+            GET_PORTFOLIO_LIST = 130,
+            GET_MONITOR_PHOTOS = 131;
     //
     public static final int
             LOGIN_STAFF = 200,

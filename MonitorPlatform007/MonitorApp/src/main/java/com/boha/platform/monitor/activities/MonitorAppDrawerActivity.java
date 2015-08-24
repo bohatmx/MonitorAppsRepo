@@ -169,7 +169,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
             @Override
             public void onError() {
-
+                getRemoteData();
             }
         });
     }
@@ -613,7 +613,6 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
                 title = getString(R.string.profile);
             }
 
-            Log.i("MonitorAppDrawer", "Strip Title: " + title);
             return title;
         }
     }

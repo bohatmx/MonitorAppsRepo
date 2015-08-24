@@ -245,6 +245,7 @@ public class NavigationDrawerFragment extends Fragment {
             setPicture(x);
         }
     }
+
     public void setPicture(PhotoUploadDTO photo) {
 
         if (photo.getThumbFilePath() == null) {

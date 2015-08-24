@@ -10,11 +10,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:padding="@dimen/mon_padding">
+        android:padding="@dimen/mon_margin">
+
+        <TextView
+            android:id="@+id/TSE_title"
+            style="@style/Title1TextStyleBlue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textColor="?attr/colorPrimaryDark"
+            android:text="@string/status_updates" />
 
         <TextView
             android:id="@+id/TSE_taskName"
+            android:layout_below="@id/TSE_title"
             style="@style/Title3TextStyleBlue"
+            android:textColor="?attr/colorPrimary"
+            android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Task Name Here" />
@@ -23,6 +35,7 @@
             android:id="@+id/TSE_icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:visibility="gone"
             android:layout_alignParentRight="true"
             android:src="@drawable/ic_action_camera" />
     </RelativeLayout>
@@ -66,7 +79,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/TSE_middle"
         android:background="@color/beige_pale"
-        android:elevation="@dimen/mon_divider"
         android:padding="@dimen/mon_margin">
 
         <TextView
@@ -88,6 +100,7 @@
             android:layout_marginTop="@dimen/mon_margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/mon_margin"
             android:layout_below="@id/TSE_btn">
 
             <TextView
@@ -96,7 +109,7 @@
                 android:layout_centerVertical="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="12:30" />
+                android:text="00:30" />
             <TextView
                 android:id="@+id/TSE_result"
                 style="@style/TextStyleRedSmall"

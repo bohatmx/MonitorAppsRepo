@@ -19,10 +19,9 @@
             android:src="@drawable/back1" />
         <TextView
             android:id="@+id/PRH_programme"
-            style="@style/Title3TextStyleWhite"
+            style="@style/Title2TextStyleWhite"
             android:layout_centerVertical="true"
-            android:background="@color/transparent_black"
-            android:padding="@dimen/mon_padding"
+            android:padding="@dimen/mon_margin"
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,7 +30,7 @@
             android:id="@+id/PRH_count"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_marginBottom="@dimen/mon_wide"
+            android:layout_marginBottom="@dimen/mon_wider"
             android:layout_marginRight="@dimen/mon_wide"
             style="@style/TransparentCircle"
             android:layout_width="56dp"

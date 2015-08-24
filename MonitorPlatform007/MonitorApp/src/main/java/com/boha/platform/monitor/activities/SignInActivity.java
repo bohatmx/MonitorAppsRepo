@@ -27,7 +27,6 @@ import com.boha.monitor.library.dto.GcmDeviceDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
-import com.boha.monitor.library.services.GPSService;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.GCMUtil;
 import com.boha.monitor.library.util.NetUtil;
@@ -156,9 +155,12 @@ public class SignInActivity extends AppCompatActivity {
                         SharedUtil.saveCompany(ctx, response.getCompany());
                         SharedUtil.saveMonitor(ctx, response.getMonitorList().get(0));
                         SharedUtil.saveGCMDevice(ctx, response.getGcmDeviceList().get(0));
+                        if (!response.getPhotoUploadList().isEmpty()) {
+                            SharedUtil.savePhoto(ctx, response.getPhotoUploadList().get(0));
+                        }
 
-                        Intent w = new Intent(ctx, GPSService.class);
-                        startService(w);
+//                        Intent w = new Intent(ctx, GPSService.class);
+//                        startService(w);
 
                         Intent intent = new Intent(ctx, MonitorAppDrawerActivity.class);
                         startActivity(intent);

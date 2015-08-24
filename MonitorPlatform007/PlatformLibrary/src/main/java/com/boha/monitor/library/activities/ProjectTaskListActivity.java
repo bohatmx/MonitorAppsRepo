@@ -33,7 +33,7 @@ public class ProjectTaskListActivity extends AppCompatActivity implements Projec
 
         project = (ProjectDTO)getIntent().getSerializableExtra("project");
         taskType = (TaskTypeDTO)getIntent().getSerializableExtra("taskType");
-        darkColor = getIntent().getIntExtra("darkColor", getApplicationContext().getResources().getColor(R.color.blue_300));
+        darkColor = getIntent().getIntExtra("darkColor", R.color.blue_800);
         Log.d("StatusUpdateActivity", "+++ onCreate - darkColor: " + darkColor);
         projectTaskListFragment = (ProjectTaskListFragment)getSupportFragmentManager().findFragmentById(R.id.fragment);
         projectTaskListFragment.setDarkColor(darkColor);

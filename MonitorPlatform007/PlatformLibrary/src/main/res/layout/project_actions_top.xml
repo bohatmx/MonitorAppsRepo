@@ -21,6 +21,7 @@
         android:id="@+id/PA_doStatus"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:elevation="@dimen/mon_padding"
         android:layout_weight="1"
         android:src="@drawable/ic_action_edit" />
     <ImageView

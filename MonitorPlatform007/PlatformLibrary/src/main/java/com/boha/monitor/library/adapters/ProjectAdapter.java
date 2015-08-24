@@ -83,7 +83,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             final HeaderViewHolder hvh = (HeaderViewHolder) holder;
             hvh.txtProgramme.setText(p.getProgrammeName());
             hvh.txtCount.setText("" + projectList.size());
-            hvh.image.setImageDrawable(Util.getRandomHeroImage(ctx));
+            hvh.image.setImageDrawable(Util.getRandomBackgroundImage(ctx));
         }
 
         if (holder instanceof ProjectViewHolder) {

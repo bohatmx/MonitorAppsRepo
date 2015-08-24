@@ -16,7 +16,10 @@ import android.widget.TextView;
 
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
+import com.boha.monitor.library.dto.RequestDTO;
+import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.ImageUtil;
+import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.platform.library.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -105,9 +108,38 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
         PhotoUploadDTO x = SharedUtil.getPhoto(getActivity());
         if (x != null) {
             setPicture(x);
+        } else {
+            getRemotePhotos();
         }
     }
 
+    private void getRemotePhotos() {
+
+        RequestDTO w = new RequestDTO(RequestDTO.GET_MONITOR_PHOTOS);
+        w.setMonitorID(SharedUtil.getMonitor(getActivity()).getMonitorID());
+
+        NetUtil.sendRequest(getActivity(), w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(ResponseDTO response) {
+                if (response.getStatusCode() == 0) {
+                    if (!response.getPhotoUploadList().isEmpty()) {
+                        SharedUtil.savePhoto(getActivity(),response.getPhotoUploadList().get(0));
+                        setPicture(response.getPhotoUploadList().get(0));
+                    }
+                }
+            }
+
+            @Override
+            public void onError(String message) {
+
+            }
+
+            @Override
+            public void onWebSocketClose() {
+
+            }
+        });
+    }
     public void setPicture(PhotoUploadDTO photo) {
 
         if (photo.getThumbFilePath() == null) {

@@ -43,13 +43,12 @@ import android.widget.ListPopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.boha.monitor.library.adapters.PopupListAdapter;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
-import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
-import com.boha.monitor.library.adapters.PopupListAdapter;
 import com.boha.platform.library.R;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -1343,7 +1342,7 @@ public class Util {
                         R.drawable.back10);
             case 10:
                 return ContextCompat.getDrawable(ctx,
-                        R.drawable.back11);
+                        R.drawable.back6);
             case 11:
                 return ContextCompat.getDrawable(ctx,
                         R.drawable.back12);
