@@ -230,6 +230,17 @@ public class GPSService extends Service implements LocationListener,
     private void send(LocationTrackerDTO dto) {
 
         RequestDTO w = new RequestDTO(RequestDTO.ADD_LOCATION_TRACK);
+        if (SharedUtil.getMonitor(getApplicationContext()) != null) {
+            dto.setMonitorID(SharedUtil.getMonitor(getApplicationContext()).getMonitorID());
+        }
+        if (SharedUtil.getCompanyStaff(getApplicationContext()) != null) {
+            dto.setStaffID(SharedUtil.getCompanyStaff(getApplicationContext()).getStaffID());
+        }
+        if (SharedUtil.getGCMDevice(getApplicationContext()) != null) {
+            GcmDeviceDTO x = new GcmDeviceDTO();
+            x.setGcmDeviceID(SharedUtil.getGCMDevice(getApplicationContext()).getGcmDeviceID());
+            dto.setGcmDevice(x);
+        }
         w.setLocationTracker(dto);
 
         NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {

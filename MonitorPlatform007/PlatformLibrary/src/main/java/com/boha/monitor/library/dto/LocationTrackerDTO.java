@@ -16,7 +16,7 @@ public class LocationTrackerDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private Integer locationTrackerID;
-    private int staffID, monitorID;
+    private Integer staffID, monitorID;
     private Long dateTracked;
     private double latitude;
     private double longitude;
@@ -44,19 +44,19 @@ public class LocationTrackerDTO implements Serializable {
         this.locationTrackerID = locationTrackerID;
     }
 
-    public int getStaffID() {
+    public Integer getStaffID() {
         return staffID;
     }
 
-    public void setStaffID(int staffID) {
+    public void setStaffID(Integer staffID) {
         this.staffID = staffID;
     }
 
-    public int getMonitorID() {
+    public Integer getMonitorID() {
         return monitorID;
     }
 
-    public void setMonitorID(int monitorID) {
+    public void setMonitorID(Integer monitorID) {
         this.monitorID = monitorID;
     }
 
