@@ -14,8 +14,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -98,12 +96,14 @@ public class SignInActivity extends AppCompatActivity {
                 .setAction("CLOSE", null)
                 .show();
         boolean ok = checkPlayServices();
+        setRefreshActionButtonState(true);
         if (ok) {
             Log.e(LOG, "############# Starting Google Cloud Messaging registration");
             GCMUtil.startGCMRegistration(getApplicationContext(), new GCMUtil.GCMUtilListener() {
                 @Override
                 public void onDeviceRegistered(String id) {
                     Log.i(LOG, "############# GCM - we cool, GcmDeviceDTO waiting to be sent with signin .....: " + id);
+                    setRefreshActionButtonState(false);
                     gcmDevice = new GcmDeviceDTO();
                     gcmDevice.setManufacturer(Build.MANUFACTURER);
                     gcmDevice.setModel(Build.MODEL);
@@ -120,6 +120,7 @@ public class SignInActivity extends AppCompatActivity {
                 @Override
                 public void onGCMError() {
                     Log.e(LOG, "############# onGCMError --- we got GCM problems");
+                    setRefreshActionButtonState(false);
 
                 }
             });
@@ -218,7 +219,6 @@ public class SignInActivity extends AppCompatActivity {
         txtApp.setText(R.string.monitor);
         btnSave.setText("Sign In");
         btnSave.setEnabled(false);
-        btnSave.setTextColor(getResources().getColor(R.color.white));
 
         txtEmail.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -305,28 +305,8 @@ public class SignInActivity extends AppCompatActivity {
                 tarList.add(accts[i].name);
 
             }
-            //setSpinner();
         }
 
-    }
-    private void setSpinner() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(ctx,R.layout.xxsimple_spinner_item, tarList);
-        spinnerEmail.setAdapter(adapter);
-        spinnerEmail.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    email = null;
-                    return;
-                }
-                email = tarList.get(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
     ArrayList<String> tarList = new ArrayList<String>();
     Menu mMenu;
