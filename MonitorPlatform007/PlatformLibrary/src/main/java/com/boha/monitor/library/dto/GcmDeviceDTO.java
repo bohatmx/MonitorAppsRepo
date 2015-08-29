@@ -7,22 +7,31 @@
 package com.boha.monitor.library.dto;
 
 
+import java.io.Serializable;
+
 /**
  *
  * @author aubreyM
  */
-public class GcmDeviceDTO {
+public class GcmDeviceDTO implements Serializable{
 
     private Integer gcmDeviceID;
     private String registrationID;
     private String manufacturer;
-    private String model;
+    private String model, app;
     private String product;
     private Integer messageCount;
     private long dateRegistered;
     private String serialNumber, androidVersion;
     private Integer staffID, companyID, monitorID;
 
+    public String getApp() {
+        return app;
+    }
+
+    public void setApp(String app) {
+        this.app = app;
+    }
 
     public Integer getGcmDeviceID() {
         return gcmDeviceID;

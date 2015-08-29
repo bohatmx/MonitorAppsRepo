@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="0dp"
@@ -7,6 +8,7 @@
 
     <RelativeLayout
         android:id="@+id/top"
+        android:padding="@dimen/mon_padding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -14,9 +16,8 @@
             android:id="@+id/text"
             android:text="Title"
             android:padding="@dimen/mon_padding"
-            style="@style/TextStyleRedSmall"
-            android:textStyle="bold"
-            android:layout_marginLeft="100dp"
+            style="@style/TextStyleBlue"
+            android:layout_marginLeft="@dimen/mon_margin"
             android:layout_centerHorizontal="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -35,16 +36,21 @@
         style="@style/RedCircle"
         android:id="@+id/count"
         android:text="999"
-        android:layout_marginTop="@dimen/mon_padding"
+        android:layout_marginTop="@dimen/mon_wide"
         android:layout_marginLeft="@dimen/mon_padding"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_margin="@dimen/mon_wider"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image"
+        android:layout_width="@dimen/mon_hero_height_small"
+        android:layout_height="@dimen/mon_hero_height_small"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="@dimen/mon_wider"
+        android:layout_marginLeft="@dimen/mon_wide"
+        android:src="@drawable/black_woman"
+        app:border_color="@color/transparent_black"
+        app:border_width="4dp" />
 
 
 </RelativeLayout>

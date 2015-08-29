@@ -149,5 +149,10 @@ public class NoProjectsAssignedFragment extends Fragment implements PageFragment
         return null;
     }
 
-
+    int primaryColor, darkColor;
+    @Override
+    public void setThemeColors(int primaryColor, int darkColor) {
+        this.primaryColor = primaryColor;
+        this.darkColor = darkColor;
+    }
 }

@@ -1309,7 +1309,6 @@ public class Util {
     public static Drawable getRandomBackgroundImage( Context ctx) {
         random = new Random(System.currentTimeMillis());
         int index = random.nextInt(14);
-        Log.e(LOG,"%%% getRandomBackgroundImage: " + index);
         switch (index) {
             case 0:
                 return ContextCompat.getDrawable(ctx, R.drawable.back1);

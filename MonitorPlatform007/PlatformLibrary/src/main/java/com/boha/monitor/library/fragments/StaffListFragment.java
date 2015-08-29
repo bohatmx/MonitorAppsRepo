@@ -293,6 +293,12 @@ public class StaffListFragment extends Fragment
         public void onCompanyStaffEditRequested(StaffDTO companyStaff);
 
     }
+    int primaryColor, darkColor;
+    @Override
+    public void setThemeColors(int primaryColor, int darkColor) {
+        this.primaryColor = primaryColor;
+        this.darkColor = darkColor;
+    }
     ProjectDTO project;
     List<StaffDTO> staffList;
     StaffAdapter staffAdapter;

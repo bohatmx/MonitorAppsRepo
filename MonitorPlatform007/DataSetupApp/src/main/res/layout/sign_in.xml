@@ -43,7 +43,6 @@
                 android:padding="@dimen/mon_padding"
                 android:text="Connect your WIFI"
                 android:visibility="gone"
-                android:layout_below="@id/SI_welcome"
                 android:layout_centerHorizontal="true"
                 style="@style/TextStyleGreenSmall"
                 android:layout_height="wrap_content"/>

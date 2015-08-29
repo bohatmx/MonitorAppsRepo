@@ -7,6 +7,7 @@
 package com.boha.monitor.library.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  *
@@ -18,14 +19,47 @@ public class LocationTrackerDTO implements Serializable {
     private Integer locationTrackerID;
     private Integer staffID, monitorID;
     private Long dateTracked;
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
     private float accuracy;
-    private String geocodedAddress, staffName;
+    private String geocodedAddress, staffName, monitorName, message;
     private Long dateAdded;
+    private List<Integer> monitorList, staffList;
     private GcmDeviceDTO gcmDevice;
 
     public LocationTrackerDTO() {
+    }
+
+    public String getMonitorName() {
+        return monitorName;
+    }
+
+    public void setMonitorName(String monitorName) {
+        this.monitorName = monitorName;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public List<Integer> getMonitorList() {
+        return monitorList;
+    }
+
+    public void setMonitorList(List<Integer> monitorList) {
+        this.monitorList = monitorList;
+    }
+
+    public List<Integer> getStaffList() {
+        return staffList;
+    }
+
+    public void setStaffList(List<Integer> staffList) {
+        this.staffList = staffList;
     }
 
     public GcmDeviceDTO getGcmDevice() {
@@ -68,11 +102,11 @@ public class LocationTrackerDTO implements Serializable {
         this.dateTracked = dateTracked;
     }
 
-    public double getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 

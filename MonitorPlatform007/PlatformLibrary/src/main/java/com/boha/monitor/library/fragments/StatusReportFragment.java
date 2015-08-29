@@ -534,5 +534,11 @@ public class StatusReportFragment extends Fragment implements PageFragment {
     public String getPageTitle() {
         return pageTitle;
     }
+    int primaryColor, darkColor;
+    @Override
+    public void setThemeColors(int primaryColor, int darkColor) {
+        this.primaryColor = primaryColor;
+        this.darkColor = darkColor;
+    }
 
 }

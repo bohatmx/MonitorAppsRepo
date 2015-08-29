@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="180dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/back1" />
+            android:src="@drawable/back13" />
         <TextView
             android:id="@+id/PRH_programme"
             style="@style/Title2TextStyleWhite"

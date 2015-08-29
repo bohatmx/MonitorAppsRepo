@@ -19,7 +19,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -53,7 +52,6 @@ public class SignInActivity extends AppCompatActivity {
     Context ctx;
     String email;
     ImageView banner;
-    ProgressBar progressBar;
 
     GcmDeviceDTO gcmDevice;
     static final String LOG = SignInActivity.class.getSimpleName();
@@ -110,9 +108,10 @@ public class SignInActivity extends AppCompatActivity {
                     gcmDevice.setManufacturer(Build.MANUFACTURER);
                     gcmDevice.setModel(Build.MODEL);
                     gcmDevice.setSerialNumber(Build.SERIAL);
-//                    gcmDevice.setProduct(Build.PRODUCT);
+                    gcmDevice.setProduct(Build.PRODUCT);
                     gcmDevice.setAndroidVersion(Build.VERSION.RELEASE);
                     gcmDevice.setRegistrationID(id);
+                    gcmDevice.setApp(ctx.getPackageName());
                     btnSave.setEnabled(true);
 
 
@@ -141,14 +140,14 @@ public class SignInActivity extends AppCompatActivity {
         r.setPin(ePin.getText().toString());
         r.setGcmDevice(gcmDevice);
 
-        progressBar.setVisibility(View.VISIBLE);
+        setRefreshActionButtonState(true);
         NetUtil.sendRequest(ctx,r,new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(final ResponseDTO response) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressBar.setVisibility(View.GONE);
+                        setRefreshActionButtonState(false);
                         if (response.getStatusCode() > 0) {
                             showErrorToast(ctx, response.getMessage());
                             return;
@@ -191,7 +190,7 @@ public class SignInActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressBar.setVisibility(View.GONE);
+                        setRefreshActionButtonState(false);
                         showErrorToast(ctx, message);
                     }
                 });
@@ -202,7 +201,6 @@ public class SignInActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressBar.setVisibility(View.GONE);
                     }
                 });
             }
@@ -212,7 +210,6 @@ public class SignInActivity extends AppCompatActivity {
 
     }
     private void setFields() {
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         ePin = (EditText) findViewById(R.id.SI_pin);
         txtEmail = (TextView) findViewById(R.id.SI_txtEmail);
         txtApp = (TextView)findViewById(R.id.SI_app);

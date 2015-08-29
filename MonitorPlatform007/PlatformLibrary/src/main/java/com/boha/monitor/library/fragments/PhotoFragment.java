@@ -21,7 +21,6 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.io.File;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -164,5 +163,11 @@ public class PhotoFragment extends Fragment implements PageFragment {
     @Override
     public String getPageTitle() {
         return null;
+    }
+    int primaryColor, darkColor;
+    @Override
+    public void setThemeColors(int primaryColor, int darkColor) {
+        this.primaryColor = primaryColor;
+        this.darkColor = darkColor;
     }
 }

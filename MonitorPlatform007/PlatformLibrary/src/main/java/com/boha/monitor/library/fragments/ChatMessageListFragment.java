@@ -308,4 +308,10 @@ public class ChatMessageListFragment extends Fragment implements PageFragment {
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(editMessage.getWindowToken(), 0);
     }
+    int primaryColor, darkColor;
+    @Override
+    public void setThemeColors(int primaryColor, int darkColor) {
+        this.primaryColor = primaryColor;
+        this.darkColor = darkColor;
+    }
 }

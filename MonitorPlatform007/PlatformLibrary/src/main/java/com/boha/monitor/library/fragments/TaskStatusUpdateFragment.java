@@ -367,9 +367,10 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         return null;
     }
 
-    int darkColor;
-
-    public void setDarkColor(int darkColor) {
+    int primaryColor, darkColor;
+    @Override
+    public void setThemeColors(int primaryColor, int darkColor) {
+        this.primaryColor = primaryColor;
         this.darkColor = darkColor;
     }
 }

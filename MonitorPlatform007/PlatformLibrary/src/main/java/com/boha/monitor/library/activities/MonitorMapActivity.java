@@ -1,9 +1,7 @@
 package com.boha.monitor.library.activities;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
@@ -15,9 +13,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
@@ -38,12 +36,16 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MonitorMapActivity extends AppCompatActivity
         implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -67,9 +69,9 @@ public class MonitorMapActivity extends AppCompatActivity
     int index;
     TextView text, txtCount;
     View topLayout;
-    ProgressBar progressBar;
+    LocationTrackerDTO track;
+    CircleImageView image;
     static final Locale loc = Locale.getDefault();
-    static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,21 +80,22 @@ public class MonitorMapActivity extends AppCompatActivity
         ctx = getApplicationContext();
         setContentView(R.layout.activity_monitor_map);
 
+        track = (LocationTrackerDTO) getIntent().getSerializableExtra("track");
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
         index = getIntent().getIntExtra("index", 0);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         text = (TextView) findViewById(R.id.text);
+        image = (CircleImageView) findViewById(R.id.image);
         txtCount = (TextView) findViewById(R.id.count);
         txtCount.setText("0");
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
+
         Statics.setRobotoFontBold(ctx, text);
 
         topLayout = findViewById(R.id.top);
 
         if (project != null) {
-//            text.setText(getString(R.string.project_map));
+
         }
         googleMap = mapFragment.getMap();
         if (googleMap == null) {
@@ -102,7 +105,16 @@ public class MonitorMapActivity extends AppCompatActivity
         }
         setGoogleMap();
         if (project != null) {
+            image.setVisibility(View.GONE);
             setOneMarker();
+        }
+        if (track != null) {
+            txtCount.setVisibility(View.GONE);
+            setTitle(track.getMonitorName());
+            getSupportActionBar().setSubtitle("Current Location");
+            text.setText("Location at " + sdf.format(new Date(track.getDateTracked())));
+            getMonitorPhotos(track.getMonitorID());
+            setMonitorMarker();
         }
     }
 
@@ -124,7 +136,7 @@ public class MonitorMapActivity extends AppCompatActivity
             @Override
             public void onResponse(ResponseDTO response) {
                 if (response.getStatusCode() == 0)
-                Log.i(LOG, "+++ cool. project location updated");
+                    Log.i(LOG, "+++ cool. project location updated");
             }
 
             @Override
@@ -141,7 +153,7 @@ public class MonitorMapActivity extends AppCompatActivity
     }
 
     Activity activity;
-
+    static final SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy HH:mm");
     private void setGoogleMap() {
         activity = this;
         googleMap.setMyLocationEnabled(true);
@@ -153,26 +165,26 @@ public class MonitorMapActivity extends AppCompatActivity
                 location = loc;
             }
         });
-        //TODO - remove after test
-        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(final LatLng latLng) {
-                final AlertDialog.Builder d = new AlertDialog.Builder(activity);
-                d.setTitle("Project Location")
-                        .setMessage("Do you want to set location for " + project.getProjectName())
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                temporaryWork(latLng);
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        }).show();
-            }
-        });
+//        //TODO - remove after test
+//        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+//            @Override
+//            public void onMapClick(final LatLng latLng) {
+//                final AlertDialog.Builder d = new AlertDialog.Builder(activity);
+//                d.setTitle("Project Location")
+//                        .setMessage("Do you want to set location for " + project.getProjectName())
+//                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                temporaryWork(latLng);
+//                            }
+//                        })
+//                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                            }
+//                        }).show();
+//            }
+//        });
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -186,7 +198,8 @@ public class MonitorMapActivity extends AppCompatActivity
                 float mf = location.distanceTo(loc);
                 Log.w(LOG, "######### distance, again: " + mf);
 
-                showPopup(latLng.latitude, latLng.longitude, marker.getTitle() + "\n" + marker.getSnippet());
+                showPopup(latLng.latitude, latLng.longitude,
+                        marker.getTitle());
 
                 return true;
             }
@@ -304,30 +317,48 @@ public class MonitorMapActivity extends AppCompatActivity
         setTitle(project.getProjectName());
     }
 
+    private void setMonitorMarker() {
+        if (track.getLatitude() == null) {
+            return;
+        }
+        LatLng pnt = new LatLng(track.getLatitude(), track.getLongitude());
+        BitmapDescriptor desc = BitmapDescriptorFactory.fromResource(R.drawable.number_1);
+        Marker m =
+                googleMap.addMarker(new MarkerOptions()
+                        .title(track.getMonitorName())
+                        .icon(desc)
+                        .snippet(track.getMonitorName())
+                        .position(pnt));
+        markers.add(m);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pnt, 1.0f));
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f));
+
+    }
+
     List<String> list;
 
     private void showPopup(final double lat, final double lng, String title) {
         list = new ArrayList<>();
         list.add("Directions");
-        list.add("Status");
-        list.add("Photos");
+        list.add("Street View");
+        list.add("Status Report");
 
         Util.showPopupBasicWithHeroImage(ctx, this, list, topLayout,
-                project.getProjectName(),
+                title,
                 new Util.UtilPopupListener() {
                     @Override
                     public void onItemSelected(int index) {
                         if (list.get(index).equalsIgnoreCase("Directions")) {
                             startDirectionsMap(lat, lng);
                         }
-                        if (list.get(index).equalsIgnoreCase("Status")) {
-                            isStatusReport = true;
-                            getCachedSiteData();
+                        if (list.get(index).equalsIgnoreCase("Street View")) {
+                            if (track != null) {
+                                getStreetView(track.getLatitude(), track.getLongitude());
+                            }
                         }
 
-                        if (list.get(index).equalsIgnoreCase("Photos")) {
-                            isGallery = true;
-                            getCachedSiteData();
+                        if (list.get(index).equalsIgnoreCase("Status Report")) {
+                            getStatusReport();
                         }
                     }
                 });
@@ -337,114 +368,22 @@ public class MonitorMapActivity extends AppCompatActivity
 
     boolean isStatusReport, isGallery;
 
-    private void startGallery() {
-        if (project.getPhotoUploadList() == null || project.getPhotoUploadList().isEmpty()) {
-            Util.showToast(ctx, "There are no pictures taken for the project");
-            return;
-        }
-//        Intent i = new Intent(ctx, SitePictureGridActivity.class);
-//        i.putExtra("projectSite", projectSite);
-//        startActivity(i);
+    private void getStreetView(double latitude, double longitude) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("google.streetview:cbll=");
+        sb.append(latitude).append(",").append(longitude);
+        Uri gmmIntentUri = Uri.parse(sb.toString());
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        startActivity(mapIntent);
     }
 
-    private void startStatusReport() {
-//        if (projectSite.getProjectSiteTaskList() == null || projectSite.getProjectSiteTaskList().isEmpty()) {
-//            Util.showToast(ctx, "There are no tasks defined for the project");
-//            return;
-//        }
-//        Intent i = new Intent(ctx, SiteStatusReportActivity.class);
-//        i.putExtra("projectSite", projectSite);
-//        startActivity(i);
-    }
-
-    private void getCachedSiteData() {
-        progressBar.setVisibility(View.VISIBLE);
-
-//        CacheUtil.getCachedSiteData(ctx, projectSite.getProjectSiteID(), new CacheUtil.CacheSiteListener() {
-//            @Override
-//            public void onSiteReturnedFromCache( ProjectDTO site) {
-//                progressBar.setVisibility(View.GONE);
-//                if (site != null) {
-//                    projectSite = site;
-//                    if (isGallery) {
-//                        isGallery = false;
-//                        startGallery();
-//                    }
-//                    if (isStatusReport) {
-//                        isStatusReport = false;
-//                        startStatusReport();
-//                    }
-//                } else {
-//                    getSiteData();
-//                }
-//            }
-//
-//            @Override
-//            public void onDataCached() {
-//
-//            }
-//
-//            @Override
-//            public void onError() {
-//                Log.e(LOG, "--- no cache exists for the project, going to the cloud");
-//                getSiteData();
-//            }
-//        });
-    }
-
-    private void getSiteData() {
-
-//        RequestDTO w = new RequestDTO(RequestDTO.GET_SITE_STATUS);
-//        w.setProjectSiteID(projectSite.getProjectSiteID());
-//        progressBar.setVisibility(View.VISIBLE);
-//        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
-//            @Override
-//            public void onResponse( final ResponseDTO response) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        progressBar.setVisibility(View.GONE);
-//                        if (!ErrorUtil.checkServerError(ctx, response)) {
-//                            return;
-//                        }
-//                        projectSite = response.getProjectSiteList().get(0);
-//                        if (isGallery) {
-//                            isGallery = false;
-//                            startGallery();
-//                        }
-//                        if (isStatusReport) {
-//                            isStatusReport = false;
-//                            startStatusReport();
-//                        }
-//                    }
-//
-//                });
-//            }
-//
-//            @Override
-//            public void onError(final String message) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        progressBar.setVisibility(View.GONE);
-//                        showErrorToast(ctx, message);
-//
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onWebSocketClose() {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        progressBar.setVisibility(View.GONE);
-//                    }
-//                });
-//            }
-//        });
+    private void getStatusReport() {
 
     }
+
+
+
 
     private void startDirectionsMap(double lat, double lng) {
         Log.i(LOG, "startDirectionsMap ..........");
@@ -481,24 +420,7 @@ public class MonitorMapActivity extends AppCompatActivity
         Log.e(LOG, "####### onLocationChanged");
     }
 
-    /**
-     * Called when the provider status changes. This method is called when
-     * a provider is unable to fetch a location or if the provider has recently
-     * become available after a period of unavailability.
-     *
-     * @param provider the name of the location provider associated with this
-     *                 update.
-     * @param extras   an optional Bundle which will contain provider specific
-     *                 status variables.
-     *                 <p/>
-     *                 <p> A number of common key/value pairs for the extras Bundle are listed
-     *                 below. Providers that use any of the keys on this list must
-     *                 provide the corresponding value as described below.
-     *                 <p/>
-     *                 <ul>
-     *                 <li> satellites - the number of satellites used to derive the fix
-     */
-    @Override
+      @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
 
     }
@@ -722,6 +644,33 @@ public class MonitorMapActivity extends AppCompatActivity
     public void onPause() {
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         super.onPause();
+    }
+
+    private void getMonitorPhotos(Integer monitorID) {
+        RequestDTO w = new RequestDTO(RequestDTO.GET_MONITOR_PHOTOS);
+        w.setMonitorID(monitorID);
+
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(ResponseDTO response) {
+                if (response.getStatusCode() == 0) {
+                    if (!response.getPhotoUploadList().isEmpty()) {
+                        String url = response.getPhotoUploadList().get(0).getUri();
+                        ImageLoader.getInstance().displayImage(url,image);
+                    }
+                }
+            }
+
+            @Override
+            public void onError(String message) {
+                Log.e("MonitorMapActivity", message);
+            }
+
+            @Override
+            public void onWebSocketClose() {
+
+            }
+        });
     }
 
 }

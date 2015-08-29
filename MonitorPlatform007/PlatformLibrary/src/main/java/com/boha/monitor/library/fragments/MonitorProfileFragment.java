@@ -21,10 +21,12 @@ import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.ImageUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
+import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,7 +43,7 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
     MonitorDTO monitor;
     TextView txtName;
     ImageView backDrop, roundImage, iconCamera;
-    EditText eFirst, eLast, eAddress, eID;
+    EditText eFirst, eLast, eAddress, eID, eCell;
     RadioButton radioMale, radioFemale;
     Button btnSave;
     View view;
@@ -62,7 +64,7 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            monitor = (MonitorDTO)getArguments().getSerializable("monitor");
+            monitor = (MonitorDTO) getArguments().getSerializable("monitor");
         }
     }
 
@@ -75,18 +77,85 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
         return view;
     }
 
+    private void updateMonitor() {
+        MonitorDTO mon = new MonitorDTO();
+        mon.setMonitorID(monitor.getMonitorID());
+
+        if (!eFirst.getText().toString().isEmpty()) {
+            mon.setFirstName(eFirst.getText().toString());
+        }
+        if (!eLast.getText().toString().isEmpty()) {
+            mon.setLastName(eLast.getText().toString());
+        }
+        if (!eCell.getText().toString().isEmpty()) {
+            mon.setCellphone(eCell.getText().toString());
+        }
+        if (!eAddress.getText().toString().isEmpty()) {
+            mon.setAddress(eAddress.getText().toString());
+        }
+        if (!eID.getText().toString().isEmpty()) {
+            mon.setIDNumber(eID.getText().toString());
+        }
+        if (!radioMale.isChecked() && !radioFemale.isChecked()) {
+            Util.showToast(getActivity(), "Please select your gender");
+            return;
+        }
+        if (radioFemale.isChecked()) {
+            mon.setGender(new Short("2"));
+        }
+        if (radioMale.isChecked()) {
+            mon.setGender(new Short("1"));
+        }
+        RequestDTO w = new RequestDTO(RequestDTO.UPDATE_MONITOR);
+        w.setMonitorList(new ArrayList<MonitorDTO>());
+        w.getMonitorList().add(mon);
+
+        mListener.setBusy(true);
+        NetUtil.sendRequest(getActivity(), w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mListener.setBusy(false);
+                        Util.showToast(getActivity(), "Monitor details have been updated");
+                    }
+                });
+            }
+
+            @Override
+            public void onError(final String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mListener.setBusy(false);
+                        Util.showErrorToast(getActivity(), message);
+                    }
+                });
+            }
+
+            @Override
+            public void onWebSocketClose() {
+
+            }
+        });
+    }
+
     private void setFields() {
-        txtName = (TextView)view.findViewById(R.id.FMP_name);
-        btnSave = (Button)view.findViewById(R.id.FMP_btnSave);
+        txtName = (TextView) view.findViewById(R.id.FMP_name);
+        btnSave = (Button) view.findViewById(R.id.FMP_btnSave);
 
-        eFirst = (EditText)view.findViewById(R.id.FMP_editFirstName);
-        eLast = (EditText)view.findViewById(R.id.FMP_editLastName);
-        eID = (EditText)view.findViewById(R.id.FMP_editID);
-        eAddress = (EditText)view.findViewById(R.id.FMP_editAddress);
+        eFirst = (EditText) view.findViewById(R.id.FMP_editFirstName);
+        eLast = (EditText) view.findViewById(R.id.FMP_editLastName);
+        eID = (EditText) view.findViewById(R.id.FMP_editID);
+        eAddress = (EditText) view.findViewById(R.id.FMP_editAddress);
+        eCell = (EditText) view.findViewById(R.id.FMP_editCell);
 
-        iconCamera = (ImageView)view.findViewById(R.id.FMP_iconCamera);
-        roundImage = (ImageView)view.findViewById(R.id.FMP_personImage);
-        backDrop = (ImageView)view.findViewById(R.id.FMP_backdrop);
+        iconCamera = (ImageView) view.findViewById(R.id.FMP_iconCamera);
+        roundImage = (ImageView) view.findViewById(R.id.FMP_personImage);
+        backDrop = (ImageView) view.findViewById(R.id.FMP_backdrop);
+        radioFemale = (RadioButton) view.findViewById(R.id.FMP_radioFemale);
+        radioMale = (RadioButton) view.findViewById(R.id.FMP_radioMale);
 
         iconCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,10 +169,31 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
                 mListener.onMonitorPictureRequested(monitor);
             }
         });
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateMonitor();
+            }
+        });
         if (monitor != null) {
             txtName.setText(monitor.getFirstName() + " " + monitor.getLastName());
             eFirst.setText(monitor.getFirstName());
             eLast.setText(monitor.getLastName());
+            if (monitor.getCellphone() != null) {
+                eCell.setText(monitor.getCellphone());
+            }
+            if (monitor.getIDNumber() != null) {
+                eID.setText(monitor.getIDNumber());
+            }
+            if (monitor.getAddress() != null) {
+                eAddress.setText(monitor.getAddress());
+            }
+            if (monitor.getGender() != null && monitor.getGender().intValue() == 1) {
+                radioMale.setChecked(true);
+            }
+            if (monitor.getGender() != null && monitor.getGender().intValue() == 2) {
+                radioFemale.setChecked(true);
+            }
         }
         PhotoUploadDTO x = SharedUtil.getPhoto(getActivity());
         if (x != null) {
@@ -123,7 +213,7 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
             public void onResponse(ResponseDTO response) {
                 if (response.getStatusCode() == 0) {
                     if (!response.getPhotoUploadList().isEmpty()) {
-                        SharedUtil.savePhoto(getActivity(),response.getPhotoUploadList().get(0));
+                        SharedUtil.savePhoto(getActivity(), response.getPhotoUploadList().get(0));
                         setPicture(response.getPhotoUploadList().get(0));
                     }
                 }
@@ -140,6 +230,7 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
             }
         });
     }
+
     public void setPicture(PhotoUploadDTO photo) {
 
         if (photo.getThumbFilePath() == null) {
@@ -161,6 +252,7 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
             }
         }
     }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -182,7 +274,9 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
     public void animateHeroHeight() {
 
     }
+
     String pageTitle;
+
     @Override
     public void setPageTitle(String title) {
         pageTitle = title;
@@ -194,8 +288,16 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
     }
 
     public interface MonitorProfileListener {
-         void onProfileUpdated(MonitorDTO monitor);
-         void onMonitorPictureRequested(MonitorDTO monitor);
-    }
+        void onProfileUpdated(MonitorDTO monitor);
 
+        void onMonitorPictureRequested(MonitorDTO monitor);
+
+        void setBusy(boolean busy);
+    }
+    int primaryColor, darkColor;
+    @Override
+    public void setThemeColors(int primaryColor, int darkColor) {
+        this.primaryColor = primaryColor;
+        this.darkColor = darkColor;
+    }
 }

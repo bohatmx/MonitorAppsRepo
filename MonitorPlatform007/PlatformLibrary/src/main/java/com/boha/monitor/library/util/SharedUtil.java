@@ -70,7 +70,7 @@ public class SharedUtil {
 
         return count;
     }
-    public static final int MAX_SLIDING_TAB_VIEWS = 100;
+    public static final int MAX_SLIDING_TAB_VIEWS = 1000;
     /**
      * Stores the registration ID and app versionCode in the application's
      * {@code SharedPreferences}.

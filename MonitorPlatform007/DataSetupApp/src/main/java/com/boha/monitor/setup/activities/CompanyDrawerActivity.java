@@ -424,6 +424,18 @@ public class CompanyDrawerActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onMessagingRequested(MonitorDTO monitor) {
+
+    }
+
+    @Override
+    public void onLocationSendRequired(List<Integer> monitorList, List<Integer> staffList) {
+
+    }
+
+
+
+    @Override
     public void setBusy(boolean busy) {
         setRefreshActionButtonState(busy);
     }

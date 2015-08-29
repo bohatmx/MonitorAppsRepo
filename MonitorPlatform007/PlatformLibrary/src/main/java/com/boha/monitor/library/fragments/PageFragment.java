@@ -7,5 +7,6 @@ public interface PageFragment {
     void animateHeroHeight();
     void setPageTitle(String title);
     String getPageTitle();
+    void setThemeColors(int primaryColor, int darkColor);
 
 }

@@ -14,21 +14,55 @@ import java.util.List;
  *
  * @author aubreyM
  */
-public class MonitorDTO implements Serializable {
+public class MonitorDTO implements Serializable, Comparable<MonitorDTO> {
     private static final long serialVersionUID = 1L;
     private Integer monitorID, activeFlag;
     private String firstName;
     private String lastName;
-    private String email, companyName;
+    private String email, companyName, IDNumber, address;
     private String cellphone, pin;
     private Long appInvitationDate;
     private Integer companyID;
+    private Short gender;
     private GcmDeviceDTO gcmDevice;
     private List<PhotoUploadDTO> photoUploadList;
     private List<LocationTrackerDTO> locationTrackerList;
     private List<StaffProjectDTO> staffProjectList;
+    private Boolean selected = Boolean.FALSE;
 
     public MonitorDTO() {
+    }
+
+    public Short getGender() {
+        return gender;
+    }
+
+    public Boolean getSelected() {
+        return selected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
+    }
+
+    public void setGender(Short gender) {
+        this.gender = gender;
+    }
+
+    public String getIDNumber() {
+        return IDNumber;
+    }
+
+    public void setIDNumber(String IDNumber) {
+        this.IDNumber = IDNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getFullName() {
@@ -155,5 +189,10 @@ public class MonitorDTO implements Serializable {
     public void setStaffProjectList(List<StaffProjectDTO> staffProjectList) {
         this.staffProjectList = staffProjectList;
     }
-    
+
+    @Override
+    public int compareTo(MonitorDTO m) {
+
+        return this.getFullName().compareTo(m.getFullName());
+    }
 }

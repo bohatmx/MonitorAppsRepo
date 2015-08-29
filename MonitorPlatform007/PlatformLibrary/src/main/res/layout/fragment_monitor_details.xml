@@ -29,14 +29,15 @@
                 android:layout_margin="@dimen/mon_margin"
                 android:layout_marginRight="@dimen/mon_margin"
                 android:text="@string/monitor" />
+
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/FMP_personImage"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginRight="@dimen/mon_margin"
+                android:layout_alignParentRight="true"
                 android:layout_margin="@dimen/mon_padding"
+                android:layout_marginRight="@dimen/mon_margin"
                 android:scaleType="centerCrop"
                 android:src="@drawable/black_woman"
                 app:border_color="@color/white"
@@ -46,73 +47,164 @@
 
         <RelativeLayout
             android:id="@+id/FMD_midLayout"
-            android:padding="@dimen/mon_margin"
-            android:layout_marginTop="@dimen/mon_margin"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/FMD_topLayout">
+            android:layout_below="@id/FMD_topLayout"
+            android:padding="@dimen/mon_margin">
 
             <ImageView
                 android:id="@+id/FMP_iconCamera"
-                android:src="@drawable/ic_action_camera"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:layout_alignParentRight="true"
-                android:layout_width="40dp"
-                android:layout_height="40dp" />
-            <EditText
-                android:id="@+id/FMP_editFirstName"
-                android:layout_below="@id/FMP_iconCamera"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="First Name" />
+                android:src="@drawable/ic_action_camera"
+                android:visibility="gone" />
 
-            <EditText
-                android:id="@+id/FMP_editLastName"
+            <RelativeLayout
+                android:id="@+id/box1"
+                android:layout_marginTop="@dimen/mon_wide"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/FMP_editFirstName"
-                android:hint="Surname" />
+                android:layout_below="@id/FMP_iconCamera">
 
-            <EditText
-                android:id="@+id/FMP_editID"
+                <ImageView
+                    android:id="@+id/icon1"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_action_person" />
+
+                <EditText
+                    android:id="@+id/FMP_editFirstName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/mon_margin"
+                    android:layout_toRightOf="@id/icon1"
+                    android:hint="First Name"
+                    android:inputType="textCapWords" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/box2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/FMP_editLastName"
-                android:hint="Identification Number" />
+                android:layout_below="@id/box1">
+
+                <ImageView
+                    android:id="@+id/icon2"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_action_person" />
+
+                <EditText
+                    android:id="@+id/FMP_editLastName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/mon_margin"
+                    android:layout_toRightOf="@id/icon2"
+                    android:hint="Surname"
+                    android:inputType="textCapWords" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/box3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/box2">
+
+                <ImageView
+                    android:id="@+id/icon3"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_action_globe" />
+
+                <EditText
+                    android:id="@+id/FMP_editID"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/mon_margin"
+                    android:layout_toRightOf="@id/icon3"
+                    android:hint="Identification Number"
+                    android:inputType="number" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/box4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/box3">
+
+                <ImageView
+                    android:id="@+id/icon4"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_action_view_as_list" />
+            <EditText
+                android:id="@+id/FMP_editCell"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_toRightOf="@id/icon4"
+                android:hint="Cellphone Number"
+                android:inputType="phone" />
+                </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/box5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/box4">
+
+                <ImageView
+                    android:id="@+id/icon5"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_action_picture" />
             <EditText
                 android:id="@+id/FMP_editAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/FMP_editID"
-                android:hint="Home Address" />
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_toRightOf="@id/icon5"
+                android:hint="Home Address"
+                android:inputType="textCapWords" />
+                </RelativeLayout>
+
             <RadioGroup
                 android:id="@+id/FMP_radioGroup"
-                android:orientation="horizontal"
-                android:layout_below="@id/FMP_editAddress"
-                android:layout_marginTop="@dimen/mon_margin"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_below="@id/box5"
+                android:layout_marginTop="@dimen/mon_margin"
+                android:orientation="horizontal">
+
                 <RadioButton
                     android:id="@+id/FMP_radioMale"
-                    android:text="Male"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:text="Male" />
+
                 <Space
                     android:layout_width="@dimen/mon_wide"
                     android:layout_height="wrap_content" />
+
                 <RadioButton
                     android:id="@+id/FMP_radioFemale"
-                    android:text="Female"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:text="Female" />
             </RadioGroup>
+
             <Button
                 android:id="@+id/FMP_btnSave"
                 style="@style/ButtonRed"
-                android:text="Save Data"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/FMP_radioGroup"
                 android:layout_marginTop="@dimen/mon_wider"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:text="Save Data" />
         </RelativeLayout>
 
     </RelativeLayout>

@@ -6,15 +6,18 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -167,28 +170,29 @@ public class NavigationDrawerFragment extends Fragment {
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the navigation drawer and the action bar app icon.
+
         mDrawerToggle = new ActionBarDrawerToggle(
                 getActivity(),                    /* host Activity */
                 mDrawerLayout,                    /* DrawerLayout object */
-                R.drawable.ic_drawer,             /* nav drawer image to replace 'Up' caret */
                 R.string.navigation_drawer_open,  /* "open drawer" description for accessibility */
                 R.string.navigation_drawer_close  /* "close drawer" description for accessibility */
         ) {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                drawerImage.setImageDrawable(Util.getRandomBackgroundImage(ctx));
+                Drawable drw = Util.getRandomBackgroundImage(ctx);
+                drawerImage.setImageDrawable(drw);
+
                 if (!isAdded()) {
                     return;
                 }
-                SharedUtil.setDrawerCount(ctx,SharedUtil.getDrawerCount(ctx) + 1);
+                SharedUtil.setDrawerCount(ctx, SharedUtil.getDrawerCount(ctx) + 1);
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-
                 if (!isAdded()) {
                     return;
                 }
@@ -222,10 +226,29 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerLayout.closeDrawers();
     }
 
+    private void usePalette() {
+        Drawable drw = Util.getRandomBackgroundImage(ctx);
+
+        drawerImage.setImageDrawable(drw);
+        Bitmap image = ((BitmapDrawable) drw).getBitmap();
+        Palette.from(image).generate(new Palette.PaletteAsyncListener() {
+            public void onGenerated(Palette palette) {
+                Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
+                Palette.Swatch vibrantSwatch2 = palette.getLightVibrantSwatch();
+                if (vibrantSwatch != null) {
+                    //outerLayout.setBackgroundColor(vibrantSwatch.getRgb());
+                    Log.i(LOG, "Palette textColor: " + vibrantSwatch.getTitleTextColor());
+                    txtSubTitle.setTextColor(vibrantSwatch2.getBodyTextColor());
+                    //bodyText.setTextColor(vibrantSwatch.getBodyTextColor());
+                }
+            }
+        });
+    }
+
     private void setFields() {
         mDrawerListView = (ListView) view.findViewById(R.id.NAV_list);
-        drawerImage = (ImageView)view.findViewById(R.id.NAV_image);
-        personImage = (CircleImageView)view.findViewById(R.id.NAV_personImage);
+        drawerImage = (ImageView) view.findViewById(R.id.NAV_image);
+        personImage = (CircleImageView) view.findViewById(R.id.NAV_personImage);
         drawerImage.setImageDrawable(Util.getRandomBackgroundImage(ctx));
         txtSubTitle = (TextView) view.findViewById(R.id.NAV_subtitle);
         if (monitor != null) {
@@ -294,7 +317,9 @@ public class NavigationDrawerFragment extends Fragment {
         super.onDetach();
         mCallbacks = null;
     }
-    @Override public void onDestroy() {
+
+    @Override
+    public void onDestroy() {
         super.onDestroy();
 //        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
 //        refWatcher.watch(this);

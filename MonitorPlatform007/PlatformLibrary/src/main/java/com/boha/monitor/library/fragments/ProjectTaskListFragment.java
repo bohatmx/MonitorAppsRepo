@@ -158,7 +158,6 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
     public String getPageTitle() {
         return pageTitle;
     }
-    int darkColor = R.color.black;
 
     public void refreshProjectTask(ProjectTaskDTO projectTask) {
 
@@ -177,5 +176,11 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
     public interface StatusUpdateListener {
         void onStatusUpdateRequested(ProjectTaskDTO task, int position);
         void onCameraRequested(ProjectTaskDTO task);
+    }
+    int primaryColor, darkColor;
+    @Override
+    public void setThemeColors(int primaryColor, int darkColor) {
+        this.primaryColor = primaryColor;
+        this.darkColor = darkColor;
     }
 }

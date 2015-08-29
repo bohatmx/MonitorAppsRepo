@@ -117,7 +117,8 @@ public class RequestDTO implements Serializable {
     public static final int
             LOGIN_STAFF = 200,
             LOGIN_MONITOR = 202,
-            SEND_GCM_REGISTRATION = 204;
+            SEND_GCM_REGISTRATION = 204,
+            UPDATE_GCM_REGISTRATION = 205;
     //
     public static final int ADD_COMPANY_TASK = 301,
             ADD_COMPANY_TASK_STATUS = 302,
@@ -157,7 +158,8 @@ public class RequestDTO implements Serializable {
             UPDATE_PROJECT = 405,
             UPDATE_COMPANY_STAFF = 407,
             RESET_STAFF_PIN = 408,
-            UPDATE_STAFF_PROJECTS = 409;
+            UPDATE_STAFF_PROJECTS = 409,
+            UPDATE_MONITOR = 410;
 
     //reports
     public static final int REPORT_PROJECT = 601,
@@ -172,7 +174,8 @@ public class RequestDTO implements Serializable {
     public static final int
             REQUEST_CHAT = 700,
             REQUEST_LOCATION = 701,
-            SEND_CHAT_MESSAGE = 702;
+            SEND_CHAT_MESSAGE = 702,
+            SEND_LOCATION = 703;
 
     public static final String COMPANY_DIR = "company";
     public static final String STAFF_DIR = "staff";

@@ -49,5 +49,7 @@
     <string name="select_proj">Select Project</string>
     <string name="status_rept">Status Report</string>
     <string name="assign_projects">Assign Projects</string>
+    <string name="welcome_msg">Welcome to Monitor Messaging</string>
+    <string name="sel_recipients">Select Recipients</string>
 
 </resources>

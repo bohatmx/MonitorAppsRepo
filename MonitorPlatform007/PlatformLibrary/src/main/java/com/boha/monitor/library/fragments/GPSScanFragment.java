@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -22,13 +21,10 @@ import com.boha.monitor.library.dto.RequestList;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.RequestCacheUtil;
-import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
 import java.text.DecimalFormat;
-
-import static com.boha.monitor.library.util.Util.showErrorToast;
 
 
 public class GPSScanFragment extends Fragment implements PageFragment {
@@ -139,7 +135,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         txtAccuracy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.flashOnce(txtAccuracy,100,new Util.UtilAnimationListener() {
+                Util.flashOnce(txtAccuracy, 100, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
                         if (project.getAccuracy() == null) return;
@@ -275,5 +271,10 @@ public class GPSScanFragment extends Fragment implements PageFragment {
 
     }
 
-
+    int primaryColor, darkColor;
+    @Override
+    public void setThemeColors(int primaryColor, int darkColor) {
+        this.primaryColor = primaryColor;
+        this.darkColor = darkColor;
+    }
 }

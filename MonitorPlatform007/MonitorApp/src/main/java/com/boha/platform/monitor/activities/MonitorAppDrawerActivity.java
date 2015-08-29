@@ -35,6 +35,7 @@ import com.boha.monitor.library.activities.PictureActivity;
 import com.boha.monitor.library.activities.TaskTypeListActivity;
 import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.dto.ChatMessageDTO;
+import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
@@ -78,7 +79,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         ProjectListFragment.ProjectListFragmentListener,
         MonitorListFragment.MonitorListListener,
         MessagingFragment.MessagingListener,
-        MonitorProfileFragment.MonitorProfileListener{
+        MonitorProfileFragment.MonitorProfileListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -138,7 +139,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout), NavigationDrawerFragment.FROM_MAIN);
         mPager = (ViewPager) findViewById(R.id.pager);
-        PagerTitleStrip strip = (PagerTitleStrip)findViewById(R.id.pager_title_strip);
+        PagerTitleStrip strip = (PagerTitleStrip) findViewById(R.id.pager_title_strip);
         strip.setBackgroundColor(themeDarkColor);
         strip.setVisibility(View.GONE);
         mPager.setOffscreenPageLimit(4);
@@ -173,6 +174,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
             }
         });
     }
+
     private void getRemoteData() {
 
         RequestDTO w = new RequestDTO(RequestDTO.GET_MONITOR_PROJECTS);
@@ -189,18 +191,18 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
                         setRefreshActionButtonState(false);
                         response = r;
                         if (response.getStatusCode() > 0) {
-                            Util.showErrorToast(ctx,response.getMessage());
+                            Util.showErrorToast(ctx, response.getMessage());
                             return;
                         }
 
-                        for (ProjectDTO d: response.getProjectList()) {
-                            for (ProjectTaskDTO pt: d.getProjectTaskList()) {
+                        for (ProjectDTO d : response.getProjectList()) {
+                            for (ProjectTaskDTO pt : d.getProjectTaskList()) {
                                 pt.setLatitude(d.getLatitude());
                                 pt.setLongitude(d.getLongitude());
                             }
                         }
                         buildPages();
-                        CacheUtil.cacheMonitorProjects(ctx,response,null);
+                        CacheUtil.cacheMonitorProjects(ctx, response, null);
                     }
                 });
             }
@@ -211,7 +213,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
                     @Override
                     public void run() {
                         setRefreshActionButtonState(false);
-                        Util.showErrorToast(ctx,message);
+                        Util.showErrorToast(ctx, message);
                     }
                 });
             }
@@ -224,6 +226,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
 
     }
+
     private void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
@@ -238,35 +241,37 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         if (!response.getProjectList().isEmpty()) {
             projectListFragment = ProjectListFragment.newInstance(response);
             projectListFragment.setPageTitle(getString(R.string.projects));
-            projectListFragment.setDarkColor(themeDarkColor);
+            projectListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
         } else {
             noProjectsAssignedFragment = NoProjectsAssignedFragment.newInstance();
             noProjectsAssignedFragment.setPageTitle("No Projects Assigned");
+            noProjectsAssignedFragment.setThemeColors(themePrimaryColor,themeDarkColor);
 
         }
 
         monitorProfileFragment = MonitorProfileFragment.newInstance(SharedUtil.getMonitor(ctx));
         monitorProfileFragment.setPageTitle(getString(R.string.profile));
-
-
+        monitorProfileFragment.setThemeColors(themePrimaryColor,themeDarkColor);
 
 
         HashMap<Integer, MonitorDTO> map = new HashMap<>();
-        for (ProjectDTO dto: response.getProjectList()) {
-            for (MonitorDTO x: dto.getMonitorList()) {
-                map.put(x.getMonitorID().intValue(),x);
+        for (ProjectDTO dto : response.getProjectList()) {
+            for (MonitorDTO x : dto.getMonitorList()) {
+                map.put(x.getMonitorID().intValue(), x);
             }
         }
         List<MonitorDTO> list = new ArrayList<>();
         Set<Integer> set = map.keySet();
-        for (Integer id: set) {
+        for (Integer id : set) {
             list.add(map.get(id));
         }
         monitorListFragment = MonitorListFragment.newInstance(list);
         monitorListFragment.setPageTitle(getString(R.string.monitors));
+        monitorListFragment.setThemeColors(themePrimaryColor,themeDarkColor);
 
         messagingFragment = MessagingFragment.newInstance(list);
         messagingFragment.setPageTitle(getString(R.string.messaging));
+        messagingFragment.setThemeColors(themePrimaryColor,themeDarkColor);
 
         if (!response.getProjectList().isEmpty()) {
             pageFragmentList.add(projectListFragment);
@@ -281,6 +286,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         mPager.setAdapter(pagerAdapter);
 
         mPager.setPageTransformer(true, new DepthPageTransformer());
+
         mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -315,7 +321,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
             }
         });
-
+        mPager.setCurrentItem(currentPageIndex);
 
     }
 
@@ -335,7 +341,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            Util.showToast(ctx,getString(R.string.under_cons));
+            Util.showToast(ctx, getString(R.string.under_cons));
             return true;
         }
         if (id == R.id.action_refresh) {
@@ -344,8 +350,8 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         }
         if (id == R.id.action_theme) {
             Intent w = new Intent(this, ThemeSelectorActivity.class);
-            w.putExtra("darkColor",themeDarkColor);
-            startActivityForResult(w,REQUEST_THEME_CHANGE);
+            w.putExtra("darkColor", themeDarkColor);
+            startActivityForResult(w, REQUEST_THEME_CHANGE);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -353,6 +359,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
     static final int REQUEST_THEME_CHANGE = 9631, LOCATION_REQUESTED = 6754;
     static final String LOG = MonitorAppDrawerActivity.class.getSimpleName();
+
     @Override
     public void onActivityResult(int reqCode, int resCode, Intent data) {
         Log.e(LOG, "##------> onActivityResult reqCode: "
@@ -361,32 +368,33 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
             case REQUEST_THEME_CHANGE:
                 finish();
-                Intent w = new Intent(this,MonitorAppDrawerActivity.class);
+                Intent w = new Intent(this, MonitorAppDrawerActivity.class);
                 startActivity(w);
 
                 break;
 
             case LOCATION_REQUESTED:
                 if (resCode == RESULT_OK) {
-                    Snackbar.make(mPager, "Project location confirmed",Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(mPager, "Project location confirmed", Snackbar.LENGTH_LONG).show();
                 }
                 break;
             case MONITOR_PICTURE_REQUESTED:
                 if (resCode == RESULT_OK) {
-                    PhotoUploadDTO x = (PhotoUploadDTO)data.getSerializableExtra("photo");
+                    PhotoUploadDTO x = (PhotoUploadDTO) data.getSerializableExtra("photo");
                     monitorProfileFragment.setPicture(x);
                     mNavigationDrawerFragment.setPicture(x);
                 }
                 break;
         }
     }
+
     @Override
     public void onDestinationSelected(int position, String text) {
 
         int index = 0;
-        for (PageFragment d: pageFragmentList) {
+        for (PageFragment d : pageFragmentList) {
             if (d.getPageTitle().equalsIgnoreCase(text)) {
-                mPager.setCurrentItem(index,true);
+                mPager.setCurrentItem(index, true);
                 break;
             }
             index++;
@@ -413,13 +421,34 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onMessagingRequested(MonitorDTO monitor) {
+        messagingFragment.animateHeroHeight();
+        mPager.setCurrentItem(3, true);
+    }
+
+    boolean sendLocation;
+
+    @Override
+    public void onLocationSendRequired(List<Integer> monitorList,
+                                       List<Integer> staffList) {
+        sendLocation = true;
+        this.monitorList = monitorList;
+        this.staffList = staffList;
+
+        setBusy(true);
+        startLocationUpdates();
+
+    }
+
 
     static final int REQUEST_CAMERA = 3329;
+
     @Override
     public void onCameraRequired(ProjectDTO project) {
 
         Intent w = new Intent(this, PictureActivity.class);
-        w.putExtra("project",project);
+        w.putExtra("project", project);
         w.putExtra("type", PhotoUploadDTO.PROJECT_IMAGE);
         startActivityForResult(w, REQUEST_CAMERA);
     }
@@ -428,13 +457,14 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     public void onStatusUpdateRequired(ProjectDTO project) {
         Log.d("MainDrawerActivity", "&& onStatusUpdateRequired themeDarkColor: " + themeDarkColor);
         Intent w = new Intent(this, TaskTypeListActivity.class);
-        w.putExtra("project",project);
-        w.putExtra("darkColor",themeDarkColor);
+        w.putExtra("project", project);
+        w.putExtra("darkColor", themeDarkColor);
         startActivity(w);
 
     }
 
     private Activity activity;
+
     @Override
     public void onLocationRequired(final ProjectDTO project) {
 
@@ -449,13 +479,13 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         AlertDialog.Builder c = new AlertDialog.Builder(this);
         c.setTitle("Project Location")
                 .setMessage("You are about to set the location coordinates of the project: " + project.getProjectName() +
-                ". Please step as close as possible to the project and begin GPS scan.")
+                        ". Please step as close as possible to the project and begin GPS scan.")
                 .setPositiveButton("Start Scan", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent w = new Intent(activity, GPSActivity.class);
-                        w.putExtra("project",project);
-                        startActivityForResult(w,LOCATION_REQUESTED);
+                        w.putExtra("project", project);
+                        startActivityForResult(w, LOCATION_REQUESTED);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -471,7 +501,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     @Override
     public void onDirectionsRequired(ProjectDTO project) {
         if (project.getLatitude() == null) {
-            Util.showErrorToast(ctx,"Project has not been located yet!");
+            Util.showErrorToast(ctx, "Project has not been located yet!");
             return;
         }
         Log.i(LOG, "startDirectionsMap ..........");
@@ -492,7 +522,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     public void onGalleryRequired(ProjectDTO project) {
 
         Intent w = new Intent(this, PhotoListActivity.class);
-        w.putExtra("project",project);
+        w.putExtra("project", project);
         startActivity(w);
     }
 
@@ -550,17 +580,72 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
 
     @Override
-    public void onLocationChanged( Location loc) {
+    public void onLocationChanged(Location loc) {
         Log.d(LOG, "## onLocationChanged accuracy = " + loc.getAccuracy()
                 + " - " + new Date().toString());
 
         if (loc.getAccuracy() <= ACCURACY) {
             mLocation = loc;
             stopLocationUpdates();
+            if (sendLocation) {
+                sendLocation = false;
+                submitTrack();
+            }
         }
     }
 
+    private void submitTrack() {
+        RequestDTO w = new RequestDTO(RequestDTO.SEND_LOCATION);
+        LocationTrackerDTO dto = new LocationTrackerDTO();
+        MonitorDTO monitor = SharedUtil.getMonitor(ctx);
+
+        dto.setMonitorID(monitor.getMonitorID());
+        dto.setDateTracked(new Date().getTime());
+        dto.setLatitude(mLocation.getLatitude());
+        dto.setLongitude(mLocation.getLongitude());
+        dto.setAccuracy(mLocation.getAccuracy());
+        dto.setMonitorName(monitor.getFullName());
+        dto.setMonitorList(monitorList);
+        dto.setStaffList(staffList);
+        dto.setGcmDevice(SharedUtil.getGCMDevice(ctx));
+        dto.getGcmDevice().setRegistrationID(null);
+        w.setLocationTracker(dto);
+
+        setBusy(true);
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(ResponseDTO response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setBusy(false);
+                        Util.showToast(ctx, "Location has been sent");
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setBusy(false);
+                    }
+                });
+            }
+
+            @Override
+            public void onWebSocketClose() {
+
+            }
+        });
+
+    }
+
+    List<Integer> monitorList, staffList;
+
     static final int ACCURACY = 15, MONITOR_PICTURE_REQUESTED = 3412;
+
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
@@ -575,8 +660,13 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     public void onMonitorPictureRequested(MonitorDTO monitor) {
 
         Intent w = new Intent(this, MonitorPictureActivity.class);
-        w.putExtra("monitor",monitor);
+        w.putExtra("monitor", monitor);
         startActivityForResult(w, MONITOR_PICTURE_REQUESTED);
+    }
+
+    @Override
+    public void setBusy(boolean busy) {
+        setRefreshActionButtonState(busy);
     }
 
     private class PagerAdapter extends FragmentStatePagerAdapter {
@@ -618,6 +708,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     }
 
     Menu mMenu;
+
     public void setRefreshActionButtonState(final boolean refreshing) {
         if (mMenu != null) {
             final MenuItem refreshItem = mMenu.findItem(R.id.action_refresh);
@@ -630,11 +721,13 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
             }
         }
     }
+
     @Override
     public void onPause() {
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         super.onPause();
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -648,6 +741,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
             mGoogleApiClient.connect();
         }
     }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -662,6 +756,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         }
 
     }
+
     boolean mBound, rBound;
     PhotoUploadService mService;
     RequestSyncService rService;
@@ -679,12 +774,12 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
             rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
                 @Override
                 public void onTasksSynced(int goodResponses, int badResponses) {
-                    Log.i(LOG,"## onTasksSynced, goodResponses: " + goodResponses + " badResponses: " + badResponses);
+                    Log.i(LOG, "## onTasksSynced, goodResponses: " + goodResponses + " badResponses: " + badResponses);
                 }
 
                 @Override
                 public void onError(String message) {
-                    Log.e(LOG,"Error with sync: " + message);
+                    Log.e(LOG, "Error with sync: " + message);
                 }
             });
 

@@ -19,7 +19,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -46,13 +45,12 @@ import static com.boha.monitor.library.util.Util.showToast;
 public class SignInActivity extends AppCompatActivity {
 
     Spinner spinnerEmail;
-    TextView txtApp, txtEmail;
+    TextView txtApp, txtEmail, label;
     EditText ePin;
     Button btnSave;
     Context ctx;
     String email;
     ImageView banner;
-    ProgressBar progressBar;
 
     GcmDeviceDTO gcmDevice;
     static final String LOG = SignInActivity.class.getSimpleName();
@@ -66,6 +64,7 @@ public class SignInActivity extends AppCompatActivity {
         activity = this;
         banner = (ImageView)findViewById(R.id.SI_banner);
         setFields();
+        banner.setImageDrawable(Util.getRandomBackgroundImage(ctx));
         getEmail();
     }
     @Override
@@ -111,6 +110,8 @@ public class SignInActivity extends AppCompatActivity {
                     gcmDevice.setSerialNumber(Build.SERIAL);
                     gcmDevice.setAndroidVersion(Build.VERSION.RELEASE);
                     gcmDevice.setRegistrationID(id);
+                    gcmDevice.setProduct(Build.PRODUCT);
+                    gcmDevice.setApp(ctx.getPackageName());
                     btnSave.setEnabled(true);
 
 
@@ -139,14 +140,14 @@ public class SignInActivity extends AppCompatActivity {
         r.setPin(ePin.getText().toString());
         r.setGcmDevice(gcmDevice);
 
-        progressBar.setVisibility(View.VISIBLE);
+       setRefreshActionButtonState(true);
         NetUtil.sendRequest(ctx,r,new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(final ResponseDTO response) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressBar.setVisibility(View.GONE);
+                        setRefreshActionButtonState(false);
                         if (response.getStatusCode() > 0) {
                             showErrorToast(ctx, response.getMessage());
                             return;
@@ -189,7 +190,7 @@ public class SignInActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressBar.setVisibility(View.GONE);
+                        setRefreshActionButtonState(false);
                         showErrorToast(ctx, message);
                     }
                 });
@@ -200,7 +201,6 @@ public class SignInActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressBar.setVisibility(View.GONE);
                     }
                 });
             }
@@ -210,9 +210,9 @@ public class SignInActivity extends AppCompatActivity {
 
     }
     private void setFields() {
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         ePin = (EditText) findViewById(R.id.SI_pin);
         txtEmail = (TextView) findViewById(R.id.SI_txtEmail);
+        label = (TextView) findViewById(R.id.SI_welcome);
         txtApp = (TextView)findViewById(R.id.SI_app);
         btnSave = (Button)findViewById(R.id.btnRed);
         txtApp.setText(R.string.monitor);
@@ -223,13 +223,11 @@ public class SignInActivity extends AppCompatActivity {
         txtEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent w = new Intent(getApplicationContext(), TestActivity.class);
-//                startActivity(w);
                 Util.flashOnce(txtEmail,300, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
                         Util.showPopupBasicWithHeroImage(ctx, activity, tarList,
-                                banner, getString(R.string.select_email),
+                                label, getString(R.string.select_email),
                                 new Util.UtilPopupListener() {
                             @Override
                             public void onItemSelected(int index) {

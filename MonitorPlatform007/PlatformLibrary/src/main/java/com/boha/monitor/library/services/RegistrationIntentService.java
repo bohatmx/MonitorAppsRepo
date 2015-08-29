@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.boha.monitor.library.dto.GcmDeviceDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.NetUtil;
@@ -25,7 +26,8 @@ import java.io.IOException;
 public class RegistrationIntentService extends IntentService {
 
     private static final String LOG = "RegIntentService";
-    private static final String[] TOPICS = {"global"};
+    private static final String[] MONITOR_TOPICS = {"general", "projects", "monitors"};
+    private static final String[] STAFF_TOPICS = {"general", "projects", "monitors", "staff"};
 
     public RegistrationIntentService() {
         super(LOG);
@@ -33,7 +35,7 @@ public class RegistrationIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.i(LOG,"RegistrationIntentService onHandleIntent");
+        Log.i(LOG, "RegistrationIntentService onHandleIntent");
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         synchronized (LOG) {
@@ -63,17 +65,23 @@ public class RegistrationIntentService extends IntentService {
      * @param token The new token.
      */
     private void sendRegistrationToServer(final String token) {
-        Log.i(LOG,"RegistrationIntentService sendRegistrationToServer: " + token);
+        Log.i(LOG, "RegistrationIntentService sendRegistrationToServer: " + token);
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final GcmDeviceDTO device = SharedUtil.getGCMDevice(getApplicationContext());
+
         RequestDTO w = new RequestDTO();
-        w.setRequestType(RequestDTO.SEND_GCM_REGISTRATION);
+        w.setRequestType(RequestDTO.UPDATE_GCM_REGISTRATION);
         w.setGcmRegistrationID(token);
+        w.setGcmDevice(device);
+        device.setRegistrationID(token);
+
         NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(final ResponseDTO response) {
                 if (response.getStatusCode() == 0) {
                     sharedPreferences.edit().putBoolean(Statics.SENT_TOKEN_TO_SERVER, true).apply();
                     SharedUtil.storeRegistrationId(getApplicationContext(), token);
+                    SharedUtil.saveGCMDevice(getApplicationContext(),device);
                     Log.w(LOG, "############ Device registered on Monitor Server GCM regime");
                 }
             }
@@ -100,10 +108,20 @@ public class RegistrationIntentService extends IntentService {
      */
     // [START subscribe_topics]
     private void subscribeTopics(String token) throws IOException {
-        for (String topic : TOPICS) {
-            GcmPubSub pubSub = GcmPubSub.getInstance(this);
-            pubSub.subscribe(token, "/topics/" + topic, null);
+
+        if (SharedUtil.getMonitor(getApplicationContext()) != null) {
+            for (String topic : MONITOR_TOPICS) {
+                GcmPubSub pubSub = GcmPubSub.getInstance(this);
+                pubSub.subscribe(token, "/topics/" + topic, null);
+            }
         }
+        if (SharedUtil.getCompanyStaff(getApplicationContext()) != null) {
+            for (String topic : STAFF_TOPICS) {
+                GcmPubSub pubSub = GcmPubSub.getInstance(this);
+                pubSub.subscribe(token, "/topics/" + topic, null);
+            }
+        }
+        Log.e(LOG, "############ subscribeTopics: Topics on GCM");
     }
 }
 // [END subscribe_topics]

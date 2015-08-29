@@ -84,10 +84,12 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     }
 
     ProjectAdapter projectAdapter;
+    int index;
 
     private void setList() {
 
-        projectAdapter = new ProjectAdapter(projectList, getActivity(), darkColor,new ProjectListFragmentListener() {
+        projectAdapter = new ProjectAdapter(projectList, getActivity(),
+                darkColor, new ProjectListFragmentListener() {
             @Override
             public void onCameraRequired(ProjectDTO project) {
                 Log.d(LOG, "### onCameraRequired");
@@ -134,7 +136,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             public void onMapRequired(ProjectDTO project) {
                 Log.i(LOG, "### onMapRequired");
                 Intent w = new Intent(getActivity(), MonitorMapActivity.class);
-                w.putExtra("project",project);
+                w.putExtra("project", project);
                 startActivity(w);
             }
         });
@@ -162,12 +164,10 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
     @Override
     public void animateHeroHeight() {
-        if (getActivity() != null) {
-//            image.setImageDrawable(Util.getRandomBackgroundImage(getActivity()));
-        }
     }
 
     String pageTitle;
+
     @Override
     public void setPageTitle(String title) {
         pageTitle = title;
@@ -226,9 +226,11 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     }
 
     List<ProjectDTO> projectList;
-    int darkColor;
+    int primaryColor, darkColor;
 
-    public void setDarkColor(int darkColor) {
+    @Override
+    public void setThemeColors(int primaryColor, int darkColor) {
+        this.primaryColor = primaryColor;
         this.darkColor = darkColor;
     }
 }

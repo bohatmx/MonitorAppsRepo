@@ -672,5 +672,10 @@ public class FileImportFragment extends Fragment implements PageFragment {
             }
         });
     }
-
+    int primaryColor, darkColor;
+    @Override
+    public void setThemeColors(int primaryColor, int darkColor) {
+        this.primaryColor = primaryColor;
+        this.darkColor = darkColor;
+    }
 }

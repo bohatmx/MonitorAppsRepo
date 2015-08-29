@@ -1,8 +1,11 @@
 package com.boha.monitor.library.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,16 +13,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListPopupWindow;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.adapters.MonitorAdapter;
+import com.boha.monitor.library.adapters.PopupListIconAdapter;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.util.PopupItem;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -41,8 +48,9 @@ public class MonitorListFragment extends Fragment implements PageFragment {
     Context ctx;
     MonitorDTO monitor;
     TextView txtCount, txtName;
-    View view, topView, fab;
-    ImageView icon;
+    View view, topView;
+    FloatingActionButton fab;
+    ImageView hero;
     static final String LOG = MonitorListFragment.class.getSimpleName();
 
     public static MonitorListFragment newInstance(List<MonitorDTO> list) {
@@ -62,7 +70,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
     @Override
     public void onCreate(Bundle b) {
         super.onCreate(b);
-        Log.d(LOG,"MonitorListFragment onCreate");
+        Log.d(LOG, "MonitorListFragment onCreate");
         if (b != null) {
             ResponseDTO w = (ResponseDTO) b.getSerializable("monitorList");
             if (w != null) {
@@ -91,12 +99,42 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         view = inflater.inflate(R.layout.fragment_monitor_list, container, false);
         txtCount = (TextView) view.findViewById(R.id.FAB_text);
         txtName = (TextView) view.findViewById(R.id.MONITOR_LIST_label);
+        hero = (ImageView) view.findViewById(R.id.MONITOR_LIST_backDrop);
         topView = view.findViewById(R.id.MONITOR_LIST_top);
-        fab = view.findViewById(R.id.FAB);
-        icon = (ImageView) view.findViewById(R.id.MONITOR_LIST_icon);
+        fab = (FloatingActionButton)view.findViewById(R.id.fab);
         mListView = (ListView) view.findViewById(R.id.MONITOR_LIST_list);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialog();
+            }
+        });
         setList();
         return view;
+    }
+
+    private void showDialog() {
+        final AlertDialog.Builder x = new AlertDialog.Builder(getActivity());
+        x.setTitle("Broadcast Your Location")
+                .setMessage("Do you want to broadcast your current location to other Monitors?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        List<Integer> mList = new ArrayList<>();
+                        for (MonitorDTO x: monitorList) {
+                            mList.add(x.getMonitorID());
+                        }
+                        mListener.onLocationSendRequired(mList,new ArrayList<Integer>());
+
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                .show();
     }
 
     @Override
@@ -110,6 +148,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
 
     private void setList() {
         Log.d(LOG, "MonitorListFragment setList: " + monitorList.size());
+        Collections.sort(monitorList);
         monitorAdapter = new MonitorAdapter(ctx, R.layout.monitor_card, monitorList, new MonitorAdapter.MonitorAdapterListener() {
             @Override
             public void onPictureRequested(MonitorDTO staff) {
@@ -121,49 +160,62 @@ public class MonitorListFragment extends Fragment implements PageFragment {
 
             }
         });
-
         mListView.setAdapter(monitorAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (null != mListener) {
                     monitor = monitorList.get(position);
-                    list = new ArrayList<>();
-                    list.add(ctx.getString(R.string.assign_projects));
-                    list.add(ctx.getString(R.string.get_status));
-                    list.add(ctx.getString(R.string.take_picture));
-                    list.add(ctx.getString(R.string.send_app_link));
-                    list.add(ctx.getString(R.string.edit));
-                    View v = Util.getHeroView(ctx, ctx.getString(R.string.select_action));
-
-                    Util.showPopupBasicWithHeroImage(ctx, getActivity(), list, txtName, monitor.getFullName(), new Util.UtilPopupListener() {
-                        @Override
-                        public void onItemSelected(int index) {
-                            switch (index) {
-                                case 0:
-                                    Util.showToast(ctx, getString(R.string.under_cons));
-                                    break;
-                                case 1:
-                                    mListener.onMonitorPhotoRequired(monitor);
-                                    break;
-                                case 2:
-                                    int index2 = 0;
-                                    for (MonitorDTO s : monitorList) {
-                                        if (s.getMonitorID().intValue() == monitor.getMonitorID().intValue()) {
-                                            break;
-                                        }
-                                        index2++;
-                                    }
-                                    break;
-                                case 3:
-                                    mListener.onMonitorEditRequested(monitor);
-                                    break;
-                            }
-                        }
-                    });
+                    showPopupBasicWithHeroImage(monitor);
                 }
             }
         });
+    }
+    private  void showPopupBasicWithHeroImage(final MonitorDTO monitor) {
+        final ListPopupWindow pop = new ListPopupWindow(getActivity());
+        LayoutInflater inf = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = inf.inflate(R.layout.hero_image_popup, null);
+        TextView txt = (TextView) v.findViewById(R.id.HERO_caption);
+        txt.setText(monitor.getFullName());
+        ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
+        img.setImageDrawable(Util.getRandomBackgroundImage(ctx));
+
+        pop.setPromptView(v);
+        pop.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
+
+        pop.setAnchorView(txtName);
+        pop.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
+        pop.setModal(true);
+        pop.setWidth(Util.getPopupWidth(getActivity()));
+
+        List<PopupItem> pList = new ArrayList<>();
+        pList.add(new PopupItem(R.drawable.ic_action_email, "Send Message"));
+        pList.add(new PopupItem(R.drawable.ic_action_location_on, "Send My Location"));
+        pop.setAdapter(new PopupListIconAdapter(ctx, R.layout.xxsimple_spinner_item,
+                pList));
+
+        pop.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                pop.dismiss();
+                switch (position) {
+                    case 0:
+                        mListener.onMessagingRequested(monitor);
+                        break;
+                    case 1:
+                        List<Integer> mList = new ArrayList<>();
+                        List<Integer> sList = new ArrayList<>();
+                        mList.add(monitor.getMonitorID());
+                        mListener.onLocationSendRequired(mList,sList);
+                        break;
+                }
+            }
+        });
+        try {
+            pop.show();
+        } catch (Exception e) {
+            Log.e(LOG, "-- popup failed, probably nullpointer", e);
+        }
     }
 
     @Override
@@ -186,6 +238,8 @@ public class MonitorListFragment extends Fragment implements PageFragment {
     @Override
     public void animateHeroHeight() {
 
+        hero.setImageDrawable(Util.getRandomBackgroundImage(getActivity()));
+        Util.expand(hero,1000,null);
     }
 
     String pageTitle = "Monitors";
@@ -216,6 +270,16 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         void onMonitorPhotoRequired(MonitorDTO monitor);
 
         void onMonitorEditRequested(MonitorDTO monitor);
+
+        void onMessagingRequested(MonitorDTO monitor);
+        void onLocationSendRequired(List<Integer> monitorList,
+                                    List<Integer> staffList);
+    }
+    int primaryColor, darkColor;
+    @Override
+    public void setThemeColors(int primaryColor, int darkColor) {
+        this.primaryColor = primaryColor;
+        this.darkColor = darkColor;
     }
 
 }
