@@ -23,6 +23,8 @@ public class ResponseDTO implements Serializable{
     private Long startDate, endDate;
     private String log;
     private ChatDTO chat;
+    private StaffDTO staff;
+    private MonitorDTO monitor;
     private List<GcmDeviceDTO> gcmDeviceList;
     private List<ChatDTO> chatList;
     private List<LocationTrackerDTO> locationTrackerList;
@@ -48,6 +50,22 @@ public class ResponseDTO implements Serializable{
     private List<MonitorDTO> monitorList;
     private List<StaffDTO> staffList;
     private ProjectTaskStatusDTO lastStatus;
+
+    public StaffDTO getStaff() {
+        return staff;
+    }
+
+    public void setStaff(StaffDTO staff) {
+        this.staff = staff;
+    }
+
+    public MonitorDTO getMonitor() {
+        return monitor;
+    }
+
+    public void setMonitor(MonitorDTO monitor) {
+        this.monitor = monitor;
+    }
 
     public List<SubTaskDTO> getSubTaskList() {
         if (subTaskList == null) {

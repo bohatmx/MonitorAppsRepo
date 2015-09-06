@@ -9,24 +9,56 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <include layout="@layout/project_list_header"/>
+        <RelativeLayout
+            android:id="@+id/PRH_top"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mon_hero_height_small">
+            <ImageView
+                android:id="@+id/PRH_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/back13" />
+            <TextView
+                android:id="@+id/PRH_programme"
+                style="@style/Title2TextStyleWhite"
+                android:layout_centerVertical="true"
+                android:padding="@dimen/mon_margin"
+                android:layout_alignParentBottom="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Programme Name" />
+            <TextView
+                android:id="@+id/PRH_subTitle"
+                style="@style/TextStyleWhite"
+                android:padding="@dimen/mon_margin"
+                android:layout_alignParentTop="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Project Tasks/Modules" />
+            <TextView
+                android:id="@+id/PRH_count"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="@dimen/mon_margin"
+                android:layout_marginRight="@dimen/mon_margin"
+                style="@style/TransparentCircle"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:text="9,778" />
+        </RelativeLayout>
+
 
     </RelativeLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_below="@id/topBox"
         android:scrollbars="vertical"
-        android:padding="@dimen/mon_padding"
+        android:padding="@dimen/mon_divider"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <ImageView
-        android:id="@+id/TSK_camera"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:tint="@color/white"
-        android:layout_margin="@dimen/mon_wider"
-        android:layout_alignParentLeft="true"
-        android:src="@android:drawable/ic_menu_camera" />
+
 
 </RelativeLayout>

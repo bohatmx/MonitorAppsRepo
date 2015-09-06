@@ -49,7 +49,7 @@ public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> 
     private Double latitude;
     private Double longitude;
     private Float accuracy;
-    private String uri, name;
+    private String uri, projectName, taskName, staffName, monitorName;
     private Integer thumbFlag;
     private Long dateUploaded;
     private String thumbFilePath;
@@ -65,6 +65,7 @@ public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> 
     private Integer width;
     private Integer height;
     private Integer bytes;
+    private ProjectTaskStatusDTO projectTaskStatus;
 
     public PhotoUploadDTO() {
     }
@@ -74,12 +75,44 @@ public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> 
         this.photoUploadID = photoUploadID;
     }
 
-    public String getName() {
-        return name;
+    public String getProjectName() {
+        return projectName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public ProjectTaskStatusDTO getProjectTaskStatus() {
+        return projectTaskStatus;
+    }
+
+    public void setProjectTaskStatus(ProjectTaskStatusDTO projectTaskStatus) {
+        this.projectTaskStatus = projectTaskStatus;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+    public String getStaffName() {
+        return staffName;
+    }
+
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
+    }
+
+    public String getMonitorName() {
+        return monitorName;
+    }
+
+    public void setMonitorName(String monitorName) {
+        this.monitorName = monitorName;
     }
 
     public String getSecureUrl() {

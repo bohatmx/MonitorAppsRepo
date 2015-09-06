@@ -27,16 +27,9 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        <activity
-            android:name=".activities.SignInActivity"
-            android:label="@string/monitor" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
+        <!-- SERVICES -->
         <service android:name="com.boha.monitor.library.services.RegistrationIntentService" />
 
         <receiver
@@ -63,6 +56,16 @@
             </intent-filter>
         </service>
 
+        <!-- ACTIVITIES -->
+        <activity
+            android:name=".activities.SignInActivity"
+            android:label="@string/monitor" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activities.MonitorAppDrawerActivity"
             android:screenOrientation="portrait"

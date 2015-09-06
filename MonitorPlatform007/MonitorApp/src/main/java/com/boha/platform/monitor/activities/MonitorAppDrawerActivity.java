@@ -47,6 +47,7 @@ import com.boha.monitor.library.fragments.MonitorListFragment;
 import com.boha.monitor.library.fragments.MonitorProfileFragment;
 import com.boha.monitor.library.fragments.PageFragment;
 import com.boha.monitor.library.fragments.ProjectListFragment;
+import com.boha.monitor.library.fragments.TaskTypeListFragment;
 import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.services.RequestSyncService;
 import com.boha.monitor.library.util.CacheUtil;
@@ -459,6 +460,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         Intent w = new Intent(this, TaskTypeListActivity.class);
         w.putExtra("project", project);
         w.putExtra("darkColor", themeDarkColor);
+        w.putExtra("type", TaskTypeListFragment.MONITOR);
         startActivity(w);
 
     }

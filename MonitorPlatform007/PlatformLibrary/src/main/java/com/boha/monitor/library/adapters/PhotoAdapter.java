@@ -2,10 +2,10 @@ package com.boha.monitor.library.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +13,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.dto.PhotoUploadDTO;
+import com.boha.monitor.library.dto.TaskStatusTypeDTO;
 import com.boha.platform.library.R;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.process.BitmapProcessor;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -29,7 +33,7 @@ import java.util.Locale;
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder> {
 
     public interface PictureListener {
-        public void onPictureClicked(int position);
+        public void onPictureClicked(PhotoUploadDTO photoUpload,int position);
     }
 
     private PictureListener listener;
@@ -52,7 +56,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     public PhotoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (imageType) {
             case FULL_IMAGE:
-            return new PhotoViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.photo_item, parent, false));
+                return new PhotoViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.photo_item, parent, false));
             case THUMB:
                 return new PhotoViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.photo_item_thumb, parent, false));
         }
@@ -64,7 +68,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
         final PhotoUploadDTO p = photoList.get(position);
         final int num = photoList.size() - (position);
-        holder.number.setText("" + num);
+
         holder.caption.setVisibility(View.GONE);
         holder.date.setText(sdf.format(p.getDateTaken()));
         holder.position = position;
@@ -73,7 +77,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             @Override
             public void onClick(View v) {
 
-                listener.onPictureClicked(position);
+                listener.onPictureClicked(p, position);
 
             }
         });
@@ -81,11 +85,45 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         if (p.getThumbFilePath() == null) {
             setRemoteImage(holder.image, p);
         } else {
-            setLocalImage(holder.image,p);
+            setLocalImage(holder.image, p);
+        }
+        hideColors(holder);
+        if (p.getProjectTaskStatus() != null) {
+            switch (p.getProjectTaskStatus().getTaskStatusType().getStatusColor()) {
+                case TaskStatusTypeDTO.STATUS_COLOR_AMBER:
+                    holder.numberRed.setVisibility(View.GONE);
+                    holder.numberAmber.setVisibility(View.VISIBLE);
+                    holder.numberAmber.setText("" + num);
+                    holder.numberGreen.setVisibility(View.GONE);
+                    break;
+                case TaskStatusTypeDTO.STATUS_COLOR_RED:
+                    holder.numberRed.setVisibility(View.VISIBLE);
+                    holder.numberRed.setText("" + num);
+                    holder.numberAmber.setVisibility(View.GONE);
+                    holder.numberGreen.setVisibility(View.GONE);
+                    break;
+                case TaskStatusTypeDTO.STATUS_COLOR_GREEN:
+                    holder.numberRed.setVisibility(View.GONE);
+                    holder.numberAmber.setVisibility(View.GONE);
+                    holder.numberGreen.setVisibility(View.VISIBLE);
+                    holder.numberGreen.setText("" + num);
+                    break;
+            }
+        } else {
+            holder.numberNone.setVisibility(View.VISIBLE);
+            holder.numberNone.setText("" + num);
         }
 
 
     }
+
+    private void hideColors(PhotoViewHolder holder) {
+        holder.numberRed.setVisibility(View.GONE);
+        holder.numberAmber.setVisibility(View.GONE);
+        holder.numberGreen.setVisibility(View.GONE);
+        holder.numberNone.setVisibility(View.GONE);
+    }
+
     private void setLocalImage(final ImageView image, PhotoUploadDTO p) {
         File file = new File(p.getThumbFilePath());
 //        Log.w(LOG, "## photo path: " + file.getAbsolutePath());
@@ -111,31 +149,34 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             }
         });
     }
+
     private void setRemoteImage(final ImageView image, PhotoUploadDTO p) {
         String url = p.getUri();
-        Log.w(LOG, "## photo url: " + url);
-        ImageLoader.getInstance().displayImage(url, image, new ImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String s, View view) {
+        //Log.w(LOG, "## photo url: " + url);
 
-            }
+        BitmapFactory.Options resizeOptions = new BitmapFactory.Options();
+        resizeOptions.inSampleSize = 4; // decrease size 4 times
+        resizeOptions.inScaled = true;
 
-            @Override
-            public void onLoadingFailed(String s, View view, FailReason failReason) {
-                image.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.under_construction));
-            }
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+                .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
+                .decodingOptions(resizeOptions)
+                .showImageOnFail(R.drawable.under_construction)
+                .showImageForEmptyUri(R.drawable.under_construction)
+                .postProcessor(new BitmapProcessor() {
+                    @Override
+                    public Bitmap process(Bitmap bitmap) {
 
-            @Override
-            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
+                        return Bitmap.createScaledBitmap(bitmap,400,600,false);
+                    }
+                })
+                .build();
 
-            }
 
-            @Override
-            public void onLoadingCancelled(String s, View view) {
 
-            }
-        });
+        ImageLoader.getInstance().displayImage(url, image, options);
     }
+
     @Override
     public int getItemCount() {
         return photoList == null ? 0 : photoList.size();
@@ -146,7 +187,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
     public class PhotoViewHolder extends RecyclerView.ViewHolder {
         protected ImageView image;
-        protected TextView caption, number, date;
+        protected TextView caption, caption2, numberRed,numberGreen, numberAmber, numberNone, date;
         protected int position;
 
 
@@ -154,7 +195,11 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             super(itemView);
             image = (ImageView) itemView.findViewById(R.id.PHOTO_image);
             caption = (TextView) itemView.findViewById(R.id.PHOTO_caption);
-            number = (TextView) itemView.findViewById(R.id.PHOTO_number);
+            caption2 = (TextView) itemView.findViewById(R.id.PHOTO_caption);
+            numberRed = (TextView) itemView.findViewById(R.id.PHOTO_numberRed);
+            numberAmber = (TextView) itemView.findViewById(R.id.PHOTO_numberAmber);
+            numberGreen = (TextView) itemView.findViewById(R.id.PHOTO_numberGreen);
+            numberNone = (TextView) itemView.findViewById(R.id.PHOTO_numberNone);
             date = (TextView) itemView.findViewById(R.id.PHOTO_date);
         }
 

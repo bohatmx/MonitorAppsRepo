@@ -22,7 +22,7 @@ public class ProjectTaskListActivity extends AppCompatActivity implements Projec
     ProjectTaskListFragment projectTaskListFragment;
     ProjectDTO project;
     TaskTypeDTO taskType;
-    int darkColor;
+    int darkColor, type;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -33,6 +33,7 @@ public class ProjectTaskListActivity extends AppCompatActivity implements Projec
 
         project = (ProjectDTO)getIntent().getSerializableExtra("project");
         taskType = (TaskTypeDTO)getIntent().getSerializableExtra("taskType");
+        type = getIntent().getIntExtra("type",0);
         darkColor = getIntent().getIntExtra("darkColor", R.color.blue_800);
         Log.d("StatusUpdateActivity", "+++ onCreate - darkColor: " + darkColor);
         projectTaskListFragment = (ProjectTaskListFragment)getSupportFragmentManager().findFragmentById(R.id.fragment);
@@ -79,6 +80,7 @@ public class ProjectTaskListActivity extends AppCompatActivity implements Projec
         Intent w = new Intent(this, TaskUpdateActivity.class);
         w.putExtra("projectTask",task);
         w.putExtra("project",project);
+        w.putExtra("type",type);
         startActivityForResult(w,TASK_UPDATE_REQUEST);
     }
 

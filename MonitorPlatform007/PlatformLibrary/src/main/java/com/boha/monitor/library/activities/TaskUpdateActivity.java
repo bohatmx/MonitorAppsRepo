@@ -51,7 +51,7 @@ public class TaskUpdateActivity extends AppCompatActivity
     View layout;
     ProjectDTO project;
     List<ProjectTaskStatusDTO> projectTaskStatusList = new ArrayList<>();
-
+    int type;
     static final String LOG = TaskUpdateActivity.class.getSimpleName();
 
     @Override
@@ -62,9 +62,12 @@ public class TaskUpdateActivity extends AppCompatActivity
         layout = findViewById(R.id.layout);
         ctx = getApplicationContext();
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
+        type = getIntent().getIntExtra("type",TaskStatusUpdateFragment.MONITOR);
+
         ProjectTaskDTO task = (ProjectTaskDTO) getIntent().getSerializableExtra("projectTask");
         taskStatusUpdateFragment = (TaskStatusUpdateFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
         taskStatusUpdateFragment.setProjectTask(task);
+        taskStatusUpdateFragment.setType(type);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -101,11 +104,11 @@ public class TaskUpdateActivity extends AppCompatActivity
     public static final int DISTANCE_MINIMUM_METRES = 1000;
 
     @Override
-    public void onCameraRequested(final ProjectTaskDTO projectTask) {
+    public void onStatusCameraRequested(final ProjectTaskDTO projectTask, final ProjectTaskStatusDTO projectTaskStatus) {
         Log.e("TaskUpdateActivity", "onMonitorPictureRequested, projectTask coming in ");
         //todo Check that the device is near the project location
-
-        if (project.getLatitude() != null) {
+        projectTaskStatusList.add(projectTaskStatus);
+        if (project.getLatitude() != null && projectTask.getLatitude() != null) {
             Location x = new Location(LocationManager.GPS_PROVIDER);
             x.setLatitude(projectTask.getLatitude());
             x.setLongitude(projectTask.getLongitude());
@@ -119,7 +122,7 @@ public class TaskUpdateActivity extends AppCompatActivity
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                startTaskPictureActivity(projectTask);
+                                startTaskPictureActivity(projectTask, projectTaskStatus);
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -131,7 +134,7 @@ public class TaskUpdateActivity extends AppCompatActivity
                         .show();
 
             } else {
-                startTaskPictureActivity(projectTask);
+                startTaskPictureActivity(projectTask, projectTaskStatus);
             }
             return;
         }
@@ -154,11 +157,6 @@ public class TaskUpdateActivity extends AppCompatActivity
                 .show();
 
 
-    }
-
-    @Override
-    public void onStatusReturned(ProjectTaskStatusDTO projectTaskStatus) {
-        projectTaskStatusList.add(projectTaskStatus);
     }
 
     @Override
@@ -199,10 +197,11 @@ public class TaskUpdateActivity extends AppCompatActivity
         }
     }
 
-    private void startTaskPictureActivity(ProjectTaskDTO projectTask) {
+    private void startTaskPictureActivity(ProjectTaskDTO projectTask, ProjectTaskStatusDTO projectTaskStatus) {
         Intent w = new Intent(this, PictureActivity.class);
         w.putExtra("type", PhotoUploadDTO.TASK_IMAGE);
         w.putExtra("projectTask", projectTask);
+        w.putExtra("projectTaskStatus", projectTaskStatus);
         startActivityForResult(w, REQUEST_CAMERA);
         if (mBound) {
             mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {

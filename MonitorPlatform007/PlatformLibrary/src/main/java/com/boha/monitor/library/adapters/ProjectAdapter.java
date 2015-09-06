@@ -65,8 +65,6 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == HEADER) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.project_list_header, parent, false);
-//            ImageView hero = (ImageView)v.findViewById(R.id.PRH_image);
-//            hero.setImageDrawable(Util.getRandomBackgroundImage(ctx));
             return new HeaderViewHolder(v);
         } else {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.project_item_with_shadow, parent, false);
@@ -126,6 +124,17 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             pvh.txtStatusCount.setText(df.format(statusCount));
 
 
+            pvh.txtStatusCount.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Util.flashOnce(pvh.txtStatusCount, 300, new Util.UtilAnimationListener() {
+                        @Override
+                        public void onAnimationEnded() {
+                            listener.onStatusReportRequired(project);
+                        }
+                    });
+                }
+            });
             pvh.txtPhotos.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

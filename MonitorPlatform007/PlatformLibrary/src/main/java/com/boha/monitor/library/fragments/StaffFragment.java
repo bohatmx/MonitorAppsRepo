@@ -1,9 +1,9 @@
 package com.boha.monitor.library.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import static com.boha.monitor.library.util.Util.showErrorToast;
 
 
-public class StaffFragment extends Fragment {
+public class StaffFragment extends Fragment implements PageFragment{
 
 
     private StaffFragmentListener listener;
@@ -35,6 +35,15 @@ public class StaffFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static StaffFragment newInstance(StaffDTO staff) {
+
+        StaffFragment sf = new StaffFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("staff", staff);
+        sf.setArguments(bundle);
+
+        return sf;
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -236,6 +245,26 @@ public class StaffFragment extends Fragment {
     }
     @Override public void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void animateHeroHeight() {
+
+    }
+
+    @Override
+    public void setPageTitle(String title) {
+
+    }
+
+    @Override
+    public String getPageTitle() {
+        return null;
+    }
+
+    @Override
+    public void setThemeColors(int primaryColor, int darkColor) {
+
     }
 
     public interface StaffFragmentListener {

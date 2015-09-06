@@ -88,6 +88,23 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
     private void setList() {
 
+        if (projectList == null || projectList.isEmpty()) {
+            Log.e(LOG,"--- projectList is NULL");
+            return;
+        }
+        Integer pID = SharedUtil.getLastProjectID(getActivity());
+
+        int index = 0;
+        boolean isFound = false;
+        if (pID != null) {
+            for (ProjectDTO x : projectList) {
+                if (x.getProjectID().intValue() == pID.intValue()) {
+                    isFound = true;
+                    break;
+                }
+                index++;
+            }
+        }
         projectAdapter = new ProjectAdapter(projectList, getActivity(),
                 darkColor, new ProjectListFragmentListener() {
             @Override
@@ -141,6 +158,15 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             }
         });
         mRecyclerView.setAdapter(projectAdapter);
+
+        if (isFound) {
+            if (index + 1 < projectList.size()) {
+                mRecyclerView.scrollToPosition(index + 1);
+            } else {
+                mRecyclerView.scrollToPosition(index);
+            }
+        }
+
 
     }
 

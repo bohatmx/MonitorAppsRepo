@@ -155,18 +155,11 @@ public class SignInActivity extends AppCompatActivity {
                         }
 
                         SharedUtil.saveCompany(ctx, response.getCompany());
-                        SharedUtil.saveMonitor(ctx, response.getMonitorList().get(0));
+                        SharedUtil.saveMonitor(ctx, response.getMonitor());
                         SharedUtil.saveGCMDevice(ctx, response.getGcmDeviceList().get(0));
                         if (!response.getPhotoUploadList().isEmpty()) {
                             SharedUtil.savePhoto(ctx, response.getPhotoUploadList().get(0));
                         }
-
-//                        Intent w = new Intent(ctx, GPSService.class);
-//                        startService(w);
-
-                        Intent intent = new Intent(ctx, MonitorAppDrawerActivity.class);
-                        startActivity(intent);
-
                         try {
                             ACRA.getErrorReporter().putCustomData("monitorID", ""
                                     + response.getMonitorList().get(0).getMonitorID());
@@ -177,7 +170,10 @@ public class SignInActivity extends AppCompatActivity {
                             public void onFileDataDeserialized(ResponseDTO response) {}
 
                             @Override
-                            public void onDataCached() {}
+                            public void onDataCached() {
+                                Intent intent = new Intent(ctx, MonitorAppDrawerActivity.class);
+                                startActivity(intent);
+                            }
 
                             @Override
                             public void onError() {}
@@ -193,6 +189,7 @@ public class SignInActivity extends AppCompatActivity {
                     public void run() {
                         setRefreshActionButtonState(false);
                         showErrorToast(ctx, message);
+                        btnSave.setEnabled(true);
                     }
                 });
             }
@@ -233,9 +230,11 @@ public class SignInActivity extends AppCompatActivity {
                             public void onItemSelected(int index) {
                                 if (index == 0) {
                                     email = null;
+                                    btnSave.setEnabled(false);
                                 } else {
                                     email = tarList.get(index);
                                     txtEmail.setText(email);
+                                    btnSave.setEnabled(true);
                                 }
                             }
                         });
@@ -251,6 +250,7 @@ public class SignInActivity extends AppCompatActivity {
                     @Override
                     public void onAnimationEnded() {
                         sendSignIn();
+                        btnSave.setEnabled(false);
                     }
                 });
             }

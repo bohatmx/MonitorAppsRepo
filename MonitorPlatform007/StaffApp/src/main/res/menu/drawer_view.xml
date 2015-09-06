@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_project"
+            android:icon="@drawable/ic_action_globe"
+            android:title="Project List" />
+
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_action_person"
+            android:title="My Profile" />
+
+        <item
+            android:id="@+id/nav_projectMaps"
+            android:icon="@drawable/ic_action_map"
+            android:title="Projects Map" />
+
+    </group>
+
+    <item android:title="Project People"
+        android:icon="@drawable/ic_action_person">
+        <menu>
+            <item
+                android:id="@+id/nav_staff_list"
+                android:icon="@drawable/ic_action_face"
+                android:title="Staff" />
+            <item
+                android:id="@+id/nav_monitors"
+                android:icon="@drawable/ic_action_person"
+                android:title="Monitors" />
+        </menu>
+    </item>
+
+</menu>

@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.media.ExifInterface;
@@ -76,6 +77,28 @@ import java.util.TimerTask;
 
 public class Util {
 
+    public static Bitmap drawableToBitmap(Drawable drawable) {
+        Bitmap bitmap = null;
+
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            if (bitmapDrawable.getBitmap() != null) {
+                return bitmapDrawable.getBitmap();
+            }
+        }
+
+        if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+        } else {
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        }
+
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bitmap;
+    }
+
     public interface UtilAnimationListener {
         public void onAnimationEnded();
     }
@@ -84,7 +107,7 @@ public class Util {
         public void onItemSelected(int index);
     }
 
-    public static Bitmap createBitmapFromView(Context context,  View view,  DisplayMetrics displayMetrics) {
+    public static Bitmap createBitmapFromView(Context context, View view, DisplayMetrics displayMetrics) {
         view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
         view.layout(0, 0, displayMetrics.widthPixels,
                 displayMetrics.heightPixels);
@@ -97,8 +120,8 @@ public class Util {
     }
 
     public static void rotateViewWithDelay(
-             final Activity activity, final View view,
-            final int duration, int delay,  final UtilAnimationListener listener ) {
+            final Activity activity, final View view,
+            final int duration, int delay, final UtilAnimationListener listener) {
 
         final Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -141,10 +164,11 @@ public class Util {
                 timer.cancel();
             }
 
-        } , delay);
+        }, delay);
     }
-    public static void setCustomActionBar( Context ctx,
-                                           ActionBar actionBar, String text, Drawable image) {
+
+    public static void setCustomActionBar(Context ctx,
+                                          ActionBar actionBar, String text, Drawable image) {
         actionBar.setDisplayShowCustomEnabled(true);
 
         LayoutInflater inflator = (LayoutInflater)
@@ -159,11 +183,11 @@ public class Util {
         actionBar.setTitle("");
     }
 
-    public static void animateHeight( final View view, int maxHeight, int duration) {
+    public static void animateHeight(final View view, int maxHeight, int duration) {
         ValueAnimator anim = ValueAnimator.ofInt(0, maxHeight);
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
-            public void onAnimationUpdate( ValueAnimator valueAnimator) {
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 int val = (Integer) valueAnimator.getAnimatedValue();
                 ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
                 layoutParams.height = val;
@@ -191,7 +215,7 @@ public class Util {
         animator.start();
     }
 
-    public static void fadeOut(View view, int duration,  final UtilAnimationListener listener) {
+    public static void fadeOut(View view, int duration, final UtilAnimationListener listener) {
 
         ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 1.0f, 0f);
         animator.setDuration(duration);
@@ -221,9 +245,9 @@ public class Util {
         animator.start();
     }
 
-    public static void showPopupBasic(Context ctx,  Activity act,
+    public static void showPopupBasic(Context ctx, Activity act,
                                       List<String> list,
-                                      View anchorView,  final UtilPopupListener listener) {
+                                      View anchorView, final UtilPopupListener listener) {
         final ListPopupWindow pop = new ListPopupWindow(act);
         pop.setAdapter(new PopupListAdapter(ctx, R.layout.xxsimple_spinner_item,
                 list, false));
@@ -241,7 +265,7 @@ public class Util {
         pop.show();
     }
 
-    public static int getPopupWidth( Activity activity) {
+    public static int getPopupWidth(Activity activity) {
         DisplayMetrics displaymetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int height = displaymetrics.heightPixels;
@@ -252,7 +276,7 @@ public class Util {
         return e.intValue();
     }
 
-    public static int getPopupHorizontalOffset( Activity activity) {
+    public static int getPopupHorizontalOffset(Activity activity) {
         DisplayMetrics displaymetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int height = displaymetrics.heightPixels;
@@ -263,7 +287,7 @@ public class Util {
         return e.intValue();
     }
 
-    private static int getWindowWidth( Activity activity) {
+    private static int getWindowWidth(Activity activity) {
         DisplayMetrics displaymetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int height = displaymetrics.heightPixels;
@@ -271,16 +295,16 @@ public class Util {
         return width;
     }
 
-    private static int getWindowHeight( Activity activity) {
+    private static int getWindowHeight(Activity activity) {
         DisplayMetrics displaymetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int height = displaymetrics.heightPixels;
         return height;
     }
 
-    public static void showPopupBasicWithHeroImage( Context ctx,  Activity act,
+    public static void showPopupBasicWithHeroImage(Context ctx, Activity act,
                                                    List<String> list,
-                                                   View anchorView,  String caption,  final UtilPopupListener listener) {
+                                                   View anchorView, String caption, final UtilPopupListener listener) {
         final ListPopupWindow pop = new ListPopupWindow(act);
         LayoutInflater inf = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inf.inflate(R.layout.hero_image_popup, null);
@@ -320,11 +344,11 @@ public class Util {
     static final Locale lox = Locale.getDefault();
     static final SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy HH:mm", lox);
 
-    public static void showPopupStaffAddress( final Context ctx,  Activity act,
-                                           List<String> list,
-                                           Date date,
-                                           View anchorView,  String address,
-                                            final UtilPopupListener listener) {
+    public static void showPopupStaffAddress(final Context ctx, Activity act,
+                                             List<String> list,
+                                             Date date,
+                                             View anchorView, String address,
+                                             final UtilPopupListener listener) {
         final ListPopupWindow pop = new ListPopupWindow(act);
         LayoutInflater inf = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inf.inflate(R.layout.staff_image_popup, null);
@@ -359,14 +383,15 @@ public class Util {
         try {
             pop.show();
         } catch (Exception e) {
-            Log.e(LOG,"popup failed", e);
+            Log.e(LOG, "popup failed", e);
         }
     }
-    public static void showPopupStaffImage( final Context ctx,  Activity act,
+
+    public static void showPopupStaffImage(final Context ctx, Activity act,
                                            List<String> list,
-                                            LocationTrackerDTO dto,
+                                           LocationTrackerDTO dto,
                                            View anchorView, boolean isStaffTracks,
-                                            final UtilPopupListener listener) {
+                                           final UtilPopupListener listener) {
         final ListPopupWindow pop = new ListPopupWindow(act);
         LayoutInflater inf = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inf.inflate(R.layout.staff_image_popup, null);
@@ -424,7 +449,7 @@ public class Util {
         try {
             pop.show();
         } catch (Exception e) {
-            Log.e(LOG,"popup failed", e);
+            Log.e(LOG, "popup failed", e);
         }
     }
 
@@ -437,10 +462,10 @@ public class Util {
         return sb.toString();
     }
 
-    public static void showPopup(Context ctx,  Activity act,
+    public static void showPopup(Context ctx, Activity act,
                                  List<String> list,
                                  View anchorView, View promptView,
-                                  Integer width,  Integer height,  Integer horizontalOffset,  final UtilPopupListener listener) {
+                                 Integer width, Integer height, Integer horizontalOffset, final UtilPopupListener listener) {
         final ListPopupWindow pop = new ListPopupWindow(act);
         pop.setPromptView(promptView);
         pop.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
@@ -469,8 +494,8 @@ public class Util {
         pop.show();
     }
 
-    public static void showConfirmAppInvitationDialog( final Context ctx,  final Activity act,
-                                                       final StaffDTO companyStaff, final int type) {
+    public static void showConfirmAppInvitationDialog(final Context ctx, final Activity act,
+                                                      final StaffDTO companyStaff, final int type) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(act);
         switch (type) {
 //            case COMPANY_EXEC:
@@ -503,7 +528,7 @@ public class Util {
 
     public static final int COMPANY_EXEC = 1, PORTFOLIO_EXEC = 2, PROJECT_MGR = 3, PROGRAMME_EXEC = 4;
 
-    private static void sendInvitation( final Context ctx, Activity act,  final StaffDTO companyStaff,
+    private static void sendInvitation(final Context ctx, Activity act, final StaffDTO companyStaff,
                                        int type) {
         StringBuilder sba = new StringBuilder();
         sba.append(getHeader(ctx, type));
@@ -562,7 +587,7 @@ public class Util {
 
     }
 
-    private static String getHeader( Context ctx, int type) {
+    private static String getHeader(Context ctx, int type) {
         StringBuilder sb = new StringBuilder();
         sb.append("<h2>").append(SharedUtil.getCompany(ctx).getCompanyName()).append("</h2>");
 //        sb.append("<p>").append(ctx.getResources().getString(R.string.invited)).append("</p>");
@@ -585,14 +610,14 @@ public class Util {
         return sb.toString();
     }
 
-    private static String getFooter( Context ctx) {
+    private static String getFooter(Context ctx) {
         StringBuilder sb = new StringBuilder();
 //        sb.append(ctx.getString(R.string.contact_us));
 //        sb.append("<h2>").append(ctx.getResources().getString(R.string.enjoy)).append("</h2>");
         return sb.toString();
     }
 
-    private static String getSiteManagerLink( Context ctx,  StaffDTO companyStaff) {
+    private static String getSiteManagerLink(Context ctx, StaffDTO companyStaff) {
         StringBuilder sb = new StringBuilder();
 //        sb.append("<p>").append(ctx.getResources().getString(R.string.click_link)).append("</p>");
         sb.append("<p>").append(Statics.INVITE_SITE_MGR).append("</p>");
@@ -600,7 +625,7 @@ public class Util {
         return sb.toString();
     }
 
-    private static String getProjectManagerLink( Context ctx,  StaffDTO companyStaff) {
+    private static String getProjectManagerLink(Context ctx, StaffDTO companyStaff) {
         StringBuilder sb = new StringBuilder();
 //        sb.append("<p>").append(ctx.getResources().getString(R.string.click_link)).append("</p>");
         sb.append("<p>").append(Statics.INVITE_PROJECT_MGR).append("</p>");
@@ -608,14 +633,14 @@ public class Util {
         return sb.toString();
     }
 
-    private static String getPinNote( Context ctx, StaffDTO companyStaff) {
+    private static String getPinNote(Context ctx, StaffDTO companyStaff) {
         StringBuilder sb = new StringBuilder();
 //        sb.append("<p>").append(ctx.getResources().getString(R.string.pin_note)).append("</p>");
         sb.append("<h4>").append(companyStaff.getPin()).append("</h4>");
         return sb.toString();
     }
 
-    private static String getOperationsLink( Context ctx,  StaffDTO companyStaff) {
+    private static String getOperationsLink(Context ctx, StaffDTO companyStaff) {
         StringBuilder sb = new StringBuilder();
 //        sb.append("<p>").append(ctx.getResources().getString(R.string.click_link)).append("</p>");
         sb.append("<p>").append(Statics.INVITE_OPERATIONS_MGR).append("</p>");
@@ -623,7 +648,7 @@ public class Util {
         return sb.toString();
     }
 
-    private static String getExecLink( Context ctx,  StaffDTO companyStaff) {
+    private static String getExecLink(Context ctx, StaffDTO companyStaff) {
         StringBuilder sb = new StringBuilder();
 //        sb.append("<p>").append(ctx.getResources().getString(R.string.click_link)).append("</p>");
         sb.append("<p>").append(Statics.INVITE_EXEC).append("</p>");
@@ -631,7 +656,7 @@ public class Util {
         return sb.toString();
     }
 
-    public static void preen(final View v, final int duration, final int max,  final UtilAnimationListener listener) {
+    public static void preen(final View v, final int duration, final int max, final UtilAnimationListener listener) {
         final ObjectAnimator an = ObjectAnimator.ofFloat(v, "alpha", 1, 1);
         an.setDuration(duration);
         an.addListener(new Animator.AnimatorListener() {
@@ -666,7 +691,7 @@ public class Util {
         an.start();
     }
 
-    public static void showErrorToast( Context ctx, String caption) {
+    public static void showErrorToast(Context ctx, String caption) {
         LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View view = inflater.inflate(R.layout.toast_monitor_generic, null);
@@ -685,7 +710,7 @@ public class Util {
         customtoast.show();
     }
 
-    public static void showToast( Context ctx, String caption) {
+    public static void showToast(Context ctx, String caption) {
         LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View view = inflater.inflate(R.layout.toast_monitor_generic, null);
@@ -704,7 +729,6 @@ public class Util {
         customtoast.setDuration(Toast.LENGTH_SHORT);
         customtoast.show();
     }
-
 
 
     public static double getElapsed(long start, long end) {
@@ -726,7 +750,7 @@ public class Util {
             FLASH_FAST = 3,
             INFINITE_FLASHES = 9999;
 
-    public static View getHeroView( Context ctx, String caption) {
+    public static View getHeroView(Context ctx, String caption) {
         LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inflater.inflate(R.layout.hero_image, null);
         ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
@@ -736,7 +760,7 @@ public class Util {
         return v;
     }
 
-    public static void expandOrCollapse( final View view, int duration, final boolean isExpandRequired,  final UtilAnimationListener listener) {
+    public static void expandOrCollapse(final View view, int duration, final boolean isExpandRequired, final UtilAnimationListener listener) {
         TranslateAnimation an = null;
         if (isExpandRequired) {
             an = new TranslateAnimation(0.0f, 0.0f, -view.getHeight(), 0.0f);
@@ -766,7 +790,7 @@ public class Util {
         });
     }
 
-    public static void collapse( final View view, int duration,  final UtilAnimationListener listener) {
+    public static void collapse(final View view, int duration, final UtilAnimationListener listener) {
         int finalHeight = view.getHeight();
 
         ValueAnimator mAnimator = slideAnimator(view, finalHeight, 0);
@@ -799,7 +823,7 @@ public class Util {
         mAnimator.start();
     }
 
-    public static void expand( View view, int duration,  final UtilAnimationListener listener) {
+    public static void expand(View view, int duration, final UtilAnimationListener listener) {
         view.setVisibility(View.VISIBLE);
 
         final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
@@ -835,13 +859,13 @@ public class Util {
     }
 
 
-    private static ValueAnimator slideAnimator( final View view, int start, int end) {
+    private static ValueAnimator slideAnimator(final View view, int start, int end) {
 
         ValueAnimator animator = ValueAnimator.ofInt(start, end);
 
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
-            public void onAnimationUpdate( ValueAnimator valueAnimator) {
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 //Update Height
                 int value = (Integer) valueAnimator.getAnimatedValue();
                 ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
@@ -852,7 +876,7 @@ public class Util {
         return animator;
     }
 
-    public static void resizeHeight( final View view, final int height, final long duration,  final UtilAnimationListener listener) {
+    public static void resizeHeight(final View view, final int height, final long duration, final UtilAnimationListener listener) {
         Log.e(LOG, "##### view height is " + height);
 
 
@@ -896,7 +920,7 @@ public class Util {
         view.startAnimation(a);
     }
 
-    public static void flashOnce(View view, long duration,  final UtilAnimationListener listener) {
+    public static void flashOnce(View view, long duration, final UtilAnimationListener listener) {
         ObjectAnimator an = ObjectAnimator.ofFloat(view, "alpha", 0, 1);
         an.setRepeatMode(ObjectAnimator.REVERSE);
         an.setDuration(duration);
@@ -959,7 +983,7 @@ public class Util {
 
     public static void flashSeveralTimes(final View view,
                                          final long duration, final int max,
-                                          final UtilAnimationListener listener) {
+                                         final UtilAnimationListener listener) {
         final ObjectAnimator an = ObjectAnimator.ofFloat(view, "alpha", 0, 1);
         an.setRepeatMode(ObjectAnimator.REVERSE);
         an.setDuration(duration);
@@ -997,7 +1021,7 @@ public class Util {
 
     }
 
-    public static void shakeX( final View v, int duration, int max,  final UtilAnimationListener listener) {
+    public static void shakeX(final View v, int duration, int max, final UtilAnimationListener listener) {
         final ObjectAnimator an = ObjectAnimator.ofFloat(v, "x", v.getX(), v.getX() + 20f);
         an.setDuration(duration);
         an.setRepeatMode(ObjectAnimator.REVERSE);
@@ -1101,7 +1125,7 @@ public class Util {
         aSet.start();
     }
 
-    public static void shrink(View view, long duration,  final UtilAnimationListener listener) {
+    public static void shrink(View view, long duration, final UtilAnimationListener listener) {
         ObjectAnimator anx = ObjectAnimator.ofFloat(view, "scaleX", 1, 0);
         ObjectAnimator any = ObjectAnimator.ofFloat(view, "scaleY", 1, 0);
 
@@ -1140,7 +1164,7 @@ public class Util {
         set.start();
     }
 
-    public static void explode(View view, long duration,  final UtilAnimationListener listener) {
+    public static void explode(View view, long duration, final UtilAnimationListener listener) {
         ObjectAnimator anx = ObjectAnimator.ofFloat(view, "scaleX", 0, 1);
         ObjectAnimator any = ObjectAnimator.ofFloat(view, "scaleY", 0, 1);
 
@@ -1180,7 +1204,7 @@ public class Util {
     }
 
 
-    public static Drawable getRandomHeroImageExec( Context ctx) {
+    public static Drawable getRandomHeroImageExec(Context ctx) {
         random = new Random(System.currentTimeMillis());
         int index = random.nextInt(17);
         switch (index) {
@@ -1244,7 +1268,7 @@ public class Util {
     }
 
 
-    public static Drawable getRandomHeroImage( Context ctx) {
+    public static Drawable getRandomHeroImage(Context ctx) {
         random = new Random(System.currentTimeMillis());
         int index = random.nextInt(17);
         switch (index) {
@@ -1306,7 +1330,8 @@ public class Util {
         return ContextCompat.getDrawable(ctx,
                 R.drawable.banner_report2);
     }
-    public static Drawable getRandomBackgroundImage( Context ctx) {
+
+    public static Drawable getRandomBackgroundImage(Context ctx) {
         random = new Random(System.currentTimeMillis());
         int index = random.nextInt(14);
         switch (index) {
@@ -1362,7 +1387,7 @@ public class Util {
 
     }
 
-    public static void writeLocationToExif(String filePath,  Location loc) {
+    public static void writeLocationToExif(String filePath, Location loc) {
         try {
             ExifInterface ef = new ExifInterface(filePath);
             ef.setAttribute(ExifInterface.TAG_GPS_LATITUDE, decimalToDMS(loc.getLatitude()));
@@ -1422,7 +1447,7 @@ public class Util {
     }
 
     //-------------------------------------------------------------------------
-    private static double DMSToDouble( String sDMS) {
+    private static double DMSToDouble(String sDMS) {
         double dRV = 999.0;
         try {
             String[] DMSs = sDMS.split(",", 3);
@@ -1449,9 +1474,9 @@ public class Util {
         public void onError(String message);
     }
 
-    public static void refreshProjectData( final Activity activity,
-                                           final Context ctx, final Integer projectID,
-                                           final ProjectDataRefreshListener listener) {
+    public static void refreshProjectData(final Activity activity,
+                                          final Context ctx, final Integer projectID,
+                                          final ProjectDataRefreshListener listener) {
         if (activity == null || ctx == null) {
             Log.e(LOG, "## activity passed in is null, exit");
             return;
@@ -1522,7 +1547,7 @@ public class Util {
     }
 
 
-    public static Intent getMailIntent(Context ctx,  String email, String message,  String subject,
+    public static Intent getMailIntent(Context ctx, String email, String message, String subject,
                                        File file) {
 
         Intent sendIntent = new Intent(Intent.ACTION_SEND);
@@ -1555,7 +1580,7 @@ public class Util {
         return perc;
     }
 
-    public static String formatCellphone( String cellphone) {
+    public static String formatCellphone(String cellphone) {
         StringBuilder sb = new StringBuilder();
         String suff = cellphone.substring(0, 3);
         String p1 = cellphone.substring(3, 6);
@@ -1625,7 +1650,7 @@ public class Util {
         an.start();
     }
 
-    public static void animateFlipFade( Context ctx, View v) {
+    public static void animateFlipFade(Context ctx, View v) {
         AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(ctx,
                 R.animator.flip_fade);
         set.setTarget(v);
@@ -1770,7 +1795,7 @@ public class Util {
     }
 
 
-    public static File getDirectory( String dir) {
+    public static File getDirectory(String dir) {
         File sd = Environment.getExternalStorageDirectory();
         File appDir = new File(sd, dir);
         if (!appDir.exists()) {
@@ -1865,7 +1890,7 @@ public class Util {
         return df.format(date);
     }
 
-    public static Calendar getLongDateTimeNoSeconds( Calendar cal) {
+    public static Calendar getLongDateTimeNoSeconds(Calendar cal) {
 
         int year = cal.get(Calendar.YEAR);
         int mth = cal.get(Calendar.MONTH);
@@ -1905,7 +1930,7 @@ public class Util {
         return df.format(dtStart) + " to " + df.format(dtEnd);
     }
 
-    public static byte[] scaleImage( Context context,  Uri photoUri) throws IOException {
+    public static byte[] scaleImage(Context context, Uri photoUri) throws IOException {
         InputStream is = context.getContentResolver().openInputStream(photoUri);
         BitmapFactory.Options dbo = new BitmapFactory.Options();
         dbo.inJustDecodeBounds = true;
@@ -1964,7 +1989,7 @@ public class Util {
         return bMapArray;
     }
 
-    public static int getOrientation( Context context,  Uri photoUri) {
+    public static int getOrientation(Context context, Uri photoUri) {
         /* it's on the external media. */
         Cursor cursor = context.getContentResolver().query(photoUri,
                 new String[]{MediaStore.Images.ImageColumns.ORIENTATION},
@@ -2050,10 +2075,295 @@ public class Util {
         return json;
 
     }
+
     static final Gson GSON = new Gson();
-    public  static ResponseDTO getResponseData(FileInputStream stream) throws IOException {
+
+    public static ResponseDTO getResponseData(FileInputStream stream) throws IOException {
         String json = getStringFromInputStream(stream);
         ResponseDTO response = GSON.fromJson(json, ResponseDTO.class);
         return response;
+    }
+
+    public static Drawable getMapIcon(Context ctx, int index, ProjectDTO project) {
+        Drawable drawable = null;
+        switch (index) {
+            case 0:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_1);
+                break;
+            case 1:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_2);
+                break;
+            case 2:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_3);
+                break;
+            case 3:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_4);
+                break;
+            case 4:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_5);
+                break;
+            case 5:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_6);
+                break;
+            case 6:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_7);
+                break;
+            case 7:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_8);
+                break;
+            case 8:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_9);
+                break;
+            case 9:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_10);
+                break;
+            case 10:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_11);
+                break;
+            case 11:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_12);
+                break;
+            case 12:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_13);
+                break;
+            case 13:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_14);
+                break;
+
+            case 14:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_15);
+                break;
+            case 15:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_16);
+                break;
+            case 16:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_17);
+                break;
+            case 17:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_18);
+                break;
+            case 18:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_19);
+                break;
+            case 19:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_20);
+                break;
+            case 20:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_21);
+                break;
+            case 21:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_22);
+                break;
+            case 22:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_23);
+                break;
+            case 23:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_24);
+                break;
+            case 24:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_25);
+                break;
+            case 25:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_26);
+                break;
+            case 26:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_27);
+                break;
+            case 27:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_28);
+                break;
+
+            case 28:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_29);
+                break;
+            case 29:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_30);
+                break;
+            case 30:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_31);
+                break;
+            case 31:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_32);
+                break;
+            case 32:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_33);
+                break;
+            case 33:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_34);
+                break;
+            case 34:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_35);
+                break;
+            case 35:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_36);
+                break;
+            case 36:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_37);
+                break;
+            case 37:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_38);
+                break;
+            case 38:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_39);
+                break;
+            case 39:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_40);
+                break;
+            case 40:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_41);
+                break;
+            case 41:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_42);
+                break;
+            ///////
+            case 42:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_43);
+                break;
+            case 43:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_44);
+                break;
+            case 44:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_45);
+                break;
+            case 45:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_46);
+                break;
+            case 46:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_47);
+                break;
+            case 47:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_48);
+                break;
+            case 48:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_49);
+                break;
+            case 49:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_50);
+                break;
+            case 50:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_51);
+                break;
+            case 51:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_52);
+                break;
+            case 52:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_53);
+                break;
+            case 53:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_54);
+                break;
+            case 54:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_55);
+                break;
+            case 55:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_56);
+                break;
+
+            case 56:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_57);
+                break;
+            case 57:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_58);
+                break;
+            case 58:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_59);
+                break;
+            case 59:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_60);
+                break;
+            case 60:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_61);
+                break;
+            case 61:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_62);
+                break;
+            case 62:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_63);
+                break;
+            case 63:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_64);
+                break;
+            case 64:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_65);
+                break;
+            case 65:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_66);
+                break;
+            case 66:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_67);
+                break;
+            case 67:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_68);
+                break;
+            case 68:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_69);
+                break;
+            case 69:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_70);
+                break;
+
+            case 70:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_71);
+                break;
+            case 71:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_72);
+                break;
+            case 72:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_73);
+                break;
+            case 73:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_74);
+                break;
+            case 74:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_75);
+                break;
+            case 75:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_76);
+                break;
+            case 76:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_77);
+                break;
+            case 77:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_78);
+                break;
+            case 78:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_79);
+                break;
+            case 79:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_80);
+                break;
+            case 80:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_81);
+                break;
+            case 81:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_82);
+                break;
+            case 82:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_83);
+                break;
+            case 83:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_84);
+                break;
+            case 84:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_85);
+                break;
+            case 85:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_86);
+                break;
+            case 86:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_87);
+                break;
+            case 87:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_88);
+                break;
+            case 88:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_89);
+                break;
+            case 89:
+                drawable = ContextCompat.getDrawable(ctx, R.drawable.number_90);
+                break;
+        }
+
+        return drawable;
     }
 }

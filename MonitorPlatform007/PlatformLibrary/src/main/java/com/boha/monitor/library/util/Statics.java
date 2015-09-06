@@ -26,10 +26,10 @@ public class Statics {
 
 //codetribe
 
-//    public static final String WEBSOCKET_URL = "ws://10.50.75.69:8080/mwp/";
-//    public static final String URL = "http://10.50.75.69:8080/mwp/";
-//    public static final String IMAGE_URL = "http://10.50.75.69:8080/";
-//    public static final String PDF_URL = "http://10.50.75.69:8080/monitor_documents/";
+//    public static final String WEBSOCKET_URL = "ws://192.168.2.64:8080/mwp/";
+//    public static final String URL = "http://192.168.2.64:8080/mwp/";
+//    public static final String IMAGE_URL = "http://192.168.2.64:8080/";
+//    public static final String PDF_URL = "http://192.168.2.64:8080/monitor_documents/";
 
     public static final String INVITE_DESTINATION = "https://play.google.com/store/apps/details?id=";
     public static final String INVITE_EXEC = INVITE_DESTINATION + "com.boha.monitor.exec";

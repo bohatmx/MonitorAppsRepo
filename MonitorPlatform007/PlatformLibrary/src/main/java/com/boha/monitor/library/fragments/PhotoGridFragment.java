@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.boha.monitor.library.adapters.PhotoAdapter;
+import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.SpacesItemDecoration;
 import com.boha.platform.library.R;
@@ -51,14 +52,15 @@ public class PhotoGridFragment extends Fragment implements PageFragment {
         view = inflater.inflate(R.layout.fragment_photo_grid, container, false);
         mRecyclerView = (RecyclerView)view.findViewById(R.id.recycler);
         StaggeredGridLayoutManager x = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
-        mRecyclerView.addItemDecoration(new SpacesItemDecoration(2));
+        mRecyclerView.addItemDecoration(new SpacesItemDecoration(1));
         mRecyclerView.setLayoutManager(x);
 
         if (response != null) {
             adapter = new PhotoAdapter(response.getPhotoUploadList(), PhotoAdapter.FULL_IMAGE, getActivity(), new PhotoAdapter.PictureListener() {
                 @Override
-                public void onPictureClicked(int position) {
-                    mListener.onPictureClicked(position);
+                public void onPictureClicked(PhotoUploadDTO photo, int position) {
+                    Log.i("PhotoGridFragment", "photo clicked, position: " + position);
+                    mListener.onPictureClicked(photo,position + 1);
                 }
             });
             mRecyclerView.setAdapter(adapter);

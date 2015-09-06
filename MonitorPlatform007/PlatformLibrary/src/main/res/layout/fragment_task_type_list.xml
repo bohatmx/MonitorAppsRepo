@@ -1,7 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:padding="@dimen/mon_divider"
     android:layout_height="match_parent"
     tools:context="com.boha.monitor.library.fragments.TaskTypeListFragment">
 
@@ -10,7 +9,46 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <include layout="@layout/project_list_header"/>
+        <RelativeLayout
+            android:id="@+id/PRH_top"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mon_hero_height_small">
+            <ImageView
+                android:id="@+id/PRH_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/back13" />
+            <TextView
+                android:id="@+id/PRH_programme"
+                style="@style/Title2TextStyleWhite"
+                android:layout_centerVertical="true"
+                android:padding="@dimen/mon_margin"
+                android:layout_alignParentBottom="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Programme Name" />
+            <TextView
+                android:id="@+id/PRH_subTitle"
+                style="@style/TextStyleWhite"
+                android:padding="@dimen/mon_margin"
+                android:layout_alignParentTop="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Trades and Task Types" />
+            <TextView
+                android:id="@+id/PRH_count"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="@dimen/mon_margin"
+                android:layout_marginRight="@dimen/mon_margin"
+                style="@style/TransparentCircle"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:text="9,778" />
+        </RelativeLayout>
+
 
     </RelativeLayout>
     <android.support.v7.widget.RecyclerView

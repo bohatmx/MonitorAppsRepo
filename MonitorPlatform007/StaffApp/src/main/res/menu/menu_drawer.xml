@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/drawer_projects"
+            android:checked="true"
+            android:icon="@drawable/ic_action_view_as_list"
+            android:title="@string/projects"/>
+
+        <item
+            android:id="@+id/drawer_monitors"
+            android:icon="@drawable/ic_action_person"
+            android:title="@string/monitors"/>
+
+        <item
+            android:id="@+id/drawer_profile"
+            android:icon="@drawable/ic_action_edit"
+            android:title="@string/profile"/>
+
+    </group>
+</menu>

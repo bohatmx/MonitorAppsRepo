@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="@dimen/mon_divider"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/NOP_image"
+        android:scaleType="centerCrop"
+        android:src="@drawable/back3"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mon_picture_large" />
+    <TextView
+        android:id="@+id/NOP_title"
+        style="@style/Title2TextStyleWhite"
+        android:layout_marginTop="@dimen/mon_wide"
+        android:text="Projects Not Assigned"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <include layout="@layout/btn_red" android:layout_below="@id/NOP_image"
+        android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+
+</RelativeLayout>

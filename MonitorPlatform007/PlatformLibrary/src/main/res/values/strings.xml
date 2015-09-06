@@ -51,5 +51,8 @@
     <string name="assign_projects">Assign Projects</string>
     <string name="welcome_msg">Welcome to Monitor Messaging</string>
     <string name="sel_recipients">Select Recipients</string>
+    <string name="directions">Directions</string>
+    <string name="streetview">Street View</string>
+    <string name="statrpt">Status Report</string>
 
 </resources>

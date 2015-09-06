@@ -22,7 +22,7 @@ public class TaskTypeListActivity extends AppCompatActivity implements TaskTypeL
 
     ProjectDTO projectDTO;
     TaskTypeListFragment taskTypeListFragment;
-    int themeDarkColor;
+    int themeDarkColor, type;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,18 +30,13 @@ public class TaskTypeListActivity extends AppCompatActivity implements TaskTypeL
         ThemeChooser.setTheme(this);
         setContentView(R.layout.activity_task_type_list);
 
-        if (savedInstanceState != null) {
-            Log.w(LOG,"## saveInstanceState is not NULL");
-            projectDTO = (ProjectDTO)savedInstanceState.getSerializable("project");
-            themeDarkColor = savedInstanceState.getInt("themeDarkColor");
-        } else {
-            themeDarkColor = getIntent().getIntExtra("darkColor", R.color.teal_900);
-            projectDTO = (ProjectDTO) getIntent().getSerializableExtra("project");
-        }
+        themeDarkColor = getIntent().getIntExtra("darkColor", R.color.teal_900);
+        projectDTO = (ProjectDTO) getIntent().getSerializableExtra("project");
+        type = getIntent().getIntExtra("type",0);
          taskTypeListFragment = (TaskTypeListFragment)
                 getSupportFragmentManager().findFragmentById(R.id.fragment);
         Log.d("TaskTypeListActivity", "### onCreate, setting project: " + projectDTO.getProjectName());
-        taskTypeListFragment.setProject(projectDTO);
+        taskTypeListFragment.setProject(projectDTO, type);
         taskTypeListFragment.setDarkColor(themeDarkColor);
 
         android.support.v7.app.ActionBar bar = getSupportActionBar();
@@ -82,6 +77,7 @@ public class TaskTypeListActivity extends AppCompatActivity implements TaskTypeL
         Intent w = new Intent(this,ProjectTaskListActivity.class);
         w.putExtra("project",projectDTO);
         w.putExtra("taskType",taskType);
+        w.putExtra("type",type);
         w.putExtra("darkColor", themeDarkColor);
 
         startActivity(w);

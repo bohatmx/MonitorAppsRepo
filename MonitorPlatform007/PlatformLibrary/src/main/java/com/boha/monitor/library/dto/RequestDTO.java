@@ -28,6 +28,7 @@ public class RequestDTO implements Serializable {
     private Integer requestType, companyID, staffID,
             projectID, projectTaskID, loginType, monitorID, taskTypeID;
     private Boolean responseRequested;
+    private Integer numberOfDays;
 
     private String email, pin, gcmRegistrationID;
     private Long startDate, endDate;
@@ -116,6 +117,7 @@ public class RequestDTO implements Serializable {
     //
     public static final int
             LOGIN_STAFF = 200,
+            LOGIN_STAFF_DATA_SETUP = 201,
             LOGIN_MONITOR = 202,
             SEND_GCM_REGISTRATION = 204,
             UPDATE_GCM_REGISTRATION = 205;
@@ -183,6 +185,22 @@ public class RequestDTO implements Serializable {
     public static final String TASK_DIR = "task";
     //
 
+
+    public Boolean getRideWebSocket() {
+        return rideWebSocket;
+    }
+
+    public void setRideWebSocket(Boolean rideWebSocket) {
+        this.rideWebSocket = rideWebSocket;
+    }
+
+    public Integer getNumberOfDays() {
+        return numberOfDays;
+    }
+
+    public void setNumberOfDays(Integer numberOfDays) {
+        this.numberOfDays = numberOfDays;
+    }
 
     public LocationTrackerDTO getLocationTracker() {
         return locationTracker;

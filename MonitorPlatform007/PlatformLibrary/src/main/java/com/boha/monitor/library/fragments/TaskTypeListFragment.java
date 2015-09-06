@@ -35,9 +35,11 @@ public class TaskTypeListFragment extends Fragment {
     private TextView txtCount, txtName;
     private RecyclerView mRecyclerView;
     ImageView hero;
-    int darkColor;
+    int darkColor, type;
+    public static final int STAFF = 1, MONITOR = 2;
 
     private View view;
+
     public static TaskTypeListFragment newInstance() {
         TaskTypeListFragment fragment = new TaskTypeListFragment();
         return fragment;
@@ -60,63 +62,91 @@ public class TaskTypeListFragment extends Fragment {
                              Bundle savedInstanceState) {
         Log.d("TaskTypeListFragment", "### onCreateView");
         view = inflater.inflate(R.layout.fragment_task_type_list, container, false);
-        txtCount = (TextView)view.findViewById(R.id.PRH_count);
-        txtName = (TextView)view.findViewById(R.id.PRH_programme);
-        hero = (ImageView)view.findViewById(R.id.PRH_image);
-        hero.setImageDrawable(Util.getRandomHeroImage(getActivity()));
+        txtCount = (TextView) view.findViewById(R.id.PRH_count);
+        txtName = (TextView) view.findViewById(R.id.PRH_programme);
+        hero = (ImageView) view.findViewById(R.id.PRH_image);
+        hero.setImageDrawable(Util.getRandomBackgroundImage(getActivity()));
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
 //        LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         GridLayoutManager glm = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
 
         mRecyclerView.setItemAnimator(new FadeInAnimator());
-        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.mon_divider);
+        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.mon_divider_small);
         mRecyclerView.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
-        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setLayoutManager(glm);
 
         return view;
     }
 
     private void getCachedTypes() {
-        Log.d("TaskTypeListFragment","### getCachedTypes");
-        CacheUtil.getCachedMonitorProjects(getActivity(), new CacheUtil.CacheUtilListener() {
-            @Override
-            public void onFileDataDeserialized(ResponseDTO response) {
-                if (response.getTaskTypeList() != null) {
-                    taskTypeList = response.getTaskTypeList();
-                    if (mRecyclerView != null) {
-                        setList();
+        Log.d("TaskTypeListFragment", "### getCachedTypes");
+        switch (type) {
+            case MONITOR:
+
+                CacheUtil.getCachedMonitorProjects(getActivity(), new CacheUtil.CacheUtilListener() {
+                    @Override
+                    public void onFileDataDeserialized(ResponseDTO response) {
+                        if (response.getTaskTypeList() != null) {
+                            taskTypeList = response.getTaskTypeList();
+                            if (mRecyclerView != null) {
+                                setList();
+                            }
+                        }
                     }
-                }
-            }
 
-            @Override
-            public void onDataCached() {
+                    @Override
+                    public void onDataCached() {
 
-            }
+                    }
 
-            @Override
-            public void onError() {
+                    @Override
+                    public void onError() {
 
-            }
-        });
+                    }
+                });
+                break;
+            case STAFF:
+                CacheUtil.getCachedStaffData(getActivity(), new CacheUtil.CacheUtilListener() {
+                    @Override
+                    public void onFileDataDeserialized(ResponseDTO response) {
+                        if (response.getTaskTypeList() != null) {
+                            taskTypeList = response.getTaskTypeList();
+                            if (mRecyclerView != null) {
+                                setList();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onDataCached() {
+
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+                break;
+        }
     }
 
     public void setDarkColor(int darkColor) {
         this.darkColor = darkColor;
     }
 
-    public void setProject(ProjectDTO project) {
-        Log.i("TaskTypeListFragment","### setProject");
+    public void setProject(ProjectDTO project, int type) {
+        Log.i("TaskTypeListFragment", "### setProject");
         this.project = project;
+        this.type = type;
         getCachedTypes();
     }
 
     private void setList() {
         txtCount.setText("" + taskTypeList.size());
         txtName.setText(project.getProjectName());
-        Log.d("TaskTypeListFragment","### setList");
-
+        Log.d("TaskTypeListFragment", "### setList");
 
 
         adapter = new TaskTypeAdapter(taskTypeList, darkColor, getActivity(), new TaskTypeAdapter.TaskListener() {

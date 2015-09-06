@@ -35,9 +35,9 @@ public class NetUtil {
 
         request.setRequestCacheID(null);
         if (request.isRideWebSocket()) {
-            sendViaWebSocket(ctx,request);
+            sendViaWebSocket(ctx, request);
         } else {
-            sendViaHttp(ctx,request);
+            sendViaHttp(ctx, request);
         }
     }
     public static void sendRequest( Context ctx,  RequestList requestList,  NetUtilListener utilListener) {
@@ -76,7 +76,11 @@ public class NetUtil {
 
             @Override
             public void onResponseReceived(ResponseDTO response) {
-                listener.onResponse(response);
+                if (response.getStatusCode() == 0) {
+                    listener.onResponse(response);
+                } else {
+                    listener.onError(response.getMessage());
+                }
             }
 
             @Override

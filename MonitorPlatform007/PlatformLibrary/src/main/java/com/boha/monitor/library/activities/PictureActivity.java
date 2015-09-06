@@ -36,6 +36,7 @@ import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
+import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.dto.VideoClipDTO;
@@ -77,6 +78,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     MonitorDTO monitor;
     Long localID;
     int darkColor;
+    ProjectTaskStatusDTO projectTaskStatus;
     RadioButton radioPhoto, radioVideo;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -128,6 +130,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
             case PhotoUploadDTO.TASK_IMAGE:
                 projectTask = (ProjectTaskDTO) getIntent().getSerializableExtra("projectTask");
+                projectTaskStatus = (ProjectTaskStatusDTO)getIntent().getSerializableExtra("projectTaskStatus");
                 if (projectTask != null) {
                     txtProject.setText(projectTask.getProjectName());
                     txtTaskName.setText(projectTask.getTask().getTaskName());
@@ -136,6 +139,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                 break;
             default:
                 projectTask = (ProjectTaskDTO) getIntent().getSerializableExtra("projectTask");
+                projectTaskStatus = (ProjectTaskStatusDTO)getIntent().getSerializableExtra("projectTaskStatus");
                 if (projectTask != null) {
                     txtProject.setText(projectTask.getProjectName());
                     txtTaskName.setText(projectTask.getTask().getTaskName());
@@ -677,6 +681,25 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
                     @Override
                     public void onDataCached(PhotoUploadDTO photo) {
+                        photoList.add(0, photo);
+                        photoAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+                break;
+            case PhotoUploadDTO.STAFF_IMAGE:
+                addStaffPicture(new PhotoCacheUtil.PhotoCacheListener() {
+                    @Override
+                    public void onFileDataDeserialized(ResponseDTO response) {
+
+                    }
+
+                    @Override
+                    public void onDataCached(PhotoUploadDTO photo) {
                         photoList.add(0,photo);
                         photoAdapter.notifyDataSetChanged();
                     }
@@ -687,6 +710,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                     }
                 });
                 break;
+
         }
 
 
@@ -702,7 +726,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         Collections.sort(photoList);
         photoAdapter = new PhotoAdapter(photoList, PhotoAdapter.THUMB, getApplicationContext(), new PhotoAdapter.PictureListener() {
             @Override
-            public void onPictureClicked(int position) {
+            public void onPictureClicked(PhotoUploadDTO photo,int position) {
                 Log.e(LOG, "onPictureClicked: " + position);
                 Intent w = new Intent(ctx, PhotoListActivity.class);
                 w.putExtra("index", position);
@@ -788,6 +812,11 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         dto.setPictureType(PhotoUploadDTO.TASK_IMAGE);
         dto.setAccuracy(location.getAccuracy());
         dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
+        if (projectTaskStatus != null) {
+            ProjectTaskStatusDTO x = new ProjectTaskStatusDTO();
+            x.setProjectTaskStatusID(projectTaskStatus.getProjectTaskStatusID());
+            dto.setProjectTaskStatus(x);
+        }
         PhotoCacheUtil.cachePhoto(ctx, dto, new PhotoCacheUtil.PhotoCacheListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {

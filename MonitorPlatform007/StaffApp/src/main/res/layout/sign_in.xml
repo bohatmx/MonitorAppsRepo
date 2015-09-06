@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:background="@color/grey"
+        android:padding="@dimen/mon_padding"
+        android:id="@+id/SI_mainLayout"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/SI_banner"
+            android:src="@drawable/back13"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mon_hero_height_medium"/>
+    <TextView
+        android:id="@+id/SI_welcome"
+        android:layout_width="wrap_content"
+        android:padding="@dimen/mon_padding"
+        android:text="@string/welcome_aboard"
+        android:layout_centerHorizontal="true"
+        style="@style/Title1TextStyleWhite"
+        android:textStyle="normal"
+        android:layout_height="wrap_content"/>
+
+        <RelativeLayout
+            android:id="@+id/SI_layout0"
+            android:layout_below="@id/SI_banner"
+            android:layout_width="match_parent"
+            android:padding="@dimen/mon_padding"
+            android:background="@color/white"
+            android:layout_height="match_parent">
+
+
+
+            <TextView
+                android:id="@+id/SI_wifi"
+                android:layout_width="wrap_content"
+                android:padding="@dimen/mon_padding"
+                android:text="Connect your WIFI"
+                android:visibility="gone"
+                android:layout_centerHorizontal="true"
+                style="@style/TextStyleGreenSmall"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/SI_header"
+                android:layout_width="wrap_content"
+                android:text="@string/subject"
+                android:layout_marginTop="@dimen/mon_padding"
+                android:visibility="gone"
+                android:layout_centerHorizontal="true"
+                style="@style/Title3TextStyleBlue"
+                android:layout_below="@id/SI_wifi"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/SI_app"
+                android:layout_width="wrap_content"
+                android:text="App Name Here"
+                android:layout_marginTop="@dimen/mon_padding"
+                style="@style/Title3TextStyleBlack"
+                android:layout_below="@id/SI_header"
+                android:layout_centerHorizontal="true"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/SI_txtEmail"
+                android:layout_marginTop="@dimen/mon_wide"
+                android:text="@string/select_email"
+                style="@style/Title2TextStyleBlue"
+                android:layout_marginLeft="@dimen/mon_padding"
+                android:layout_below="@id/SI_app"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
+            <EditText
+                android:id="@+id/SI_pin"
+                android:layout_width="match_parent"
+                android:layout_below="@id/SI_txtEmail"
+                android:inputType="number"
+                android:layout_marginTop="@dimen/mon_margin"
+                android:layout_marginLeft="@dimen/mon_padding"
+                android:layout_height="wrap_content"
+                android:hint="Enter PIN"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_below="@id/SI_pin"
+                android:layout_marginTop="15dp"
+                android:padding="10dp"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+
+
+                <include layout="@layout/btn_red" />
+
+            </LinearLayout>
+        </RelativeLayout>
+
+    </RelativeLayout>

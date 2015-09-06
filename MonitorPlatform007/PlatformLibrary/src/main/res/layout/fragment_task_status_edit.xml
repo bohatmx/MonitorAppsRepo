@@ -1,83 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/grey"
-    android:padding="@dimen/mon_divider">
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/TSE_top"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:padding="@dimen/mon_margin">
+        android:layout_height="@dimen/mon_hero_height_medium">
+
+        <ImageView
+            android:id="@+id/TSE_backdrop"
+            android:src="@drawable/back10"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <TextView
             android:id="@+id/TSE_title"
-            style="@style/Title1TextStyleBlue"
+            style="@style/Title1TextStyleWhite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mon_margin"
             android:layout_centerHorizontal="true"
-            android:textColor="?attr/colorPrimaryDark"
             android:text="@string/status_updates" />
 
         <TextView
             android:id="@+id/TSE_taskName"
             android:layout_below="@id/TSE_title"
-            style="@style/Title3TextStyleBlue"
-            android:textColor="?attr/colorPrimary"
+            style="@style/TextStyle"
+            android:textColor="@color/white"
             android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:padding="@dimen/mon_padding"
+            android:layout_marginTop="@dimen/mon_margin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Task Name Here" />
 
-        <ImageView
-            android:id="@+id/TSE_icon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:visibility="gone"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/ic_action_camera" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/TSE_middle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/TSE_top"
-        android:background="@color/beige_pale"
-        android:padding="@dimen/mon_padding"
-        android:visibility="gone">
-
-
-        <TextView
-            android:id="@+id/TSE_selectedColor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/mon_margin"
-            android:background="@color/grey_500"
-            android:minWidth="@dimen/mon_hero_height_small"
-            android:padding="@dimen/mon_padding"
-            android:textColor="@color/white" />
-
-        <TextView
-            android:id="@+id/TSE_label1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/mon_wide"
-            android:layout_toLeftOf="@id/TSE_selectedColor"
-            android:text="Task Status Colour" />
-
 
     </RelativeLayout>
+
+
 
     <RelativeLayout
         android:id="@+id/TSE_actionLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/TSE_middle"
+        android:layout_below="@id/TSE_top"
         android:background="@color/beige_pale"
         android:padding="@dimen/mon_margin">
 
@@ -87,11 +56,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/mon_margin"
             android:text="Task Status Type Here" />
 
         <include
             android:id="@+id/TSE_btn"
             layout="@layout/btn_red"
+            android:layout_marginTop="@dimen/mon_margin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/TSE_statusType" />

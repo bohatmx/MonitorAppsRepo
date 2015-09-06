@@ -26,7 +26,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PhotoListActivity extends AppCompatActivity implements PhotoAdapter.PictureListener{
+public class PhotoListActivity extends AppCompatActivity implements PhotoAdapter.PictureListener,
+        PhotoFragment.PhotoFragmentListener{
 
     public static final int
             PHOTO_LOCAL = 1,
@@ -89,10 +90,14 @@ public class PhotoListActivity extends AppCompatActivity implements PhotoAdapter
         Collections.sort(response.getPhotoUploadList());
         pageFragmentList.add(PhotoGridFragment.newInstance(response));
 
+        int number = 0;
+        int total = response.getPhotoUploadList().size();
         for (PhotoUploadDTO dto: response.getPhotoUploadList()) {
-            pageFragmentList.add(PhotoFragment.newInstance(dto));
+            pageFragmentList.add(PhotoFragment.newInstance(dto, total - number));
+            number++;
         }
         adapter = new PagerAdapter(getSupportFragmentManager());
+        mPager.setOffscreenPageLimit(4);
         mPager.setAdapter(adapter);
 
         mPager.setCurrentItem(index,true);
@@ -121,9 +126,16 @@ public class PhotoListActivity extends AppCompatActivity implements PhotoAdapter
     }
 
     @Override
-    public void onPictureClicked(int position) {
-
+    public void onPictureClicked(PhotoUploadDTO photo, int position) {
+        Log.e("PhotoListActivity", "photoClicked, id: " + photo.getPhotoUploadID() + " position: " + position);
         mPager.setCurrentItem(position);
+
+
+    }
+
+    @Override
+    public void onBigPhotoClicked(PhotoUploadDTO photo) {
+        mPager.setCurrentItem(0);
     }
 
     private class PagerAdapter extends FragmentStatePagerAdapter {

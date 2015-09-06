@@ -11,7 +11,7 @@
     <dimen name="mon_middle">12dp</dimen>
     <dimen name="mon_wide">24dp</dimen>
     <dimen name="mon_wider">48dp</dimen>
-    <dimen name="mon_widest">72dp</dimen>
+    <dimen name="mon_widest">80dp</dimen>
     <dimen name="mon_nav_width">240dp</dimen>
     <dimen name="mon_hero_height_small">100dp</dimen>
     <dimen name="mon_hero_height_medium_lite">130dp</dimen>

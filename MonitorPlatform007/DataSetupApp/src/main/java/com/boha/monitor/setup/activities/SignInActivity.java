@@ -135,7 +135,7 @@ public class SignInActivity extends AppCompatActivity {
             return;
         }
         RequestDTO r = new RequestDTO();
-        r.setRequestType(RequestDTO.LOGIN_STAFF);
+        r.setRequestType(RequestDTO.LOGIN_STAFF_DATA_SETUP);
         r.setEmail(email);
         r.setPin(ePin.getText().toString());
         r.setGcmDevice(gcmDevice);

@@ -16,6 +16,7 @@ import com.boha.monitor.library.adapters.TaskAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.TaskTypeDTO;
+import com.boha.monitor.library.util.SpacesItemDecoration;
 import com.boha.platform.library.R;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
@@ -97,6 +98,9 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
         mRecyclerView.setItemAnimator(new SlideInLeftAnimator());
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         GridLayoutManager glm = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, true);
+        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.mon_divider_small);
+        mRecyclerView.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
+        mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setLayoutManager(llm);
         mRecyclerView.setHasFixedSize(true);
         return view;
