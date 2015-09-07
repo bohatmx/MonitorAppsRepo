@@ -166,17 +166,17 @@ public class MonitorListFragment extends Fragment implements PageFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (null != mListener) {
                     monitor = monitorList.get(position);
-                    showPopupBasicWithHeroImage(monitor);
+                    showPopup(monitor);
                 }
             }
         });
     }
-    private  void showPopupBasicWithHeroImage(final MonitorDTO monitor) {
+    private  void showPopup(final MonitorDTO monitor) {
         final ListPopupWindow pop = new ListPopupWindow(getActivity());
         LayoutInflater inf = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inf.inflate(R.layout.hero_image_popup, null);
         TextView txt = (TextView) v.findViewById(R.id.HERO_caption);
-        txt.setText(monitor.getFullName());
+        txt.setText("To: " + monitor.getFullName());
         ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
         img.setImageDrawable(Util.getRandomBackgroundImage(ctx));
 

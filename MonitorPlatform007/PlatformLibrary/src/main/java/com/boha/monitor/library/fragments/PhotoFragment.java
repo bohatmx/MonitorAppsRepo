@@ -28,7 +28,8 @@ import java.util.Date;
 public class PhotoFragment extends Fragment implements PageFragment {
 
     PhotoUploadDTO photo;
-    TextView txtCap1, txtDate, txtNumberRed, txtNumberAmber, txtNumberGreen, txtNumberNone;
+    TextView txtCap1, txtDate, txtNumberRed, txtNumberAmber,
+            txtNumberGreen, txtNumberNone, txtName;
     ImageView image;
     int number;
     Context ctx;
@@ -60,7 +61,6 @@ public class PhotoFragment extends Fragment implements PageFragment {
         view = inflater.inflate(R.layout.image_full, container, false);
         setFields();
 
-//        Log.d("PhotoFragment", "## onCreateView");
         return view;
     }
     void setFields() {
@@ -71,9 +71,11 @@ public class PhotoFragment extends Fragment implements PageFragment {
         txtNumberGreen = (TextView)view.findViewById(R.id.PHOTO_numberGreen);
         txtNumberNone = (TextView)view.findViewById(R.id.PHOTO_numberNone);
         txtDate = (TextView)view.findViewById(R.id.PHOTO_date);
+        txtName = (TextView)view.findViewById(R.id.PHOTO_name);
 
         txtCap1.setText("");
         txtDate.setText("");
+        txtName.setText("");
 
         if (photo.getThumbFilePath() != null) {
             setLocalImage();
@@ -111,6 +113,7 @@ public class PhotoFragment extends Fragment implements PageFragment {
                     break;
             }
         }
+        setTxtName();
 
         image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,6 +122,17 @@ public class PhotoFragment extends Fragment implements PageFragment {
             }
         });
 
+    }
+    private void setTxtName() {
+        txtName.setVisibility(View.GONE);
+        if (photo.getStaffName() != null) {
+            txtName.setText(photo.getStaffName());
+            txtName.setVisibility(View.VISIBLE);
+        }
+        if (photo.getMonitorName() != null) {
+            txtName.setText(photo.getMonitorName());
+            txtName.setVisibility(View.VISIBLE);
+        }
     }
     private void hideColors() {
         txtNumberAmber.setVisibility(View.GONE);

@@ -185,6 +185,7 @@ public class StaffMainActivity extends AppCompatActivity implements
             public void onFileDataDeserialized(ResponseDTO r) {
                 response = r;
                 buildPages();
+                getRemoteStaffData();
             }
 
             @Override
@@ -223,6 +224,9 @@ public class StaffMainActivity extends AppCompatActivity implements
                             @Override
                             public void onDataCached() {
                                 buildPages();
+                                if (r.getProjectList().isEmpty()) {
+                                    Util.showErrorToast(ctx,"Projects have not been assigned yet");
+                                }
                             }
 
                             @Override

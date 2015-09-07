@@ -89,6 +89,10 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         }
         hideColors(holder);
         if (p.getProjectTaskStatus() != null) {
+            if (p.getProjectTaskStatus().getTaskStatusType().getStatusColor() == null) {
+                p.getProjectTaskStatus().getTaskStatusType().setStatusColor(
+                        Short.parseShort("" +TaskStatusTypeDTO.STATUS_COLOR_AMBER));
+            }
             switch (p.getProjectTaskStatus().getTaskStatusType().getStatusColor()) {
                 case TaskStatusTypeDTO.STATUS_COLOR_AMBER:
                     holder.numberRed.setVisibility(View.GONE);
@@ -107,6 +111,12 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                     holder.numberAmber.setVisibility(View.GONE);
                     holder.numberGreen.setVisibility(View.VISIBLE);
                     holder.numberGreen.setText("" + num);
+                    break;
+                default:
+                    holder.numberRed.setVisibility(View.GONE);
+                    holder.numberAmber.setVisibility(View.VISIBLE);
+                    holder.numberAmber.setText("" + num);
+                    holder.numberGreen.setVisibility(View.GONE);
                     break;
             }
         } else {

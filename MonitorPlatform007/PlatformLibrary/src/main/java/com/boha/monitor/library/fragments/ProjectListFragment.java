@@ -159,6 +159,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         });
         mRecyclerView.setAdapter(projectAdapter);
 
+        if (index == 0) return;
         if (isFound) {
             if (index + 1 < projectList.size()) {
                 mRecyclerView.scrollToPosition(index + 1);
