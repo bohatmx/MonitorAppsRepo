@@ -41,6 +41,14 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
 
     public void setProject(ProjectDTO project) {
         this.project = project;
+        if (project == null) {
+            return;
+        }
+
+
+    }
+
+    private void buildList() {
         projectTaskList = project.getProjectTaskList();
         List<ProjectTaskDTO> list = new ArrayList<>();
         for (ProjectTaskDTO pt: projectTaskList) {
@@ -55,9 +63,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
         } else {
             Log.e(LOG,"$%#$## WTF?");
         }
-
     }
-
     public void setTaskType(TaskTypeDTO taskType) {
         this.taskType = taskType;
     }
@@ -76,7 +82,6 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i(LOG,"++ onCreate");
         if (getArguments() != null) {
             project = (ProjectDTO) getArguments().getSerializable("project");
         }
@@ -105,19 +110,26 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
         mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setLayoutManager(llm);
         mRecyclerView.setHasFixedSize(true);
+        if (taskType != null) {
+            txtProject.setText(taskType.getTaskTypeName());
+        }
+
+
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(LOG,"#### onResume");
+        buildList();
+    }
     private void setList() {
-        Log.i(LOG,"++ project has been set");
+        Log.i(LOG,"+++ setList");
         txtCount.setText("" + projectTaskList.size());
         if (projectTaskList.isEmpty()) {
             return;
         }
-        if (projectTaskList.get(0).getProjectName() != null) {
-            txtProject.setText(projectTaskList.get(0).getProjectName());
-        }
-
 
         taskAdapter = new TaskAdapter(projectTaskList, darkColor, getActivity(), new TaskAdapter.TaskListener() {
             @Override

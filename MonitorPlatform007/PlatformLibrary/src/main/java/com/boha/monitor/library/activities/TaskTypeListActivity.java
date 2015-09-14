@@ -35,10 +35,19 @@ public class TaskTypeListActivity extends AppCompatActivity implements TaskTypeL
         themeDarkColor = getIntent().getIntExtra("darkColor", R.color.teal_900);
         projectDTO = (ProjectDTO) getIntent().getSerializableExtra("project");
         type = getIntent().getIntExtra("type",0);
+        if (savedInstanceState != null) {
+            projectDTO = (ProjectDTO)savedInstanceState.getSerializable("project");
+        }
+        if (projectDTO == null) {
+            Log.e(LOG,"Project is NULL");
+            finish();
+            return;
+        }
          taskTypeListFragment = (TaskTypeListFragment)
                 getSupportFragmentManager().findFragmentById(R.id.fragment);
-        taskTypeListFragment.setProject(projectDTO, type);
+//        taskTypeListFragment.setProject(projectDTO, type);
         taskTypeListFragment.setDarkColor(themeDarkColor);
+
         Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
                 projectDTO.getProjectName(), projectDTO.getCityName(),
                 ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));    }

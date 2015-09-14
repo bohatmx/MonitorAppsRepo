@@ -54,9 +54,10 @@ public class TaskTypeAdapter extends RecyclerView.Adapter<TaskTypeAdapter.TaskTy
         final TaskTypeDTO p = taskTypeList.get(position);
         holder.txtTaskTypeName.setText(p.getTaskTypeName());
         holder.txtNumber.setText("" + (position + 1));
-        holder.txtTaskTypeName.setTextColor(darkColor);
-        holder.txtNumber.getBackground().setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-
+        if (darkColor != 0) {
+            holder.txtTaskTypeName.setTextColor(darkColor);
+            holder.txtNumber.getBackground().setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
+        }
         holder.nameView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

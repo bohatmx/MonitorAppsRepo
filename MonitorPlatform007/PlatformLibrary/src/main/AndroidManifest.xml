@@ -49,6 +49,10 @@
             android:name="com.boha.monitor.library.activities.SimpleMessagingActivity"
             android:label="@string/title_activity_messaging" >
         </activity>
+        <activity
+            android:name="com.boha.monitor.library.activities.MainUpdateActivity"
+            android:label="@string/title_activity_main_update" >
+        </activity>
     </application>
 
 </manifest>

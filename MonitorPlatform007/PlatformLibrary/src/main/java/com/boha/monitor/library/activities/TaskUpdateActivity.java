@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -66,7 +67,7 @@ public class TaskUpdateActivity extends AppCompatActivity
         layout = findViewById(R.id.layout);
         ctx = getApplicationContext();
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
-        type = getIntent().getIntExtra("type",TaskStatusUpdateFragment.MONITOR);
+        type = getIntent().getIntExtra("type", TaskStatusUpdateFragment.MONITOR);
 
         ProjectTaskDTO task = (ProjectTaskDTO) getIntent().getSerializableExtra("projectTask");
         taskStatusUpdateFragment = (TaskStatusUpdateFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
@@ -78,6 +79,9 @@ public class TaskUpdateActivity extends AppCompatActivity
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+        final ActionBar ab = getSupportActionBar();
+        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        ab.setDisplayHomeAsUpEnabled(true);
 
         Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
                 project.getProjectName(), project.getCityName(),

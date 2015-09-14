@@ -63,5 +63,6 @@
     <string name="confirm_loc">Confirm Location</string>
     <string name="confirm_loc_of">Do you want to confirm the location of\n</string>
     <string name="title_activity_messaging">MessagingActivity</string>
+    <string name="title_activity_main_update">MainUpdateActivity</string>
 
 </resources>

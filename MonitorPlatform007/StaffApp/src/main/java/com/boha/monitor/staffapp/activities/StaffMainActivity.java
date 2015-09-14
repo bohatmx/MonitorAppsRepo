@@ -40,13 +40,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.boha.monitor.library.activities.GPSActivity;
+import com.boha.monitor.library.activities.MainUpdateActivity;
 import com.boha.monitor.library.activities.MonitorMapActivity;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.activities.PictureActivity;
 import com.boha.monitor.library.activities.ProfilePhotoActivity;
 import com.boha.monitor.library.activities.ProjectMapActivity;
 import com.boha.monitor.library.activities.StatusReportActivity;
-import com.boha.monitor.library.activities.TaskTypeListActivity;
 import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
@@ -69,6 +69,7 @@ import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.DepthPageTransformer;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
+import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.staffapp.R;
@@ -105,7 +106,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         super.onResume();
 
         navImage.setImageDrawable(Util.getRandomBackgroundImage(ctx));
-        mDrawerLayout.openDrawer(GravityCompat.START);
+
 
     }
 
@@ -135,8 +136,8 @@ public class StaffMainActivity extends AppCompatActivity implements
         navImage = (ImageView) findViewById(R.id.NAVHEADER_image);
         navText = (TextView) findViewById(R.id.NAVHEADER_text);
         navText.setText(SharedUtil.getCompanyStaff(ctx).getFullName());
-
         try {
+            Statics.setRobotoFontLight(getApplicationContext(),navText);
             Drawable globe = ContextCompat.getDrawable(ctx, R.drawable.ic_action_globe);
             globe.setColorFilter(themeDarkColor, PorterDuff.Mode.SRC_IN);
             navigationView.getMenu().getItem(0).setIcon(globe);
@@ -151,7 +152,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
             navigationView.getMenu().getItem(3).getSubMenu().getItem(0).setIcon(face);
             navigationView.getMenu().getItem(3).getSubMenu().getItem(1).setIcon(face);
-
+            mDrawerLayout.openDrawer(GravityCompat.START);
         } catch (Exception e) {
             Log.e(LOG, "Problem colorizing menu items");
         }
@@ -696,7 +697,8 @@ public class StaffMainActivity extends AppCompatActivity implements
     @Override
     public void onStatusUpdateRequired(ProjectDTO project) {
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
-        Intent w = new Intent(this, TaskTypeListActivity.class);
+//        Intent w = new Intent(this, TaskTypeListActivity.class);
+        Intent w = new Intent(this, MainUpdateActivity.class);
         w.putExtra("project", project);
         w.putExtra("darkColor", themeDarkColor);
         w.putExtra("type", TaskTypeListFragment.STAFF);

@@ -75,10 +75,12 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
     }
 
-    public static TaskStatusUpdateFragment newInstance(ProjectTaskDTO projectTask) {
+    public static TaskStatusUpdateFragment newInstance(ProjectTaskDTO projectTask,
+                                                       int type) {
         TaskStatusUpdateFragment fragment = new TaskStatusUpdateFragment();
         Bundle args = new Bundle();
         args.putSerializable("projectTask", projectTask);
+        args.putInt("type",type);
         fragment.setArguments(args);
         return fragment;
     }
@@ -91,6 +93,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         super.onCreate(savedInstanceState);
         Log.i(LOG, "++ onCreate");
         if (getArguments() != null) {
+            type = getArguments().getInt("type");
             projectTask = (ProjectTaskDTO) getArguments().getSerializable("projectTask");
         }
     }
@@ -102,6 +105,10 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         actionView = view.findViewById(R.id.TSE_actionLayout);
         actionView.setVisibility(View.GONE);
         setFields();
+        if (projectTask != null) {
+            txtTaskName.setText(projectTask.getTask().getTaskName());
+            getStatusTypes();
+        }
 
         return view;
     }

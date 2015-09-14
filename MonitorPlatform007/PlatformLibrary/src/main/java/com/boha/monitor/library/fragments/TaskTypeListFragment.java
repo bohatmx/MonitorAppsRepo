@@ -27,7 +27,7 @@ import java.util.List;
 
 import jp.wasabeef.recyclerview.animators.FadeInAnimator;
 
-public class TaskTypeListFragment extends Fragment {
+public class TaskTypeListFragment extends Fragment implements PageFragment {
 
 
     private TaskTypeListener mListener;
@@ -42,8 +42,12 @@ public class TaskTypeListFragment extends Fragment {
 
     private View view;
 
-    public static TaskTypeListFragment newInstance() {
+    public static TaskTypeListFragment newInstance(ProjectDTO project, int type) {
         TaskTypeListFragment fragment = new TaskTypeListFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("project",project);
+        bundle.putInt("type", type);
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -55,7 +59,8 @@ public class TaskTypeListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-
+            type = getArguments().getInt("type",0);
+            project = (ProjectDTO)getArguments().getSerializable("project");
         }
     }
 
@@ -77,6 +82,8 @@ public class TaskTypeListFragment extends Fragment {
         mRecyclerView.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
         mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setLayoutManager(glm);
+
+        getCachedTypes();
 
         return view;
     }
@@ -138,13 +145,6 @@ public class TaskTypeListFragment extends Fragment {
         this.darkColor = darkColor;
     }
 
-    public void setProject(ProjectDTO project, int type) {
-        Log.i("TaskTypeListFragment", "### setProject");
-        this.project = project;
-        this.type = type;
-        getCachedTypes();
-    }
-
     private void setList() {
         txtCount.setText("" + taskTypeList.size());
         txtName.setText(project.getProjectName());
@@ -169,7 +169,7 @@ public class TaskTypeListFragment extends Fragment {
             mListener = (TaskTypeListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement TaskTypeListener");
         }
     }
 
@@ -186,9 +186,29 @@ public class TaskTypeListFragment extends Fragment {
         refWatcher.watch(this);
     }
 
+    @Override
+    public void animateHeroHeight() {
+
+    }
+
+    @Override
+    public void setPageTitle(String title) {
+
+    }
+
+    @Override
+    public String getPageTitle() {
+        return null;
+    }
+
+    @Override
+    public void setThemeColors(int primaryColor, int darkColor) {
+        this.darkColor = darkColor;
+
+    }
+
     public interface TaskTypeListener {
-        // TODO: Update argument type and name
-        public void onTaskTypeClicked(TaskTypeDTO taskType);
+         void onTaskTypeClicked(TaskTypeDTO taskType);
     }
 
 }
