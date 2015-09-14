@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.TaskStatusTypeAdapter;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
@@ -37,6 +38,7 @@ import com.boha.monitor.library.util.SpacesItemDecoration;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.library.util.WebCheck;
 import com.boha.platform.library.R;
+import com.squareup.leakcanary.RefWatcher;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import java.text.SimpleDateFormat;
@@ -307,6 +309,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mListener.setBusy(false);
                         btnSubmit.setEnabled(false);
                         if (response.getProjectTaskStatusList() != null && !response.getProjectTaskStatusList().isEmpty()) {
                             returnedStatus = response.getProjectTaskStatusList().get(0);
@@ -326,6 +329,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mListener.setBusy(false);
                         saveRequestInCache(request);
                         Util.showErrorToast(getActivity(), message);
                     }
@@ -381,6 +385,12 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 //        mListener = null;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+        refWatcher.watch(this);
+    }
     @Override
     public void animateHeroHeight() {
 

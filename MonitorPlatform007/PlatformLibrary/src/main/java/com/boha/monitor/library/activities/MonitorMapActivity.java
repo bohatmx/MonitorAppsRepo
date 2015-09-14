@@ -4,12 +4,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,24 +26,25 @@ import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.Statics;
+import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
-import com.boha.monitor.library.util.WebSocketUtil;
 import com.boha.platform.library.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.ErrorDialogFragment;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.picasso.Picasso;
 
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,44 +65,58 @@ public class MonitorMapActivity extends AppCompatActivity
     List<Marker> markers = new ArrayList<Marker>();
     static final String LOG = MonitorMapActivity.class.getSimpleName();
     boolean mResolvingError;
-    static final long ONE_MINUTE = 1000 * 60;
-    static final long FIVE_MINUTES = 1000 * 60 * 5;
     private static final int REQUEST_RESOLVE_ERROR = 1001;
     // Unique tag for the error dialog fragment
     private static final String DIALOG_ERROR = "dialog_error";
 
     ProjectDTO project;
     int index;
-    TextView text, txtCount;
+    TextView text, txtCount, txtTime;
     View topLayout;
+    List<LocationTrackerDTO> trackList;
     LocationTrackerDTO track;
     CircleImageView image;
+    int themeDarkColor, themePrimaryColor;
     static final Locale loc = Locale.getDefault();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.w(LOG, "#### onCreate");
-        super.onCreate(savedInstanceState);
         ctx = getApplicationContext();
+
+        ThemeChooser.setTheme(this);
+        Resources.Theme theme = getTheme();
+        TypedValue typedValue = new TypedValue();
+        theme.resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
+        themeDarkColor = typedValue.data;
+        theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        themePrimaryColor = typedValue.data;
+
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitor_map);
 
         track = (LocationTrackerDTO) getIntent().getSerializableExtra("track");
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
+        ResponseDTO w = (ResponseDTO) getIntent().getSerializableExtra("response");
+        if (w != null) {
+            trackList = w.getLocationTrackerList();
+        }
+
         index = getIntent().getIntExtra("index", 0);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         text = (TextView) findViewById(R.id.text);
-        image = (CircleImageView) findViewById(R.id.image);
+        image = (CircleImageView) findViewById(R.id.roundImage);
         txtCount = (TextView) findViewById(R.id.count);
+        txtTime = (TextView) findViewById(R.id.time);
         txtCount.setText("0");
+        txtTime.setVisibility(View.GONE);
 
         Statics.setRobotoFontBold(ctx, text);
 
         topLayout = findViewById(R.id.top);
-
-        if (project != null) {
-
-        }
+        displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay()
+                .getMetrics(displayMetrics);
         googleMap = mapFragment.getMap();
         if (googleMap == null) {
             Util.showToast(ctx, "map is not available");
@@ -108,13 +128,32 @@ public class MonitorMapActivity extends AppCompatActivity
             image.setVisibility(View.GONE);
             setOneMarker();
         }
+
         if (track != null) {
             txtCount.setVisibility(View.GONE);
-            setTitle(track.getMonitorName());
-            getSupportActionBar().setSubtitle("Current Location");
-            text.setText("Location at " + sdf.format(new Date(track.getDateTracked())));
-            getMonitorPhotos(track.getMonitorID());
-            setMonitorMarker();
+            txtTime.setText(fTime.format(new Date(track.getDateTracked().longValue())));
+            txtTime.setVisibility(View.VISIBLE);
+            getPersonPhotos();
+            final String name = setPersonMarker();
+            Util.setCustomActionBar(ctx,getSupportActionBar(),name,"Location",
+                    ContextCompat.getDrawable(ctx,R.drawable.glasses48));
+
+            txtTime.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showPopup(track.getLatitude(), track.getLongitude(), name);
+                }
+            });
+            image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showPopup(track.getLatitude(),track.getLongitude(), name);
+                }
+            });
+        }
+        if (trackList != null && !trackList.isEmpty()) {
+            setTitle("Locations - " + trackList.get(0).getMonitorName());
+            setLocationMarkers();
         }
     }
 
@@ -208,94 +247,62 @@ public class MonitorMapActivity extends AppCompatActivity
 
     }
 
-    static final DecimalFormat df = new DecimalFormat("###,##0.00");
-
-    private void refreshProjectData() {
-        RequestDTO w = new RequestDTO(RequestDTO.GET_PROJECT_DATA);
-        w.setProjectID(project.getProjectID());
-        WebSocketUtil.sendRequest(ctx, Statics.COMPANY_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
-            @Override
-            public void onMessage(final ResponseDTO response) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        if (response.getProjectList().isEmpty()) {
-                            return;
-                        }
-                        project = response.getProjectList().get(0);
-                        setProjectMarkers();
-                    }
-                });
-            }
+    static final SimpleDateFormat fTime = new SimpleDateFormat("HH:mm");
+    static final SimpleDateFormat fDate = new SimpleDateFormat("dd MMMM yyyy");
+    DisplayMetrics displayMetrics;
 
 
-            @Override
-            public void onError(final String message) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Util.showErrorToast(ctx, message);
-                    }
-                });
-            }
-        });
-    }
-
-    private void setProjectMarkers() {
+    private void setLocationMarkers() {
         googleMap.clear();
         LatLng point = null;
         int index = 0, count = 0;
 
-//        for (ProjectDTO site : project.getProjectSiteList()) {
-//            if (site.getLatitude() == null) continue;
-//            LatLng pnt = new LatLng(site.getLatitude(), site.getLongitude());
-//            point = pnt;
-//            BitmapDescriptor desc = BitmapDescriptorFactory.fromResource(R.drawable.dot_black);
-//            Short color = null;
-//            if (site.getLastStatus() != null) {
-//                color = site.getLastStatus().getTaskStatus().getStatusColor();
-//                switch (color) {
-//                    case TaskStatusDTO.STATUS_COLOR_RED:
-//                        desc = BitmapDescriptorFactory.fromResource(R.drawable.dot_red);
-//                        break;
-//                    case TaskStatusDTO.STATUS_COLOR_GREEN:
-//                        desc = BitmapDescriptorFactory.fromResource(R.drawable.dot_green);
-//                        break;
-//                    case TaskStatusDTO.STATUS_COLOR_AMBER:
-//                        desc = BitmapDescriptorFactory.fromResource(R.drawable.dot_yellow);
-//                        break;
-//                }
-//
-//            }
-//            Marker m =
-//                    googleMap.addMarker(new MarkerOptions()
-//                            .title(site.getProjectSiteName())
-//                            .icon(desc)
-//                            .snippet(site.getProjectName())
-//                            .position(pnt));
-//            markers.add(m);
-//            index++;
-//            count++;
-//        }
-//        googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-//            @Override
-//            public void onMapLoaded() {
-//                //ensure that all markers in bounds
-//                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-//                for (Marker marker : markers) {
-//                    builder.include(marker.getPosition());
-//                }
-//
-//                LatLngBounds bounds = builder.build();
-//                int padding = 60; // offset from edges of the map in pixels
-//                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-//
-//                txtCount.setText("" + markers.size());
-//                googleMap.animateCamera(cu);
-//                setTitle(project.getProjectName());
-//            }
-//        });
+        for (LocationTrackerDTO track : trackList) {
+            if (track.getLatitude() == null) continue;
+            if (index > 5) {
+                break;
+            }
+            LatLng pnt = new LatLng(track.getLatitude(), track.getLongitude());
+            point = pnt;
+
+            View view = getLayoutInflater().inflate(R.layout.location_track_item, null);
+            TextView date = (TextView)view.findViewById(R.id.LTI_date);
+            TextView time = (TextView)view.findViewById(R.id.LTI_time);
+            TextView number = (TextView)view.findViewById(R.id.LTI_number);
+
+//            number.setText((index + 1));
+            date.setText(fDate.format(new Date(track.getDateTracked())));
+            time.setText(fTime.format(new Date(track.getDateTracked())));
+            Bitmap bmBitmap = Util.createBitmapFromView(ctx, view, displayMetrics);
+            BitmapDescriptor desc = BitmapDescriptorFactory.fromBitmap(bmBitmap);
+
+            Marker m =
+                    googleMap.addMarker(new MarkerOptions()
+                            .title(track.getMonitorName())
+                            .icon(desc)
+                            .snippet(track.getMonitorName())
+                            .position(pnt));
+            markers.add(m);
+            index++;
+            count++;
+        }
+        googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                //ensure that all markers in bounds
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for (Marker marker : markers) {
+                    builder.include(marker.getPosition());
+                }
+
+                LatLngBounds bounds = builder.build();
+                int padding = 60; // offset from edges of the map in pixels
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+
+                txtCount.setText("" + markers.size());
+                googleMap.animateCamera(cu);
+            }
+        });
 
     }
 
@@ -304,7 +311,11 @@ public class MonitorMapActivity extends AppCompatActivity
             return;
         }
         LatLng pnt = new LatLng(project.getLatitude(), project.getLongitude());
-        BitmapDescriptor desc = BitmapDescriptorFactory.fromResource(R.drawable.number_1);
+        View view = getLayoutInflater().inflate(R.layout.project_name, null);
+        TextView name = (TextView)view.findViewById(R.id.name);
+        name.setText(project.getProjectName());
+        Bitmap bmBitmap = Util.createBitmapFromView(ctx,view,displayMetrics);
+        BitmapDescriptor desc = BitmapDescriptorFactory.fromBitmap(bmBitmap);
         Marker m =
                 googleMap.addMarker(new MarkerOptions()
                         .title(project.getProjectName())
@@ -317,22 +328,27 @@ public class MonitorMapActivity extends AppCompatActivity
         setTitle(project.getProjectName());
     }
 
-    private void setMonitorMarker() {
-        if (track.getLatitude() == null) {
-            return;
+    private String setPersonMarker() {
+
+        String name = "Unknown";
+        if (track.getStaffName() != null) {
+            name = track.getStaffName();
+        }
+        if (track.getMonitorName() != null) {
+            name = track.getMonitorName();
         }
         LatLng pnt = new LatLng(track.getLatitude(), track.getLongitude());
         BitmapDescriptor desc = BitmapDescriptorFactory.fromResource(R.drawable.number_1);
         Marker m =
                 googleMap.addMarker(new MarkerOptions()
-                        .title(track.getMonitorName())
+                        .title(name)
                         .icon(desc)
-                        .snippet(track.getMonitorName())
+                        .snippet(name)
                         .position(pnt));
         markers.add(m);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pnt, 1.0f));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f));
-
+        return name;
     }
 
     List<String> list;
@@ -646,9 +662,18 @@ public class MonitorMapActivity extends AppCompatActivity
         super.onPause();
     }
 
-    private void getMonitorPhotos(Integer monitorID) {
-        RequestDTO w = new RequestDTO(RequestDTO.GET_MONITOR_PHOTOS);
-        w.setMonitorID(monitorID);
+    private void getPersonPhotos() {
+
+        RequestDTO w = new RequestDTO();
+        if (track.getMonitorID() != null) {
+            w.setRequestType(RequestDTO.GET_MONITOR_PHOTOS);
+            w.setMonitorID(track.getMonitorID());
+        }
+        if (track.getStaffID() != null) {
+            w.setRequestType(RequestDTO.GET_STAFF_PHOTOS);
+            w.setStaffID(track.getStaffID());
+        }
+
 
         NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
@@ -656,7 +681,7 @@ public class MonitorMapActivity extends AppCompatActivity
                 if (response.getStatusCode() == 0) {
                     if (!response.getPhotoUploadList().isEmpty()) {
                         String url = response.getPhotoUploadList().get(0).getUri();
-                        ImageLoader.getInstance().displayImage(url,image);
+                        Picasso.with(ctx).load(url).into(image);
                     }
                 }
             }

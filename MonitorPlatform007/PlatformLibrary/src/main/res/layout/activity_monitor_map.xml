@@ -9,6 +9,7 @@
     <RelativeLayout
         android:id="@+id/top"
         android:padding="@dimen/mon_padding"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -42,15 +43,25 @@
         android:layout_height="wrap_content" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/image"
-        android:layout_width="@dimen/mon_hero_height_small"
-        android:layout_height="@dimen/mon_hero_height_small"
+        android:id="@+id/roundImage"
+        android:layout_width="@dimen/mon_hero_height_medium_lite"
+        android:layout_height="@dimen/mon_hero_height_medium_lite"
         android:scaleType="centerCrop"
-        android:layout_marginTop="@dimen/mon_wider"
+        android:layout_marginTop="@dimen/mon_margin"
         android:layout_marginLeft="@dimen/mon_wide"
         android:src="@drawable/black_woman"
-        app:border_color="@color/transparent_black"
-        app:border_width="4dp" />
+        app:border_color="@color/white"
+        app:border_width="2dp" />
+
+    <TextView
+        style="@style/RedCountBox"
+        android:id="@+id/time"
+        android:text="12:35"
+        android:layout_below="@id/roundImage"
+        android:layout_marginTop="@dimen/mon_padding"
+        android:layout_marginLeft="@dimen/mon_wide"
+        android:layout_width="@dimen/mon_hero_height_medium_lite"
+        android:layout_height="wrap_content" />
 
 
 </RelativeLayout>

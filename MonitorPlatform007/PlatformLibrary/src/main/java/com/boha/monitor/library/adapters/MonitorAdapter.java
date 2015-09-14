@@ -1,7 +1,6 @@
 package com.boha.monitor.library.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +11,7 @@ import android.widget.TextView;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -98,29 +95,8 @@ public class MonitorAdapter extends ArrayAdapter<MonitorDTO> {
             item.photo.setImageDrawable(ContextCompat.getDrawable(ctx,R.drawable.boy));
             item.photo.setAlpha(0.4f);
         } else {
-            ImageLoader.getInstance().displayImage(p.getPhotoUploadList().get(0).getUri(),
-                    item.photo, new ImageLoadingListener() {
-                @Override
-                public void onLoadingStarted(String s, View view) {
-
-                }
-
-                @Override
-                public void onLoadingFailed(String s, View view, FailReason failReason) {
-                    item.photo.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.boy));
-                    item.photo.setAlpha(0.4f);
-                }
-
-                @Override
-                public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-                    item.photo.setAlpha(1.0f);
-                }
-
-                @Override
-                public void onLoadingCancelled(String s, View view) {
-
-                }
-            });
+            item.photo.setAlpha(1.0f);
+            Picasso.with(ctx).load(p.getPhotoUploadList().get(0).getUri()).into(item.photo);
         }
 
         return (convertView);

@@ -28,6 +28,7 @@
 
     <TextView
         android:id="@+id/NAVHEADER_text"
+        style="@style/Title2TextStyleWhite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

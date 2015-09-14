@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.ProfilePhotoActivity;
 import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.PortfolioDTO;
@@ -37,7 +38,7 @@ import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.fragments.MonitorListFragment;
 import com.boha.monitor.library.fragments.PageFragment;
-import com.boha.monitor.library.fragments.StaffFragment;
+import com.boha.monitor.library.fragments.StaffProfileFragment;
 import com.boha.monitor.library.fragments.StaffListFragment;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.DepthPageTransformer;
@@ -59,7 +60,7 @@ import java.util.List;
 public class CompanyDrawerActivity extends AppCompatActivity implements
         PortfolioListFragment.PortfolioFragmentListener,
         MonitorListFragment.MonitorListListener,
-        StaffFragment.StaffFragmentListener,
+        StaffProfileFragment.StaffFragmentListener,
         StaffListFragment.CompanyStaffListListener,
         LocationListener,
         GoogleApiClient.ConnectionCallbacks,
@@ -253,7 +254,7 @@ public class CompanyDrawerActivity extends AppCompatActivity implements
     private void buildPages() {
         pageFragmentList = new ArrayList<>();
         portfolioListFragment = PortfolioListFragment.newInstance(response.getPortfolioList());
-        monitorListFragment = MonitorListFragment.newInstance(response.getMonitorList());
+        monitorListFragment = MonitorListFragment.newInstance(response.getMonitorList(),MonitorListFragment.STAFF);
         staffListFragment = StaffListFragment.newInstance(response.getStaffList());
 
 
@@ -439,6 +440,13 @@ public class CompanyDrawerActivity extends AppCompatActivity implements
     public void setBusy(boolean busy) {
         setRefreshActionButtonState(busy);
     }
+    static final int STAFF_PICTURE_REQUESTED = 3472;
+    @Override
+    public void onStaffPictureRequired(StaffDTO staff) {
+        Intent w = new Intent(this, ProfilePhotoActivity.class);
+        w.putExtra("staff", staff);
+        startActivityForResult(w, STAFF_PICTURE_REQUESTED);
+    }
 
     @Override
     public void onPortfolioClicked(PortfolioDTO portfolio) {
@@ -485,12 +493,12 @@ public class CompanyDrawerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onStaffAdded(StaffDTO companyStaff) {
+    public void onStaffAdded(StaffDTO staff) {
 
     }
 
     @Override
-    public void onStaffUpdated(StaffDTO companyStaff) {
+    public void onStaffUpdated(StaffDTO staff) {
 
     }
 

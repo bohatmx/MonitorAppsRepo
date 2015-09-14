@@ -11,7 +11,6 @@ import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.os.SystemClock;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.android.volley.RequestQueue;
@@ -25,14 +24,10 @@ import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
-import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
-import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.utils.L;
-import com.nostra13.universalimageloader.utils.StorageUtils;
-
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
+import com.squareup.picasso.OkHttpDownloader;
+import com.squareup.picasso.Picasso;
 
 import org.acra.ACRA;
 import org.acra.ReportField;
@@ -71,15 +66,25 @@ public class MonApp extends Application implements Application.ActivityLifecycle
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
     private ChatMessageListActivity chatMessageListActivity;
-    private  boolean messageActivityVisible;
+    private boolean messageActivityVisible;
     static final String LOG = MonApp.class.getSimpleName();
+    public static Picasso picasso;
+    static final long MAX_CACHE_SIZE = 1024 * 1024 * 1024; // 1 GB cache on device
+
+    public static RefWatcher getRefWatcher(Context context) {
+        MonApp application = (MonApp) context.getApplicationContext();
+        return application.refWatcher;
+    }
+
+    private RefWatcher refWatcher;
 
     public enum TrackerName {
         APP_TRACKER, // Tracker used only in this app.
         GLOBAL_TRACKER, // Tracker used by all the apps from a company. eg: roll-up tracking.
         ECOMMERCE_TRACKER, // Tracker used by all ecommerce transactions from a company.
     }
-    public synchronized Tracker getTracker( TrackerName trackerId) {
+
+    public synchronized Tracker getTracker(TrackerName trackerId) {
         if (!mTrackers.containsKey(trackerId)) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             Tracker t = null;
@@ -107,13 +112,33 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         sb.append("#######################################\n\n");
 
         Log.d(LOG, sb.toString());
+        boolean isDebuggable = 0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
+        refWatcher = LeakCanary.install(this);
         registerActivityLifecycleCallbacks(this);
 
-        boolean isDebuggable = 0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
+        // create Picasso.Builder object
+        File picassoCacheDir = getCacheDir();
+        Log.w(LOG, "####### images in picasso cache: " + picassoCacheDir.listFiles().length);
+        Picasso.Builder picassoBuilder = new Picasso.Builder(getApplicationContext());
+        picassoBuilder.downloader(new OkHttpDownloader(picassoCacheDir, MAX_CACHE_SIZE));
+        picasso = picassoBuilder.build();
+        try {
+            Picasso.setSingletonInstance(picasso);
+        } catch (IllegalStateException ignored) {
+            // Picasso instance was already set
+            // cannot set it after Picasso.with(Context) was already in use
+        }
+
+        if (isDebuggable) {
+            Picasso.with(getApplicationContext())
+                    .setIndicatorsEnabled(true);
+            Picasso.with(getApplicationContext())
+                    .setLoggingEnabled(true);
+        }
         if (!isDebuggable) {
             StrictMode.enableDefaults();
             Log.e(LOG, "###### StrictMode defaults enabled");
-                    ACRA.init(this);
+            ACRA.init(this);
             StaffDTO staff = SharedUtil.getCompanyStaff(getApplicationContext());
             MonitorDTO mon = SharedUtil.getMonitor(getApplicationContext());
             if (staff != null) {
@@ -128,29 +153,6 @@ public class MonApp extends Application implements Application.ActivityLifecycle
             Log.d(LOG, "###### ACRA Crash Reporting has NOT been initiated, in DEBUG mode");
         }
         initializeVolley(getApplicationContext());
-
-        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder();
-        builder.cacheInMemory(true);
-        builder.cacheOnDisk(true);
-        builder.showImageOnFail(ContextCompat.getDrawable(getApplicationContext(), R.drawable.under_construction));
-        builder.showImageOnLoading(ContextCompat.getDrawable(getApplicationContext(), R.drawable.under_construction));
-        DisplayImageOptions defaultOptions = builder.build();
-
-        File cacheDir = StorageUtils.getCacheDirectory(this, true);
-        Log.d(LOG, "## onCreate, ImageLoader cacheDir, files: " + cacheDir.listFiles().length);
-        //
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
-                .denyCacheImageMultipleSizesInMemory()
-                .diskCache(new UnlimitedDiskCache(cacheDir))
-                .memoryCache(new LruMemoryCache(16 * 1024 * 1024))
-                .defaultDisplayImageOptions(defaultOptions)
-                .build();
-
-        ImageLoader.getInstance().init(config);
-        L.writeDebugLogs(false);
-        L.writeLogs(false);
-
-        Log.w(LOG, "###### ImageLoaderConfiguration has been initialised");
         startLocationAlarm();
 
     }
@@ -178,33 +180,21 @@ public class MonApp extends Application implements Application.ActivityLifecycle
      *
      * @param context
      */
-    public void initializeVolley( Context context) {
+    public void initializeVolley(Context context) {
         Log.e(LOG, "initializing Volley Networking ...");
         requestQueue = Volley.newRequestQueue(context);
         int memClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE))
                 .getMemoryClass();
 
-        // Use 1/8th of the available memory for this memory cache.
         int cacheSize = 1024 * 1024 * memClass / 8;
         bitmapLruCache = new BitmapLruCache(cacheSize);
-        // imageLoader = new ImageLoader(requestQueue, bitmapLruCache);
         Log.i(LOG, "********** Yebo! Volley Networking has been initialized, cache size: " + (cacheSize / 1024) + " KB");
-
-        // Create global configuration and initialize ImageLoader with this configuration
-        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .build();
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
-                .defaultDisplayImageOptions(defaultOptions)
-                .build();
-
-        ImageLoader.getInstance().init(config);
     }
 
     public ChatMessageListActivity getChatMessageListActivity() {
         return chatMessageListActivity;
     }
+
     public void refreshChatMessages() {
         if (chatMessageListActivity != null) {
             chatMessageListActivity.refreshMessages();
@@ -214,9 +204,9 @@ public class MonApp extends Application implements Application.ActivityLifecycle
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         if (activity instanceof ChatMessageListActivity) {
-            chatMessageListActivity = (ChatMessageListActivity)activity;
+            chatMessageListActivity = (ChatMessageListActivity) activity;
             messageActivityVisible = true;
-            Log.d(LOG,"ChatMessageListActivity onActivityCreated, messageActivityVisible: " + messageActivityVisible);
+            Log.d(LOG, "ChatMessageListActivity onActivityCreated, messageActivityVisible: " + messageActivityVisible);
         }
     }
 
@@ -224,8 +214,8 @@ public class MonApp extends Application implements Application.ActivityLifecycle
     public void onActivityStarted(Activity activity) {
         if (activity instanceof ChatMessageListActivity) {
             messageActivityVisible = true;
-            chatMessageListActivity = (ChatMessageListActivity)activity;
-            Log.d(LOG,"ChatMessageListActivity onActivityStarted, messageActivityVisible: " + messageActivityVisible);
+            chatMessageListActivity = (ChatMessageListActivity) activity;
+            Log.d(LOG, "ChatMessageListActivity onActivityStarted, messageActivityVisible: " + messageActivityVisible);
         }
     }
 
@@ -233,8 +223,8 @@ public class MonApp extends Application implements Application.ActivityLifecycle
     public void onActivityResumed(Activity activity) {
         if (activity instanceof ChatMessageListActivity) {
             messageActivityVisible = true;
-            chatMessageListActivity = (ChatMessageListActivity)activity;
-            Log.d(LOG,"ChatMessageListActivity onActivityResumed, messageActivityVisible: " + messageActivityVisible);
+            chatMessageListActivity = (ChatMessageListActivity) activity;
+            Log.d(LOG, "ChatMessageListActivity onActivityResumed, messageActivityVisible: " + messageActivityVisible);
         }
     }
 
@@ -242,7 +232,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
     public void onActivityPaused(Activity activity) {
         if (activity instanceof ChatMessageListActivity) {
             messageActivityVisible = false;
-            Log.d(LOG,"ChatMessageListActivity onActivityPaused, messageActivityVisible: " + messageActivityVisible);
+            Log.d(LOG, "ChatMessageListActivity onActivityPaused, messageActivityVisible: " + messageActivityVisible);
         }
     }
 
@@ -250,7 +240,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
     public void onActivityStopped(Activity activity) {
         if (activity instanceof ChatMessageListActivity) {
             messageActivityVisible = false;
-            Log.d(LOG,"ChatMessageListActivity onActivityStopped, messageActivityVisible: " + messageActivityVisible);
+            Log.d(LOG, "ChatMessageListActivity onActivityStopped, messageActivityVisible: " + messageActivityVisible);
         }
     }
 
@@ -263,7 +253,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
     public void onActivityDestroyed(Activity activity) {
         if (activity instanceof ChatMessageListActivity) {
             messageActivityVisible = false;
-            Log.d(LOG,"ChatMessageListActivity onActivityDestroyed, messageActivityVisible: " + messageActivityVisible);
+            Log.d(LOG, "ChatMessageListActivity onActivityDestroyed, messageActivityVisible: " + messageActivityVisible);
         }
     }
 

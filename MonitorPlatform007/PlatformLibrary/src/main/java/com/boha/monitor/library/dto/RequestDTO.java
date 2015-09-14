@@ -34,6 +34,7 @@ public class RequestDTO implements Serializable {
     private Long startDate, endDate;
     private Double latitude, longitude;
     private Float accuracy;
+    private SimpleMessageDTO simpleMessage;
     private CompanyDTO company;
     private StaffDTO staff;
     private TaskTypeDTO taskType;
@@ -113,7 +114,9 @@ public class RequestDTO implements Serializable {
             GET_MESSAGES_BY_PROJECT = 128,
             GET_MONITOR_PROJECTS = 129,
             GET_PORTFOLIO_LIST = 130,
-            GET_MONITOR_PHOTOS = 131;
+            GET_MONITOR_PHOTOS = 131,
+            GET_LOCATION_TRACK_BY_MONITOR_IN_PERIOD = 132,
+            GET_STAFF_PHOTOS = 133;
     //
     public static final int
             LOGIN_STAFF = 200,
@@ -177,7 +180,8 @@ public class RequestDTO implements Serializable {
             REQUEST_CHAT = 700,
             REQUEST_LOCATION = 701,
             SEND_CHAT_MESSAGE = 702,
-            SEND_LOCATION = 703;
+            SEND_LOCATION = 703,
+            SEND_SIMPLE_MESSAGE = 704;
 
     public static final String COMPANY_DIR = "company";
     public static final String STAFF_DIR = "staff";
@@ -185,6 +189,14 @@ public class RequestDTO implements Serializable {
     public static final String TASK_DIR = "task";
     //
 
+
+    public SimpleMessageDTO getSimpleMessage() {
+        return simpleMessage;
+    }
+
+    public void setSimpleMessage(SimpleMessageDTO simpleMessage) {
+        this.simpleMessage = simpleMessage;
+    }
 
     public Boolean getRideWebSocket() {
         return rideWebSocket;

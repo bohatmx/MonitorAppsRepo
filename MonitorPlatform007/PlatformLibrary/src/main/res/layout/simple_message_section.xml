@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/AM_top"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mon_widest">
+
+
+        <TextView
+            android:id="@+id/AM_title"
+            style="@style/Title3TextStyleBlue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="@dimen/mon_padding"
+            android:padding="@dimen/mon_margin"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="Monitor Platform Messaging" />
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/AM_recycler"
+        android:padding="@dimen/mon_margin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/AM_top"
+        android:scrollbars="vertical" />
+
+    <ImageView
+        android:src="@android:drawable/ic_menu_week"
+        android:layout_margin="@dimen/mon_margin"
+        android:tint="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

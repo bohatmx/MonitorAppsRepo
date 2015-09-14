@@ -40,7 +40,7 @@
     <string name="open_camera">Open Camera</string>
     <string name="title_activity_photo">PhotoActivity</string>
     <string name="title_activity_test">TestActivity</string>
-    <string name="select_account">Select email account</string>
+    <string name="select_account">Select email account or enter email address</string>
     <string name="no_prev_photos">No previous photos found. Tap to start</string>
     <string name="start_scan">Start Scan</string>
     <string name="stop_scan">Stop Scan</string>
@@ -54,5 +54,14 @@
     <string name="directions">Directions</string>
     <string name="streetview">Street View</string>
     <string name="statrpt">Status Report</string>
+    <string name="send_message">Send Message</string>
+    <string name="send_my_location">Send My Location</string>
+    <string name="get_location">Get Current Location</string>
+    <string name="get_updates">Get Status Updates</string>
+    <string name="start_gps">Start GPS Scan</string>
+    <string name="stop_gps">Stop GPS Scan</string>
+    <string name="confirm_loc">Confirm Location</string>
+    <string name="confirm_loc_of">Do you want to confirm the location of\n</string>
+    <string name="title_activity_messaging">MessagingActivity</string>
 
 </resources>

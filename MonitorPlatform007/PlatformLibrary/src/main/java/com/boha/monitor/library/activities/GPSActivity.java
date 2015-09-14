@@ -1,15 +1,20 @@
 package com.boha.monitor.library.activities;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.fragments.GPSScanFragment;
+import com.boha.monitor.library.util.ThemeChooser;
+import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -31,11 +36,20 @@ public class GPSActivity extends AppCompatActivity
     GPSScanFragment gpsScanFragment;
     ProjectDTO project;
     boolean siteLocationConfirmed;
+    int themeDarkColor, themePrimaryColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        ThemeChooser.setTheme(this);
+        Resources.Theme theme = getTheme();
+        TypedValue typedValue = new TypedValue();
+        theme.resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
+        themeDarkColor = typedValue.data;
+        theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        themePrimaryColor = typedValue.data;
+
         super.onCreate(savedInstanceState);
-        Log.e(LOG, "######### onCreate");
         setContentView(R.layout.activity_gps);
         gpsScanFragment = (GPSScanFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
@@ -47,6 +61,10 @@ public class GPSActivity extends AppCompatActivity
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+
+        Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
+                project.getProjectName(),project.getCityName(),
+                ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
 
     }
 
@@ -71,7 +89,8 @@ public class GPSActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.menu_gps, menu);
+        getMenuInflater().inflate(R.menu.gps_menu, menu);
+        mMenu = menu;
         return true;
     }
 
@@ -95,7 +114,7 @@ public class GPSActivity extends AppCompatActivity
     public void onLocationConfirmed(ProjectDTO project) {
         Log.e(LOG, "######### onLocationConfirmed");
         this.project = project;
-        project.setLocationConfirmed(true);
+        this.project.setLocationConfirmed(true);
         siteLocationConfirmed = true;
         onBackPressed();
     }
@@ -117,11 +136,16 @@ public class GPSActivity extends AppCompatActivity
     }
 
     @Override
+    public void setBusy(boolean busy) {
+        setRefreshActionButtonState(busy);
+    }
+
+    @Override
     public void onBackPressed() {
         Log.w(LOG, "######### onBackPressed");
         if (siteLocationConfirmed) {
             Intent w = new Intent();
-            w.putExtra("projectSite", project);
+            w.putExtra("project", project);
             setResult(RESULT_OK, w);
         } else {
             setResult(RESULT_CANCELED);
@@ -143,10 +167,9 @@ public class GPSActivity extends AppCompatActivity
                     + mLocation.getAccuracy());
         }
         mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(5000);
+        mLocationRequest.setInterval(2000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setFastestInterval(1000);
-        startLocationUpdates();
 
     }
 
@@ -155,7 +178,7 @@ public class GPSActivity extends AppCompatActivity
 
     }
 
-    protected void startLocationUpdates() {
+    public void startLocationUpdates() {
         Log.w(LOG, "###### startLocationUpdates: " + new Date().toString());
         if (mGoogleApiClient.isConnected()) {
             mRequestingLocationUpdates = true;
@@ -210,5 +233,18 @@ public class GPSActivity extends AppCompatActivity
         super.onPause();
     }
 
+    Menu mMenu;
+    public void setRefreshActionButtonState(final boolean refreshing) {
+        if (mMenu != null) {
+            final MenuItem refreshItem = mMenu.findItem(R.id.action_refresh);
+            if (refreshItem != null) {
+                if (refreshing) {
+                    refreshItem.setActionView(R.layout.action_bar_progess);
+                } else {
+                    refreshItem.setActionView(null);
+                }
+            }
+        }
+    }
 
 }

@@ -1,10 +1,6 @@
 package com.boha.monitor.library.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +11,7 @@ import android.widget.TextView;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.TaskStatusTypeDTO;
 import com.boha.platform.library.R;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.nostra13.universalimageloader.core.process.BitmapProcessor;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -89,35 +80,42 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         }
         hideColors(holder);
         if (p.getProjectTaskStatus() != null) {
-            if (p.getProjectTaskStatus().getTaskStatusType().getStatusColor() == null) {
-                p.getProjectTaskStatus().getTaskStatusType().setStatusColor(
-                        Short.parseShort("" +TaskStatusTypeDTO.STATUS_COLOR_AMBER));
+            if (p.getProjectTaskStatus().getTaskStatusType() != null) {
+                if (p.getProjectTaskStatus().getTaskStatusType().getStatusColor() == null) {
+                    p.getProjectTaskStatus().getTaskStatusType().setStatusColor(
+                            Short.parseShort("" + TaskStatusTypeDTO.STATUS_COLOR_AMBER));
+                }
             }
-            switch (p.getProjectTaskStatus().getTaskStatusType().getStatusColor()) {
-                case TaskStatusTypeDTO.STATUS_COLOR_AMBER:
-                    holder.numberRed.setVisibility(View.GONE);
-                    holder.numberAmber.setVisibility(View.VISIBLE);
-                    holder.numberAmber.setText("" + num);
-                    holder.numberGreen.setVisibility(View.GONE);
-                    break;
-                case TaskStatusTypeDTO.STATUS_COLOR_RED:
-                    holder.numberRed.setVisibility(View.VISIBLE);
-                    holder.numberRed.setText("" + num);
-                    holder.numberAmber.setVisibility(View.GONE);
-                    holder.numberGreen.setVisibility(View.GONE);
-                    break;
-                case TaskStatusTypeDTO.STATUS_COLOR_GREEN:
-                    holder.numberRed.setVisibility(View.GONE);
-                    holder.numberAmber.setVisibility(View.GONE);
-                    holder.numberGreen.setVisibility(View.VISIBLE);
-                    holder.numberGreen.setText("" + num);
-                    break;
-                default:
-                    holder.numberRed.setVisibility(View.GONE);
-                    holder.numberAmber.setVisibility(View.VISIBLE);
-                    holder.numberAmber.setText("" + num);
-                    holder.numberGreen.setVisibility(View.GONE);
-                    break;
+            try {
+                switch (p.getProjectTaskStatus().getTaskStatusType().getStatusColor()) {
+                    case TaskStatusTypeDTO.STATUS_COLOR_AMBER:
+                        holder.numberRed.setVisibility(View.GONE);
+                        holder.numberAmber.setVisibility(View.VISIBLE);
+                        holder.numberAmber.setText("" + num);
+                        holder.numberGreen.setVisibility(View.GONE);
+                        break;
+                    case TaskStatusTypeDTO.STATUS_COLOR_RED:
+                        holder.numberRed.setVisibility(View.VISIBLE);
+                        holder.numberRed.setText("" + num);
+                        holder.numberAmber.setVisibility(View.GONE);
+                        holder.numberGreen.setVisibility(View.GONE);
+                        break;
+                    case TaskStatusTypeDTO.STATUS_COLOR_GREEN:
+                        holder.numberRed.setVisibility(View.GONE);
+                        holder.numberAmber.setVisibility(View.GONE);
+                        holder.numberGreen.setVisibility(View.VISIBLE);
+                        holder.numberGreen.setText("" + num);
+                        break;
+                    default:
+                        holder.numberRed.setVisibility(View.GONE);
+                        holder.numberAmber.setVisibility(View.VISIBLE);
+                        holder.numberAmber.setText("" + num);
+                        holder.numberGreen.setVisibility(View.GONE);
+                        break;
+                }
+            } catch (Exception e) {
+                holder.numberNone.setVisibility(View.VISIBLE);
+                holder.numberNone.setText("" + num);
             }
         } else {
             holder.numberNone.setVisibility(View.VISIBLE);
@@ -136,55 +134,14 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
     private void setLocalImage(final ImageView image, PhotoUploadDTO p) {
         File file = new File(p.getThumbFilePath());
-//        Log.w(LOG, "## photo path: " + file.getAbsolutePath());
-        ImageLoader.getInstance().displayImage(Uri.fromFile(file).toString(), image, new ImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String s, View view) {
-
-            }
-
-            @Override
-            public void onLoadingFailed(String s, View view, FailReason failReason) {
-                image.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.under_construction));
-            }
-
-            @Override
-            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-
-            }
-
-            @Override
-            public void onLoadingCancelled(String s, View view) {
-
-            }
-        });
+        Picasso.with(ctx).load(file).into(image);
     }
 
     private void setRemoteImage(final ImageView image, PhotoUploadDTO p) {
-        String url = p.getUri();
-        //Log.w(LOG, "## photo url: " + url);
-
-        BitmapFactory.Options resizeOptions = new BitmapFactory.Options();
-        resizeOptions.inSampleSize = 4; // decrease size 4 times
-        resizeOptions.inScaled = true;
-
-        DisplayImageOptions options = new DisplayImageOptions.Builder()
-                .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
-                .decodingOptions(resizeOptions)
-                .showImageOnFail(R.drawable.under_construction)
-                .showImageForEmptyUri(R.drawable.under_construction)
-                .postProcessor(new BitmapProcessor() {
-                    @Override
-                    public Bitmap process(Bitmap bitmap) {
-
-                        return Bitmap.createScaledBitmap(bitmap,400,600,false);
-                    }
-                })
-                .build();
-
-
-
-        ImageLoader.getInstance().displayImage(url, image, options);
+        Picasso.with(ctx).load(p.getUri())
+                .placeholder(R.drawable.back13)
+                .resize(240,240)
+                .into(image);
     }
 
     @Override

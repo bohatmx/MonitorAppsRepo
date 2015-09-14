@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.TaskTypeAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
@@ -20,6 +21,7 @@ import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.SpacesItemDecoration;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.util.List;
 
@@ -177,6 +179,12 @@ public class TaskTypeListFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+        refWatcher.watch(this);
+    }
 
     public interface TaskTypeListener {
         // TODO: Update argument type and name

@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.adapters.StatusReportAdapter;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
@@ -31,6 +32,7 @@ import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -386,12 +388,14 @@ public class StatusReportFragment extends Fragment implements PageFragment {
     public void onDetach() {
         super.onDetach();
     }
-    @Override public void onDestroy() {
-        super.onDestroy();
-//        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
-//        refWatcher.watch(this);
-    }
 
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+        refWatcher.watch(this);
+    }
     static final String LOG = StatusReportFragment.class.getSimpleName();
 
     @Override

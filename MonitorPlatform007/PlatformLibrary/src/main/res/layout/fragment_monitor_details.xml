@@ -62,10 +62,10 @@
 
             <RelativeLayout
                 android:id="@+id/box1"
-                android:layout_marginTop="@dimen/mon_wide"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/FMP_iconCamera">
+                android:layout_below="@id/FMP_iconCamera"
+                android:layout_marginTop="@dimen/mon_wide">
 
                 <ImageView
                     android:id="@+id/icon1"
@@ -74,14 +74,20 @@
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_action_person" />
 
-                <EditText
-                    android:id="@+id/FMP_editFirstName"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/mon_margin"
-                    android:layout_toRightOf="@id/icon1"
-                    android:hint="First Name"
-                    android:inputType="textCapWords" />
+                    android:layout_toRightOf="@id/icon1">
+
+                    <EditText
+                        android:id="@+id/FMP_editFirstName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/mon_margin"
+
+                        android:hint="First Name"
+                        android:inputType="textCapWords" />
+                </android.support.design.widget.TextInputLayout>
             </RelativeLayout>
 
             <RelativeLayout
@@ -90,6 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/box1">
 
+
                 <ImageView
                     android:id="@+id/icon2"
                     android:layout_width="18dp"
@@ -97,14 +104,21 @@
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_action_person" />
 
-                <EditText
-                    android:id="@+id/FMP_editLastName"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/mon_margin"
-                    android:layout_toRightOf="@id/icon2"
-                    android:hint="Surname"
-                    android:inputType="textCapWords" />
+                    android:layout_toRightOf="@id/icon2">
+
+                    <EditText
+                        android:id="@+id/FMP_editLastName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/icon2"
+                        android:hint="Surname"
+                        android:inputType="textCapWords" />
+                </android.support.design.widget.TextInputLayout>
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -120,15 +134,22 @@
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_action_globe" />
 
-                <EditText
-                    android:id="@+id/FMP_editID"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/mon_margin"
-                    android:layout_toRightOf="@id/icon3"
-                    android:hint="Identification Number"
-                    android:inputType="number" />
+                    android:layout_toRightOf="@id/icon3">
+
+                    <EditText
+                        android:id="@+id/FMP_editID"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/icon3"
+                        android:hint="Identification Number"
+                        android:inputType="number" />
+                </android.support.design.widget.TextInputLayout>
             </RelativeLayout>
+
             <RelativeLayout
                 android:id="@+id/box4"
                 android:layout_width="match_parent"
@@ -141,15 +162,23 @@
                     android:layout_height="18dp"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_action_view_as_list" />
-            <EditText
-                android:id="@+id/FMP_editCell"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/mon_margin"
-                android:layout_toRightOf="@id/icon4"
-                android:hint="Cellphone Number"
-                android:inputType="phone" />
-                </RelativeLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/icon4">
+
+                    <EditText
+                        android:id="@+id/FMP_editCell"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/icon4"
+                        android:hint="Cellphone Number"
+                        android:inputType="phone" />
+                </android.support.design.widget.TextInputLayout>
+            </RelativeLayout>
+
             <RelativeLayout
                 android:id="@+id/box5"
                 android:layout_width="match_parent"
@@ -162,15 +191,22 @@
                     android:layout_height="18dp"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_action_picture" />
-            <EditText
-                android:id="@+id/FMP_editAddress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/mon_margin"
-                android:layout_toRightOf="@id/icon5"
-                android:hint="Home Address"
-                android:inputType="textCapWords" />
-                </RelativeLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/icon5">
+
+                    <EditText
+                        android:id="@+id/FMP_editAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/icon5"
+                        android:hint="Home Address"
+                        android:inputType="textCapWords" />
+                </android.support.design.widget.TextInputLayout>
+            </RelativeLayout>
 
             <RadioGroup
                 android:id="@+id/FMP_radioGroup"

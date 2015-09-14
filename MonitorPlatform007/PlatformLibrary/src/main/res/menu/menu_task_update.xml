@@ -8,10 +8,10 @@
         android:icon="@drawable/ic_action_refresh"
         android:title="Refresh"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_help"
-        android:orderInCategory="100"
-        android:icon="@drawable/ic_action_help"
-        android:title="Help"
-        app:showAsAction="ifRoom" />
+    <!--<item-->
+        <!--android:id="@+id/action_help"-->
+        <!--android:orderInCategory="100"-->
+        <!--android:icon="@drawable/ic_action_help"-->
+        <!--android:title="Help"-->
+        <!--app:showAsAction="never" />-->
 </menu>

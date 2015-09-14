@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.RequestDTO;
@@ -23,7 +24,8 @@ import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.leakcanary.RefWatcher;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -235,8 +237,8 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
 
         if (photo.getThumbFilePath() == null) {
             if (photo.getUri() != null) {
-                ImageLoader.getInstance().displayImage(photo.getUri(), backDrop);
-                ImageLoader.getInstance().displayImage(photo.getUri(), roundImage);
+                Picasso.with(getActivity()).load(photo.getUri()).into(backDrop);
+                Picasso.with(getActivity()).load(photo.getUri()).into(roundImage);
             }
 
         } else {
@@ -272,9 +274,15 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
 
     @Override
     public void animateHeroHeight() {
-
+        Util.expand(backDrop,500,null);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+        refWatcher.watch(this);
+    }
     String pageTitle;
 
     @Override

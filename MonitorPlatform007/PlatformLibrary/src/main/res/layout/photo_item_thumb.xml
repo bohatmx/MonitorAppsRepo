@@ -5,7 +5,7 @@
     android:layout_height="240dp"
     android:background="@color/white"
     android:padding="@dimen/mon_padding"
-    tools:cardCornerRadius="8dp">
+    tools:cardCornerRadius="0dp">
 
     <RelativeLayout
         android:id="@+id/PHOTO_top"
@@ -15,8 +15,10 @@
 
         <ImageView
             android:id="@+id/PHOTO_image"
-            android:layout_width="240dp"
-            android:layout_height="240dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:maxWidth="240dp"
+            android:maxHeight="240dp"
             android:scaleType="centerCrop"
             android:src="@drawable/under_construction" />
 

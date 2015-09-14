@@ -30,9 +30,11 @@ public class ThemeSelectorActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+
         ThemeChooser.setTheme(this);
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.theme_chooser);
+
         activity = this;
         ctx = getApplicationContext();
         setFields();
@@ -41,7 +43,7 @@ public class ThemeSelectorActivity extends AppCompatActivity {
         themeDarkColor = getIntent().getIntExtra("darkColor", R.color.teal_900);
         CompanyDTO muni = SharedUtil.getCompany(ctx);
         Util.setCustomActionBar(ctx, getSupportActionBar(),
-                muni.getCompanyName(), ContextCompat.getDrawable(ctx, R.drawable.ic_action_globe));
+                muni.getCompanyName(), "Themes",ContextCompat.getDrawable(ctx, R.drawable.ic_action_globe));
         //
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();

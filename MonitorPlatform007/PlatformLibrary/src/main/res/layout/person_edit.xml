@@ -11,19 +11,13 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/ED_PSN_banner"
-            android:src="@drawable/banner_report2"
+            android:id="@+id/ED_PSN_hero"
+            android:src="@drawable/back14"
             android:scaleType="centerCrop"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/mon_hero_height_medium" />
+            android:layout_height="@dimen/mon_nav_width" />
 
-        <RelativeLayout
-            android:id="@+id/ED_PSN_mainLayout"
-            android:layout_below="@id/ED_PSN_banner"
-            android:background="@color/white"
-            android:padding="@dimen/mon_padding"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+
 
 
             <TextView
@@ -34,38 +28,29 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <RelativeLayout
-                android:id="@+id/xlayoutxl"
-                android:layout_below="@id/ED_PSN_title"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/txtLayout1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/icon5">
 
 
-                <ImageView
-                    android:id="@+id/ED_PSN_imgDelete"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="@dimen/mon_margin"
-                    android:src="@android:drawable/ic_delete"
-                    android:layout_centerVertical="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
 
-                <EditText
+            <EditText
                     android:id="@+id/ED_PSN_firstName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/ED_PSN_imgDelete"
                     android:layout_marginTop="@dimen/mon_padding"
                     android:inputType="textCapWords"
                     style="@style/TextStyleSmall"
                     android:layout_marginLeft="5dp"
                     android:hint="First Name" />
-            </RelativeLayout>
+            </android.support.design.widget.TextInputLayout>
 
             <EditText
                 android:id="@+id/ED_PSN_lastName"
                 android:layout_width="match_parent"
-                android:layout_below="@id/xlayoutxl"
+                android:layout_below="@id/ED_PSN_firstName"
                 android:inputType="textCapWords"
                 android:layout_marginTop="@dimen/mon_padding"
                 android:layout_marginLeft="5dp"
@@ -238,5 +223,4 @@
 
         </RelativeLayout>
 
-    </RelativeLayout>
 </ScrollView>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/STAFF_LIST_top"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mon_hero_height_medium">
+
+        <LinearLayout
+            android:id="@+id/STAFF_LIST_handle"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:orientation="horizontal" />
+
+        <ImageView
+            android:id="@+id/STAFF_LIST_backDrop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/back1" />
+
+        <TextView
+            android:id="@+id/STAFF_LIST_label"
+            style="@style/Title1TextStyleWhite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/mon_wide"
+            android:layout_marginTop="@dimen/mon_wider"
+            android:text="Staff Team"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/STAFF_LIST_label2"
+            style="@style/TextStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/STAFF_LIST_label"
+            android:layout_marginLeft="@dimen/mon_wide"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:text="Personnel with Monitor Apps on their devices"
+            android:textColor="@color/white" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/STAFF_LIST_top"
+        android:background="@color/white">
+
+        <ListView
+            android:id="@+id/STAFF_LIST_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:dividerHeight="@dimen/mon_divider" />
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

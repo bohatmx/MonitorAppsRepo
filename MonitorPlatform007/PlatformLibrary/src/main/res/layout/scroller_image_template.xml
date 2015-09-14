@@ -7,14 +7,14 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/image"
+        android:id="@+id/roundImage"
         android:scaleType="centerCrop"
         android:src="@drawable/under_construction"
         android:layout_width="@dimen/mon_picture_large"
         android:layout_height="@dimen/mon_picture_larger" />
 
     <TextView
-        android:id="@+id/number"
+        android:id="@+id/roundImage"
         android:text="00"
         style="@style/TextStyleSmall"
         android:textColor="@color/white"

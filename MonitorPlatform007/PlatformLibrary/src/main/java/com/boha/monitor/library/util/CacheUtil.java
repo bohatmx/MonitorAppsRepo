@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.dto.SimpleMessageDTO;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -39,7 +40,7 @@ public class CacheUtil {
             CACHE_PROJECT = 5, CACHE_REQUEST = 6, CACHE_PROJECT_STATUS = 4,
             CACHE_TRACKER = 8, CACHE_CHAT = 9, CACHE_MONITOR_PROJECTS = 10,
             CACHE_TASK_STATUS = 11, CACHE_COMPANY = 12, CACHE_PORTFOLIOS = 14,
-            CACHE_STAFF_DATA = 15;
+            CACHE_STAFF_DATA = 15, CACHE_MESSAGES = 16;
     static int dataType;
     static Integer projectID;
     static ResponseDTO response;
@@ -48,7 +49,7 @@ public class CacheUtil {
     static Context ctx;
     static final String JSON_DATA = "data.json", JSON_COUNTRIES = "countries.json", JSON_COMPANY_DATA = "company_data",
             JSON_PROJECT_DATA = "project_data", JSON_PROJECT_STATUS = "project_status", JSON_MON_PROJECTS = "monprojects.json",
-            JSON_REQUEST = "requestCache.json", JSON_SITE = "site", JSON_PORTFOLIOS = "portfolios.json",
+            JSON_REQUEST = "requestCache.json", JSON_SITE = "site", JSON_PORTFOLIOS = "portfolios.json", JSON_MESSAGES = "messages.json",
             JSON_TRACKER = "tracker.json", JSON_CHAT = "chat", JSON_STATUS = "status", JSON_STAFF_DATA = "staffData.json";
 
 
@@ -211,6 +212,58 @@ public class CacheUtil {
         thread.start();
     }
 
+    public static void cacheMessages(final Context context, final ResponseDTO r, final CacheUtilListener cacheUtilListener) {
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String json = gson.toJson(r);
+                FileOutputStream outputStream = null;
+                try {
+                    outputStream = context.openFileOutput(JSON_MESSAGES, Context.MODE_PRIVATE);
+                    outputStream.write(json.getBytes());
+                    outputStream.close();
+                    File file = context.getFileStreamPath(JSON_MESSAGES);
+                    if (file != null) {
+                        Log.e(LOG, "Message cache written, path: " + file.getAbsolutePath() +
+                                " - length: " + file.length());
+                    }
+                    if (cacheUtilListener != null)
+                        cacheUtilListener.onDataCached();
+                } catch (IOException e) {
+                    Log.e(LOG, "Cache failed", e);
+                    if (cacheUtilListener != null)
+                        cacheUtilListener.onError();
+                }
+
+            }
+        });
+        thread.start();
+    }
+
+    public static void getCachedMessages(final Context context, final CacheUtilListener cacheUtilListener) {
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FileInputStream stream = null;
+                try {
+                    stream = context.openFileInput(JSON_MESSAGES);
+                    String json = getStringFromInputStream(stream);
+                    ResponseDTO response = gson.fromJson(json, ResponseDTO.class);
+                    cacheUtilListener.onFileDataDeserialized(response);
+                } catch (IOException e) {
+                    Log.e(LOG, "## message cache not found, will start new cache");
+                    ResponseDTO response = new ResponseDTO();
+                    response.setSimpleMessageList(new ArrayList<SimpleMessageDTO>());
+                    cacheUtilListener.onFileDataDeserialized(response);
+                }
+
+            }
+        });
+        thread.start();
+    }
+
     public static void getCachedStaffData(Context context, CacheUtilListener cacheUtilListener) {
         dataType = CACHE_STAFF_DATA;
         utilListener = cacheUtilListener;
@@ -294,6 +347,16 @@ public class CacheUtil {
                         file = ctx.getFileStreamPath(JSON_TRACKER);
                         if (file != null) {
                             Log.e(LOG, "Tracker cache written, path: " + file.getAbsolutePath() +
+                                    " - length: " + file.length());
+                        }
+                        break;
+                    case CACHE_MESSAGES:
+                        json = gson.toJson(response);
+                        outputStream = ctx.openFileOutput(JSON_MESSAGES, Context.MODE_PRIVATE);
+                        write(outputStream, json);
+                        file = ctx.getFileStreamPath(JSON_MESSAGES);
+                        if (file != null) {
+                            Log.e(LOG, "Messages cache written, path: " + file.getAbsolutePath() +
                                     " - length: " + file.length());
                         }
                         break;
@@ -435,6 +498,11 @@ public class CacheUtil {
             try {
                 switch (dataType) {
 
+                    case CACHE_MESSAGES:
+                        stream = ctx.openFileInput(JSON_MESSAGES);
+                        response = getData(stream);
+                        Log.i(LOG, "++ messages cache retrieved");
+                        break;
                     case CACHE_PORTFOLIOS:
                         stream = ctx.openFileInput(JSON_PORTFOLIOS);
                         response = getData(stream);

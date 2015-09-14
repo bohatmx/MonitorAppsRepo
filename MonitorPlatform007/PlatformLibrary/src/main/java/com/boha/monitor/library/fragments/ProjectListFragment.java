@@ -13,12 +13,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.MonitorMapActivity;
 import com.boha.monitor.library.adapters.ProjectAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.platform.library.R;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.util.List;
 
@@ -189,6 +191,12 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         mListener = null;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+        refWatcher.watch(this);
+    }
     @Override
     public void animateHeroHeight() {
     }

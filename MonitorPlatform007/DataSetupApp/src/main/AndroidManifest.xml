@@ -7,10 +7,10 @@
     <!-- PROD API KEY: AIzaSyA1ePn3jrM-aU61Cz4kTk-ehE0cfLnfzVk -->
 
     <permission
-        android:name="com.boha.platform.monitor.gcm.permission.C2D_MESSAGE"
+        android:name="com.boha.platform.monitor.setup.gcm.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="com.boha.platform.monitor.gcm.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.boha.platform.monitor.setup.gcm.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 

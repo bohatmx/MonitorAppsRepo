@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/SI_mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/grey"
+    android:padding="@dimen/mon_padding">
+
+    <ImageView
+        android:id="@+id/SI_banner"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mon_hero_height_medium"
+        android:scaleType="centerCrop"
+        android:src="@drawable/banner_construction11" />
+
+    <TextView
+        android:id="@+id/SI_welcome"
+        style="@style/Title1TextStyleWhite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:padding="@dimen/mon_padding"
+        android:text="@string/welcome_aboard"
+        android:textStyle="normal" />
+
+    <RelativeLayout
+        android:id="@+id/SI_layout0"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/SI_banner"
+        android:background="@color/white"
+        android:padding="@dimen/mon_padding">
+
+
+        <TextView
+            android:id="@+id/SI_wifi"
+            style="@style/TextStyleGreenSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:padding="@dimen/mon_padding"
+            android:text="Connect your WIFI"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/SI_header"
+            style="@style/Title3TextStyleBlue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/SI_wifi"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:text="@string/subject"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/SI_app"
+            style="@style/Title1TextStyleBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/SI_header"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:text="App Name Here" />
+
+        <TextView
+            android:id="@+id/SI_txtEmail"
+            style="@style/Title2TextStyleBlue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/SI_app"
+            android:layout_marginLeft="@dimen/mon_padding"
+            android:layout_marginTop="@dimen/mon_wide"
+            android:text="@string/select_email" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/SI_emailLayout"
+            android:layout_marginTop="@dimen/mon_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/SI_txtEmail">
+
+            <EditText
+                android:id="@+id/SI_editEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginLeft="@dimen/mon_padding"
+                android:layout_marginTop="@dimen/mon_margin"
+                android:hint="OR Enter Email address"
+                android:inputType="textEmailAddress" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/SI_pinLayout"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/SI_emailLayout">
+
+            <EditText
+                android:id="@+id/SI_pin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginLeft="@dimen/mon_padding"
+                android:layout_marginTop="@dimen/mon_margin"
+                android:hint="Enter PIN"
+                android:inputType="number" />
+        </android.support.design.widget.TextInputLayout>
+
+
+        <com.dd.ShadowLayout
+            app:sl_shadowRadius="4dp"
+            app:sl_shadowColor="#AA000000"
+            app:sl_dx="2dp"
+            app:sl_dy="2dp"
+            android:layout_below="@id/SI_pinLayout"
+            app:sl_cornerRadius="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/btnRed"
+                android:text="Sign In"
+                android:padding="@dimen/mon_margin"
+                android:background="@color/red_800"
+                android:textColor="@color/white"
+                android:minWidth="@dimen/mon_hero_height_small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.dd.ShadowLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

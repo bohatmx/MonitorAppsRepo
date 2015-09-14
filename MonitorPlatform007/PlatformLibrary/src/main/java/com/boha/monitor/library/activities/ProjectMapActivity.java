@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -15,7 +16,9 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +35,7 @@ import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Statics;
+import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -78,19 +82,29 @@ public class ProjectMapActivity extends AppCompatActivity
 
     ProjectDTO project;
     int type;
-    TextView text, txtCount;
+    TextView text, txtCount, txtTime;
     View topLayout;
     List<LocationTrackerDTO> trackList;
     CircleImageView image;
     static final Locale loc = Locale.getDefault();
     List<ProjectDTO> projectList;
     public static final int STAFF = 1, MONITOR = 2;
-
+    DisplayMetrics displayMetrics;
+    int themeDarkColor, themePrimaryColor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.w(LOG, "#### onCreate");
-        super.onCreate(savedInstanceState);
+
         ctx = getApplicationContext();
+
+        ThemeChooser.setTheme(this);
+        Resources.Theme theme = getTheme();
+        TypedValue typedValue = new TypedValue();
+        theme.resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
+        themeDarkColor = typedValue.data;
+        theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        themePrimaryColor = typedValue.data;
+
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitor_map);
 
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
@@ -100,10 +114,16 @@ public class ProjectMapActivity extends AppCompatActivity
                 .findFragmentById(R.id.map);
         text = (TextView) findViewById(R.id.text);
 
-        image = (CircleImageView) findViewById(R.id.image);
+        image = (CircleImageView) findViewById(R.id.roundImage);
         image.setVisibility(View.GONE);
         txtCount = (TextView) findViewById(R.id.count);
+        txtTime = (TextView) findViewById(R.id.time);
         txtCount.setText("0");
+        txtTime.setVisibility(View.GONE);
+        displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay()
+                .getMetrics(displayMetrics);
+
 
         Statics.setRobotoFontBold(ctx, text);
 
@@ -118,10 +138,14 @@ public class ProjectMapActivity extends AppCompatActivity
         setGoogleMap();
         if (project != null) {
             txtCount.setText("" + 1);
-            setTitle(project.getProjectName());
-            getSupportActionBar().setSubtitle("Project Location");
+            Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
+                    project.getProjectName(),project.getCityName(),
+                    ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
             setOneProjectMarker();
         } else {
+            Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
+                    SharedUtil.getCompany(ctx).getCompanyName() ,"Project Locations",
+                    ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
             getCachedData();
         }
 
@@ -136,8 +160,7 @@ public class ProjectMapActivity extends AppCompatActivity
                     public void onFileDataDeserialized(ResponseDTO response) {
                         if (response.getProjectList() != null) {
                             projectList = response.getProjectList();
-                            setTitle(SharedUtil.getCompany(ctx).getCompanyName());
-                            getSupportActionBar().setSubtitle("Project Locations");
+
                             txtCount.setText("" + projectList.size());
                             setProjectMarkers();
                         }
@@ -161,8 +184,7 @@ public class ProjectMapActivity extends AppCompatActivity
                     public void onFileDataDeserialized(ResponseDTO response) {
                         if (response.getProjectList() != null) {
                             projectList = response.getProjectList();
-                            setTitle(SharedUtil.getCompany(ctx).getCompanyName());
-                            getSupportActionBar().setSubtitle("Project Locations");
+
                             txtCount.setText("" + projectList.size());
                             setProjectMarkers();
                         }
@@ -372,7 +394,11 @@ public class ProjectMapActivity extends AppCompatActivity
         }
         LatLng pnt = new LatLng(projectList.get(0).getLatitude(),
                 projectList.get(0).getLongitude());
-        BitmapDescriptor desc = BitmapDescriptorFactory.fromResource(R.drawable.number_1);
+        View view = getLayoutInflater().inflate(R.layout.project_name, null);
+        TextView name = (TextView)view.findViewById(R.id.name);
+        name.setText(project.getProjectName());
+        Bitmap bmBitmap = Util.createBitmapFromView(ctx,view,displayMetrics);
+        BitmapDescriptor desc = BitmapDescriptorFactory.fromBitmap(bmBitmap);
         Marker m =
                 googleMap.addMarker(new MarkerOptions()
                         .title(projectList.get(0).getProjectID().toString())

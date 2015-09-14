@@ -67,7 +67,10 @@ public class RequestSyncService extends IntentService {
                                     " bad responses: " + response.getBadCount());
                             RequestCacheUtil.clearCache(getApplicationContext(),null);
                             if (requestSyncListener != null) {
-                                requestSyncListener.onTasksSynced(response.getGoodCount(),response.getBadCount());
+                                if (response != null) {
+                                    requestSyncListener.onTasksSynced(response.getGoodCount(),
+                                            response.getBadCount());
+                                }
                             }
                         }
 

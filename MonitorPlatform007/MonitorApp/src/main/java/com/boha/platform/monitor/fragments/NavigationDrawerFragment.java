@@ -11,11 +11,11 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.util.Log;
@@ -39,7 +39,7 @@ import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.monitor.R;
 import com.boha.platform.monitor.adapters.DrawerMonitorAdapter;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -147,6 +147,9 @@ public class NavigationDrawerFragment extends Fragment {
         return view;
     }
 
+    public void openDrawer() {
+        mDrawerLayout.openDrawer(GravityCompat.START);
+    }
     public boolean isDrawerOpen() {
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
     }
@@ -273,7 +276,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         if (photo.getThumbFilePath() == null) {
             if (photo.getUri() != null) {
-                ImageLoader.getInstance().displayImage(photo.getUri(), personImage);
+                Picasso.with(ctx).load(photo.getUri()).into(personImage);
             }
 
         } else {

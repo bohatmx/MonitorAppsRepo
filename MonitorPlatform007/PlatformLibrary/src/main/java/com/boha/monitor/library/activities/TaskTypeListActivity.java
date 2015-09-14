@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -16,6 +17,7 @@ import com.boha.monitor.library.dto.TaskTypeDTO;
 import com.boha.monitor.library.fragments.TaskTypeListFragment;
 import com.boha.monitor.library.services.RequestSyncService;
 import com.boha.monitor.library.util.ThemeChooser;
+import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
 public class TaskTypeListActivity extends AppCompatActivity implements TaskTypeListFragment.TaskTypeListener{
@@ -26,7 +28,7 @@ public class TaskTypeListActivity extends AppCompatActivity implements TaskTypeL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.w(LOG,"## onCreate");
+        Log.w(LOG, "## onCreate");
         ThemeChooser.setTheme(this);
         setContentView(R.layout.activity_task_type_list);
 
@@ -35,13 +37,11 @@ public class TaskTypeListActivity extends AppCompatActivity implements TaskTypeL
         type = getIntent().getIntExtra("type",0);
          taskTypeListFragment = (TaskTypeListFragment)
                 getSupportFragmentManager().findFragmentById(R.id.fragment);
-        Log.d("TaskTypeListActivity", "### onCreate, setting project: " + projectDTO.getProjectName());
         taskTypeListFragment.setProject(projectDTO, type);
         taskTypeListFragment.setDarkColor(themeDarkColor);
-
-        android.support.v7.app.ActionBar bar = getSupportActionBar();
-        bar.setTitle(projectDTO.getProjectName());
-    }
+        Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
+                projectDTO.getProjectName(), projectDTO.getCityName(),
+                ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));    }
 
     @Override
     public void onSaveInstanceState(Bundle b) {

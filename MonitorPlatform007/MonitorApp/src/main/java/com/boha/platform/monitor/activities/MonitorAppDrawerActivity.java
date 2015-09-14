@@ -16,6 +16,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -29,9 +30,10 @@ import android.view.View;
 
 import com.boha.monitor.library.activities.GPSActivity;
 import com.boha.monitor.library.activities.MonitorMapActivity;
-import com.boha.monitor.library.activities.MonitorPictureActivity;
+import com.boha.monitor.library.activities.ProfilePhotoActivity;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.activities.PictureActivity;
+import com.boha.monitor.library.activities.StatusReportActivity;
 import com.boha.monitor.library.activities.TaskTypeListActivity;
 import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.dto.ChatMessageDTO;
@@ -47,6 +49,7 @@ import com.boha.monitor.library.fragments.MonitorListFragment;
 import com.boha.monitor.library.fragments.MonitorProfileFragment;
 import com.boha.monitor.library.fragments.PageFragment;
 import com.boha.monitor.library.fragments.ProjectListFragment;
+import com.boha.monitor.library.fragments.SimpleMessageFragment;
 import com.boha.monitor.library.fragments.TaskTypeListFragment;
 import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.services.RequestSyncService;
@@ -76,6 +79,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
+        SimpleMessageFragment.SimpleMessageFragmentListener,
         NavigationDrawerFragment.NavigationDrawerListener,
         ProjectListFragment.ProjectListFragmentListener,
         MonitorListFragment.MonitorListListener,
@@ -94,6 +98,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     MonitorListFragment monitorListFragment;
     ProjectListFragment projectListFragment;
     NoProjectsAssignedFragment noProjectsAssignedFragment;
+    SimpleMessageFragment simpleMessageFragment;
     List<PageFragment> pageFragmentList;
     ResponseDTO response;
     Context ctx;
@@ -147,9 +152,18 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
         getCachedData();
         android.support.v7.app.ActionBar bar = getSupportActionBar();
-        bar.setTitle(SharedUtil.getCompany(ctx).getCompanyName());
+
+        Util.setCustomActionBar(ctx, bar,
+                SharedUtil.getCompany(ctx).getCompanyName(),
+                "Project Monitoring",
+                ContextCompat.getDrawable(ctx, R.drawable.glasses48));
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mNavigationDrawerFragment.openDrawer();
+    }
 
     private void getCachedData() {
         CacheUtil.getCachedMonitorProjects(ctx, new CacheUtil.CacheUtilListener() {
@@ -250,6 +264,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
         }
 
+
         monitorProfileFragment = MonitorProfileFragment.newInstance(SharedUtil.getMonitor(ctx));
         monitorProfileFragment.setPageTitle(getString(R.string.profile));
         monitorProfileFragment.setThemeColors(themePrimaryColor,themeDarkColor);
@@ -266,13 +281,13 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         for (Integer id : set) {
             list.add(map.get(id));
         }
-        monitorListFragment = MonitorListFragment.newInstance(list);
+        monitorListFragment = MonitorListFragment.newInstance(list, MonitorListFragment.MONITOR);
         monitorListFragment.setPageTitle(getString(R.string.monitors));
-        monitorListFragment.setThemeColors(themePrimaryColor,themeDarkColor);
+        monitorListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
 
-        messagingFragment = MessagingFragment.newInstance(list);
-        messagingFragment.setPageTitle(getString(R.string.messaging));
-        messagingFragment.setThemeColors(themePrimaryColor,themeDarkColor);
+        simpleMessageFragment = new SimpleMessageFragment();
+        simpleMessageFragment.setPageTitle(getString(R.string.messaging));
+        simpleMessageFragment.setThemeColors(themePrimaryColor,themeDarkColor);
 
         if (!response.getProjectList().isEmpty()) {
             pageFragmentList.add(projectListFragment);
@@ -281,7 +296,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         }
         pageFragmentList.add(monitorProfileFragment);
         pageFragmentList.add(monitorListFragment);
-        pageFragmentList.add(messagingFragment);
+        pageFragmentList.add(simpleMessageFragment);
 
         pagerAdapter = new PagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(pagerAdapter);
@@ -384,6 +399,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
                     PhotoUploadDTO x = (PhotoUploadDTO) data.getSerializableExtra("photo");
                     monitorProfileFragment.setPicture(x);
                     mNavigationDrawerFragment.setPicture(x);
+                    SharedUtil.savePhoto(ctx,x);
                 }
                 break;
         }
@@ -424,7 +440,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
     @Override
     public void onMessagingRequested(MonitorDTO monitor) {
-        messagingFragment.animateHeroHeight();
+        simpleMessageFragment.animateHeroHeight();
         mPager.setCurrentItem(3, true);
     }
 
@@ -447,7 +463,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
     @Override
     public void onCameraRequired(ProjectDTO project) {
-
+        SharedUtil.saveLastProjectID(ctx, project.getProjectID());
         Intent w = new Intent(this, PictureActivity.class);
         w.putExtra("project", project);
         w.putExtra("type", PhotoUploadDTO.PROJECT_IMAGE);
@@ -456,6 +472,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
     @Override
     public void onStatusUpdateRequired(ProjectDTO project) {
+        SharedUtil.saveLastProjectID(ctx, project.getProjectID());
         Log.d("MainDrawerActivity", "&& onStatusUpdateRequired themeDarkColor: " + themeDarkColor);
         Intent w = new Intent(this, TaskTypeListActivity.class);
         w.putExtra("project", project);
@@ -469,6 +486,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
     @Override
     public void onLocationRequired(final ProjectDTO project) {
+        SharedUtil.saveLastProjectID(ctx, project.getProjectID());
 
         activity = this;
         if (project.getLatitude() != null) {
@@ -502,6 +520,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
     @Override
     public void onDirectionsRequired(ProjectDTO project) {
+        SharedUtil.saveLastProjectID(ctx, project.getProjectID());
         if (project.getLatitude() == null) {
             Util.showErrorToast(ctx, "Project has not been located yet!");
             return;
@@ -517,12 +536,12 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
     @Override
     public void onMessagingRequired(ProjectDTO project) {
-
+        SharedUtil.saveLastProjectID(ctx, project.getProjectID());
     }
 
     @Override
     public void onGalleryRequired(ProjectDTO project) {
-
+        SharedUtil.saveLastProjectID(ctx, project.getProjectID());
         Intent w = new Intent(this, PhotoListActivity.class);
         w.putExtra("project", project);
         startActivity(w);
@@ -530,12 +549,15 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
     @Override
     public void onStatusReportRequired(ProjectDTO project) {
-
+        SharedUtil.saveLastProjectID(ctx, project.getProjectID());
+        Intent w = new Intent(this,StatusReportActivity.class);
+        w.putExtra("project", project);
+        startActivity(w);
     }
 
     @Override
     public void onMapRequired(ProjectDTO project) {
-
+        SharedUtil.saveLastProjectID(ctx, project.getProjectID());
     }
 
     @Override
@@ -661,7 +683,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     @Override
     public void onMonitorPictureRequested(MonitorDTO monitor) {
 
-        Intent w = new Intent(this, MonitorPictureActivity.class);
+        Intent w = new Intent(this, ProfilePhotoActivity.class);
         w.putExtra("monitor", monitor);
         startActivityForResult(w, MONITOR_PICTURE_REQUESTED);
     }

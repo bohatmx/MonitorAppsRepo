@@ -1,29 +1,42 @@
 package com.boha.monitor.library.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListPopupWindow;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.MonitorMapActivity;
+import com.boha.monitor.library.adapters.PopupListIconAdapter;
 import com.boha.monitor.library.adapters.StaffAdapter;
-import com.boha.monitor.library.dto.ProjectDTO;
+import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.dto.SimpleMessageDTO;
 import com.boha.monitor.library.dto.StaffDTO;
+import com.boha.monitor.library.util.NetUtil;
+import com.boha.monitor.library.util.PopupItem;
+import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.utils.DiskCacheUtils;
-import com.nostra13.universalimageloader.utils.MemoryCacheUtils;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,7 +49,7 @@ import java.util.List;
  * interface.
  */
 public class StaffListFragment extends Fragment
-        implements  PageFragment {
+        implements PageFragment {
 
 
     private CompanyStaffListListener mListener;
@@ -62,9 +75,9 @@ public class StaffListFragment extends Fragment
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        Log.d(LOG,"StaffListFragment onCreate");
+        Log.d(LOG, "StaffListFragment onCreate");
         if (bundle != null) {
-            ResponseDTO w = (ResponseDTO)bundle.getSerializable("staffList");
+            ResponseDTO w = (ResponseDTO) bundle.getSerializable("staffList");
             if (w != null) {
                 staffList = w.getStaffList();
                 return;
@@ -72,7 +85,7 @@ public class StaffListFragment extends Fragment
         }
         Bundle c = getArguments();
         if (c != null) {
-            ResponseDTO w = (ResponseDTO)c.getSerializable("staffList");
+            ResponseDTO w = (ResponseDTO) c.getSerializable("staffList");
             if (w != null) {
                 staffList = w.getStaffList();
                 return;
@@ -83,39 +96,149 @@ public class StaffListFragment extends Fragment
 
     Context ctx;
     TextView txtCount, txtName;
-    View view, topView, fab;
-    ImageView icon;
+    View view, topView, handle;
+    FloatingActionButton fab;
+    ImageView  hero;
     ResponseDTO response;
 
+    ImageView iconClose;
+    TextView txtPerson, txtFromMsg;
+    EditText editMessage;
+    Button btnSend;
+    SlidingUpPanelLayout paneLayout;
+
     @Override
-    public View onCreateView( LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(LOG, "###### StaffListFragment onCreateView");
         view = inflater.inflate(R.layout.fragment_staff_list, container, false);
         ctx = getActivity();
 
+        paneLayout = (SlidingUpPanelLayout)view.findViewById(R.id.sliding_layout);
+        editMessage = (EditText) view.findViewById(R.id.FSL_message);
+        btnSend = (Button) view.findViewById(R.id.FSL_btnSend);
+        txtPerson = (TextView) view.findViewById(R.id.FSL_name);
+        txtFromMsg = (TextView) view.findViewById(R.id.FSL_fromMessage);
+        iconClose = (ImageView) view.findViewById(R.id.FSL_iconClose);
+        txtFromMsg.setVisibility(View.GONE);
+        paneLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+
         txtCount = (TextView) view.findViewById(R.id.FAB_text);
         txtName = (TextView) view.findViewById(R.id.STAFF_LIST_label);
+        handle = view.findViewById(R.id.STAFF_LIST_handle);
         topView = view.findViewById(R.id.STAFF_LIST_top);
-        fab = view.findViewById(R.id.FAB);
-        icon = (ImageView)view.findViewById(R.id.STAFF_LIST_icon);
+        hero = (ImageView) view.findViewById(R.id.STAFF_LIST_backDrop);
+        fab = (FloatingActionButton) view.findViewById(R.id.fab);
         mListView = (ListView) view.findViewById(R.id.STAFF_LIST_list);
+
+        iconClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                paneLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+            }
+        });
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.flashOnce(fab, 300, new Util.UtilAnimationListener() {
-                    @Override
-                    public void onAnimationEnded() {
-                        mListener.onNewCompanyStaff();
-                    }
-                });
+                showDialog();
+            }
+        });
+
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                paneLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+                sendMessageToSelectedStaffMember();
             }
         });
 
         setList();
 
         return view;
+    }
+
+    private void sendMessageToSelectedStaffMember() {
+        StaffDTO from = SharedUtil.getCompanyStaff(getActivity());
+        if (editMessage.getText().toString().isEmpty()) {
+            Util.showToast(getActivity(),"Please enter message");
+            return;
+        }
+        SimpleMessageDTO z = new SimpleMessageDTO();
+        z.setMessage(editMessage.getText().toString());
+        z.setStaffID(from.getStaffID());
+        z.setStaffName(from.getFullName());
+        z.setStaffList(new ArrayList<Integer>());
+        z.getStaffList().add(staff.getStaffID());
+        z.setMonitorList(new ArrayList<Integer>());
+        Collections.sort(from.getPhotoUploadList());
+        if (!from.getPhotoUploadList().isEmpty()) {
+            z.setUrl(from.getPhotoUploadList().get(0).getUri());
+        }
+
+        RequestDTO w = new RequestDTO(RequestDTO.SEND_SIMPLE_MESSAGE);
+        w.setSimpleMessage(z);
+
+        mListener.setBusy(true);
+        hideKeyboard();
+        NetUtil.sendRequest(getActivity(), w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(ResponseDTO response) {
+                Log.i(LOG, "simple message sent OK");
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mListener.setBusy(false);
+                        paneLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onError(final String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Util.showErrorToast(getActivity(), message);
+                        mListener.setBusy(false);
+                        paneLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+                    }
+                });
+            }
+
+            @Override
+            public void onWebSocketClose() {
+
+            }
+        });
+    }
+    void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) ctx
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editMessage.getWindowToken(), 0);
+    }
+    private void showDialog() {
+        final AlertDialog.Builder x = new AlertDialog.Builder(getActivity());
+        x.setTitle("Broadcast Your Location")
+                .setMessage("Do you want to broadcast your current location to other Staff?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        List<Integer> mList = new ArrayList<>();
+                        for (StaffDTO x : staffList) {
+                            mList.add(x.getStaffID());
+                        }
+                        mListener.onLocationSendRequired(mList, new ArrayList<Integer>());
+
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                .show();
     }
 
     @Override
@@ -134,7 +257,7 @@ public class StaffListFragment extends Fragment
     }
 
     @Override
-    public void onAttach( Activity activity) {
+    public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
             mListener = (CompanyStaffListListener) activity;
@@ -142,7 +265,7 @@ public class StaffListFragment extends Fragment
             throw new ClassCastException("Host " + activity.getLocalClassName()
                     + " must implement CompanyStaffListListener");
         }
-        Log.i("StaffListFragment","## onAttach, mListener = " + activity.getLocalClassName());
+        Log.i("StaffListFragment", "## onAttach, mListener = " + activity.getLocalClassName());
     }
 
     @Override
@@ -150,15 +273,17 @@ public class StaffListFragment extends Fragment
         super.onDetach();
         mListener = null;
     }
-    @Override public void onDestroy() {
+
+    @Override
+    public void onDestroy() {
         super.onDestroy();
 //        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
 //        refWatcher.watch(this);
     }
 
-    List<String> list;
+    List<PopupItem> popupItemList;
+
     private void setList() {
-        Log.e(LOG, "setList staffList: " + staffList.size());
         staffAdapter = new StaffAdapter(ctx, R.layout.monitor_card,
                 staffList, new StaffAdapter.StaffAdapterListener() {
             @Override
@@ -178,40 +303,103 @@ public class StaffListFragment extends Fragment
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (null != mListener) {
                     staff = staffList.get(position);
-                    list = new ArrayList<>();
-                    list.add(ctx.getString(R.string.get_status));
-                    list.add(ctx.getString(R.string.take_picture));
-                    list.add(ctx.getString(R.string.send_app_link));
-                    list.add(ctx.getString(R.string.edit));
-                    View v = Util.getHeroView(ctx, ctx.getString(R.string.select_action));
-
-                    Util.showPopupBasicWithHeroImage(ctx,getActivity(),list,txtName, staff.getFullName(),new Util.UtilPopupListener() {
-                        @Override
-                        public void onItemSelected(int index) {
-                            switch (index) {
-                                case 0:
-                                    Util.showToast(ctx,getString(R.string.under_cons));
-                                    break;
-                                case 1:
-                                    mListener.onCompanyStaffPictureRequested(staff);
-                                    break;
-                                case 2:
-                                    int index2 = 0;
-                                    for (StaffDTO s: staffList) {
-                                        if (s.getStaffID().intValue() == staff.getStaffID().intValue()) {
-                                            break;
-                                        }
-                                        index2++;
-                                    }
-                                    mListener.onCompanyStaffInvitationRequested(staffList,index2);
-                                    break;
-                                case 3:
-                                    mListener.onCompanyStaffEditRequested(staff);
-                                    break;
-                            }
-                        }
-                    });
+                    showPopup(staff);
                 }
+            }
+        });
+    }
+    private void showPopup(final StaffDTO staff) {
+        popupItemList = new ArrayList<>();
+        PopupItem item1 = new PopupItem(R.drawable.ic_action_location_on, ctx.getString(R.string.send_my_location));
+        PopupItem item2 = new PopupItem(R.drawable.ic_action_email, ctx.getString(R.string.send_message));
+        PopupItem item3 = new PopupItem(R.drawable.ic_action_location_on, ctx.getString(R.string.get_location));
+        popupItemList.add(item1);
+        popupItemList.add(item2);
+        popupItemList.add(item3);
+        final ListPopupWindow pop = new ListPopupWindow(getActivity());
+        LayoutInflater inf = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = inf.inflate(R.layout.hero_image_popup, null);
+        TextView txt = (TextView) v.findViewById(R.id.HERO_caption);
+        txt.setText("To: " + staff.getFullName());
+        ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
+        img.setImageDrawable(Util.getRandomBackgroundImage(ctx));
+
+        pop.setPromptView(v);
+        pop.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
+
+        pop.setAnchorView(txtName);
+        pop.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
+        pop.setModal(true);
+        pop.setWidth(Util.getPopupWidth(getActivity()));
+
+
+        pop.setAdapter(new PopupListIconAdapter(ctx, R.layout.xxsimple_spinner_item,
+                popupItemList, darkColor));
+        pop.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                pop.dismiss();
+                PopupItem item = popupItemList.get(position);
+                if (item.getText().equalsIgnoreCase(ctx.getString(R.string.send_message))) {
+                    txtPerson.setText(staff.getFullName());
+                    paneLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+                }
+                if (item.getText().equalsIgnoreCase(ctx.getString(R.string.send_my_location))) {
+                    List<Integer> mList = new ArrayList<>();
+                    List<Integer> sList = new ArrayList<>();
+                    mList.add(StaffListFragment.this.staff.getStaffID());
+                    mListener.onLocationSendRequired(mList, sList);
+                }
+                if (item.getText().equalsIgnoreCase(ctx.getString(R.string.get_location))) {
+                    getStaffLocationTracks(StaffListFragment.this.staff.getStaffID());
+                }
+
+            }
+        });
+        try {
+            pop.show();
+        } catch (Exception e) {
+            Log.e(LOG, "-- popup failed, probably nullpointer", e);
+        }
+    }
+
+    private void getStaffLocationTracks(Integer staffID) {
+        RequestDTO w = new RequestDTO(RequestDTO.GET_LOCATION_TRACK_BY_STAFF_IN_PERIOD);
+        w.setStaffID(staffID);
+
+        mListener.setBusy(true);
+        NetUtil.sendRequest(getActivity(), w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (response.getLocationTrackerList() != null
+                                && !response.getLocationTrackerList().isEmpty()) {
+                            Intent w = new Intent(getActivity(), MonitorMapActivity.class);
+                            w.putExtra("response", response);
+                            startActivity(w);
+                        } else {
+                            Util.showToast(getActivity(), "Location not available");
+                        }
+                    }
+                });
+
+            }
+
+            @Override
+            public void onError(final String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Util.showErrorToast(getActivity(),message);
+                    }
+                });
+            }
+
+            @Override
+            public void onWebSocketClose() {
+
             }
         });
     }
@@ -221,16 +409,12 @@ public class StaffListFragment extends Fragment
 
     @Override
     public void animateHeroHeight() {
-        Util.fadeIn(topView);
-        Util.rotateViewWithDelay(getActivity(),fab,500,1000, new Util.UtilAnimationListener() {
-            @Override
-            public void onAnimationEnded() {
-                Util.flashOnce(icon,300,null);
-            }
-        });
+        Util.expand(hero, 500, null);
 
     }
+
     String pageTitle = "Staff";
+
     @Override
     public void setPageTitle(String title) {
         pageTitle = title;
@@ -241,65 +425,29 @@ public class StaffListFragment extends Fragment
         return pageTitle;
     }
 
-    public void addCompanyStaff( StaffDTO staff) {
-        if (staffList == null) {
-            staffList = new ArrayList<>();
-        }
-        staffList.add(staff);
-//        Collections.sort(monitorList);
-        staffAdapter.notifyDataSetChanged();
-        txtCount.setText("" + staffList.size());
-        Util.preen(txtCount, 300, 4, new Util.UtilAnimationListener() {
-            @Override
-            public void onAnimationEnded() {
-                Util.animateRotationY(txtCount, 500);
-            }
-        });
-        int index = 0;
-        for (StaffDTO s: staffList) {
-            if (s.getStaffID().intValue() == staff.getStaffID().intValue()) {
-                break;
-            }
-            index++;
-        }
-        mListView.setSelection(index);
-
-    }
-
-    public void refreshList( StaffDTO staff) {
-
-        String url = Util.getStaffImageURL(ctx,staff.getStaffID());
-        MemoryCacheUtils.removeFromCache(url, ImageLoader.getInstance().getMemoryCache());
-        DiskCacheUtils.removeFromCache(url, ImageLoader.getInstance().getDiskCache());
-        Log.w("","### refreshList, image removed from caches ... " + staff.getFullName());
-        setList();
-
-        int index = 0;
-        for (StaffDTO c: staffList) {
-            if (staff.getStaffID() == c.getStaffID()) {
-                break;
-            }
-            index++;
-        }
-        if (index < staffList.size()) {
-            mListView.setSelection(index);
-        }
-    }
 
     public interface CompanyStaffListListener {
-        public void onNewCompanyStaff();
-        public void onCompanyStaffInvitationRequested(List<StaffDTO> companyStaffList, int index);
-        public void onCompanyStaffPictureRequested(StaffDTO companyStaff);
-        public void onCompanyStaffEditRequested(StaffDTO companyStaff);
+        void onNewCompanyStaff();
+
+        void setBusy(boolean busy);
+        void onLocationSendRequired(List<Integer> staffList, List<Integer> monitorList);
+
+        void onCompanyStaffInvitationRequested(List<StaffDTO> companyStaffList, int index);
+
+        void onCompanyStaffPictureRequested(StaffDTO companyStaff);
+
+        void onCompanyStaffEditRequested(StaffDTO companyStaff);
 
     }
+
     int primaryColor, darkColor;
+
     @Override
     public void setThemeColors(int primaryColor, int darkColor) {
         this.primaryColor = primaryColor;
         this.darkColor = darkColor;
     }
-    ProjectDTO project;
+
     List<StaffDTO> staffList;
     StaffAdapter staffAdapter;
     static final String LOG = StaffListFragment.class.getSimpleName();

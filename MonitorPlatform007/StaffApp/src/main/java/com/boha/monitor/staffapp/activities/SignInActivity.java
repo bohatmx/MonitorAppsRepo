@@ -42,7 +42,7 @@ import static com.boha.monitor.library.util.Util.showToast;
 public class SignInActivity extends AppCompatActivity {
 
     TextView txtApp, txtEmail, label;
-    EditText ePin;
+    EditText ePin, editEmail;
     Button btnSave;
     Context ctx;
     String email;
@@ -133,8 +133,12 @@ public class SignInActivity extends AppCompatActivity {
             return;
         }
         if (email == null) {
-            showErrorToast(ctx, getString(R.string.select_account));
-            return;
+            if (editEmail.getText().toString().isEmpty()) {
+                showErrorToast(ctx, getString(R.string.select_account));
+                return;
+            } else {
+                email = editEmail.getText().toString();
+            }
         }
         RequestDTO r = new RequestDTO();
         r.setRequestType(RequestDTO.LOGIN_STAFF);
@@ -214,6 +218,7 @@ public class SignInActivity extends AppCompatActivity {
 
     private void setFields() {
         ePin = (EditText) findViewById(R.id.SI_pin);
+        editEmail = (EditText) findViewById(R.id.SI_editEmail);
         txtEmail = (TextView) findViewById(R.id.SI_txtEmail);
         label = (TextView) findViewById(R.id.SI_welcome);
         txtApp = (TextView) findViewById(R.id.SI_app);
@@ -235,7 +240,6 @@ public class SignInActivity extends AppCompatActivity {
                                     public void onItemSelected(int index) {
                                         if (index == 0) {
                                             email = null;
-                                            btnSave.setEnabled(false);
                                         } else {
                                             email = tarList.get(index);
                                             txtEmail.setText(email);

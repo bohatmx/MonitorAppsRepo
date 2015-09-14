@@ -25,6 +25,7 @@ public class ResponseDTO implements Serializable{
     private ChatDTO chat;
     private StaffDTO staff;
     private MonitorDTO monitor;
+    private List<SimpleMessageDTO> simpleMessageList;
     private List<GcmDeviceDTO> gcmDeviceList;
     private List<ChatDTO> chatList;
     private List<LocationTrackerDTO> locationTrackerList;
@@ -178,6 +179,14 @@ public class ResponseDTO implements Serializable{
 
     public void setProjectTaskStatusList(List<ProjectTaskStatusDTO> projectTaskStatusList) {
         this.projectTaskStatusList = projectTaskStatusList;
+    }
+
+    public List<SimpleMessageDTO> getSimpleMessageList() {
+        return simpleMessageList;
+    }
+
+    public void setSimpleMessageList(List<SimpleMessageDTO> simpleMessageList) {
+        this.simpleMessageList = simpleMessageList;
     }
 
     public List<MonitorDTO> getMonitorList() {

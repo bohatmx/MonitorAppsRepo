@@ -1,9 +1,7 @@
 package com.boha.monitor.library.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +13,7 @@ import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -167,30 +163,7 @@ public class ChatMessageListAdapter extends ArrayAdapter<ChatMessageDTO> {
     private void getProfileImage( CircleImageView view, Integer staffID) {
 
         String url = Util.getStaffImageURL(ctx, staffID);
-        Log.w("ChatMessageListAdapter", "## getting image: " + url);
-        ImageLoader.getInstance().displayImage(url,view, new ImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String s, View view) {
-
-            }
-
-            @Override
-            public void onLoadingFailed(String s, View view,  FailReason failReason) {
-                Log.w("ChatMessageListAdapter", "## onLoadingFailed, reason: " + failReason.getType().name());
-            }
-
-            @Override
-            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-//                Log.w("ChatMessageListAdapter", "## onLoadingComplete, s: " + s);
-//                RoundedBitmapDrawable x = RoundedBitmapDrawableFactory.create(ctx.getResources(),bitmap);
-//                item.profileIcon.setImageDrawable(x);
-            }
-
-            @Override
-            public void onLoadingCancelled(String s, View view) {
-                Log.w("ChatMessageListAdapter", "## onLoadingCancelled");
-            }
-        });
+        Picasso.with(ctx).load(url).into(view);
     }
     static final Locale loc = Locale.getDefault();
     static final SimpleDateFormat sdfDate = new SimpleDateFormat("EEEE, dd MMMM yyyy", loc);

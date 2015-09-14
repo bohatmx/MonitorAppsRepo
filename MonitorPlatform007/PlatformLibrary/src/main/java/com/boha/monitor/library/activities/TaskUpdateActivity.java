@@ -11,6 +11,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -25,6 +26,7 @@ import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.fragments.TaskStatusUpdateFragment;
 import com.boha.monitor.library.services.RequestSyncService;
 import com.boha.monitor.library.util.ThemeChooser;
+import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -57,8 +59,10 @@ public class TaskUpdateActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         ThemeChooser.setTheme(this);
         setContentView(R.layout.activity_task_update);
+
         layout = findViewById(R.id.layout);
         ctx = getApplicationContext();
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
@@ -74,8 +78,10 @@ public class TaskUpdateActivity extends AppCompatActivity
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-        android.support.v7.app.ActionBar bar = getSupportActionBar();
-        bar.setTitle(project.getProjectName());
+
+        Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
+                project.getProjectName(), project.getCityName(),
+                ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
 
     }
 
@@ -108,7 +114,7 @@ public class TaskUpdateActivity extends AppCompatActivity
         Log.e("TaskUpdateActivity", "onMonitorPictureRequested, projectTask coming in ");
         //todo Check that the device is near the project location
         projectTaskStatusList.add(projectTaskStatus);
-        if (project.getLatitude() != null && projectTask.getLatitude() != null) {
+        if (projectTask.getLatitude() != null) {
             Location x = new Location(LocationManager.GPS_PROVIDER);
             x.setLatitude(projectTask.getLatitude());
             x.setLongitude(projectTask.getLongitude());

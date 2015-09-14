@@ -6,6 +6,7 @@
 
 package com.boha.monitor.library.dto;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  *
@@ -27,13 +28,15 @@ public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> 
     @Override
     public int compareTo(PhotoUploadDTO another) {
 
-        if (this.dateTaken.intValue() < another.dateTaken.intValue()) {
-            return 1;
-        }
-        if (this.dateTaken.intValue() > another.dateTaken.intValue()) {
+        Date thisDate = new Date(this.dateTaken.longValue());
+        Date anotherDate = new Date(another.dateTaken.longValue());
+
+        if (thisDate.after(anotherDate)) {
             return -1;
         }
-
+        if (thisDate.before(anotherDate)) {
+            return 1;
+        }
         return 0;
     }
 

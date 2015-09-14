@@ -40,7 +40,7 @@ import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +50,7 @@ import java.util.List;
 /**
  * Created by aubreyM on 2014/04/21.
  */
-public class MonitorPictureActivity extends AppCompatActivity {
+public class ProfilePhotoActivity extends AppCompatActivity {
     LayoutInflater inflater;
     TextView txtName;
     MonitorDTO monitor;
@@ -61,7 +61,6 @@ public class MonitorPictureActivity extends AppCompatActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(LOG, "### onCreate............");
         ctx = getApplicationContext();
         ThemeChooser.setTheme(this);
         inflater = getLayoutInflater();
@@ -69,6 +68,7 @@ public class MonitorPictureActivity extends AppCompatActivity {
 
         darkColor = getIntent().getIntExtra("darkColor", R.color.red_900);
         monitor = (MonitorDTO) getIntent().getSerializableExtra("monitor");
+        staff = (StaffDTO) getIntent().getSerializableExtra("staff");
 
         setFields();
         dispatchTakePictureIntent();
@@ -97,7 +97,10 @@ public class MonitorPictureActivity extends AppCompatActivity {
         image = (ImageView) findViewById(R.id.CM_image);
         fab = (FloatingActionButton) findViewById(R.id.CM_fab);
         if (monitor != null) {
-            txtName.setText(monitor.getFirstName() + " " + monitor.getLastName());
+            txtName.setText(monitor.getFullName());
+        }
+        if (staff != null) {
+            txtName.setText(staff.getFullName());
         }
 
         image.setOnClickListener(new View.OnClickListener() {
@@ -136,7 +139,6 @@ public class MonitorPictureActivity extends AppCompatActivity {
                                     setRefreshActionButtonState(false);
                                     if (!list.isEmpty()) {
                                         newPhoto = list.get(0);
-                                        SharedUtil.savePhoto(getApplicationContext(),newPhoto);
                                         onBackPressed();
                                     }
 
@@ -305,8 +307,9 @@ public class MonitorPictureActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
+
         if (newPhoto != null) {
-            Log.d(LOG, "onBackPressed ... picture uploaded");
+            Log.d(LOG, "onBackPressed ... newPhoto: " + newPhoto.getThumbFilePath());
             Intent i = new Intent();
             i.putExtra("photo", newPhoto);
             setResult(RESULT_OK, i);
@@ -363,16 +366,16 @@ public class MonitorPictureActivity extends AppCompatActivity {
                     }
                     try {
                         BitmapFactory.Options options = new BitmapFactory.Options();
-                        options.inSampleSize = 2;
+                        options.inSampleSize = 4;
                         Bitmap bm = BitmapFactory.decodeFile(photoFile.getAbsolutePath(), options);
-                        getLog(bm, "Raw Camera- sample size = 2");
+                        getLog(bm, "Raw Camera- sample size = 4");
                         Matrix matrixThumbnail = new Matrix();
                         matrixThumbnail.postScale(0.6f, 0.6f);
 
                         Bitmap thumb = Bitmap.createBitmap
                                 (bm, 0, 0, bm.getWidth(),
                                         bm.getHeight(), matrixThumbnail, true);
-                        getLog(thumb, "Thumb");
+                        getLog(thumb, "Thumb bitmap");
 
                         currentThumbFile = ImageUtil.getFileFromBitmap(thumb, "t" + System.currentTimeMillis() + ".jpg");
                         bitmapForScreen = ImageUtil.getBitmapFromUri(ctx, Uri.fromFile(currentThumbFile));
@@ -404,18 +407,26 @@ public class MonitorPictureActivity extends AppCompatActivity {
             if (thumbUri != null) {
                 pictureChanged = true;
                 try {
-                    addMonitorPicture(new PhotoCacheUtil.PhotoCacheListener() {
+
+                    addPhotoToCache(new PhotoCacheUtil.PhotoCacheListener() {
                         @Override
                         public void onFileDataDeserialized(ResponseDTO response) {
                         }
 
                         @Override
                         public void onDataCached(final PhotoUploadDTO photo) {
-                            ImageLoader loader = ImageLoader.getInstance();
                             File file = new File(photo.getThumbFilePath());
-                            Uri uri = Uri.fromFile(file);
-                            loader.displayImage(uri.toString(), image);
-                            fab.setVisibility(View.VISIBLE);
+                            Picasso.with(ctx).load(file).into(image);
+                            setRefreshActionButtonState(true);
+                            mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+                                @Override
+                                public void onUploadsComplete(List<PhotoUploadDTO> list) {
+                                    Log.i(LOG, "photos uploaded: " + list.size());
+                                    setRefreshActionButtonState(false);
+                                }
+                            });
+                            newPhoto = photo;
+                            onBackPressed();
 
                         }
 
@@ -476,13 +487,9 @@ public class MonitorPictureActivity extends AppCompatActivity {
     ProjectTaskDTO projectTask;
 
     File photoFile;
-    boolean isUploaded;
-    static final int REQUEST_VIDEO_CAPTURE = 1;
-
-
     File currentThumbFile;
     Uri thumbUri;
-    static final String LOG = MonitorPictureActivity.class.getSimpleName();
+    static final String LOG = ProfilePhotoActivity.class.getSimpleName();
 
     Menu mMenu;
     int type;
@@ -495,10 +502,9 @@ public class MonitorPictureActivity extends AppCompatActivity {
     Bitmap bitmapForScreen;
 
 
-    public void addMonitorPicture(final PhotoCacheUtil.PhotoCacheListener listener) {
-        Log.w(LOG, "**** addMonitorPicture");
+    public void addPhotoToCache(final PhotoCacheUtil.PhotoCacheListener listener) {
+        Log.w(LOG, "**** addPhotoToCache");
         final PhotoUploadDTO dto = getObject();
-
 
         Log.w(LOG, "**** addPhotoToCache starting ... file: " + dto.getThumbFilePath());
         PhotoCacheUtil.cachePhoto(ctx, dto, new PhotoCacheUtil.PhotoCacheListener() {
@@ -525,12 +531,15 @@ public class MonitorPictureActivity extends AppCompatActivity {
     private PhotoUploadDTO getObject() {
         PhotoUploadDTO dto = new PhotoUploadDTO();
         dto.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
-        dto.setPictureType(PhotoUploadDTO.MONITOR_IMAGE);
-        if (SharedUtil.getCompanyStaff(ctx) != null) {
-            dto.setStaffID(SharedUtil.getCompanyStaff(ctx).getStaffID());
+
+
+        if (staff != null) {
+            dto.setStaffID(staff.getStaffID());
+            dto.setPictureType(PhotoUploadDTO.STAFF_IMAGE);
         }
-        if (SharedUtil.getMonitor(ctx) != null) {
-            dto.setMonitorID(SharedUtil.getMonitor(ctx).getMonitorID());
+        if (monitor != null) {
+            dto.setMonitorID(monitor.getMonitorID());
+            dto.setPictureType(PhotoUploadDTO.MONITOR_IMAGE);
         }
 
         dto.setThumbFilePath(currentThumbFile.getAbsolutePath());

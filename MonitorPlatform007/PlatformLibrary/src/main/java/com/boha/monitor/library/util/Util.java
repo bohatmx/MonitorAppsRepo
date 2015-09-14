@@ -10,6 +10,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -45,16 +46,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.boha.monitor.library.adapters.PopupListAdapter;
-import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.platform.library.R;
 import com.google.gson.Gson;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -118,7 +115,60 @@ public class Util {
         view.draw(canvas);
         return bitmap;
     }
+    public static Bitmap decodeSampledBitmap(File file,
+                                                         int reqWidth, int reqHeight) {
 
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        Bitmap out = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+
+
+
+
+        return out;
+    }
+    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+                                                         int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, resId, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(res, resId, options);
+    }
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
     public static void rotateViewWithDelay(
             final Activity activity, final View view,
             final int duration, int delay, final UtilAnimationListener listener) {
@@ -167,7 +217,7 @@ public class Util {
         }, delay);
     }
 
-    public static void setCustomActionBar(Context ctx,
+    public static ImageView setCustomActionBar(Context ctx,
                                           ActionBar actionBar, String text, Drawable image) {
         actionBar.setDisplayShowCustomEnabled(true);
 
@@ -181,6 +231,25 @@ public class Util {
         logo.setImageDrawable(image);
         actionBar.setCustomView(v);
         actionBar.setTitle("");
+        return logo;
+    }
+    public static ImageView setCustomActionBar(Context ctx,
+                                               ActionBar actionBar, String text, String subText, Drawable image) {
+        actionBar.setDisplayShowCustomEnabled(true);
+
+        LayoutInflater inflator = (LayoutInflater)
+                ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = inflator.inflate(R.layout.action_bar_logo, null);
+        TextView txt = (TextView) v.findViewById(R.id.ACTION_BAR_text);
+        TextView sub = (TextView) v.findViewById(R.id.ACTION_BAR_subText);
+        ImageView logo = (ImageView) v.findViewById(R.id.ACTION_BAR_logo);
+        txt.setText(text);
+        sub.setText(subText);
+        //
+        logo.setImageDrawable(image);
+        actionBar.setCustomView(v);
+        actionBar.setTitle("");
+        return logo;
     }
 
     public static void animateHeight(final View view, int maxHeight, int duration) {
@@ -344,114 +413,6 @@ public class Util {
     static final Locale lox = Locale.getDefault();
     static final SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy HH:mm", lox);
 
-    public static void showPopupStaffAddress(final Context ctx, Activity act,
-                                             List<String> list,
-                                             Date date,
-                                             View anchorView, String address,
-                                             final UtilPopupListener listener) {
-        final ListPopupWindow pop = new ListPopupWindow(act);
-        LayoutInflater inf = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = inf.inflate(R.layout.staff_image_popup, null);
-        TextView txt = (TextView) v.findViewById(R.id.HERO_caption);
-        TextView dt = (TextView) v.findViewById(R.id.HERO_date);
-        dt.setText(sdf.format(date));
-        if (address != null) {
-            txt.setText(address);
-        } else {
-            txt.setVisibility(View.INVISIBLE);
-        }
-        final ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
-        img.setImageDrawable(getRandomHeroImage(ctx));
-
-        pop.setPromptView(v);
-        pop.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
-        pop.setAdapter(new PopupListAdapter(ctx, R.layout.xxsimple_spinner_item,
-                list, false));
-        pop.setAnchorView(anchorView);
-        pop.setHorizontalOffset(getPopupHorizontalOffset(act));
-        pop.setModal(true);
-        pop.setWidth(getPopupWidth(act));
-        pop.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                pop.dismiss();
-                if (listener != null) {
-                    listener.onItemSelected(position);
-                }
-            }
-        });
-        try {
-            pop.show();
-        } catch (Exception e) {
-            Log.e(LOG, "popup failed", e);
-        }
-    }
-
-    public static void showPopupStaffImage(final Context ctx, Activity act,
-                                           List<String> list,
-                                           LocationTrackerDTO dto,
-                                           View anchorView, boolean isStaffTracks,
-                                           final UtilPopupListener listener) {
-        final ListPopupWindow pop = new ListPopupWindow(act);
-        LayoutInflater inf = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = inf.inflate(R.layout.staff_image_popup, null);
-        TextView txtName = (TextView) v.findViewById(R.id.HERO_caption);
-        TextView addr = (TextView) v.findViewById(R.id.HERO_address);
-        TextView dt = (TextView) v.findViewById(R.id.HERO_date);
-        dt.setText(sdf.format(dto.getDateTracked()));
-        txtName.setText(dto.getStaffName());
-        addr.setText(dto.getGeocodedAddress());
-        final ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
-        //
-        if (isStaffTracks) {
-            img.setImageDrawable(getRandomHeroImage(ctx));
-        } else {
-            ImageLoader.getInstance().displayImage(getStaffImageURL(ctx, dto.getStaffID()), img, new ImageLoadingListener() {
-                @Override
-                public void onLoadingStarted(String s, View view) {
-
-                }
-
-                @Override
-                public void onLoadingFailed(String s, View view, FailReason failReason) {
-                    img.setImageDrawable(getRandomHeroImage(ctx));
-                }
-
-                @Override
-                public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-
-                }
-
-                @Override
-                public void onLoadingCancelled(String s, View view) {
-                    img.setImageDrawable(getRandomHeroImage(ctx));
-                }
-            });
-        }
-
-        pop.setPromptView(v);
-        pop.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
-        pop.setAdapter(new PopupListAdapter(ctx, R.layout.xxsimple_spinner_item,
-                list, false));
-        pop.setAnchorView(anchorView);
-        pop.setHorizontalOffset(getPopupHorizontalOffset(act));
-        pop.setModal(true);
-        pop.setWidth(getPopupWidth(act));
-        pop.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                pop.dismiss();
-                if (listener != null) {
-                    listener.onItemSelected(position);
-                }
-            }
-        });
-        try {
-            pop.show();
-        } catch (Exception e) {
-            Log.e(LOG, "popup failed", e);
-        }
-    }
 
     public static String getStaffImageURL(Context ctx, Integer staffID) {
         StringBuilder sb = new StringBuilder();

@@ -2,10 +2,9 @@ package com.boha.monitor.library.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +18,8 @@ import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.process.BitmapProcessor;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -63,6 +61,22 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (options == null) {
+            BitmapFactory.Options resizeOptions = new BitmapFactory.Options();
+            resizeOptions.inSampleSize = 2; // decrease size 3 times
+            resizeOptions.inScaled = true;
+            options = new DisplayImageOptions.Builder()
+                    .showImageForEmptyUri(R.drawable.back8)
+                    .decodingOptions(resizeOptions)
+                    .postProcessor(new BitmapProcessor() {
+                        @Override
+                        public Bitmap process(Bitmap bmp) {
+                            return Bitmap.createScaledBitmap(bmp, 300, 300, false);
+                        }
+                    })
+                    .build();
+        }
+
         if (viewType == HEADER) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.project_list_header, parent, false);
             return new HeaderViewHolder(v);
@@ -73,10 +87,10 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     }
 
+    DisplayImageOptions options;
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-
 
         if (holder instanceof HeaderViewHolder) {
             final ProjectDTO p = projectList.get(0);
@@ -89,19 +103,24 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (holder instanceof ProjectViewHolder) {
             final ProjectDTO project = projectList.get(position - 1);
             final ProjectViewHolder pvh = (ProjectViewHolder) holder;
+            pvh.imageLayout.setVisibility(View.GONE);
+            pvh.image.setVisibility(View.GONE);
 
             pvh.txtProjectName.setText(project.getProjectName());
+            pvh.txtNumber.setText("" + (position));
             if (project.getProjectTaskList() != null) {
                 pvh.txtTasks.setText("" + project.getProjectTaskList().size());
 
             } else {
                 pvh.txtTasks.setText("0");
             }
+            List<PhotoUploadDTO> photoList = new ArrayList<>();
             int photoCount = 0, statusCount = 0;
             if (project.getPhotoUploadList() != null) {
                 photoCount = project.getPhotoUploadList().size();
+                photoList.addAll(project.getPhotoUploadList());
             }
-            List<PhotoUploadDTO> photoList = new ArrayList<>();
+
             List<ProjectTaskStatusDTO> statusList = new ArrayList<>();
             for (ProjectTaskDTO task : project.getProjectTaskList()) {
                 if (task.getPhotoUploadList() != null) {
@@ -122,7 +141,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
             pvh.txtPhotos.setText(df.format(photoCount));
             pvh.txtStatusCount.setText(df.format(statusCount));
-
+            setPlaceNames(project, pvh);
 
             pvh.txtStatusCount.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -146,7 +165,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     });
                 }
             });
-            
+
             pvh.iconCamera.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -180,17 +199,6 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     });
                 }
             });
-            pvh.iconGallery.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Util.flashOnce(pvh.iconGallery, 300, new Util.UtilAnimationListener() {
-                        @Override
-                        public void onAnimationEnded() {
-                            listener.onGalleryRequired(project);
-                        }
-                    });
-                }
-            });
             pvh.iconLocation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -202,76 +210,31 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     });
                 }
             });
-            pvh.iconMap.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Util.flashOnce(pvh.iconMap, 300, new Util.UtilAnimationListener() {
-                        @Override
-                        public void onAnimationEnded() {
-                            listener.onMapRequired(project);
-                        }
-                    });
-                }
-            });
-            pvh.iconMessaging.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Util.flashOnce(pvh.iconMessaging, 300, new Util.UtilAnimationListener() {
-                        @Override
-                        public void onAnimationEnded() {
-                            listener.onMessagingRequired(project);
-                        }
-                    });
-                }
-            });
-
-            if (photoList.isEmpty()) {
-                pvh.image.setVisibility(View.GONE);
-            } else {
-                pvh.image.setVisibility(View.VISIBLE);
-                String url = photoList.get(0).getUri();
-                Log.w(LOG, "## photo url: " + url);
-                ImageLoader.getInstance().displayImage(url, pvh.image, new ImageLoadingListener() {
-                    @Override
-                    public void onLoadingStarted(String s, View view) {
-
-                    }
-
-                    @Override
-                    public void onLoadingFailed(String s, View view, FailReason failReason) {
-                        pvh.image.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.under_construction));
-                    }
-
-                    @Override
-                    public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-
-                    }
-
-                    @Override
-                    public void onLoadingCancelled(String s, View view) {
-
-                    }
-                });
-
-            }
 
             if (darkColor != 0) {
                 pvh.iconCamera.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
                 pvh.iconDirections.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
                 pvh.iconDoStatus.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-                pvh.iconGallery.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
                 pvh.iconLocation.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-                pvh.iconMessaging.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-                pvh.iconStatusRpt.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-            }
-            if (project.getLatitude() != null) {
-                pvh.iconLocation.setColorFilter(R.color.green_700, PorterDuff.Mode.SRC_IN);
-            } else {
-                pvh.iconLocation.setColorFilter(R.color.red_700, PorterDuff.Mode.SRC_IN);
             }
 
         }
 
+
+    }
+
+    private void setPlaceNames(ProjectDTO project, ProjectViewHolder pvh) {
+        pvh.txtMuni.setVisibility(View.GONE);
+        pvh.txtCity.setVisibility(View.GONE);
+
+        if (project.getCityName() != null) {
+            pvh.txtCity.setVisibility(View.VISIBLE);
+            pvh.txtCity.setText(project.getCityName());
+        }
+        if (project.getMunicipalityName() != null) {
+            pvh.txtMuni.setVisibility(View.VISIBLE);
+            pvh.txtMuni.setText(project.getMunicipalityName());
+        }
 
     }
 
@@ -286,33 +249,33 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public class ProjectViewHolder extends RecyclerView.ViewHolder {
         protected ImageView image;
-        protected TextView txtProjectName, txtStatusCount, txtLastDate, txtPhotos, txtTasks;
+        protected TextView txtProjectName, txtStatusCount, txtLastDate,
+                txtPhotos, txtTasks, txtCity, txtMuni, txtNumber, txtCaption;
         protected ImageView
                 iconCamera, iconDirections, iconDoStatus,
-                iconMap, iconGallery, iconLocation, iconStatusRpt,
-                iconMessaging;
-        protected int imageIndex;
+                iconLocation;
+        protected View imageLayout;
 
 
         public ProjectViewHolder(View itemView) {
+
             super(itemView);
+            imageLayout = itemView.findViewById(R.id.PI_imageLayout);
             image = (ImageView) itemView.findViewById(R.id.PI_photo);
             txtProjectName = (TextView) itemView.findViewById(R.id.PI_projectName);
             txtPhotos = (TextView) itemView.findViewById(R.id.PI_photoCount);
             txtStatusCount = (TextView) itemView.findViewById(R.id.PI_statusCount);
             txtLastDate = (TextView) itemView.findViewById(R.id.PI_lastStatusDate);
             txtTasks = (TextView) itemView.findViewById(R.id.PI_taskCount);
+            txtCity = (TextView) itemView.findViewById(R.id.PI_cityName);
+            txtMuni = (TextView) itemView.findViewById(R.id.PI_muniName);
+            txtNumber = (TextView) itemView.findViewById(R.id.PI_number);
+            txtCaption = (TextView) itemView.findViewById(R.id.PI_caption);
 
             iconCamera = (ImageView) itemView.findViewById(R.id.PA_camera);
             iconDirections = (ImageView) itemView.findViewById(R.id.PA_directions);
-
             iconDoStatus = (ImageView) itemView.findViewById(R.id.PA_doStatus);
-            iconGallery = (ImageView) itemView.findViewById(R.id.PA_gallery);
             iconLocation = (ImageView) itemView.findViewById(R.id.PA_locations);
-
-            iconMap = (ImageView) itemView.findViewById(R.id.PA_map);
-            iconMessaging = (ImageView) itemView.findViewById(R.id.PA_messaging);
-            iconStatusRpt = (ImageView) itemView.findViewById(R.id.PA_statusReport);
         }
 
     }

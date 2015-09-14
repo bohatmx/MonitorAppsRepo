@@ -2,19 +2,23 @@ package com.boha.monitor.library.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.RequestList;
@@ -23,6 +27,7 @@ import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.RequestCacheUtil;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.text.DecimalFormat;
 
@@ -45,10 +50,11 @@ public class GPSScanFragment extends Fragment implements PageFragment {
     }
 
     public interface GPSScanFragmentListener {
-        public void onStartScanRequested();
-        public void onLocationConfirmed(ProjectDTO projectSite);
-        public void onEndScanRequested();
-        public void onMapRequested(ProjectDTO projectSite);
+         void onStartScanRequested();
+         void onLocationConfirmed(ProjectDTO projectSite);
+         void onEndScanRequested();
+         void onMapRequested(ProjectDTO projectSite);
+        void setBusy(boolean busy);
 
 
     }
@@ -91,6 +97,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
     ImageView imgLogo, hero;
     Context ctx;
     Chronometer chronometer;
+    Button btnScan;
 
     @Override
     public View onCreateView( LayoutInflater inflater, ViewGroup container,
@@ -100,8 +107,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         ctx = getActivity();
         setFields();
 
-        chronometer.setBase(SystemClock.elapsedRealtime());
-        chronometer.start();
+
 
         return view;
     }
@@ -116,9 +122,45 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         imgLogo = (ImageView) view.findViewById(R.id.GPS_imgLogo);
         hero = (ImageView) view.findViewById(R.id.GPS_hero);
         txtName = (TextView) view.findViewById(R.id.GPS_siteName);
+        btnScan = (Button) view.findViewById(R.id.GPS_btnStop);
         chronometer = (Chronometer)view.findViewById(R.id.GPS_chrono);
         gpsMessage.setVisibility(View.GONE);
+        btnScan.setText(ctx.getString(R.string.start_gps));
 
+        hero.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Util.flashOnce(hero, 300, new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        chronometer.setBase(SystemClock.elapsedRealtime());
+                        chronometer.start();
+                        listener.onStartScanRequested();
+                        btnScan.setText(ctx.getString(R.string.stop_gps));
+                    }
+                });
+            }
+        });
+        btnScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.flashOnce(imgLogo, 100, new Util.UtilAnimationListener() {
+                    @Override
+                    public void onAnimationEnded() {
+                        if (btnScan.getText().toString().contains(getString(R.string.start_gps))) {
+                            chronometer.setBase(SystemClock.elapsedRealtime());
+                            chronometer.start();
+                            listener.onStartScanRequested();
+                            btnScan.setText(ctx.getString(R.string.stop_gps));
+                        } else {
+                            chronometer.stop();
+                            listener.onEndScanRequested();
+                            btnScan.setText(ctx.getString(R.string.start_gps));
+                        }
+                    }
+                });
+            }
+        });
 
         imgLogo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,6 +187,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
 
             }
         });
+
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -161,9 +204,31 @@ public class GPSScanFragment extends Fragment implements PageFragment {
 
             }
         });
+        seekBar.setProgress(5);
 
     }
     private void confirmLocation() {
+
+        AlertDialog.Builder d = new AlertDialog.Builder(getActivity());
+        d.setTitle(ctx.getString(R.string.confirm_loc))
+                .setMessage(ctx.getString(R.string.confirm_loc_of)
+                        + project.getProjectName() + "\n" + project.getCityName())
+                .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        sendGPSCoordinates();
+                    }
+                })
+                .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                .show();
+    }
+
+    private void sendGPSCoordinates() {
         final RequestDTO w = new RequestDTO(RequestDTO.CONFIRM_LOCATION);
         w.setProjectID(project.getProjectID());
         w.setLatitude(project.getLatitude());
@@ -261,6 +326,12 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         listener = null;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+        refWatcher.watch(this);
+    }
     Location location;
     static final String LOG = GPSScanFragment.class.getSimpleName();
 

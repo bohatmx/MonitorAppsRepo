@@ -15,11 +15,17 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.boha.monitor.library.activities.MonitorMapActivity;
+import com.boha.monitor.library.activities.SimpleMessagingActivity;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
+import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.dto.SimpleMessageDTO;
+import com.boha.monitor.library.util.CacheUtil;
 import com.boha.platform.library.MainActivity;
 import com.boha.platform.library.R;
 import com.google.android.gms.gcm.GcmListenerService;
 import com.google.gson.Gson;
+
+import java.util.Date;
 
 public class MonitorGCMListenerService extends GcmListenerService {
 
@@ -41,30 +47,106 @@ public class MonitorGCMListenerService extends GcmListenerService {
             Log.d(TAG, "** GCM message From: " + from);
             Log.d(TAG, "Message: " + message);
             sendNotification(message);
-        } else {
-            message = data.getString("track");
+            return;
+        }
+        message = data.getString("track");
+        if (message != null) {
             LocationTrackerDTO m = GSON.fromJson(message, LocationTrackerDTO.class);
-            Log.d(TAG, "** GCM message From: " + from);
+            Log.d(TAG, "** GCM track message From: " + from);
             Log.d(TAG, "Track: " + message);
             sendNotification(m);
+            return;
+        }
+        message = data.getString("simpleMessage");
+        if (message != null) {
+            SimpleMessageDTO m = GSON.fromJson(message, SimpleMessageDTO.class);
+            m.setDateReceived(new Date().getTime());
+            Log.d(TAG, "** GCM simpleMessage From: " + from);
+            Log.d(TAG, "SimpleMessage: " + m.getMessage());
+            cacheMessage(m);
+            return;
         }
 
     }
-    static final int LOCATION_REQUEST_CODE = 7763;
-    private void sendNotification(LocationTrackerDTO message) {
-        Intent intent = new Intent(this, MonitorMapActivity.class);
-        intent.putExtra("track",message);
+    private void cacheMessage(final SimpleMessageDTO message) {
+        CacheUtil.getCachedMessages(getApplicationContext(), new CacheUtil.CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO response) {
+                response.getSimpleMessageList().add(message);
+                CacheUtil.cacheMessages(getApplicationContext(), response, new CacheUtil.CacheUtilListener() {
+                    @Override
+                    public void onFileDataDeserialized(ResponseDTO response) {
+
+                    }
+
+                    @Override
+                    public void onDataCached() {
+                        sendNotification(message);
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onDataCached() {
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+    }
+    private void sendNotification(SimpleMessageDTO simpleMessage) {
+        Intent intent = new Intent(this, SimpleMessagingActivity.class);
+        intent.putExtra("simpleMessage",simpleMessage);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 LOCATION_REQUEST_CODE, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
         String name = "unknown";
-        if (message.getMonitorName() != null) {
-            name = message.getMonitorName();
+        if (simpleMessage.getMonitorName() != null) {
+            name = simpleMessage.getMonitorName();
         }
-        if (message.getStaffName() != null) {
-            name = message.getStaffName();
+        if (simpleMessage.getStaffName() != null) {
+            name = simpleMessage.getStaffName();
+        }
+        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.glasses48)
+                .setContentTitle(name + " - " + "Message received")
+                .setContentText(simpleMessage.getMessage())
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+    }
+
+    static final int LOCATION_REQUEST_CODE = 7763;
+    private void sendNotification(LocationTrackerDTO track) {
+        Intent intent = new Intent(this, MonitorMapActivity.class);
+        intent.putExtra("track",track);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                LOCATION_REQUEST_CODE, intent,
+                PendingIntent.FLAG_ONE_SHOT);
+
+        String name = "unknown";
+        if (track.getMonitorName() != null) {
+            name = track.getMonitorName();
+        }
+        if (track.getStaffName() != null) {
+            name = track.getStaffName();
         }
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)

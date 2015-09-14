@@ -2,20 +2,26 @@ package com.boha.monitor.staffapp.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Resources;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
@@ -37,10 +43,13 @@ import com.boha.monitor.library.activities.GPSActivity;
 import com.boha.monitor.library.activities.MonitorMapActivity;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.activities.PictureActivity;
+import com.boha.monitor.library.activities.ProfilePhotoActivity;
 import com.boha.monitor.library.activities.ProjectMapActivity;
 import com.boha.monitor.library.activities.StatusReportActivity;
 import com.boha.monitor.library.activities.TaskTypeListActivity;
+import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.dto.CompanyDTO;
+import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
@@ -50,13 +59,17 @@ import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.fragments.MonitorListFragment;
 import com.boha.monitor.library.fragments.PageFragment;
 import com.boha.monitor.library.fragments.ProjectListFragment;
-import com.boha.monitor.library.fragments.StaffFragment;
+import com.boha.monitor.library.fragments.SimpleMessageFragment;
 import com.boha.monitor.library.fragments.StaffListFragment;
+import com.boha.monitor.library.fragments.StaffProfileFragment;
 import com.boha.monitor.library.fragments.TaskTypeListFragment;
+import com.boha.monitor.library.services.PhotoUploadService;
+import com.boha.monitor.library.services.RequestSyncService;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.DepthPageTransformer;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
+import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.staffapp.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -66,35 +79,50 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class StaffMainActivity extends AppCompatActivity implements
         MonitorListFragment.MonitorListListener,
-        StaffFragment.StaffFragmentListener,
+        StaffProfileFragment.StaffFragmentListener,
         StaffListFragment.CompanyStaffListListener,
         ProjectListFragment.ProjectListFragmentListener,
+        SimpleMessageFragment.SimpleMessageFragmentListener,
         LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    StaffFragment staffFragment;
+    StaffProfileFragment staffProfileFragment;
     MonitorListFragment monitorListFragment;
     StaffListFragment staffListFragment;
     ProjectListFragment projectListFragment;
+    SimpleMessageFragment simpleMessageFragment;
     ActionBar actionBar;
     Location mLocation;
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        navImage.setImageDrawable(Util.getRandomBackgroundImage(ctx));
+        mDrawerLayout.openDrawer(GravityCompat.START);
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_staff_main);
         ctx = getApplicationContext();
+
+        ThemeChooser.setTheme(this);
         Resources.Theme theme = getTheme();
         TypedValue typedValue = new TypedValue();
         theme.resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
         themeDarkColor = typedValue.data;
         theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
         themePrimaryColor = typedValue.data;
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_staff_main);
 
         actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
@@ -106,11 +134,31 @@ public class StaffMainActivity extends AppCompatActivity implements
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navImage = (ImageView) findViewById(R.id.NAVHEADER_image);
         navText = (TextView) findViewById(R.id.NAVHEADER_text);
-        navText.setText(SharedUtil.getCompany(ctx).getCompanyName());
+        navText.setText(SharedUtil.getCompanyStaff(ctx).getFullName());
+
+        try {
+            Drawable globe = ContextCompat.getDrawable(ctx, R.drawable.ic_action_globe);
+            globe.setColorFilter(themeDarkColor, PorterDuff.Mode.SRC_IN);
+            navigationView.getMenu().getItem(0).setIcon(globe);
+
+            Drawable face = ContextCompat.getDrawable(ctx, R.drawable.ic_action_face);
+            face.setColorFilter(themeDarkColor, PorterDuff.Mode.SRC_IN);
+            navigationView.getMenu().getItem(1).setIcon(face);
+
+            Drawable map = ContextCompat.getDrawable(ctx, R.drawable.ic_action_map);
+            map.setColorFilter(themeDarkColor, PorterDuff.Mode.SRC_IN);
+            navigationView.getMenu().getItem(2).setIcon(map);
+
+            navigationView.getMenu().getItem(3).getSubMenu().getItem(0).setIcon(face);
+            navigationView.getMenu().getItem(3).getSubMenu().getItem(1).setIcon(face);
+
+        } catch (Exception e) {
+            Log.e(LOG, "Problem colorizing menu items");
+        }
 
 
         mPager = (ViewPager) findViewById(R.id.viewpager);
-        mPager.setOffscreenPageLimit(10);
+        mPager.setOffscreenPageLimit(4);
         PagerTitleStrip strip = (PagerTitleStrip) mPager.findViewById(R.id.pager_title_strip);
         strip.setVisibility(View.GONE);
         strip.setBackgroundColor(themeDarkColor);
@@ -140,8 +188,10 @@ public class StaffMainActivity extends AppCompatActivity implements
 
         setMenuDestinations();
         getCache();
-        mDrawerLayout.openDrawer(GravityCompat.START);
-        setTitle("MonPlatform");
+        Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
+                SharedUtil.getCompany(ctx).getCompanyName(), "Project Monitoring",
+                ContextCompat.getDrawable(getApplicationContext(), com.boha.platform.library.R.drawable.glasses48));
+
     }
 
     private void setMenuDestinations() {
@@ -155,6 +205,15 @@ public class StaffMainActivity extends AppCompatActivity implements
                     mPager.setCurrentItem(0, true);
                     return true;
                 }
+                if (menuItem.getItemId() == R.id.nav_messaging) {
+                    mPager.setCurrentItem(3, true);
+                    return true;
+                }
+
+                if (menuItem.getItemId() == R.id.nav_profile) {
+                    mPager.setCurrentItem(4, true);
+                    return true;
+                }
                 if (menuItem.getItemId() == R.id.nav_staff_list) {
                     mPager.setCurrentItem(1, true);
                     return true;
@@ -163,6 +222,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                     mPager.setCurrentItem(2, true);
                     return true;
                 }
+
                 if (menuItem.getItemId() == R.id.nav_projectMaps) {
                     Intent w = new Intent(ctx, ProjectMapActivity.class);
                     w.putExtra("type", ProjectMapActivity.STAFF);
@@ -185,7 +245,6 @@ public class StaffMainActivity extends AppCompatActivity implements
             public void onFileDataDeserialized(ResponseDTO r) {
                 response = r;
                 buildPages();
-                getRemoteStaffData();
             }
 
             @Override
@@ -225,7 +284,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                             public void onDataCached() {
                                 buildPages();
                                 if (r.getProjectList().isEmpty()) {
-                                    Util.showErrorToast(ctx,"Projects have not been assigned yet");
+                                    Util.showErrorToast(ctx, "Projects have not been assigned yet");
                                 }
                             }
 
@@ -260,20 +319,28 @@ public class StaffMainActivity extends AppCompatActivity implements
     private void buildPages() {
         pageFragmentList = new ArrayList<>();
 
-        staffFragment = StaffFragment.newInstance(SharedUtil.getCompanyStaff(ctx));
-        monitorListFragment = MonitorListFragment.newInstance(response.getMonitorList());
+        staffProfileFragment = StaffProfileFragment.newInstance(SharedUtil.getCompanyStaff(ctx));
+        monitorListFragment = MonitorListFragment.newInstance(response.getMonitorList(), MonitorListFragment.STAFF);
         staffListFragment = StaffListFragment.newInstance(response.getStaffList());
         projectListFragment = ProjectListFragment.newInstance(response);
+        simpleMessageFragment = new SimpleMessageFragment();
 
+
+        staffProfileFragment.setThemeColors(themePrimaryColor,themeDarkColor);
+        monitorListFragment.setThemeColors(themePrimaryColor,themeDarkColor);
+        staffListFragment.setThemeColors(themePrimaryColor,themeDarkColor);
+        projectListFragment.setThemeColors(themePrimaryColor,themeDarkColor);
+        simpleMessageFragment.setThemeColors(themePrimaryColor,themeDarkColor);
 
         pageFragmentList.add(projectListFragment);
         pageFragmentList.add(staffListFragment);
         pageFragmentList.add(monitorListFragment);
+        pageFragmentList.add(simpleMessageFragment);
+        pageFragmentList.add(staffProfileFragment);
 
-        adapter = new CompanyPagerAdapter(getSupportFragmentManager());
+        adapter = new StaffPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(adapter);
         mPager.setPageTransformer(true, new DepthPageTransformer());
-//            mPager.setPageTransformer(true, new ZoomPageTransformer());
 
         mPager.setCurrentItem(currentPageIndex, true);
         mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -326,11 +393,19 @@ public class StaffMainActivity extends AppCompatActivity implements
         return true;
     }
 
+    static final int THEME_REQUESTED = 1762;
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
             getRemoteStaffData();
+            return true;
+        }
+        if (id == R.id.action_theme) {
+            Intent w = new Intent(this, ThemeSelectorActivity.class);
+            w.putExtra("darkColor", themeDarkColor);
+            startActivityForResult(w, THEME_REQUESTED);
             return true;
         }
         if (id == R.id.action_help) {
@@ -356,12 +431,12 @@ public class StaffMainActivity extends AppCompatActivity implements
         if (googleApiClient != null) {
             googleApiClient.connect();
         }
-//        Log.i(LOG, "## onStart Bind to PhotoUploadService, RequestService");
-//        Intent intent = new Intent(this, PhotoUploadService.class);
-//        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-//
-//        Intent intentw = new Intent(this, RequestService.class);
-//        bindService(intentw, rConnection, Context.BIND_AUTO_CREATE);
+        Log.i(LOG, "## onStart Bind to PhotoUploadService, RequestService");
+        Intent intent = new Intent(this, PhotoUploadService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
+        Intent intentw = new Intent(this, RequestSyncService.class);
+        bindService(intentw, rConnection, Context.BIND_AUTO_CREATE);
         super.onStart();
     }
 
@@ -372,15 +447,15 @@ public class StaffMainActivity extends AppCompatActivity implements
             googleApiClient.disconnect();
             Log.e(LOG, "### onStop - locationClient disconnecting ");
         }
-//        Log.e(LOG, "## onStop unBind from PhotoUploadService, RequestService");
-//        if (mBound) {
-//            unbindService(mConnection);
-//            mBound = false;
-//        }
-//        if (rBound) {
-//            unbindService(rConnection);
-//            rBound = false;
-//        }
+        Log.e(LOG, "## onStop unBind from PhotoUploadService, RequestService");
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
+        if (rBound) {
+            unbindService(rConnection);
+            rBound = false;
+        }
 
     }
 
@@ -395,7 +470,6 @@ public class StaffMainActivity extends AppCompatActivity implements
         mLocationRequest.setInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setFastestInterval(500);
-        startLocationUpdates();
     }
 
     @Override
@@ -409,12 +483,24 @@ public class StaffMainActivity extends AppCompatActivity implements
                 + " " + location.getLongitude() + " " + location.getAccuracy());
 
         if (location.getAccuracy() <= ACCURACY_THRESHOLD) {
-            this.location = location;
+            mLocation = location;
             stopLocationUpdates();
             mRequestingLocationUpdates = false;
+
             if (directionRequired) {
                 directionRequired = false;
-                onDirectionsRequired(project);
+                Log.i(LOG, "startDirectionsMap ..........");
+                String url = "http://maps.google.com/maps?saddr="
+                        + mLocation.getLatitude() + "," + mLocation.getLongitude()
+                        + "&daddr=" + project.getLatitude() + "," + project.getLongitude() + "&mode=driving";
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                intent.setClassName("com.google.android.apps.maps",
+                        "com.google.android.maps.MapsActivity");
+                startActivity(intent);
+            }
+            if (sendLocation) {
+                sendLocation = false;
+                submitTrack();
             }
 
         }
@@ -446,20 +532,93 @@ public class StaffMainActivity extends AppCompatActivity implements
 
     }
 
+    boolean sendLocation;
+    List<Integer> monitorList, staffList;
     @Override
-    public void onLocationSendRequired(List<Integer> monitorList, List<Integer> staffList) {
+    public void onLocationSendRequired(List<Integer> staffList, List<Integer> monitorList) {
+        sendLocation = true;
+        this.monitorList = monitorList;
+        this.staffList = staffList;
+
+        setBusy(true);
+        startLocationUpdates();
+    }
+    private void submitTrack() {
+        RequestDTO w = new RequestDTO(RequestDTO.SEND_LOCATION);
+        LocationTrackerDTO dto = new LocationTrackerDTO();
+        StaffDTO staff = SharedUtil.getCompanyStaff(ctx);
+
+        dto.setStaffID(staff.getStaffID());
+        dto.setDateTracked(new Date().getTime());
+        dto.setLatitude(mLocation.getLatitude());
+        dto.setLongitude(mLocation.getLongitude());
+        dto.setAccuracy(mLocation.getAccuracy());
+        dto.setStaffName(staff.getFullName());
+        dto.setMonitorList(monitorList);
+        dto.setStaffList(staffList);
+        dto.setGcmDevice(SharedUtil.getGCMDevice(ctx));
+        dto.getGcmDevice().setRegistrationID(null);
+        w.setLocationTracker(dto);
+
+        setBusy(true);
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(ResponseDTO response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setBusy(false);
+                        Util.showToast(ctx, "Location has been sent");
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setBusy(false);
+                    }
+                });
+            }
+
+            @Override
+            public void onWebSocketClose() {
+
+            }
+        });
 
     }
 
 
-    static final int CHECK_FOR_REFRESH = 3121;
+    static final int CHECK_FOR_REFRESH = 3121, STAFF_PICTURE_REQUESTED = 3472;
     boolean companyDataRefreshed;
 
     @Override
     public void onActivityResult(int reqCode, int resCode, Intent data) {
-
+        Log.d(LOG, "onActivityResult reqCode " + reqCode + " resCode " + resCode);
         switch (reqCode) {
-
+            case STAFF_PICTURE_REQUESTED:
+                if (resCode == RESULT_OK) {
+                    PhotoUploadDTO x = (PhotoUploadDTO) data.getSerializableExtra("photo");
+                    SharedUtil.savePhoto(getApplicationContext(),x);
+                    Log.e(LOG,"photo returned uri: " + x.getUri());
+                    staffProfileFragment.setPicture(x);
+                }
+                break;
+            case LOCATION_REQUESTED:
+                if (resCode == RESULT_OK) {
+                    getRemoteStaffData();
+                }
+                break;
+            case THEME_REQUESTED:
+                if (resCode == RESULT_OK) {
+                    finish();
+                    Intent w = new Intent(this, StaffMainActivity.class);
+                    startActivity(w);
+                }
+                break;
             case CHECK_FOR_REFRESH:
                 if (resCode == RESULT_OK) {
                     ResponseDTO x = (ResponseDTO) data.getSerializableExtra("response");
@@ -475,12 +634,24 @@ public class StaffMainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onStaffAdded(StaffDTO companyStaff) {
+    public void setBusy(boolean busy) {
+        setRefreshActionButtonState(busy);
+    }
+
+    @Override
+    public void onStaffPictureRequired(StaffDTO staff) {
+        Intent w = new Intent(this, ProfilePhotoActivity.class);
+        w.putExtra("staff", staff);
+        startActivityForResult(w, STAFF_PICTURE_REQUESTED);
+    }
+
+    @Override
+    public void onStaffAdded(StaffDTO staff) {
 
     }
 
     @Override
-    public void onStaffUpdated(StaffDTO companyStaff) {
+    public void onStaffUpdated(StaffDTO staff) {
 
     }
 
@@ -493,6 +664,8 @@ public class StaffMainActivity extends AppCompatActivity implements
     public void onNewCompanyStaff() {
 
     }
+
+
 
     @Override
     public void onCompanyStaffInvitationRequested(List<StaffDTO> companyStaffList, int index) {
@@ -537,9 +710,29 @@ public class StaffMainActivity extends AppCompatActivity implements
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
         activity = this;
         if (project.getLatitude() != null) {
-            Intent w = new Intent(this, MonitorMapActivity.class);
-            w.putExtra("project", project);
-            startActivity(w);
+            AlertDialog.Builder c = new AlertDialog.Builder(this);
+            c.setTitle("Project Location")
+                    .setMessage("Do you want to update the location of the project?\n\n"
+                            + project.getProjectName() +
+                            "\n\nNo takes you to a map")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent w = new Intent(activity, GPSActivity.class);
+                            w.putExtra("project", project);
+                            startActivityForResult(w, LOCATION_REQUESTED);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent w = new Intent(activity, MonitorMapActivity.class);
+                            w.putExtra("project", project);
+                            startActivity(w);
+                        }
+                    })
+                    .show();
+
             return;
         }
 
@@ -575,20 +768,10 @@ public class StaffMainActivity extends AppCompatActivity implements
             Util.showErrorToast(ctx, "Project has not been located yet!");
             return;
         }
-        if (mLocation == null) {
-            directionRequired = true;
-            this.project = project;
-            startLocationUpdates();
-            return;
-        }
-        Log.i(LOG, "startDirectionsMap ..........");
-        String url = "http://maps.google.com/maps?saddr="
-                + mLocation.getLatitude() + "," + mLocation.getLongitude()
-                + "&daddr=" + project.getLatitude() + "," + project.getLongitude() + "&mode=driving";
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        intent.setClassName("com.google.android.apps.maps",
-                "com.google.android.maps.MapsActivity");
-        startActivity(intent);
+        directionRequired = true;
+        this.project = project;
+        startLocationUpdates();
+
     }
 
     @Override
@@ -622,9 +805,9 @@ public class StaffMainActivity extends AppCompatActivity implements
     /**
      * Adapter to manage fragments in view pager
      */
-    private static class CompanyPagerAdapter extends FragmentStatePagerAdapter {
+    private static class StaffPagerAdapter extends FragmentStatePagerAdapter {
 
-        public CompanyPagerAdapter(FragmentManager fm) {
+        public StaffPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -659,10 +842,70 @@ public class StaffMainActivity extends AppCompatActivity implements
         }
     }
 
+    boolean mBound, rBound;
+    PhotoUploadService mService;
+    RequestSyncService rService;
+
+
+    private ServiceConnection rConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            Log.w(LOG, "## RequestSyncService ServiceConnection onServiceConnected");
+            RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
+            rService = binder.getService();
+            rBound = true;
+            rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
+                @Override
+                public void onTasksSynced(int goodResponses, int badResponses) {
+                    Log.i(LOG, "## onTasksSynced, goodResponses: " + goodResponses + " badResponses: " + badResponses);
+                }
+
+                @Override
+                public void onError(String message) {
+                    Log.e(LOG, "Error with sync: " + message);
+                }
+            });
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.w(LOG, "## RequestSyncService onServiceDisconnected");
+            mBound = false;
+        }
+    };
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            Log.w(LOG, "## PhotoUploadService ServiceConnection onServiceConnected");
+            PhotoUploadService.LocalBinder binder = (PhotoUploadService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+            mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+                @Override
+                public void onUploadsComplete(List<PhotoUploadDTO> list) {
+                    Log.w(LOG, "$$$ onUploadsComplete, list: " + list.size());
+                }
+            });
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.w(LOG, "## PhotoUploadService onServiceDisconnected");
+            mBound = false;
+        }
+    };
+
+
     static final String LOG = StaffMainActivity.class.getSimpleName();
     static final int ACCURACY_THRESHOLD = 20;
     private DrawerLayout mDrawerLayout;
-    CompanyPagerAdapter adapter;
+    StaffPagerAdapter adapter;
     Context ctx;
     int currentPageIndex;
     Location mCurrentLocation;
@@ -678,7 +921,6 @@ public class StaffMainActivity extends AppCompatActivity implements
     boolean goToAlerts;
     ImageView navImage;
     TextView navText;
-    Location location;
     NavigationView navigationView;
     Menu mMenu;
     CompanyDTO company;

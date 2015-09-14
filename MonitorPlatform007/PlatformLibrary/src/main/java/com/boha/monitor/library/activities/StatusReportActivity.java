@@ -2,6 +2,7 @@ package com.boha.monitor.library.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -9,6 +10,8 @@ import android.view.MenuItem;
 
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.fragments.StatusReportFragment;
+import com.boha.monitor.library.util.ThemeChooser;
+import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
 public class StatusReportActivity extends AppCompatActivity
@@ -19,14 +22,18 @@ StatusReportFragment statusReportFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeChooser.setTheme(this);
+
         super.onCreate(savedInstanceState);
-        Log.e(LOG, "######### onCreate");
         setContentView(R.layout.activity_status_report);
         statusReportFragment = (StatusReportFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
         statusReportFragment.setProject(project);
 
-        setTitle(project.getProjectName());
+
+        Util.setCustomActionBar(getApplicationContext(),getSupportActionBar(),
+                project.getProjectName(), project.getCityName(),
+                ContextCompat.getDrawable(getApplicationContext(),R.drawable.glasses48));
     }
 
 

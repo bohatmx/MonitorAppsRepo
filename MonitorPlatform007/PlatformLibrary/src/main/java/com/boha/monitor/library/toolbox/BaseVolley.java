@@ -221,6 +221,8 @@ public class BaseVolley {
                         Log.e(LOG, "onErrorResponse: Retrying after timeout error ...retries = " + retries);
                         requestQueue.add(bohaRequest);
                         return;
+                    } else {
+                        bohaVolleyListener.onVolleyError(error);
                     }
                 }
                 if (error instanceof NetworkError) {
@@ -236,12 +238,12 @@ public class BaseVolley {
                         Log.e(LOG, "onErrorResponse: Retrying after NetworkError ...retries = " + retries);
                         requestQueue.add(bohaRequest);
                         return;
+                    } else {
+                        bohaVolleyListener.onVolleyError(error);
                     }
 
-                } else {
-                    Log.e(LOG, ctx.getResources().getString(
-                            R.string.comms_interrupt));
                 }
+
                 bohaVolleyListener.onVolleyError(error);
             }
         };
@@ -263,7 +265,7 @@ public class BaseVolley {
     protected ImageLoader imageLoader;
     protected static String suff;
     static final String LOG = "BaseVolley";
-    static final int MAX_RETRIES = 10, BACK_OFF_MULTIPLIER = 2;
+    static final int MAX_RETRIES = 2, BACK_OFF_MULTIPLIER = 2;
     static final long SLEEP_TIME = 3000;
 
 

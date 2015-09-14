@@ -14,12 +14,14 @@ import android.widget.ListPopupWindow;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.PopupMonitorListAdapter;
 import com.boha.monitor.library.dto.ChatMessageDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -179,6 +181,12 @@ public class MessagingFragment extends Fragment implements PageFragment {
         mListener = null;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+        refWatcher.watch(this);
+    }
     @Override
     public void animateHeroHeight() {
         hero.setImageDrawable(Util.getRandomBackgroundImage(getActivity()));

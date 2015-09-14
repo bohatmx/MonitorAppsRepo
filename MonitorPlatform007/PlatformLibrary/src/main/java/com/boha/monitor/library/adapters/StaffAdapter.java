@@ -1,7 +1,6 @@
 package com.boha.monitor.library.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +11,7 @@ import android.widget.TextView;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -94,31 +91,13 @@ public class StaffAdapter extends ArrayAdapter<StaffDTO> {
             }
         });
         Statics.setRobotoFontLight(ctx, item.txtName);
-        item.photo.setAlpha(0.4f);
+        item.photo.setAlpha(0.3f);
         if (p.getPhotoUploadList() != null && !p.getPhotoUploadList().isEmpty()) {
+            item.photo.setAlpha(1.0f);
             String url = p.getPhotoUploadList().get(0).getUri();
-            ImageLoader.getInstance().displayImage(url,item.photo, new ImageLoadingListener() {
-                @Override
-                public void onLoadingStarted(String s, View view) {
-
-                }
-
-                @Override
-                public void onLoadingFailed(String s, View view, FailReason failReason) {
-                    item.photo.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.boy));
-                    item.photo.setAlpha(0.4f);
-                }
-
-                @Override
-                public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-                    item.photo.setAlpha(1.0f);
-                }
-
-                @Override
-                public void onLoadingCancelled(String s, View view) {
-
-                }
-            });
+            Picasso.with(ctx).load(url).into(item.photo);
+        } else {
+            item.photo.setImageDrawable(ContextCompat.getDrawable(ctx,R.drawable.black_woman));
         }
 
 

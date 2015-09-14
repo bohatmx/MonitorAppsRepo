@@ -1,6 +1,7 @@
 package com.boha.monitor.library.activities;
 
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,7 @@ import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.dto.TaskTypeDTO;
 import com.boha.monitor.library.fragments.ProjectTaskListFragment;
 import com.boha.monitor.library.util.ThemeChooser;
+import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
 import java.util.ArrayList;
@@ -42,8 +44,9 @@ public class ProjectTaskListActivity extends AppCompatActivity implements Projec
         projectTaskListFragment.setTaskType(taskType);
         projectTaskListFragment.setProject(project);
 
-        android.support.v7.app.ActionBar bar = getSupportActionBar();
-        bar.setTitle(project.getProjectName());
+        Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
+                project.getProjectName(), project.getCityName(),
+                ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
     }
 
     @Override

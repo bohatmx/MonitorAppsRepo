@@ -1,15 +1,20 @@
 package com.boha.monitor.library.activities;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.adapters.PhotoAdapter;
@@ -20,10 +25,14 @@ import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.fragments.PageFragment;
 import com.boha.monitor.library.fragments.PhotoFragment;
 import com.boha.monitor.library.fragments.PhotoGridFragment;
+import com.boha.monitor.library.util.ThemeChooser;
+import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class PhotoListActivity extends AppCompatActivity implements PhotoAdapter.PictureListener,
@@ -38,22 +47,32 @@ public class PhotoListActivity extends AppCompatActivity implements PhotoAdapter
     ViewPager mPager;
     Context ctx;
     TextView txtCaption;
-    int index;
+    int index, themeDarkColor, themePrimaryColor;
     ProjectDTO project;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeChooser.setTheme(this);
+        Resources.Theme theme = getTheme();
+        TypedValue typedValue = new TypedValue();
+        theme.resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
+        themeDarkColor = typedValue.data;
+        theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        themePrimaryColor = typedValue.data;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo);
         ctx = getApplicationContext();
         mPager = (ViewPager)findViewById(R.id.pager);
-
 
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
         response = (ResponseDTO) getIntent().getSerializableExtra("response");
         index = getIntent().getIntExtra("index", 0);
 
         if (project != null) {
-            setTitle(project.getProjectName());
+            Util.setCustomActionBar(getApplicationContext(),
+                    getSupportActionBar(), project.getProjectName(),
+                    project.getCityName(),
+                    ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
             response = new ResponseDTO();
             response.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
             if (project.getPhotoUploadList() != null) {
@@ -82,12 +101,38 @@ public class PhotoListActivity extends AppCompatActivity implements PhotoAdapter
 
     }
 
+    static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
     private void buildPhotoPages() {
         if (pageFragmentList == null) {
             pageFragmentList = new ArrayList<>();
         }
 
         Collections.sort(response.getPhotoUploadList());
+        StringBuilder sb = new StringBuilder();
+        if (!response.getPhotoUploadList().isEmpty()) {
+            Date latest = new Date(response.getPhotoUploadList().get(0).getDateTaken().longValue());
+            PhotoUploadDTO oldestPhoto = response.getPhotoUploadList().get(response.getPhotoUploadList().size() - 1);
+            Date oldest = new java.sql.Date(oldestPhoto.getDateTaken().longValue());
+
+            sb.append("Photos ").append(sdf.format(oldest));
+            sb.append(" to ").append(sdf.format(latest));
+            //getSupportActionBar().setSubtitle(sb.toString());
+
+        }
+        String text = "Photo Updates";
+        if (project != null) {
+            ImageView logo = Util.setCustomActionBar(ctx, getSupportActionBar(),
+                    project.getProjectName(),
+                    sb.toString(),
+                    ContextCompat.getDrawable(ctx, R.drawable.glasses48));
+            logo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.e("PhotoListActivity", "### logo clicked");
+
+                }
+            });
+        }
         pageFragmentList.add(PhotoGridFragment.newInstance(response));
 
         int number = 0;

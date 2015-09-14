@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -18,11 +19,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -77,11 +80,19 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     TextView txtProject, txtTaskName;
     MonitorDTO monitor;
     Long localID;
-    int darkColor;
+    int darkColor,themeDarkColor,themePrimaryColor;
     ProjectTaskStatusDTO projectTaskStatus;
     RadioButton radioPhoto, radioVideo;
 
     public void onCreate(Bundle savedInstanceState) {
+        ThemeChooser.setTheme(this);
+        Resources.Theme theme = getTheme();
+        TypedValue typedValue = new TypedValue();
+        theme.resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
+        themeDarkColor = typedValue.data;
+        theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        themePrimaryColor = typedValue.data;
+
         super.onCreate(savedInstanceState);
         Log.d(LOG, "### onCreate............");
         ctx = getApplicationContext();
@@ -118,37 +129,47 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                 if (staff != null) {
                     txtProject.setText(staff.getFirstName() + " " + staff.getLastName());
                     dispatchTakePictureIntent();
+                    Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
+                            staff.getFullName() , "Profile Photo",
+                            ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
+
                 }
                 break;
             case PhotoUploadDTO.PROJECT_IMAGE:
                 project = (ProjectDTO) getIntent().getSerializableExtra("project");
                 if (project != null) {
                     txtProject.setText(project.getProjectName());
-                    setTitle(project.getProjectName());
+                    Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
+                            project.getProjectName() ,project.getCityName(),
+                            ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
                 }
                 break;
 
             case PhotoUploadDTO.TASK_IMAGE:
                 projectTask = (ProjectTaskDTO) getIntent().getSerializableExtra("projectTask");
-                projectTaskStatus = (ProjectTaskStatusDTO)getIntent().getSerializableExtra("projectTaskStatus");
+                projectTaskStatus = (ProjectTaskStatusDTO) getIntent().getSerializableExtra("projectTaskStatus");
                 if (projectTask != null) {
                     txtProject.setText(projectTask.getProjectName());
                     txtTaskName.setText(projectTask.getTask().getTaskName());
-                    setTitle(projectTask.getTask().getTaskName());
+                    Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
+                            projectTask.getProjectName() ,projectTask.getTask().getTaskName(),
+                            ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
                 }
                 break;
             default:
                 projectTask = (ProjectTaskDTO) getIntent().getSerializableExtra("projectTask");
-                projectTaskStatus = (ProjectTaskStatusDTO)getIntent().getSerializableExtra("projectTaskStatus");
+                projectTaskStatus = (ProjectTaskStatusDTO) getIntent().getSerializableExtra("projectTaskStatus");
                 if (projectTask != null) {
                     txtProject.setText(projectTask.getProjectName());
                     txtTaskName.setText(projectTask.getTask().getTaskName());
-                    setTitle(projectTask.getTask().getTaskName());
+                    Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
+                            projectTask.getProjectName() ,projectTask.getTask().getTaskName(),
+                            ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
+
                     break;
                 }
                 throw new UnsupportedOperationException("No data passed to activity");
         }
-
 
 
         setPhotoList();
@@ -376,7 +397,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                 vcc.addVideo(clip);
                 CacheVideoUtil.cacheVideo(ctx, vcc);
             } catch (Exception e) {
-                Log.e(LOG,"Video file save failed", e);
+                Log.e(LOG, "Video file save failed", e);
                 return 9;
             }
 
@@ -586,15 +607,14 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                     }
                     try {
                         BitmapFactory.Options options = new BitmapFactory.Options();
-                        options.inSampleSize = 2;
+                        options.inSampleSize = 4;
                         Bitmap bm = BitmapFactory.decodeFile(photoFile.getAbsolutePath(), options);
-                        getLog(bm, "Raw Camera- sample size = 2");
+                        getLog(bm, "Raw Camera- sample size = 4");
                         Matrix matrixThumbnail = new Matrix();
                         matrixThumbnail.postScale(0.6f, 0.6f);
 
                         Bitmap thumb = Bitmap.createBitmap
-                                (bm, 0, 0, bm.getWidth(),
-                                        bm.getHeight(), matrixThumbnail, true);
+                                (bm, 0, 0, bm.getWidth(), bm.getHeight(), matrixThumbnail, true);
                         getLog(thumb, "Thumb");
 
                         currentThumbFile = ImageUtil.getFileFromBitmap(thumb, "t" + System.currentTimeMillis() + ".jpg");
@@ -700,7 +720,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
                     @Override
                     public void onDataCached(PhotoUploadDTO photo) {
-                        photoList.add(0,photo);
+                        photoList.add(0, photo);
                         photoAdapter.notifyDataSetChanged();
                     }
 
@@ -726,7 +746,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         Collections.sort(photoList);
         photoAdapter = new PhotoAdapter(photoList, PhotoAdapter.THUMB, getApplicationContext(), new PhotoAdapter.PictureListener() {
             @Override
-            public void onPictureClicked(PhotoUploadDTO photo,int position) {
+            public void onPictureClicked(PhotoUploadDTO photo, int position) {
                 Log.e(LOG, "onPictureClicked: " + position);
                 Intent w = new Intent(ctx, PhotoListActivity.class);
                 w.putExtra("index", position);
@@ -740,6 +760,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         });
         mRecyclerView.setAdapter(photoAdapter);
     }
+
     List<String> currentSessionPhotos = new ArrayList<>();
 
     private void getLog(Bitmap bm, String which) {
