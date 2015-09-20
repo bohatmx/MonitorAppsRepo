@@ -15,15 +15,39 @@ import java.util.List;
  */
 public class TaskDTO implements Serializable {
     private static final long serialVersionUID = 1L;
-    private Integer taskID;
-    private String taskName;
+    private Integer taskID, companyID;
+    private String taskName, programmeName, taskTypeName;
     private Integer taskNumber;
     private String description;
     private List<ProjectTaskDTO> projectTaskList;
-    private Integer companyID, taskTypeID;
     private List<SubTaskDTO> subTaskList;
+    private Integer taskTypeID, programmeID;
 
     public TaskDTO() {
+    }
+
+    public String getProgrammeName() {
+        return programmeName;
+    }
+
+    public void setProgrammeName(String programmeName) {
+        this.programmeName = programmeName;
+    }
+
+    public String getTaskTypeName() {
+        return taskTypeName;
+    }
+
+    public void setTaskTypeName(String taskTypeName) {
+        this.taskTypeName = taskTypeName;
+    }
+
+    public Integer getProgrammeID() {
+        return programmeID;
+    }
+
+    public void setProgrammeID(Integer programmeID) {
+        this.programmeID = programmeID;
     }
 
     public List<SubTaskDTO> getSubTaskList() {

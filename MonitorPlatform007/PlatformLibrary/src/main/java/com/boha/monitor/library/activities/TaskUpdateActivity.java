@@ -170,6 +170,16 @@ public class TaskUpdateActivity extends AppCompatActivity
     }
 
     @Override
+    public void onProjectTaskCameraRequested(ProjectTaskDTO projectTask) {
+
+    }
+
+    @Override
+    public void onStatusComplete(ProjectTaskDTO projectTask) {
+
+    }
+
+    @Override
     public void setBusy(boolean busy) {
         setRefreshActionButtonState(busy);
     }

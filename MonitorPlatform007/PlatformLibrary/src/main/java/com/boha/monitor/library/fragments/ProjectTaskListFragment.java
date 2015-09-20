@@ -3,6 +3,7 @@ package com.boha.monitor.library.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,11 +14,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.boha.monitor.library.activities.MonApp;
-import com.boha.monitor.library.adapters.TaskAdapter;
+import com.boha.monitor.library.adapters.ProjectTaskAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.TaskTypeDTO;
-import com.boha.monitor.library.util.SpacesItemDecoration;
+import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.platform.library.R;
 import com.squareup.leakcanary.RefWatcher;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
@@ -33,39 +34,39 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
     ProjectDTO project;
     TaskTypeDTO taskType;
     private View view;
-    private TextView txtProject, txtCount;
+    private TextView txtTaskType, txtCount;
     private RecyclerView mRecyclerView;
     private List<ProjectTaskDTO> projectTaskList;
-    private TaskAdapter taskAdapter;
+    private ProjectTaskAdapter projectTaskAdapter;
     static final String LOG = ProjectTaskListFragment.class.getSimpleName();
 
-    public void setProject(ProjectDTO project) {
-        this.project = project;
-        if (project == null) {
-            return;
-        }
-
-
-    }
 
     private void buildList() {
         projectTaskList = project.getProjectTaskList();
-        List<ProjectTaskDTO> list = new ArrayList<>();
-        for (ProjectTaskDTO pt: projectTaskList) {
-            if (pt.getTask().getTaskTypeID().intValue() == taskType.getTaskTypeID().intValue()) {
-                list.add(pt);
+        if (taskType != null) {
+            List<ProjectTaskDTO> list = new ArrayList<>();
+            for (ProjectTaskDTO pt : projectTaskList) {
+                if (pt.getTask().getTaskTypeID().intValue() == taskType.getTaskTypeID().intValue()) {
+                    list.add(pt);
+                }
             }
+
+            projectTaskList = list;
         }
-        projectTaskList = list;
         Log.i(LOG,"++ project has been set");
         if (view != null) {
             setList();
         } else {
-            Log.e(LOG,"$%#$## WTF?");
+            Log.e(LOG, "$%#$## WTF?");
         }
     }
     public void setTaskType(TaskTypeDTO taskType) {
         this.taskType = taskType;
+
+        if (txtTaskType != null) {
+            txtTaskType.setText(taskType.getTaskTypeName());
+            buildList();
+        }
     }
 
     public static ProjectTaskListFragment newInstance(ProjectDTO project) {
@@ -93,11 +94,11 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
         view = inflater.inflate(R.layout.fragment_project_task_list, container, false);
         Log.i(LOG,"++ onCreateView");
         txtCount = (TextView)view.findViewById(R.id.PRH_count);
-        txtProject= (TextView)view.findViewById(R.id.PRH_programme);
+        txtTaskType = (TextView)view.findViewById(R.id.PRH_programme);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getActivity())
-                .color(getResources().getColor(R.color.blue_gray_500))
+                .color(ContextCompat.getColor(getActivity(), R.color.blue_gray_500))
                 .sizeResId(R.dimen.mon_divider)
                 .marginResId(R.dimen.mon_padding, R.dimen.mon_padding)
                 .build());
@@ -105,13 +106,13 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
         mRecyclerView.setItemAnimator(new SlideInLeftAnimator());
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         GridLayoutManager glm = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, true);
-        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.mon_divider_small);
-        mRecyclerView.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
-        mRecyclerView.setHasFixedSize(false);
+        mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
         mRecyclerView.setLayoutManager(llm);
         mRecyclerView.setHasFixedSize(true);
         if (taskType != null) {
-            txtProject.setText(taskType.getTaskTypeName());
+            txtTaskType.setText(taskType.getTaskTypeName());
+        } else {
+            txtTaskType.setText("");
         }
 
 
@@ -131,16 +132,16 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
             return;
         }
 
-        taskAdapter = new TaskAdapter(projectTaskList, darkColor, getActivity(), new TaskAdapter.TaskListener() {
+        projectTaskAdapter = new ProjectTaskAdapter(projectTaskList, darkColor, getActivity(), new ProjectTaskAdapter.TaskListener() {
             @Override
             public void onTaskNameClicked(ProjectTaskDTO projTask, int position) {
                 projectTask = projTask;
-                mListener.onStatusUpdateRequested(projTask,position);
+                mListener.onStatusUpdateRequested(projectTask,position);
             }
 
 
         });
-        mRecyclerView.setAdapter(taskAdapter);
+        mRecyclerView.setAdapter(projectTaskAdapter);
 
     }
     private ProjectTaskDTO projectTask;
@@ -188,7 +189,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
         for (ProjectTaskDTO x: projectTaskList) {
             if (x.getProjectTaskID().intValue() == projectTask.getProjectTaskID().intValue()) {
                 x = projectTask;
-                taskAdapter.notifyDataSetChanged();
+                projectTaskAdapter.notifyDataSetChanged();
                 break;
             }
         }

@@ -19,6 +19,7 @@ import com.boha.monitor.library.adapters.ProjectAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.SharedUtil;
+import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.platform.library.R;
 import com.squareup.leakcanary.RefWatcher;
 
@@ -77,8 +78,10 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_project_list, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity(),
+                LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(llm);
+        mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
         mRecyclerView.setHasFixedSize(true);
 
         setList();
@@ -94,19 +97,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             Log.e(LOG,"--- projectList is NULL");
             return;
         }
-        Integer pID = SharedUtil.getLastProjectID(getActivity());
 
-        int index = 0;
-        boolean isFound = false;
-        if (pID != null) {
-            for (ProjectDTO x : projectList) {
-                if (x.getProjectID().intValue() == pID.intValue()) {
-                    isFound = true;
-                    break;
-                }
-                index++;
-            }
-        }
         projectAdapter = new ProjectAdapter(projectList, getActivity(),
                 darkColor, new ProjectListFragmentListener() {
             @Override
@@ -160,7 +151,19 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             }
         });
         mRecyclerView.setAdapter(projectAdapter);
+        Integer pID = SharedUtil.getLastProjectID(getActivity());
 
+        int index = 0;
+        boolean isFound = false;
+        if (pID != null) {
+            for (ProjectDTO x : projectList) {
+                if (x.getProjectID().intValue() == pID.intValue()) {
+                    isFound = true;
+                    break;
+                }
+                index++;
+            }
+        }
         if (index == 0) return;
         if (isFound) {
             if (index + 1 < projectList.size()) {
@@ -169,7 +172,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                 mRecyclerView.scrollToPosition(index);
             }
         }
-
 
     }
 

@@ -25,23 +25,11 @@
                 style="@style/Title1TextStyleWhite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
+                android:layout_alignParentTop="true"
                 android:layout_margin="@dimen/mon_margin"
-                android:layout_marginRight="@dimen/mon_margin"
                 android:text="@string/monitor" />
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/FMP_personImage"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_margin="@dimen/mon_padding"
-                android:layout_marginRight="@dimen/mon_margin"
-                android:scaleType="centerCrop"
-                android:src="@drawable/black_woman"
-                app:border_color="@color/white"
-                app:border_width="1dp" />
+
 
         </RelativeLayout>
 
@@ -52,19 +40,12 @@
             android:layout_below="@id/FMD_topLayout"
             android:padding="@dimen/mon_margin">
 
-            <ImageView
-                android:id="@+id/FMP_iconCamera"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_alignParentRight="true"
-                android:src="@drawable/ic_action_camera"
-                android:visibility="gone" />
+
 
             <RelativeLayout
                 android:id="@+id/box1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/FMP_iconCamera"
                 android:layout_marginTop="@dimen/mon_wide">
 
                 <ImageView
@@ -242,6 +223,18 @@
                 android:layout_marginTop="@dimen/mon_wider"
                 android:text="Save Data" />
         </RelativeLayout>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/FMP_personImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="100dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/mon_margin"
+            android:scaleType="centerCrop"
+            android:src="@drawable/black_woman"
+            app:border_color="@color/white"
+            app:border_width="1dp" />
 
     </RelativeLayout>
 </ScrollView>

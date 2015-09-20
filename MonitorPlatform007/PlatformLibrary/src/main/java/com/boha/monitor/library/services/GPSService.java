@@ -154,7 +154,7 @@ public class GPSService extends Service implements LocationListener,
             CacheUtil.addLocationTrack(getApplicationContext(), dto, new CacheUtil.AddLocationTrackerListener() {
                 @Override
                 public void onLocationTrackerAdded(ResponseDTO response) {
-                    Log.d(LOG, "onLocationTrackerAdded, tracks: " + response.getLocationTrackerList().size());
+                    Log.i(LOG, "onLocationTrackerAdded, tracks: " + response.getLocationTrackerList().size());
                     locationTrackerList = response.getLocationTrackerList();
                     index = 0;
                     if (!WebCheck.checkNetworkAvailability(getApplicationContext()).isNetworkUnavailable()) {

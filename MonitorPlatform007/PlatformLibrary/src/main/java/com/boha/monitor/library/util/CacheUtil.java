@@ -8,6 +8,7 @@ import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -199,6 +200,11 @@ public class CacheUtil {
                     stream = context.openFileInput(JSON_TRACKER);
                     String json = getStringFromInputStream(stream);
                     ResponseDTO response = gson.fromJson(json, ResponseDTO.class);
+                    cacheUtilListener.onFileDataDeserialized(response);
+                } catch (JsonSyntaxException e) {
+                    Log.e(LOG, "Error getting track cache: " + e.getMessage());
+                    ResponseDTO response = new ResponseDTO();
+                    response.setLocationTrackerList(new ArrayList<LocationTrackerDTO>());
                     cacheUtilListener.onFileDataDeserialized(response);
                 } catch (IOException e) {
                     Log.e(LOG, "## cache not found, starting new cache");

@@ -661,7 +661,7 @@ public class Util {
         ind.setText("E");
         Statics.setRobotoFontLight(ctx, txt);
         ind.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xred_oval_small));
-        txt.setTextColor(ctx.getResources().getColor(R.color.absa_red));
+        txt.setTextColor(ContextCompat.getColor(ctx,R.color.absa_red));
         txt.setText(caption);
         Toast customtoast = new Toast(ctx);
 
@@ -680,7 +680,7 @@ public class Util {
         TextView ind = (TextView) view.findViewById(R.id.MONTOAST_indicator);
         ind.setText("M");
         ind.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xblue_oval_small));
-        txt.setTextColor(ctx.getResources().getColor(R.color.blue));
+        txt.setTextColor(ContextCompat.getColor(ctx,R.color.blue));
         txt.setText(caption);
 
         Toast customtoast = new Toast(ctx);

@@ -9,7 +9,7 @@
         android:layout_height="wrap_content">
         <ImageView
             android:id="@+id/MONTOAST_banner"
-            android:src="@drawable/banner_construction13"
+            android:src="@drawable/back13"
             android:scaleType="centerCrop"
             android:layout_width="match_parent"
             android:layout_height="@dimen/mon_wider" />

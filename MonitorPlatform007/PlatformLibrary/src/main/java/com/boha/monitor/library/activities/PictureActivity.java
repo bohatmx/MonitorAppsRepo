@@ -534,10 +534,11 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     @Override
     public void onBackPressed() {
 
-        if (isUploaded) {
+        if (photoList != null && !photoList.isEmpty()) {
             Log.d(LOG, "onBackPressed ... picture uploaded");
             ResponseDTO r = new ResponseDTO();
             Intent i = new Intent();
+            r.setPhotoUploadList(photoList);
             i.putExtra("response", r);
             setResult(RESULT_OK, i);
         } else {
@@ -650,7 +651,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                 pictureChanged = true;
                 try {
                     currentSessionPhotos.add(Uri.fromFile(currentThumbFile).toString());
-                    addImageToScroller();
+                    addImageToPhotoList();
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -664,8 +665,8 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     RecyclerView mRecyclerView;
     List<PhotoUploadDTO> photoList;
 
-    private void addImageToScroller() {
-        Log.i(LOG, "## addImageToScroller");
+    private void addImageToPhotoList() {
+        Log.i(LOG, "## addImageToPhotoList");
         if (photoList == null) {
             photoList = new ArrayList<>();
         } else {

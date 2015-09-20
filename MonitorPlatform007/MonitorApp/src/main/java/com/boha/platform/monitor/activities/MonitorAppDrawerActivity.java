@@ -29,12 +29,12 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.boha.monitor.library.activities.GPSActivity;
+import com.boha.monitor.library.activities.MainUpdateActivity;
 import com.boha.monitor.library.activities.MonitorMapActivity;
-import com.boha.monitor.library.activities.ProfilePhotoActivity;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.activities.PictureActivity;
+import com.boha.monitor.library.activities.ProfilePhotoActivity;
 import com.boha.monitor.library.activities.StatusReportActivity;
-import com.boha.monitor.library.activities.TaskTypeListActivity;
 import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.dto.ChatMessageDTO;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
@@ -50,7 +50,6 @@ import com.boha.monitor.library.fragments.MonitorProfileFragment;
 import com.boha.monitor.library.fragments.PageFragment;
 import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.fragments.SimpleMessageFragment;
-import com.boha.monitor.library.fragments.TaskTypeListFragment;
 import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.services.RequestSyncService;
 import com.boha.monitor.library.util.CacheUtil;
@@ -92,7 +91,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     private NavigationDrawerFragment mNavigationDrawerFragment;
     int themeDarkColor, themePrimaryColor, logo, currentPageIndex;
     ViewPager mPager;
-    PagerAdapter pagerAdapter;
+    MonitorPagerAdapter monitorPagerAdapter;
     MessagingFragment messagingFragment;
     MonitorProfileFragment monitorProfileFragment;
     MonitorListFragment monitorListFragment;
@@ -147,6 +146,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         mPager = (ViewPager) findViewById(R.id.pager);
         PagerTitleStrip strip = (PagerTitleStrip) findViewById(R.id.pager_title_strip);
         strip.setBackgroundColor(themeDarkColor);
+        strip.setTextColor(ContextCompat.getColor(ctx, R.color.white));
         strip.setVisibility(View.GONE);
         mPager.setOffscreenPageLimit(4);
 
@@ -287,7 +287,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
         simpleMessageFragment = new SimpleMessageFragment();
         simpleMessageFragment.setPageTitle(getString(R.string.messaging));
-        simpleMessageFragment.setThemeColors(themePrimaryColor,themeDarkColor);
+        simpleMessageFragment.setThemeColors(themePrimaryColor, themeDarkColor);
 
         if (!response.getProjectList().isEmpty()) {
             pageFragmentList.add(projectListFragment);
@@ -298,8 +298,8 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         pageFragmentList.add(monitorListFragment);
         pageFragmentList.add(simpleMessageFragment);
 
-        pagerAdapter = new PagerAdapter(getSupportFragmentManager());
-        mPager.setAdapter(pagerAdapter);
+        monitorPagerAdapter = new MonitorPagerAdapter(getSupportFragmentManager());
+        mPager.setAdapter(monitorPagerAdapter);
 
         mPager.setPageTransformer(true, new DepthPageTransformer());
 
@@ -356,8 +356,11 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            Util.showToast(ctx, getString(R.string.under_cons));
+        //todo remove
+        if (id == R.id.action_sign_in) {
+            Intent w = new Intent(this,SignInActivity.class);
+            w.putExtra("force",true);
+            startActivity(w);
             return true;
         }
         if (id == R.id.action_refresh) {
@@ -471,14 +474,36 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     }
 
     @Override
-    public void onStatusUpdateRequired(ProjectDTO project) {
+    public void onStatusUpdateRequired(final ProjectDTO project) {
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
-        Log.d("MainDrawerActivity", "&& onStatusUpdateRequired themeDarkColor: " + themeDarkColor);
-        Intent w = new Intent(this, TaskTypeListActivity.class);
-        w.putExtra("project", project);
-        w.putExtra("darkColor", themeDarkColor);
-        w.putExtra("type", TaskTypeListFragment.MONITOR);
-        startActivity(w);
+
+        CacheUtil.getCachedMonitorProjects(ctx, new CacheUtil.CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO response) {
+                int type = MainUpdateActivity.NO_TYPES;
+                if (!response.getTaskTypeList().isEmpty()) {
+                    type = MainUpdateActivity.TYPES;
+                }
+                Intent w = new Intent(getApplicationContext(),
+                        MainUpdateActivity.class);
+                w.putExtra("project", project);
+                w.putExtra("darkColor", themeDarkColor);
+                w.putExtra("type", type);
+                startActivity(w);
+            }
+
+            @Override
+            public void onDataCached() {
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+
+
 
     }
 
@@ -549,6 +574,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
     @Override
     public void onStatusReportRequired(ProjectDTO project) {
+
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
         Intent w = new Intent(this,StatusReportActivity.class);
         w.putExtra("project", project);
@@ -693,9 +719,9 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         setRefreshActionButtonState(busy);
     }
 
-    private class PagerAdapter extends FragmentStatePagerAdapter {
+    private class MonitorPagerAdapter extends FragmentStatePagerAdapter {
 
-        public PagerAdapter(FragmentManager fm) {
+        public MonitorPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -712,6 +738,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
         @Override
         public CharSequence getPageTitle(int position) {
+            Log.e(LOG,"getPageTitle, position: " + position);
             PageFragment pf = pageFragmentList.get(position);
             String title = "No Title";
             if (pf instanceof ProjectListFragment) {

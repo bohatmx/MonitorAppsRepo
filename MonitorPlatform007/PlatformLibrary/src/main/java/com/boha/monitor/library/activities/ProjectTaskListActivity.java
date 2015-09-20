@@ -46,7 +46,7 @@ public class ProjectTaskListActivity extends AppCompatActivity implements Projec
         projectTaskListFragment.setDarkColor(darkColor);
 
         projectTaskListFragment.setTaskType(taskType);
-        projectTaskListFragment.setProject(project);
+//        projectTaskListFragment.setProject(project);
 
         Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
                 project.getProjectName(), project.getCityName(),

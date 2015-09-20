@@ -2,6 +2,7 @@ package com.boha.monitor.library.adapters;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +24,7 @@ import java.util.Locale;
 /**
  * Created by aubreyM on 14/12/17.
  */
-public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
+public class ProjectTaskAdapter extends RecyclerView.Adapter<ProjectTaskAdapter.TaskViewHolder> {
 
     public interface TaskListener {
         void onTaskNameClicked(ProjectTaskDTO task, int position);
@@ -34,8 +35,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private Context ctx;
     int darkColor;
 
-    public TaskAdapter(List<ProjectTaskDTO> projectTaskList, int darkColor,
-                       Context context, TaskListener listener) {
+    public ProjectTaskAdapter(List<ProjectTaskDTO> projectTaskList, int darkColor,
+                              Context context, TaskListener listener) {
         this.projectTaskList = projectTaskList;
         this.ctx = context;
         this.mListener = listener;
@@ -88,6 +89,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             }
         });
 
+        Util.expand(holder.card, 300, null);
     }
 
     @Override
@@ -101,12 +103,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public class TaskViewHolder extends RecyclerView.ViewHolder {
         protected ImageView image;
+        protected CardView card;
         protected TextView txtTaskName, txtStatusCount, txtLastDate, txtPhotos;
         protected View nameView;
 
 
         public TaskViewHolder(View itemView) {
             super(itemView);
+            card = (CardView) itemView.findViewById(R.id.card);
             image = (ImageView) itemView.findViewById(R.id.TSK_icon);
             txtTaskName = (TextView) itemView.findViewById(R.id.TSK_taskName);
             txtPhotos = (TextView) itemView.findViewById(R.id.TSK_photoCount);
@@ -117,5 +121,5 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     }
 
-    static final String LOG = TaskAdapter.class.getSimpleName();
+    static final String LOG = ProjectTaskAdapter.class.getSimpleName();
 }

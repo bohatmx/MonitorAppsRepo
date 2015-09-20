@@ -153,18 +153,12 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
         eAddress = (EditText) view.findViewById(R.id.FMP_editAddress);
         eCell = (EditText) view.findViewById(R.id.FMP_editCell);
 
-        iconCamera = (ImageView) view.findViewById(R.id.FMP_iconCamera);
         roundImage = (ImageView) view.findViewById(R.id.FMP_personImage);
         backDrop = (ImageView) view.findViewById(R.id.FMP_backdrop);
         radioFemale = (RadioButton) view.findViewById(R.id.FMP_radioFemale);
         radioMale = (RadioButton) view.findViewById(R.id.FMP_radioMale);
 
-        iconCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mListener.onMonitorPictureRequested(monitor);
-            }
-        });
+
         roundImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -181,13 +175,13 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
             txtName.setText(monitor.getFirstName() + " " + monitor.getLastName());
             eFirst.setText(monitor.getFirstName());
             eLast.setText(monitor.getLastName());
-            if (monitor.getCellphone() != null) {
+            if (monitor.getCellphone() != null && !monitor.getCellphone().isEmpty()) {
                 eCell.setText(monitor.getCellphone());
             }
-            if (monitor.getIDNumber() != null) {
+            if (monitor.getIDNumber() != null && !monitor.getIDNumber().isEmpty()) {
                 eID.setText(monitor.getIDNumber());
             }
-            if (monitor.getAddress() != null) {
+            if (monitor.getAddress() != null && !monitor.getAddress().isEmpty()) {
                 eAddress.setText(monitor.getAddress());
             }
             if (monitor.getGender() != null && monitor.getGender().intValue() == 1) {

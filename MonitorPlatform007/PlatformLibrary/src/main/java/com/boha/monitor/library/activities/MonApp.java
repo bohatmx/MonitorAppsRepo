@@ -1,7 +1,6 @@
 package com.boha.monitor.library.activities;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.PendingIntent;
@@ -18,7 +17,6 @@ import com.android.volley.toolbox.Volley;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.services.LocationTrackerReceiver;
-import com.boha.monitor.library.toolbox.BitmapLruCache;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
@@ -59,9 +57,7 @@ import java.util.HashMap;
 )
 public class MonApp extends Application implements Application.ActivityLifecycleCallbacks {
     RequestQueue requestQueue;
-    BitmapLruCache bitmapLruCache;
     static final String PROPERTY_ID = "UA-53661372-2";
-
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
@@ -183,12 +179,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
     public void initializeVolley(Context context) {
         Log.e(LOG, "initializing Volley Networking ...");
         requestQueue = Volley.newRequestQueue(context);
-        int memClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE))
-                .getMemoryClass();
-
-        int cacheSize = 1024 * 1024 * memClass / 8;
-        bitmapLruCache = new BitmapLruCache(cacheSize);
-        Log.i(LOG, "********** Yebo! Volley Networking has been initialized, cache size: " + (cacheSize / 1024) + " KB");
+        Log.i(LOG, "********** Yebo! Volley Networking has been initialized");
     }
 
     public ChatMessageListActivity getChatMessageListActivity() {
@@ -212,10 +203,8 @@ public class MonApp extends Application implements Application.ActivityLifecycle
 
     @Override
     public void onActivityStarted(Activity activity) {
-        if (activity instanceof ChatMessageListActivity) {
-            messageActivityVisible = true;
-            chatMessageListActivity = (ChatMessageListActivity) activity;
-            Log.d(LOG, "ChatMessageListActivity onActivityStarted, messageActivityVisible: " + messageActivityVisible);
+        if (activity instanceof MainUpdateActivity) {
+            Log.d(LOG, "MainUpdateActivity onActivityStarted");
         }
     }
 

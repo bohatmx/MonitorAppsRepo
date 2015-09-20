@@ -92,7 +92,6 @@ public class TaskTypeListFragment extends Fragment implements PageFragment {
         Log.d("TaskTypeListFragment", "### getCachedTypes");
         switch (type) {
             case MONITOR:
-
                 CacheUtil.getCachedMonitorProjects(getActivity(), new CacheUtil.CacheUtilListener() {
                     @Override
                     public void onFileDataDeserialized(ResponseDTO response) {
@@ -148,8 +147,6 @@ public class TaskTypeListFragment extends Fragment implements PageFragment {
     private void setList() {
         txtCount.setText("" + taskTypeList.size());
         txtName.setText(project.getProjectName());
-        Log.d("TaskTypeListFragment", "### setList");
-
 
         adapter = new TaskTypeAdapter(taskTypeList, darkColor, getActivity(), new TaskTypeAdapter.TaskListener() {
             @Override

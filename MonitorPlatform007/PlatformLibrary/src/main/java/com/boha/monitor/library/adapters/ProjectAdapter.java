@@ -16,6 +16,7 @@ import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.fragments.ProjectListFragment;
+import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -81,7 +82,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.project_list_header, parent, false);
             return new HeaderViewHolder(v);
         } else {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.project_item_with_shadow, parent, false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.project_item, parent, false);
             return new ProjectViewHolder(v);
         }
 
@@ -98,6 +99,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             hvh.txtProgramme.setText(p.getProgrammeName());
             hvh.txtCount.setText("" + projectList.size());
             hvh.image.setImageDrawable(Util.getRandomBackgroundImage(ctx));
+            Statics.setRobotoFontLight(ctx,hvh.txtProgramme);
         }
 
         if (holder instanceof ProjectViewHolder) {
@@ -216,6 +218,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 pvh.iconDirections.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
                 pvh.iconDoStatus.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
                 pvh.iconLocation.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
+                pvh.txtProjectName.setTextColor(darkColor);
             }
 
         }
@@ -234,6 +237,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (project.getMunicipalityName() != null) {
             pvh.txtMuni.setVisibility(View.VISIBLE);
             pvh.txtMuni.setText(project.getMunicipalityName());
+            Statics.setRobotoFontLight(ctx,pvh.txtMuni);
         }
 
     }

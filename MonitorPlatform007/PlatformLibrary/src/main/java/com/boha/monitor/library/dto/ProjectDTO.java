@@ -17,7 +17,7 @@ import java.util.List;
 public class ProjectDTO implements Serializable {
     private List<PhotoUploadDTO> photoUploadList;
     private static final long serialVersionUID = 1L;
-    private Integer projectID, cityID;
+    private Integer projectID, cityID,companyID;
     private Integer programmeID, portfolioID, statusCount, photoCount;
     private String projectName;
     private Double latitude;
@@ -37,6 +37,14 @@ public class ProjectDTO implements Serializable {
     private Boolean selected;
 
     public ProjectDTO() {
+    }
+
+    public Integer getCompanyID() {
+        return companyID;
+    }
+
+    public void setCompanyID(Integer companyID) {
+        this.companyID = companyID;
     }
 
     public Boolean getSelected() {

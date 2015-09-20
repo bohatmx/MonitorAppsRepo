@@ -61,6 +61,7 @@ public class SignInActivity extends AppCompatActivity {
         ctx = getApplicationContext();
         activity = this;
         banner = (ImageView)findViewById(R.id.SI_banner);
+
         setFields();
         banner.setImageDrawable(Util.getRandomBackgroundImage(ctx));
         getEmail();
@@ -72,7 +73,11 @@ public class SignInActivity extends AppCompatActivity {
         checkVirgin();
     }
     private void checkVirgin() {
-
+        boolean force = getIntent().getBooleanExtra("force",false);
+        if (force) {
+            registerGCMDevice();
+            return;
+        }
         MonitorDTO dto = SharedUtil.getMonitor(ctx);
         if (dto != null) {
             Log.i(LOG, "++++++++ Not a virgin anymore ...checking GCM registration....");
@@ -87,6 +92,7 @@ public class SignInActivity extends AppCompatActivity {
             finish();
             return;
         }
+
         registerGCMDevice();
     }
 

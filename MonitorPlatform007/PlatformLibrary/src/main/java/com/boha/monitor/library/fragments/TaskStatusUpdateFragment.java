@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -16,13 +17,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.TaskStatusTypeAdapter;
 import com.boha.monitor.library.dto.MonitorDTO;
-import com.boha.monitor.library.dto.ProjectDTO;
+import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.dto.RequestDTO;
@@ -39,9 +42,12 @@ import com.boha.monitor.library.util.Util;
 import com.boha.monitor.library.util.WebCheck;
 import com.boha.platform.library.R;
 import com.squareup.leakcanary.RefWatcher;
+import com.squareup.picasso.Picasso;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -52,16 +58,23 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
     public interface TaskStatusUpdateListener {
         void onStatusCameraRequested(ProjectTaskDTO projectTask, ProjectTaskStatusDTO projectTaskStatus);
+
+        void onProjectTaskCameraRequested(ProjectTaskDTO projectTask);
+
+        void onStatusComplete(ProjectTaskDTO projectTask);
+
         void setBusy(boolean busy);
     }
-    ProjectDTO project;
+
     private View view, actionView;
     private TextView txtTaskName, txtStatusType, txtResult;
     private ProjectTaskDTO projectTask;
-    private Button  btnSubmit;
+    private Button btnSubmit, btnDone;
     private RecyclerView mRecyclerView;
-    private ImageView  iconClose, hero;
-
+    private ImageView iconClose, hero;
+    private FloatingActionButton fab;
+    private LinearLayout photoContainer;
+    private HorizontalScrollView scrollView;
 
     static final String LOG = TaskStatusUpdateFragment.class.getSimpleName();
 
@@ -80,7 +93,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         TaskStatusUpdateFragment fragment = new TaskStatusUpdateFragment();
         Bundle args = new Bundle();
         args.putSerializable("projectTask", projectTask);
-        args.putInt("type",type);
+        args.putInt("type", type);
         fragment.setArguments(args);
         return fragment;
     }
@@ -103,6 +116,8 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_task_status_edit, container, false);
         actionView = view.findViewById(R.id.TSE_actionLayout);
+        this.inflater = inflater;
+
         actionView.setVisibility(View.GONE);
         setFields();
         if (projectTask != null) {
@@ -116,6 +131,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
     List<TaskStatusTypeDTO> taskStatusTypeList;
     public static final int STAFF = 1, MONITOR = 2;
     int type;
+    LayoutInflater inflater;
 
     public void setType(int type) {
         this.type = type;
@@ -123,54 +139,51 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
     }
 
     private void getStatusTypes() {
-        switch (type) {
-            case MONITOR:
-                CacheUtil.getCachedData(getActivity(), CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
-                    @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
-                        if (response.getTaskStatusTypeList() != null) {
-                            taskStatusTypeList = response.getTaskStatusTypeList();
-                            setList();
+        CacheUtil.getCachedMonitorProjects(getActivity(), new CacheUtil.CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO response) {
+                if (response.getTaskStatusTypeList() != null && !response.getTaskStatusTypeList().isEmpty()) {
+                    taskStatusTypeList = response.getTaskStatusTypeList();
+                    setList();
+                } else {
+                    CacheUtil.getCachedStaffData(getActivity(), new CacheUtil.CacheUtilListener() {
+                        @Override
+                        public void onFileDataDeserialized(ResponseDTO response) {
+                            if (response.getTaskStatusTypeList() != null) {
+                                taskStatusTypeList = response.getTaskStatusTypeList();
+                                setList();
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onDataCached() {
+                        @Override
+                        public void onDataCached() {
 
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-                break;
-            case STAFF:
-                CacheUtil.getCachedStaffData(getActivity(), new CacheUtil.CacheUtilListener() {
-                    @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
-                        if (response.getTaskStatusTypeList() != null) {
-                            taskStatusTypeList = response.getTaskStatusTypeList();
-                            setList();
                         }
-                    }
 
-                    @Override
-                    public void onDataCached() {
+                        @Override
+                        public void onError() {
 
-                    }
+                        }
+                    });
+                }
+            }
 
-                    @Override
-                    public void onError() {
+            @Override
+            public void onDataCached() {
 
-                    }
-                });
-                break;
-        }
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+
     }
 
 
     TaskStatusTypeAdapter adapter;
+
     private void setList() {
         txtTaskName.setText(projectTask.getTask().getTaskName());
         adapter = new TaskStatusTypeAdapter(taskStatusTypeList, darkColor, getActivity(), new TaskStatusTypeAdapter.TaskStatusTypeListener() {
@@ -192,7 +205,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
                         break;
                 }
 
-                Util.expand(actionView,1000, null);
+                Util.expand(actionView, 1000, null);
 
 
             }
@@ -201,18 +214,21 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
     }
 
     private void setFields() {
-
+        scrollView = (HorizontalScrollView) view.findViewById(R.id.TSE_scroll);
+        photoContainer = (LinearLayout) view.findViewById(R.id.TSE_photoContainer);
+        scrollView.setVisibility(View.GONE);
+        fab = (FloatingActionButton) view.findViewById(R.id.fab);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
-        iconClose = (ImageView)view.findViewById(R.id.TSE_closeIcon);
-        hero = (ImageView)view.findViewById(R.id.TSE_backdrop);
+        iconClose = (ImageView) view.findViewById(R.id.TSE_closeIcon);
+        hero = (ImageView) view.findViewById(R.id.TSE_backdrop);
         hero.setImageDrawable(Util.getRandomBackgroundImage(getActivity()));
         mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getActivity())
-                .color(ContextCompat.getColor(getActivity(),R.color.blue_gray_500))
+                .color(ContextCompat.getColor(getActivity(), R.color.blue_gray_500))
                 .sizeResId(R.dimen.mon_divider)
                 .marginResId(R.dimen.mon_padding, R.dimen.mon_padding)
                 .build());
         mRecyclerView.setItemAnimator(new SlideInLeftAnimator());
-        GridLayoutManager glm = new GridLayoutManager(getActivity(),2,LinearLayoutManager.VERTICAL,false);
+        GridLayoutManager glm = new GridLayoutManager(getActivity(), 2, LinearLayoutManager.VERTICAL, false);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.mon_divider_small);
         mRecyclerView.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
@@ -227,12 +243,20 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         txtResult = (TextView) view.findViewById(R.id.TSE_result);
 
         btnSubmit = (Button) view.findViewById(R.id.btnRed);
+        btnDone = (Button) view.findViewById(R.id.TSE_btnDone);
+
         btnSubmit.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.blue_gray_400));
         btnSubmit.setText("Submit Task Status");
         txtStatusType.setText("");
         txtTime.setText("");
         txtResult.setText("");
 
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onProjectTaskCameraRequested(projectTask);
+            }
+        });
         iconClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -267,13 +291,31 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
             }
         });
 
+        scrollView.setVisibility(View.GONE);
+        btnDone.setVisibility(View.GONE);
+        btnDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cleanup();
+            }
+        });
 
     }
 
+    private void cleanup() {
+        photoContainer.removeAllViews();
+        Util.collapse(actionView, 1000, null);
+        btnDone.setVisibility(View.GONE);
+        scrollView.setVisibility(View.GONE);
+        mListener.onStatusComplete(projectTask);
+
+
+    }
     TaskStatusTypeDTO taskStatusType;
 
     private TextView txtTime;
     static final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+
     private void processRequest() {
 
         btnSubmit.setEnabled(false);
@@ -284,7 +326,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         } else {
             StaffDTO s = SharedUtil.getCompanyStaff(getActivity());
             if (s != null) {
-               projectTaskStatus.setStaffID(s.getStaffID());
+                projectTaskStatus.setStaffID(s.getStaffID());
             }
         }
 
@@ -303,7 +345,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         final RequestDTO request = new RequestDTO(RequestDTO.ADD_PROJECT_TASK_STATUS);
         request.setProjectTaskStatus(projectTaskStatus);
 
-        if (WebCheck.checkNetworkAvailability(getActivity(),true).isNetworkUnavailable()) {
+        if (WebCheck.checkNetworkAvailability(getActivity(), true).isNetworkUnavailable()) {
             saveRequestInCache(request);
             btnSubmit.setEnabled(true);
             return;
@@ -317,14 +359,14 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
                     @Override
                     public void run() {
                         mListener.setBusy(false);
-                        btnSubmit.setEnabled(false);
+                        btnSubmit.setEnabled(true);
                         if (response.getProjectTaskStatusList() != null && !response.getProjectTaskStatusList().isEmpty()) {
                             returnedStatus = response.getProjectTaskStatusList().get(0);
-                            //mListener.onStatusReturned(returnedStatus);
                             Snackbar.make(mRecyclerView, "The task status update has been sent", Snackbar.LENGTH_LONG).show();
                             txtTime.setText(sdf.format(new Date()));
                             txtResult.setText("Status updated: " + projectTask.getTask().getTaskName());
                             mListener.onStatusCameraRequested(projectTask, returnedStatus);
+                            Util.collapse(actionView, 1000, null);
                         }
                     }
                 });
@@ -353,17 +395,42 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
     }
 
+    private List<PhotoUploadDTO> photoUploadList;
+
+    public void displayPhotos(List<PhotoUploadDTO> list) {
+        Log.i(LOG, "## photos Taken: " + list.size());
+        if (photoUploadList == null) {
+            photoUploadList = new ArrayList<>();
+        }
+        photoUploadList.addAll(list);
+        scrollView.setVisibility(View.VISIBLE);
+        btnDone.setVisibility(View.VISIBLE);
+        for (PhotoUploadDTO p : photoUploadList) {
+            View view =  inflater.inflate(R.layout.small_image, null);
+            ImageView imageView = (ImageView)view.findViewById(R.id.image);
+            File file = new File(p.getThumbFilePath());
+            if (file.exists()) {
+                Picasso.with(getActivity()).load(file).into(imageView);
+                photoContainer.addView(view);
+            }
+        }
+        Util.collapse(actionView, 300, null);
+        Util.expand(photoContainer, 1000, null);
+
+    }
+
     private ProjectTaskStatusDTO returnedStatus;
+
     private void saveRequestInCache(RequestDTO request) {
         RequestCacheUtil.addRequest(getActivity(), request, new RequestCacheUtil.RequestCacheListener() {
             @Override
             public void onError(String message) {
-                Log.e(LOG,message);
+                Log.e(LOG, message);
             }
 
             @Override
             public void onRequestAdded() {
-                Snackbar.make(mRecyclerView,"The task status update has been saved",Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mRecyclerView, "The task status update has been saved", Snackbar.LENGTH_LONG).show();
                 mListener.onStatusCameraRequested(projectTask, null);
             }
 
@@ -373,7 +440,9 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
             }
         });
     }
+
     TaskStatusUpdateListener mListener;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -398,6 +467,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
         refWatcher.watch(this);
     }
+
     @Override
     public void animateHeroHeight() {
 
@@ -414,6 +484,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
     }
 
     int primaryColor, darkColor;
+
     @Override
     public void setThemeColors(int primaryColor, int darkColor) {
         this.primaryColor = primaryColor;

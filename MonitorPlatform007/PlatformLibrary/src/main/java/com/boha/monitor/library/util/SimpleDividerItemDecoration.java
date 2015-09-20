@@ -4,10 +4,11 @@ package com.boha.monitor.library.util;
  * Created by aubreyM on 15/05/31.
  */
 
-import android.content.res.Resources;
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -16,8 +17,8 @@ import com.boha.platform.library.R;
 public class SimpleDividerItemDecoration extends RecyclerView.ItemDecoration{
     private Drawable mDivider;
 
-    public SimpleDividerItemDecoration(Resources resources) {
-        mDivider = resources.getDrawable(R.drawable.line_divider);
+    public SimpleDividerItemDecoration(Context ctx) {
+        mDivider = ContextCompat.getDrawable(ctx,R.drawable.line_divider);
     }
 
     public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {

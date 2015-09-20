@@ -22,7 +22,7 @@
                 android:src="@drawable/back13" />
             <TextView
                 android:id="@+id/PRH_programme"
-                style="@style/Title2TextStyleWhite"
+                style="@style/TextStyleWhite"
                 android:layout_centerVertical="true"
                 android:padding="@dimen/mon_margin"
                 android:layout_alignParentBottom="true"
@@ -43,22 +43,27 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="@dimen/mon_margin"
                 android:layout_marginRight="@dimen/mon_margin"
-                style="@style/TransparentCircle"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:text="9,778" />
+                style="@style/TransparentCircleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0" />
         </RelativeLayout>
 
 
     </RelativeLayout>
+    <RelativeLayout
+        android:layout_below="@id/topBox"
+        android:background="@color/grey"
+        android:padding="@dimen/mon_padding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler"
-        android:layout_below="@id/topBox"
         android:scrollbars="vertical"
         android:padding="@dimen/mon_divider"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-
+    </RelativeLayout>
 
 </RelativeLayout>
