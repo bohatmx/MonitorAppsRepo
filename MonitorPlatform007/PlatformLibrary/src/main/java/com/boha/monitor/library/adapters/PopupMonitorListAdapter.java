@@ -79,7 +79,7 @@ public class PopupMonitorListAdapter extends ArrayAdapter<MonitorDTO> {
 
 
         final MonitorDTO p = mList.get(position);
-        if (p.getSelected()) {
+        if (p.isSelected()) {
             item.image.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_action_clear));
             item.image.setColorFilter(color, PorterDuff.Mode.SRC_IN);
         } else {

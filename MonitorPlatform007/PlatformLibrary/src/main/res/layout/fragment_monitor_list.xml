@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     tools:context="com.boha.monitor.library.fragments.MonitorListFragment">
 
-    <com.sothree.slidinguppanel.SlidingUpPanelLayout
-        xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:sothree="http://schemas.android.com/apk/res-auto"
         android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,33 +21,21 @@
             android:id="@+id/FSL_frameLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <include layout="@layout/monitor_list_include"/>
+
+            <include layout="@layout/monitor_list_include" />
         </FrameLayout>
 
         <RelativeLayout
             android:id="@+id/FSL_panel"
-            android:padding="@dimen/mon_margin"
-            android:background="@color/white"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/mon_picture_large">
+            android:layout_height="400dp"
+            android:background="@color/white"
+            android:padding="@dimen/mon_margin">
 
-            <include layout="@layout/message_panel"/>
+            <include layout="@layout/message_panel" />
         </RelativeLayout>
 
-
-
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/mon_wide"
-        android:layout_marginTop="@dimen/mon_hero_height_medium_lite"
-        android:elevation="@dimen/mon_margin"
-        android:src="@drawable/ic_action_location_on" />
-
 
 
 </RelativeLayout>

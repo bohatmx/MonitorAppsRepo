@@ -133,7 +133,7 @@ public class MessagingFragment extends Fragment implements PageFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 pop.dismiss();
-                if (monitorList.get(position).getSelected() == Boolean.TRUE) {
+                if (monitorList.get(position).isSelected() == Boolean.TRUE) {
                     monitorList.get(position).setSelected(false);
                     map.remove(monitorList.get(position).getMonitorID());
                 } else {

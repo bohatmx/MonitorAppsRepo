@@ -4,12 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="?attr/colorPrimary"
     android:padding="0dp">
 
     <RelativeLayout
         android:id="@+id/CAM_layout0"
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/mon_padding">
@@ -25,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:checked="true"
                 android:paddingRight="@dimen/mon_wide"
-                android:text="Take Photos"
+                android:text="Photo"
                 android:textColor="@color/white" />
 
 
@@ -34,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="false"
-                android:text="Make a Video"
+                android:text="Video"
                 android:textColor="@color/white" />
         </RadioGroup>
     </RelativeLayout>
@@ -48,6 +47,7 @@
         <TextView
             android:id="@+id/CAM_projectName"
             style="@style/Title2TextStyleWhite"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/mon_margin"
@@ -56,9 +56,10 @@
 
         <TextView
             android:id="@+id/CAM_siteName"
-            style="@style/Title2TextStyleBlue"
+            style="@style/Title2TextStyleWhite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_below="@id/CAM_projectName"
             android:layout_marginLeft="@dimen/mon_margin"
             android:layout_marginTop="@dimen/mon_padding"
@@ -66,6 +67,7 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler"
+            android:layout_below="@id/CAM_siteName"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/mon_padding"
@@ -73,25 +75,15 @@
             android:scrollbars="vertical" />
     </RelativeLayout>
 
-    <RelativeLayout
-        android:padding="@dimen/mon_padding"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/ButtonRed"
-            android:elevation="@dimen/mon_padding"
-            android:padding="@dimen/mon_padding"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:text="@string/take_picture"
-            android:layout_margin="@dimen/mon_padding"
-            android:drawableTop="@drawable/ic_action_camera" />
-
-    </RelativeLayout>
-
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/mon_wide"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/mon_wide"
+        android:elevation="@dimen/mon_margin"
+        android:src="@drawable/camera_a32" />
 
 </RelativeLayout>

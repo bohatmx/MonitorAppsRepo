@@ -63,13 +63,13 @@ public class StaffAdapter extends ArrayAdapter<StaffDTO> {
             convertView = mInflater.inflate(mLayoutRes, null);
             item = new ViewHolderItem();
             item.txtName = (TextView) convertView
-                    .findViewById(R.id.PSN_txtName);
+                    .findViewById(R.id.MON_txtName);
 
             item.txtCount = (TextView) convertView
-                    .findViewById(R.id.PSN_txtCounter);
+                    .findViewById(R.id.MON_txtCounter);
 
             item.photo = (CircleImageView) convertView
-                    .findViewById(R.id.PSN_imagex);
+                    .findViewById(R.id.MON_imagex);
 
             convertView.setTag(item);
         } else {

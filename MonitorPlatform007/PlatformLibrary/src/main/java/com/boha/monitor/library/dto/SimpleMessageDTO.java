@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by aubreyM on 15/09/13.
  */
-public class SimpleMessageDTO implements Serializable{
+public class SimpleMessageDTO implements Serializable, Comparable<SimpleMessageDTO>{
     private String staffName, monitorName, message, url;
     private List<Integer> monitorList, staffList;
     private Integer staffID, monitorID;
@@ -90,5 +90,17 @@ public class SimpleMessageDTO implements Serializable{
 
     public void setMonitorID(Integer monitorID) {
         this.monitorID = monitorID;
+    }
+
+    @Override
+    public int compareTo(SimpleMessageDTO msg) {
+
+        if (this.dateSent.longValue() > msg.dateSent.intValue()) {
+            return - 1;
+        }
+        if (this.dateSent.longValue() < msg.dateSent.intValue()) {
+            return 1;
+        }
+        return 0;
     }
 }

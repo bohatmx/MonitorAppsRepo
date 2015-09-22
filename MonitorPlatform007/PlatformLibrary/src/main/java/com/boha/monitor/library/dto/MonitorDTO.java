@@ -37,7 +37,7 @@ public class MonitorDTO implements Serializable, Comparable<MonitorDTO> {
         return gender;
     }
 
-    public Boolean getSelected() {
+    public Boolean isSelected() {
         return selected;
     }
 

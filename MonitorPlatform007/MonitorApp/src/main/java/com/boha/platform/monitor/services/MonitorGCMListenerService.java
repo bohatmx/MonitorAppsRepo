@@ -150,7 +150,7 @@ public class MonitorGCMListenerService extends GcmListenerService {
         }
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_action_globe)
+                .setSmallIcon(R.drawable.glasses48)
                 .setContentTitle(name + " - " + "Current Location")
                 .setContentText("This is a location sent to you")
                 .setAutoCancel(true)

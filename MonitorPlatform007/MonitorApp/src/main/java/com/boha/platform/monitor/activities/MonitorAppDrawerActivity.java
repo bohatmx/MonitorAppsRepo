@@ -9,9 +9,12 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -172,9 +175,9 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
                 if (r.getProjectList() != null && !r.getProjectList().isEmpty()) {
                     response = r;
                     buildPages();
+                } else {
+                    getRemoteData();
                 }
-                //
-                getRemoteData();
 
             }
 
@@ -260,14 +263,14 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         } else {
             noProjectsAssignedFragment = NoProjectsAssignedFragment.newInstance();
             noProjectsAssignedFragment.setPageTitle("No Projects Assigned");
-            noProjectsAssignedFragment.setThemeColors(themePrimaryColor,themeDarkColor);
+            noProjectsAssignedFragment.setThemeColors(themePrimaryColor, themeDarkColor);
 
         }
 
 
         monitorProfileFragment = MonitorProfileFragment.newInstance(SharedUtil.getMonitor(ctx));
         monitorProfileFragment.setPageTitle(getString(R.string.profile));
-        monitorProfileFragment.setThemeColors(themePrimaryColor,themeDarkColor);
+        monitorProfileFragment.setThemeColors(themePrimaryColor, themeDarkColor);
 
 
         HashMap<Integer, MonitorDTO> map = new HashMap<>();
@@ -285,7 +288,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         monitorListFragment.setPageTitle(getString(R.string.monitors));
         monitorListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
 
-        simpleMessageFragment = new SimpleMessageFragment();
+        simpleMessageFragment = SimpleMessageFragment.newInstance(null, list);
         simpleMessageFragment.setPageTitle(getString(R.string.messaging));
         simpleMessageFragment.setThemeColors(themePrimaryColor, themeDarkColor);
 
@@ -294,9 +297,10 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         } else {
             pageFragmentList.add(noProjectsAssignedFragment);
         }
-        pageFragmentList.add(monitorProfileFragment);
+
         pageFragmentList.add(monitorListFragment);
         pageFragmentList.add(simpleMessageFragment);
+        pageFragmentList.add(monitorProfileFragment);
 
         monitorPagerAdapter = new MonitorPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(monitorPagerAdapter);
@@ -343,12 +347,10 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            getMenuInflater().inflate(R.menu.main_drawer, menu);
-            mMenu = menu;
-            restoreActionBar();
-            return true;
-        }
+        getMenuInflater().inflate(R.menu.main_drawer, menu);
+        mMenu = menu;
+
+        checkSettings();
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -358,8 +360,8 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
         //todo remove
         if (id == R.id.action_sign_in) {
-            Intent w = new Intent(this,SignInActivity.class);
-            w.putExtra("force",true);
+            Intent w = new Intent(this, SignInActivity.class);
+            w.putExtra("force", true);
             startActivity(w);
             return true;
         }
@@ -402,7 +404,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
                     PhotoUploadDTO x = (PhotoUploadDTO) data.getSerializableExtra("photo");
                     monitorProfileFragment.setPicture(x);
                     mNavigationDrawerFragment.setPicture(x);
-                    SharedUtil.savePhoto(ctx,x);
+                    SharedUtil.savePhoto(ctx, x);
                 }
                 break;
         }
@@ -444,6 +446,10 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     @Override
     public void onMessagingRequested(MonitorDTO monitor) {
         simpleMessageFragment.animateHeroHeight();
+        List<MonitorDTO> list = new ArrayList<>();
+        list.add(monitor);
+        simpleMessageFragment.setMonitorList(list);
+        simpleMessageFragment.openMessageToMonitors(list);
         mPager.setCurrentItem(3, true);
     }
 
@@ -502,7 +508,6 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
             }
         });
-
 
 
     }
@@ -576,7 +581,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     public void onStatusReportRequired(ProjectDTO project) {
 
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
-        Intent w = new Intent(this,StatusReportActivity.class);
+        Intent w = new Intent(this, StatusReportActivity.class);
         w.putExtra("project", project);
         startActivity(w);
     }
@@ -738,7 +743,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
         @Override
         public CharSequence getPageTitle(int position) {
-            Log.e(LOG,"getPageTitle, position: " + position);
+            //Log.e(LOG,"getPageTitle, position: " + position);
             PageFragment pf = pageFragmentList.get(position);
             String title = "No Title";
             if (pf instanceof ProjectListFragment) {
@@ -866,5 +871,71 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
             mBound = false;
         }
     };
+
+    private boolean checkSettings() {
+
+
+        LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
+        boolean gpsEnabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean networkEnabled = service.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        Log.i(LOG, "GPS enabled: " + gpsEnabled + " networkEnabled: " + networkEnabled);
+
+        if (!isLocationEnabled()) {
+            Log.e(LOG, "extra check - isLocationEnabled: " + false);
+        }
+        if (!gpsEnabled && !networkEnabled && !isLocationEnabled()) {
+            showSettingDialog();
+        } else {
+            return true;
+        }
+        return true;
+    }
+
+    public void showSettingDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Location Setting");
+        builder.setMessage("The app needs Location setting to be turned on so that it can start the river search." +
+                "\n\nDo you want to turn it on?");
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent("com.google.android.gms.location.settings.GOOGLE_LOCATION_SETTINGS");
+                startActivity(intent);
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.show();
+    }
+
+    public boolean isLocationEnabled() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                int locationMode = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
+                return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            String locationProviders = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            if (locationProviders == null || locationProviders.equalsIgnoreCase("null") || locationProviders.isEmpty()) {
+                return false;
+            }
+
+        }
+
+        return false;
+    }
 
 }

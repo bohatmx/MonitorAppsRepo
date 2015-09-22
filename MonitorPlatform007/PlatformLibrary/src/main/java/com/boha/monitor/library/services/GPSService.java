@@ -158,7 +158,16 @@ public class GPSService extends Service implements LocationListener,
                     locationTrackerList = response.getLocationTrackerList();
                     index = 0;
                     if (!WebCheck.checkNetworkAvailability(getApplicationContext()).isNetworkUnavailable()) {
-                        controlSend();
+
+                        try {
+                            Log.e(LOG,"Sleeping for a few seconds ...");
+                            Thread.sleep(10000);
+                            Log.i(LOG,"waking up... controlSend...");
+                            controlSend();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 }
             });

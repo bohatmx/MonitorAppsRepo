@@ -218,6 +218,29 @@ public class CacheUtil {
         thread.start();
     }
 
+    public static void addMessage(final Context context, final SimpleMessageDTO s, final  CacheUtilListener cacheUtilListener) {
+
+        getCachedMessages(context, new CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO response) {
+                if (response.getSimpleMessageList() == null) {
+                    response.setSimpleMessageList(new ArrayList<SimpleMessageDTO>());
+                }
+                response.getSimpleMessageList().add(0, s);
+                cacheMessages(context, response, cacheUtilListener);
+            }
+
+            @Override
+            public void onDataCached() {
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+    }
     public static void cacheMessages(final Context context, final ResponseDTO r, final CacheUtilListener cacheUtilListener) {
 
         Thread thread = new Thread(new Runnable() {

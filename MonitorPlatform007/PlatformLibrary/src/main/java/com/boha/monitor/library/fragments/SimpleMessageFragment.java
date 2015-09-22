@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +16,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.adapters.SimpleMessageAdapter;
+import com.boha.monitor.library.dto.MonitorDTO;
+import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
+import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.util.CacheUtil;
-import com.boha.monitor.library.util.SpacesItemDecoration;
+import com.boha.monitor.library.util.NetUtil;
+import com.boha.monitor.library.util.SharedUtil;
+import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SimpleMessageFragment extends Fragment implements PageFragment {
@@ -40,15 +47,46 @@ public class SimpleMessageFragment extends Fragment implements PageFragment {
     Button btnSend;
     View topView;
     SlidingUpPanelLayout paneLayout;
+    List<MonitorDTO> monitorList;
+    List<StaffDTO> staffList;
+
+    public List<StaffDTO> getStaffList() {
+        return staffList;
+    }
+
+    public void setStaffList(List<StaffDTO> staffList) {
+        this.staffList = staffList;
+    }
+    public List<MonitorDTO> getMonitorList() {
+        return monitorList;
+    }
+
+    public void setMonitorList(List<MonitorDTO> monitorList) {
+        this.monitorList = monitorList;
+    }
+
 
     public SimpleMessageFragment() {
         // Required empty public constructor
     }
 
+    public static SimpleMessageFragment newInstance(List<StaffDTO> staffList,List<MonitorDTO> monitorList) {
+        SimpleMessageFragment fragment = new SimpleMessageFragment();
+        Bundle b = new Bundle();
+        ResponseDTO r = new ResponseDTO();
+        r.setStaffList(staffList);
+        r.setMonitorList(monitorList);
+        b.putSerializable("response",r);
+        fragment.setArguments(b);
+        return fragment;
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            ResponseDTO r = (ResponseDTO)getArguments().getSerializable("response");
+            staffList = r.getStaffList();
+            monitorList = r.getMonitorList();
         }
     }
 
@@ -66,13 +104,18 @@ public class SimpleMessageFragment extends Fragment implements PageFragment {
         txtFromMsg = (TextView) view.findViewById(R.id.FSL_fromMessage);
         topView = view.findViewById(R.id.AM_top);
         txtFromMsg.setVisibility(View.GONE);
-        paneLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+        paneLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
 
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendMessage();
+            }
+        });
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
         recyclerView.setHasFixedSize(true);
-        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.mon_divider_small);
-        recyclerView.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
+        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
         getCachedMessages();
         return view;
     }
@@ -100,8 +143,10 @@ public class SimpleMessageFragment extends Fragment implements PageFragment {
         });
     }
 
+
     private void setList() {
 
+        Collections.sort(simpleMessageList);
         adapter = new SimpleMessageAdapter(simpleMessageList, darkColor, getActivity(), new SimpleMessageAdapter.SimpleMessageListener() {
             @Override
             public void onResponseRequested(SimpleMessageDTO message, int position) {
@@ -111,6 +156,34 @@ public class SimpleMessageFragment extends Fragment implements PageFragment {
         recyclerView.setAdapter(adapter);
     }
 
+    public void openMessageToMonitors(List<MonitorDTO> monitorList) {
+
+        this.monitorList = monitorList;
+        paneLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+        txtFromMsg.setVisibility(View.VISIBLE);
+        StringBuilder sb = new StringBuilder();
+        for (MonitorDTO m: monitorList) {
+            sb.append(m.getFullName()).append(", ");
+        }
+        txtPerson.setText(sb.toString().trim());
+
+        txtFromMsg.setText(SharedUtil.getMonitor(getActivity()).getFullName());
+        editMessage.setText("");
+    }
+    public void openMessageToStaff(List<StaffDTO> staffList) {
+
+        this.staffList = staffList;
+        paneLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+        txtFromMsg.setVisibility(View.VISIBLE);
+        StringBuilder sb = new StringBuilder();
+        for (StaffDTO m: staffList) {
+            sb.append(m.getFullName()).append(", ");
+        }
+        txtPerson.setText(sb.toString().trim());
+
+        txtFromMsg.setText(SharedUtil.getCompanyStaff(getActivity()).getFullName());
+        editMessage.setText("");
+    }
     private void respond(SimpleMessageDTO message, int position) {
         paneLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
         txtFromMsg.setVisibility(View.VISIBLE);
@@ -125,6 +198,77 @@ public class SimpleMessageFragment extends Fragment implements PageFragment {
 
     }
 
+    private void sendMessage() {
+        if (editMessage.getText().toString().isEmpty()) {
+            Util.showToast(getActivity(),"Please enter message");
+            return;
+        }
+        final SimpleMessageDTO msg = new SimpleMessageDTO();
+        msg.setMonitorList(new ArrayList<Integer>());
+        MonitorDTO monitor = SharedUtil.getMonitor(getActivity());
+        StaffDTO staff = SharedUtil.getCompanyStaff(getActivity());
+        if (monitor != null) {
+            msg.setMonitorID(monitor.getMonitorID());
+            msg.setMonitorName(monitor.getFullName());
+        }
+        if (staff != null) {
+            msg.setStaffID(staff.getStaffID());
+            msg.setStaffName(staff.getFullName());
+        }
+        if (staffList != null && !staffList.isEmpty()) {
+            for (StaffDTO s: staffList) {
+                msg.getStaffList().add(s.getStaffID());
+            }
+        }
+        if (monitorList != null && !monitorList.isEmpty()) {
+            for (MonitorDTO x: monitorList) {
+                msg.getMonitorList().add(x.getMonitorID());
+            }
+        }
+        msg.setMessage(editMessage.getText().toString());
+        RequestDTO w = new RequestDTO(RequestDTO.SEND_SIMPLE_MESSAGE);
+        w.setSimpleMessage(msg);
+        mListener.setBusy(true);
+        NetUtil.sendRequest(getActivity(), w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(final ResponseDTO response) {
+                Log.e(LOG, "##sendMessage, statusCode: " + response.getStatusCode() +
+                        " message: " + response.getMessage());
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mListener.setBusy(false);
+                        if (response.getStatusCode() == 0) {
+                            if (simpleMessageList == null) {
+                                simpleMessageList = new ArrayList<>();
+                            }
+                            simpleMessageList.add(msg);
+                            adapter.notifyDataSetChanged();
+                            CacheUtil.addMessage(getActivity(), msg,null);
+                        }
+                    }
+                });
+
+            }
+
+            @Override
+            public void onError(final String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mListener.setBusy(false);
+                        Util.showErrorToast(getActivity(), message);
+                    }
+                });
+            }
+
+            @Override
+            public void onWebSocketClose() {
+
+            }
+        });
+    }
+    static final String LOG = SimpleMessageFragment.class.getSimpleName();
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

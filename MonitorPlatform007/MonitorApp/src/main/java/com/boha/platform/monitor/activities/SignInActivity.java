@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.dto.GcmDeviceDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.RequestDTO;
@@ -182,7 +183,7 @@ public class SignInActivity extends AppCompatActivity {
 
                             @Override
                             public void onDataCached() {
-                                Intent intent = new Intent(ctx, MonitorAppDrawerActivity.class);
+                                Intent intent = new Intent(ctx, ThemeSelectorActivity.class);
                                 startActivity(intent);
                             }
 

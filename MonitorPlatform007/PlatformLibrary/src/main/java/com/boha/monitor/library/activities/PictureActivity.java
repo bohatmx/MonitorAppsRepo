@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -30,7 +31,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -80,7 +80,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     TextView txtProject, txtTaskName;
     MonitorDTO monitor;
     Long localID;
-    int darkColor,themeDarkColor,themePrimaryColor;
+    int themeDarkColor,themePrimaryColor;
     ProjectTaskStatusDTO projectTaskStatus;
     RadioButton radioPhoto, radioVideo;
 
@@ -104,7 +104,6 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
             Log.d(LOG, "## savedInstanceState is not null: ");
         }
 
-        darkColor = getIntent().getIntExtra("darkColor", R.color.red_900);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler);
 
 
@@ -209,7 +208,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         super.onRestoreInstanceState(savedInstanceState);
     }
 
-    Button fab;
+    FloatingActionButton fab;
 
     private void setFields() {
         activity = this;
@@ -221,8 +220,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
         txtProject = (TextView) findViewById(R.id.CAM_projectName);
         txtTaskName = (TextView) findViewById(R.id.CAM_siteName);
-        fab = (Button) findViewById(R.id.fab);
-        fab.setBackgroundColor(darkColor);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         txtProject.setText("");
         txtTaskName.setText("");
 

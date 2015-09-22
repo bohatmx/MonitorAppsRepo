@@ -137,7 +137,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         navText = (TextView) findViewById(R.id.NAVHEADER_text);
         navText.setText(SharedUtil.getCompanyStaff(ctx).getFullName());
         try {
-            Statics.setRobotoFontLight(getApplicationContext(),navText);
+            Statics.setRobotoFontLight(getApplicationContext(), navText);
             Drawable globe = ContextCompat.getDrawable(ctx, R.drawable.ic_action_globe);
             globe.setColorFilter(themeDarkColor, PorterDuff.Mode.SRC_IN);
             navigationView.getMenu().getItem(0).setIcon(globe);
@@ -152,7 +152,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
             navigationView.getMenu().getItem(3).getSubMenu().getItem(0).setIcon(face);
             navigationView.getMenu().getItem(3).getSubMenu().getItem(1).setIcon(face);
-            mDrawerLayout.openDrawer(GravityCompat.START);
+
         } catch (Exception e) {
             Log.e(LOG, "Problem colorizing menu items");
         }
@@ -188,6 +188,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         }
 
         setMenuDestinations();
+        mDrawerLayout.openDrawer(GravityCompat.START);
         getCache();
         Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
                 SharedUtil.getCompany(ctx).getCompanyName(), "Project Monitoring",
@@ -225,9 +226,16 @@ public class StaffMainActivity extends AppCompatActivity implements
                 }
 
                 if (menuItem.getItemId() == R.id.nav_projectMaps) {
-                    Intent w = new Intent(ctx, ProjectMapActivity.class);
-                    w.putExtra("type", ProjectMapActivity.STAFF);
-                    startActivity(w);
+                    for (ProjectDTO p: response.getProjectList()) {
+                        if (p.getLatitude() != null) {
+                            Intent w = new Intent(ctx, ProjectMapActivity.class);
+                            w.putExtra("type", ProjectMapActivity.STAFF);
+                            startActivity(w);
+                            return true;
+                        }
+                    }
+
+                    Util.showToast(getApplicationContext(),"Projects have not been located via GPS");
 
                     return true;
                 }
