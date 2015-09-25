@@ -17,6 +17,7 @@
 
         <!-- SERVICES -->
         <service android:name="com.boha.monitor.library.services.GPSService" />
+
         <service android:name="com.boha.monitor.library.services.PhotoUploadService" />
         <service android:name="com.boha.monitor.library.services.RequestSyncService" />
         <service android:name="com.squareup.leakcanary.DisplayLeakService" />

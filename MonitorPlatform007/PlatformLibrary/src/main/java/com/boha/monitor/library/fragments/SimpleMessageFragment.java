@@ -104,11 +104,23 @@ public class SimpleMessageFragment extends Fragment implements PageFragment {
         txtFromMsg = (TextView) view.findViewById(R.id.FSL_fromMessage);
         topView = view.findViewById(R.id.AM_top);
         txtFromMsg.setVisibility(View.GONE);
-        paneLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        paneLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
 
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (staffList != null) {
+                    sendToStaff = new ArrayList<Integer>();
+                    for (StaffDTO x: staffList) {
+                        sendToStaff.add(x.getStaffID());
+                    }
+                }
+                if (monitorList != null) {
+                    sendToMonitors = new ArrayList<Integer>();
+                    for (MonitorDTO m: monitorList) {
+                        sendToMonitors.add(m.getMonitorID());
+                    }
+                }
                 sendMessage();
             }
         });
@@ -189,15 +201,24 @@ public class SimpleMessageFragment extends Fragment implements PageFragment {
         txtFromMsg.setVisibility(View.VISIBLE);
         if (message.getStaffName() != null) {
             txtPerson.setText(message.getStaffName());
+            if (sendToStaff == null) {
+                sendToStaff = new ArrayList<>();
+            }
+            sendToStaff.add(message.getStaffID());
         }
         if (message.getMonitorName() != null) {
             txtPerson.setText(message.getMonitorName());
+            if (sendToMonitors == null) {
+                sendToMonitors = new ArrayList<>();
+            }
+            sendToMonitors.add(message.getMonitorID());
         }
         txtFromMsg.setText(message.getMessage());
         editMessage.setText("");
 
     }
 
+    List<Integer> sendToStaff, sendToMonitors;
     private void sendMessage() {
         if (editMessage.getText().toString().isEmpty()) {
             Util.showToast(getActivity(),"Please enter message");
@@ -215,16 +236,9 @@ public class SimpleMessageFragment extends Fragment implements PageFragment {
             msg.setStaffID(staff.getStaffID());
             msg.setStaffName(staff.getFullName());
         }
-        if (staffList != null && !staffList.isEmpty()) {
-            for (StaffDTO s: staffList) {
-                msg.getStaffList().add(s.getStaffID());
-            }
-        }
-        if (monitorList != null && !monitorList.isEmpty()) {
-            for (MonitorDTO x: monitorList) {
-                msg.getMonitorList().add(x.getMonitorID());
-            }
-        }
+        msg.setStaffList(sendToStaff);
+        msg.setMonitorList(sendToMonitors);
+
         msg.setMessage(editMessage.getText().toString());
         RequestDTO w = new RequestDTO(RequestDTO.SEND_SIMPLE_MESSAGE);
         w.setSimpleMessage(msg);

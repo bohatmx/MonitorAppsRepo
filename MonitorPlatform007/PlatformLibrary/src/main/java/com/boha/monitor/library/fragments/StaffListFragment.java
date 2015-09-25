@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,12 +20,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListPopupWindow;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.activities.MonitorMapActivity;
 import com.boha.monitor.library.adapters.PopupListIconAdapter;
-import com.boha.monitor.library.adapters.StaffAdapter;
+import com.boha.monitor.library.adapters.StaffListAdapter;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
@@ -57,7 +58,7 @@ public class StaffListFragment extends Fragment
     /**
      * The fragment's ListView/GridView.
      */
-    private ListView mListView;
+    private RecyclerView mRecycler;
 
     public StaffListFragment() {
     }
@@ -128,7 +129,7 @@ public class StaffListFragment extends Fragment
         topView = view.findViewById(R.id.STAFF_LIST_top);
         hero = (ImageView) view.findViewById(R.id.STAFF_LIST_backDrop);
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        mListView = (ListView) view.findViewById(R.id.STAFF_LIST_list);
+        mRecycler = (RecyclerView) view.findViewById(R.id.STAFF_LIST_list);
 
         iconClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -283,30 +284,23 @@ public class StaffListFragment extends Fragment
 
     List<PopupItem> popupItemList;
 
+
     private void setList() {
-        staffAdapter = new StaffAdapter(ctx, R.layout.monitor_card,
-                staffList, new StaffAdapter.StaffAdapterListener() {
+        Log.d(LOG,"##### setList");
+        staffAdapter = new StaffListAdapter(staffList, darkColor, getActivity(), new StaffListAdapter.StaffListListener() {
             @Override
-            public void onPictureRequested(StaffDTO staff) {
-                mListener.onCompanyStaffPictureRequested(staff);
-            }
-
-            @Override
-            public void onStatusUpdatesRequested(StaffDTO staff) {
-
+            public void onStaffNameClicked(StaffDTO s) {
+                staff = s;
+                showPopup(staff);
             }
         });
 
-        mListView.setAdapter(staffAdapter);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (null != mListener) {
-                    staff = staffList.get(position);
-                    showPopup(staff);
-                }
-            }
-        });
+        LinearLayoutManager llm =
+                new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
+        mRecycler.setHasFixedSize(true);
+        mRecycler.setLayoutManager(llm);
+        mRecycler.setAdapter(staffAdapter);
+
     }
     private void showPopup(final StaffDTO staff) {
         popupItemList = new ArrayList<>();
@@ -449,6 +443,6 @@ public class StaffListFragment extends Fragment
     }
 
     List<StaffDTO> staffList;
-    StaffAdapter staffAdapter;
+    StaffListAdapter staffAdapter;
     static final String LOG = StaffListFragment.class.getSimpleName();
 }

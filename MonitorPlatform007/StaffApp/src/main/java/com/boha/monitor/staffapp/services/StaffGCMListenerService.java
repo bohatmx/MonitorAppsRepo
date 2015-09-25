@@ -61,6 +61,9 @@ public class StaffGCMListenerService extends GcmListenerService {
         if (message != null) {
             SimpleMessageDTO m = GSON.fromJson(message, SimpleMessageDTO.class);
             m.setDateReceived(new Date().getTime());
+            if (m.isLocationRequest() == null) {
+                m.setLocationRequest(Boolean.FALSE);
+            }
             Log.d(TAG, "** GCM simpleMessage From: " + from);
             Log.d(TAG, "SimpleMessage: " + m.getMessage());
             cacheMessage(m);
@@ -69,6 +72,10 @@ public class StaffGCMListenerService extends GcmListenerService {
 
     }
     private void cacheMessage(final SimpleMessageDTO message) {
+        if (message.getLocationTracker() != null) {
+            sendNotification(message.getLocationTracker());
+            return;
+        }
         CacheUtil.getCachedMessages(getApplicationContext(), new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {

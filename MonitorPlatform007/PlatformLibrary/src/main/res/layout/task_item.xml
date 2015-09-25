@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:padding="@dimen/mon_margin">
+        android:padding="@dimen/mon_padding">
 
         <RelativeLayout
             android:id="@+id/TSK_top"
@@ -44,8 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/TSK_top"
-            android:layout_marginTop="@dimen/mon_divider"
-            android:padding="@dimen/mon_padding">
+            android:padding="@dimen/mon_divider">
 
             <TextView
                 android:id="@+id/TSK_label1"
@@ -91,7 +90,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/TSK_middle"
-            android:layout_marginTop="@dimen/mon_divider"
             android:padding="@dimen/mon_padding">
 
             <TextView

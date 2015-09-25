@@ -19,6 +19,7 @@ import com.boha.monitor.library.activities.SimpleMessagingActivity;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
+import com.boha.monitor.library.services.GPSService;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.platform.library.MainActivity;
 import com.boha.platform.library.R;
@@ -61,6 +62,9 @@ public class MonitorGCMListenerService extends GcmListenerService {
         if (message != null) {
             SimpleMessageDTO m = GSON.fromJson(message, SimpleMessageDTO.class);
             m.setDateReceived(new Date().getTime());
+            if (m.isLocationRequest() == null) {
+                m.setLocationRequest(Boolean.FALSE);
+            }
             Log.d(TAG, "** GCM simpleMessage From: " + from);
             Log.d(TAG, "SimpleMessage: " + m.getMessage());
             cacheMessage(m);
@@ -69,7 +73,14 @@ public class MonitorGCMListenerService extends GcmListenerService {
 
     }
     private void cacheMessage(final SimpleMessageDTO message) {
-        CacheUtil.getCachedMessages(getApplicationContext(), new CacheUtil.CacheUtilListener() {
+        if (message.isLocationRequest()) {
+            Log.d(TAG, "*** is location request received, calling GPSService: " + message.getStaffName());
+            Intent w = new Intent(getApplicationContext(), GPSService.class);
+            w.putExtra("simpleMessage", message);
+            getApplicationContext().startService(w);
+            return;
+        }
+            CacheUtil.getCachedMessages(getApplicationContext(), new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
                 response.getSimpleMessageList().add(message);
@@ -81,7 +92,9 @@ public class MonitorGCMListenerService extends GcmListenerService {
 
                     @Override
                     public void onDataCached() {
-                        sendNotification(message);
+
+                            sendNotification(message);
+
                     }
 
                     @Override

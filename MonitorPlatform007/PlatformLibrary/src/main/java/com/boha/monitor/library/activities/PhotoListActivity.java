@@ -119,7 +119,6 @@ public class PhotoListActivity extends AppCompatActivity implements PhotoAdapter
             //getSupportActionBar().setSubtitle(sb.toString());
 
         }
-        String text = "Photo Updates";
         if (project != null) {
             ImageView logo = Util.setCustomActionBar(ctx, getSupportActionBar(),
                     project.getProjectName(),
@@ -142,7 +141,7 @@ public class PhotoListActivity extends AppCompatActivity implements PhotoAdapter
             number++;
         }
         adapter = new PagerAdapter(getSupportFragmentManager());
-        mPager.setOffscreenPageLimit(4);
+        mPager.setOffscreenPageLimit(2);
         mPager.setAdapter(adapter);
 
         mPager.setCurrentItem(index,true);

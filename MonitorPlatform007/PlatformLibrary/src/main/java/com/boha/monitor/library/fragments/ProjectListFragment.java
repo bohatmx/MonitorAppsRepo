@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.activities.MonApp;
-import com.boha.monitor.library.activities.MonitorMapActivity;
+import com.boha.monitor.library.activities.ProjectMapActivity;
 import com.boha.monitor.library.adapters.ProjectAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
@@ -145,7 +145,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             @Override
             public void onMapRequired(ProjectDTO project) {
                 Log.i(LOG, "### onMapRequired");
-                Intent w = new Intent(getActivity(), MonitorMapActivity.class);
+                Intent w = new Intent(getActivity(), ProjectMapActivity.class);
                 w.putExtra("project", project);
                 startActivity(w);
             }

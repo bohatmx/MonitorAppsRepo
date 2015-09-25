@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -23,7 +22,6 @@ import android.widget.ListPopupWindow;
 import android.widget.TextView;
 
 import com.boha.monitor.library.activities.MonApp;
-import com.boha.monitor.library.activities.MonitorMapActivity;
 import com.boha.monitor.library.adapters.MonitorListAdapter;
 import com.boha.monitor.library.adapters.PopupListIconAdapter;
 import com.boha.monitor.library.dto.MonitorDTO;
@@ -221,7 +219,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
     private void showDialog() {
         final AlertDialog.Builder x = new AlertDialog.Builder(getActivity());
         x.setTitle("Broadcast Your Location")
-                .setMessage("Do you want to broadcast your current location to other Monitors?")
+                .setMessage("Do you want to broadcast your current location to the Monitors in the list?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -432,6 +430,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
                 pList.add(new PopupItem(R.drawable.ic_action_location_on, ctx.getString(R.string.send_my_location)));
                 break;
             case STAFF:
+                pList.add(new PopupItem(R.drawable.ic_action_location_on, ctx.getString(R.string.send_my_location)));
                 pList.add(new PopupItem(R.drawable.ic_action_location_on, ctx.getString(R.string.get_location)));
                 pList.add(new PopupItem(R.drawable.ic_action_view_as_list, ctx.getString(R.string.get_updates)));
                 break;
@@ -477,24 +476,40 @@ public class MonitorListFragment extends Fragment implements PageFragment {
     }
 
     private void getMonitorLocationTracks(Integer monitorID) {
-        RequestDTO w = new RequestDTO(RequestDTO.GET_LOCATION_TRACK_BY_MONITOR_IN_PERIOD);
-        w.setMonitorID(monitorID);
+        SimpleMessageDTO msg = new SimpleMessageDTO();
+        StaffDTO s = SharedUtil.getCompanyStaff(
+                getActivity());
+        if (s != null) {
+            msg.setStaffID(s.getStaffID());
+            msg.setStaffName(s.getFullName());
+        }
+        MonitorDTO m = SharedUtil.getMonitor(
+                getActivity());
+        if (m != null) {
+            msg.setMonitorID(m.getMonitorID());
+            msg.setMonitorName(m.getFullName());
+        }
+        msg.setMonitorList(new ArrayList<Integer>());
+        msg.getMonitorList().add(monitorID);
+        msg.setLocationRequest(Boolean.TRUE);
+
+        RequestDTO w = new RequestDTO(RequestDTO.SEND_SIMPLE_MESSAGE);
+        w.setSimpleMessage(msg);
 
         NetUtil.sendRequest(getActivity(), w, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(ResponseDTO response) {
-                if (response.getLocationTrackerList() != null
-                        && !response.getLocationTrackerList().isEmpty()) {
-                    Intent w = new Intent(getActivity(), MonitorMapActivity.class);
-                    w.putExtra("response",response);
-                    startActivity(w);
-                } else {
-                    Util.showToast(getActivity(), "Location not available");
-                }
+                Log.i(LOG,"request for location sent");
             }
 
             @Override
-            public void onError(String message) {
+            public void onError(final String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Util.showErrorToast(getActivity(),message);
+                    }
+                });
 
             }
 
@@ -503,6 +518,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
 
             }
         });
+
     }
     @Override
     public void onAttach(Activity activity) {

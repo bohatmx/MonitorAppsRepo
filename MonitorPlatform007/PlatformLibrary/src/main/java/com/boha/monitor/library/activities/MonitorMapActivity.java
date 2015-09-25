@@ -21,7 +21,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.boha.monitor.library.dto.LocationTrackerDTO;
-import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.NetUtil;
@@ -69,7 +68,6 @@ public class MonitorMapActivity extends AppCompatActivity
     // Unique tag for the error dialog fragment
     private static final String DIALOG_ERROR = "dialog_error";
 
-    ProjectDTO project;
     int index;
     TextView text, txtCount, txtTime;
     View topLayout;
@@ -95,7 +93,6 @@ public class MonitorMapActivity extends AppCompatActivity
         setContentView(R.layout.activity_monitor_map);
 
         track = (LocationTrackerDTO) getIntent().getSerializableExtra("track");
-        project = (ProjectDTO) getIntent().getSerializableExtra("project");
         ResponseDTO w = (ResponseDTO) getIntent().getSerializableExtra("response");
         if (w != null) {
             trackList = w.getLocationTrackerList();
@@ -105,7 +102,7 @@ public class MonitorMapActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         text = (TextView) findViewById(R.id.text);
-        image = (CircleImageView) findViewById(R.id.roundImage);
+        image = (CircleImageView) findViewById(R.id.statusColor);
         txtCount = (TextView) findViewById(R.id.count);
         txtTime = (TextView) findViewById(R.id.time);
         txtCount.setText("0");
@@ -124,15 +121,7 @@ public class MonitorMapActivity extends AppCompatActivity
             return;
         }
         setGoogleMap();
-        if (project != null) {
-            image.setVisibility(View.GONE);
-            setOneMarker();
-        }
-
         if (track != null) {
-            txtCount.setVisibility(View.GONE);
-            txtTime.setText(fTime.format(new Date(track.getDateTracked().longValue())));
-            txtTime.setVisibility(View.VISIBLE);
             getPersonPhotos();
             final String name = setPersonMarker();
             Util.setCustomActionBar(ctx,getSupportActionBar(),name,"Location",
@@ -152,43 +141,10 @@ public class MonitorMapActivity extends AppCompatActivity
             });
         }
         if (trackList != null && !trackList.isEmpty()) {
+            image.setVisibility(View.GONE);
             setTitle("Locations - " + trackList.get(0).getMonitorName());
             setLocationMarkers();
         }
-    }
-
-
-    private void temporaryWork(LatLng latLng) {
-        location.setLatitude(latLng.latitude);
-        location.setLongitude(latLng.longitude);
-        Log.w(LOG, "********* onMapClick");
-
-        RequestDTO w = new RequestDTO(RequestDTO.UPDATE_PROJECT);
-        ProjectDTO p = new ProjectDTO();
-        p.setProjectID(project.getProjectID());
-        p.setLatitude(latLng.latitude);
-        p.setLongitude(latLng.longitude);
-        p.setLocationConfirmed(true);
-        w.setProject(p);
-
-        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
-            @Override
-            public void onResponse(ResponseDTO response) {
-                if (response.getStatusCode() == 0)
-                    Log.i(LOG, "+++ cool. project location updated");
-            }
-
-            @Override
-            public void onError(String message) {
-                Log.e(LOG, message);
-            }
-
-            @Override
-            public void onWebSocketClose() {
-
-            }
-        });
-
     }
 
     Activity activity;
@@ -204,26 +160,7 @@ public class MonitorMapActivity extends AppCompatActivity
                 location = loc;
             }
         });
-//        //TODO - remove after test
-//        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-//            @Override
-//            public void onMapClick(final LatLng latLng) {
-//                final AlertDialog.Builder d = new AlertDialog.Builder(activity);
-//                d.setTitle("Project Location")
-//                        .setMessage("Do you want to set location for " + project.getProjectName())
-//                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                temporaryWork(latLng);
-//                            }
-//                        })
-//                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                            }
-//                        }).show();
-//            }
-//        });
+
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -231,9 +168,7 @@ public class MonitorMapActivity extends AppCompatActivity
                 Location loc = new Location(location);
                 loc.setLatitude(latLng.latitude);
                 loc.setLongitude(latLng.longitude);
-                if (project != null) {
 
-                }
                 float mf = location.distanceTo(loc);
                 Log.w(LOG, "######### distance, again: " + mf);
 
@@ -254,23 +189,22 @@ public class MonitorMapActivity extends AppCompatActivity
 
     private void setLocationMarkers() {
         googleMap.clear();
-        LatLng point = null;
         int index = 0, count = 0;
 
         for (LocationTrackerDTO track : trackList) {
             if (track.getLatitude() == null) continue;
-            if (index > 5) {
-                break;
-            }
-            LatLng pnt = new LatLng(track.getLatitude(), track.getLongitude());
-            point = pnt;
 
+            LatLng pnt = new LatLng(track.getLatitude(), track.getLongitude());
             View view = getLayoutInflater().inflate(R.layout.location_track_item, null);
             TextView date = (TextView)view.findViewById(R.id.LTI_date);
             TextView time = (TextView)view.findViewById(R.id.LTI_time);
-            TextView number = (TextView)view.findViewById(R.id.LTI_number);
-
-//            number.setText((index + 1));
+            TextView name = (TextView)view.findViewById(R.id.LTI_name);
+            if (track.getStaffName() != null) {
+                name.setText(track.getStaffName());
+            }
+            if (track.getMonitorName() != null) {
+                name.setText(track.getMonitorName());
+            }
             date.setText(fDate.format(new Date(track.getDateTracked())));
             time.setText(fTime.format(new Date(track.getDateTracked())));
             Bitmap bmBitmap = Util.createBitmapFromView(ctx, view, displayMetrics);
@@ -306,49 +240,34 @@ public class MonitorMapActivity extends AppCompatActivity
 
     }
 
-    private void setOneMarker() {
-        if (project.getLatitude() == null) {
-            return;
+    private String setPersonMarker() {
+
+        LatLng pnt = new LatLng(track.getLatitude(), track.getLongitude());
+        View view = getLayoutInflater().inflate(R.layout.location_track_item, null);
+        TextView date = (TextView)view.findViewById(R.id.LTI_date);
+        TextView time = (TextView)view.findViewById(R.id.LTI_time);
+        TextView name = (TextView)view.findViewById(R.id.LTI_name);
+        if (track.getStaffName() != null) {
+            name.setText(track.getStaffName());
         }
-        LatLng pnt = new LatLng(project.getLatitude(), project.getLongitude());
-        View view = getLayoutInflater().inflate(R.layout.project_name, null);
-        TextView name = (TextView)view.findViewById(R.id.name);
-        name.setText(project.getProjectName());
-        Bitmap bmBitmap = Util.createBitmapFromView(ctx,view,displayMetrics);
+        if (track.getMonitorName() != null) {
+            name.setText(track.getMonitorName());
+        }
+        date.setText(fDate.format(new Date(track.getDateTracked())));
+        time.setText(fTime.format(new Date(track.getDateTracked())));
+
+        Bitmap bmBitmap = Util.createBitmapFromView(ctx, view, displayMetrics);
         BitmapDescriptor desc = BitmapDescriptorFactory.fromBitmap(bmBitmap);
         Marker m =
                 googleMap.addMarker(new MarkerOptions()
-                        .title(project.getProjectName())
+                        .title(name.getText().toString())
                         .icon(desc)
-                        .snippet(project.getProjectName())
+                        .snippet(name.getText().toString())
                         .position(pnt));
         markers.add(m);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pnt, 1.0f));
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f));
-        setTitle(project.getProjectName());
-    }
-
-    private String setPersonMarker() {
-
-        String name = "Unknown";
-        if (track.getStaffName() != null) {
-            name = track.getStaffName();
-        }
-        if (track.getMonitorName() != null) {
-            name = track.getMonitorName();
-        }
-        LatLng pnt = new LatLng(track.getLatitude(), track.getLongitude());
-        BitmapDescriptor desc = BitmapDescriptorFactory.fromResource(R.drawable.number_1);
-        Marker m =
-                googleMap.addMarker(new MarkerOptions()
-                        .title(name)
-                        .icon(desc)
-                        .snippet(name)
-                        .position(pnt));
-        markers.add(m);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pnt, 1.0f));
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f));
-        return name;
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
+        return name.getText().toString();
     }
 
     List<String> list;
@@ -538,115 +457,6 @@ public class MonitorMapActivity extends AppCompatActivity
 
     List<BitmapDescriptor> bmdList = new ArrayList<BitmapDescriptor>();
 
-    private void loadIcons() {
-        try {
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_1));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_2));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_3));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_4));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_5));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_6));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_7));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_8));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_9));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_10));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_11));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_12));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_13));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_14));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_15));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_16));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_17));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_18));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_19));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_20));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_21));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_22));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_23));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_24));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_25));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_26));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_27));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_28));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_29));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_30));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_31));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_32));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_33));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_34));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_35));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_36));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_37));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_38));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_39));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_40));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_41));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_42));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_43));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_44));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_45));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_46));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_47));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_48));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_49));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_50));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_51));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_52));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_53));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_54));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_55));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_56));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_57));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_58));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_59));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_60));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_61));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_62));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_63));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_64));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_65));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_66));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_67));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_68));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_69));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_70));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_71));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_72));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_73));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_74));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_75));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_76));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_77));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_78));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_79));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_80));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_81));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_82));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_83));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_84));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_85));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_86));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_87));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_88));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_89));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_90));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_91));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_92));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_93));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_94));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_95));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_96));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_97));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_98));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_99));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_100));
-        } catch (Exception e) {
-            Log.e(LOG, "Load icons failed", e);
-        }
-
-
-    }
-
     boolean coordsConfirmed;
 
     @Override
@@ -681,7 +491,7 @@ public class MonitorMapActivity extends AppCompatActivity
                 if (response.getStatusCode() == 0) {
                     if (!response.getPhotoUploadList().isEmpty()) {
                         String url = response.getPhotoUploadList().get(0).getUri();
-                        Picasso.with(ctx).load(url).into(image);
+                        Picasso.with(ctx).load(url).fit().into(image);
                     }
                 }
             }

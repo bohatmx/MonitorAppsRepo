@@ -71,6 +71,8 @@
             android:screenOrientation="portrait"
             android:label="@string/title_activity_main_drawer" >
         </activity>
+        <activity android:name="com.boha.monitor.library.activities.ProjectMapActivity"
+            android:parentActivityName=".activities.MonitorAppDrawerActivity"/>
         <activity android:name="com.boha.monitor.library.activities.StatusReportActivity"
             android:parentActivityName=".activities.MonitorAppDrawerActivity"/>
         <activity

@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.net.Uri;
@@ -60,8 +58,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class ProjectMapActivity extends AppCompatActivity
         implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -82,10 +78,9 @@ public class ProjectMapActivity extends AppCompatActivity
 
     ProjectDTO project;
     int type;
-    TextView text, txtCount, txtTime;
+    TextView text, txtCount;
     View topLayout;
     List<LocationTrackerDTO> trackList;
-    CircleImageView image;
     static final Locale loc = Locale.getDefault();
     List<ProjectDTO> projectList;
     public static final int STAFF = 1, MONITOR = 2;
@@ -105,7 +100,7 @@ public class ProjectMapActivity extends AppCompatActivity
         themePrimaryColor = typedValue.data;
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_monitor_map);
+        setContentView(R.layout.activity_project_map);
 
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
         type = getIntent().getIntExtra("type", 0);
@@ -113,13 +108,8 @@ public class ProjectMapActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         text = (TextView) findViewById(R.id.text);
-
-        image = (CircleImageView) findViewById(R.id.roundImage);
-        image.setVisibility(View.GONE);
         txtCount = (TextView) findViewById(R.id.count);
-        txtTime = (TextView) findViewById(R.id.time);
         txtCount.setText("0");
-        txtTime.setVisibility(View.GONE);
         displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay()
                 .getMetrics(displayMetrics);
@@ -160,7 +150,6 @@ public class ProjectMapActivity extends AppCompatActivity
                     public void onFileDataDeserialized(ResponseDTO response) {
                         if (response.getProjectList() != null) {
                             projectList = response.getProjectList();
-
                             txtCount.setText("" + projectList.size());
                             setProjectMarkers();
                         }
@@ -301,72 +290,64 @@ public class ProjectMapActivity extends AppCompatActivity
 
     static final DecimalFormat df = new DecimalFormat("###,##0.00");
 
+    private ProjectTaskStatusDTO getLastStatus(ProjectDTO project) {
+        ProjectTaskStatusDTO status = null;
+        List<ProjectTaskStatusDTO> ptList = new ArrayList<>();
+        for (ProjectTaskDTO task: project.getProjectTaskList()) {
+                ptList.addAll(task.getProjectTaskStatusList());
+        }
+        Collections.sort(ptList);
+        if (!ptList.isEmpty()) {
+            status = ptList.get(0);
+        }
+
+        return status;
+    }
+
     private void setProjectMarkers() {
         googleMap.clear();
-        LatLng point = null;
-        int index = 0, count = 0;
-        ProjectTaskStatusDTO status = null;
-        List<ProjectTaskStatusDTO> list = new ArrayList<>();
-        for (ProjectDTO x : projectList) {
-            for (ProjectTaskDTO y : x.getProjectTaskList()) {
-                list.addAll(y.getProjectTaskStatusList());
-            }
-        }
-        Collections.sort(list);
-        if (!list.isEmpty()) {
-            status = list.get(0);
-        }
 
-        Drawable drawable = null;
         index = 0;
-        for (ProjectDTO site : projectList) {
-            if (site.getLatitude() == null) continue;
-            LatLng pnt = new LatLng(site.getLatitude(), site.getLongitude());
-            point = pnt;
-            drawable = Util.getMapIcon(ctx, index, site);
+        for (ProjectDTO project : projectList) {
+            if (project.getLatitude() == null) continue;
+            LatLng pnt = new LatLng(project.getLatitude(), project.getLongitude());
+            ProjectTaskStatusDTO status = getLastStatus(project);
+
+            View view = getLayoutInflater().inflate(R.layout.project_name, null);
+            TextView name = (TextView)view.findViewById(R.id.name);
+            TextView st = (TextView)view.findViewById(R.id.statusColor);
+            name.setText(project.getProjectName());
             Bitmap bitmap = null;
             BitmapDescriptor desc = null;
-            Short color = null;
+            st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgrey_oval_small));
             if (status != null) {
-                color = status.getTaskStatusType().getStatusColor();
+                Short color = status.getTaskStatusType().getStatusColor();
                 switch (color) {
                     case TaskStatusTypeDTO.STATUS_COLOR_RED:
-                        drawable.setColorFilter(ContextCompat.getColor(ctx,R.color.red_800), PorterDuff.Mode.SRC_IN);
-                        bitmap = Util.drawableToBitmap(drawable);
-                        desc = BitmapDescriptorFactory.fromBitmap(bitmap);
+                        st.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xred_oval_small));
                         break;
                     case TaskStatusTypeDTO.STATUS_COLOR_GREEN:
-                        drawable.setColorFilter(ContextCompat.getColor(ctx,R.color.green_700), PorterDuff.Mode.SRC_IN);
-                        bitmap = Util.drawableToBitmap(drawable);
-                        desc = BitmapDescriptorFactory.fromBitmap(bitmap);
+                        st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgreen_oval_small));
                         break;
                     case TaskStatusTypeDTO.STATUS_COLOR_AMBER:
-                        drawable.setColorFilter(ContextCompat.getColor(ctx,R.color.amber_700), PorterDuff.Mode.SRC_IN);
-                        bitmap = Util.drawableToBitmap(drawable);
-                        desc = BitmapDescriptorFactory.fromBitmap(bitmap);
+                        st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xamber_oval_small));
                         break;
                     default:
-                        drawable.setColorFilter(ContextCompat.getColor(ctx,R.color.black), PorterDuff.Mode.SRC_IN);
-                        bitmap = Util.drawableToBitmap(drawable);
-                        desc = BitmapDescriptorFactory.fromBitmap(bitmap);
+                        st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgrey_oval_small));
+
                         break;
-
                 }
-
-            } else {
-                drawable.setColorFilter(ContextCompat.getColor(ctx,R.color.blue_400), PorterDuff.Mode.SRC_IN);
-                bitmap = Util.drawableToBitmap(drawable);
-                desc = BitmapDescriptorFactory.fromBitmap(bitmap);
-                break;
             }
+
+            bitmap = Util.createBitmapFromView(ctx, view, displayMetrics);
+            desc = BitmapDescriptorFactory.fromBitmap(bitmap);
             Marker m = googleMap.addMarker(new MarkerOptions()
-                    .title(site.getProjectID().toString())
+                    .title(project.getProjectID().toString())
                     .icon(desc)
-                    .snippet(site.getProjectName())
+                    .snippet(project.getProjectName())
                     .position(pnt));
             markers.add(m);
             index++;
-            count++;
         }
         googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
@@ -389,19 +370,35 @@ public class ProjectMapActivity extends AppCompatActivity
     }
 
     private void setOneProjectMarker() {
-        if (projectList.get(0).getLatitude() == null) {
-            return;
-        }
-        LatLng pnt = new LatLng(projectList.get(0).getLatitude(),
-                projectList.get(0).getLongitude());
+
+        LatLng pnt = new LatLng(project.getLatitude(),
+                project.getLongitude());
         View view = getLayoutInflater().inflate(R.layout.project_name, null);
         TextView name = (TextView)view.findViewById(R.id.name);
+        TextView st = (TextView)view.findViewById(R.id.statusColor);
+        ProjectTaskStatusDTO status = getLastStatus(project);
         name.setText(project.getProjectName());
+        if (status != null) {
+            switch (status.getTaskStatusType().getStatusColor()) {
+                case TaskStatusTypeDTO.STATUS_COLOR_AMBER:
+                    st.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xamber_oval_small));
+                    break;
+                case TaskStatusTypeDTO.STATUS_COLOR_GREEN:
+                    st.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xgreen_oval_small));
+                    break;
+                case TaskStatusTypeDTO.STATUS_COLOR_RED:
+                    st.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xred_oval_small));
+                    break;
+
+            }
+        } else {
+            st.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xgrey_oval_small));
+        }
         Bitmap bmBitmap = Util.createBitmapFromView(ctx,view,displayMetrics);
         BitmapDescriptor desc = BitmapDescriptorFactory.fromBitmap(bmBitmap);
         Marker m =
                 googleMap.addMarker(new MarkerOptions()
-                        .title(projectList.get(0).getProjectID().toString())
+                        .title(project.getProjectID().toString())
                         .icon(desc)
                         .snippet(project.getProjectName())
                         .position(pnt));

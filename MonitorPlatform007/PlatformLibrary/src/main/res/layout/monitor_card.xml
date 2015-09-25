@@ -48,12 +48,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/top"
-            android:layout_marginRight="@dimen/mon_wide"
+            android:layout_marginRight="@dimen/mon_widest"
             android:visibility="visible">
 
             <TextView
-                android:id="@+id/MON_txtCounter"
-                style="@style/RedCircleSmall"
+                android:id="@+id/MON_txtCountStatus"
+                style="@style/GreenCircleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -68,8 +68,68 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toLeftOf="@id/MON_txtCounter"
-                android:text="status_updates" />
+                android:layout_toLeftOf="@id/MON_txtCountStatus"
+                android:text="@string/status_updates" />
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/MON_layoutCount2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/MON_layoutCount"
+            android:layout_marginRight="@dimen/mon_widest"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/MON_txtCountPhotos"
+                style="@style/RedCircleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="5dp"
+                android:text="0" />
+
+            <TextView
+                android:id="@+id/MON_txtCounterLabel2"
+                style="@style/TextStyleGreySmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/MON_txtCountPhotos"
+                android:text="Photos Taken" />
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/MON_layoutCount3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/MON_layoutCount2"
+            android:layout_marginRight="@dimen/mon_widest"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/MON_txtCountProjects"
+                style="@style/BlackCircleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="5dp"
+                android:text="0" />
+
+            <TextView
+                android:id="@+id/MON_txtCounterLabel3"
+                style="@style/TextStyleGreySmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/MON_txtCountProjects"
+                android:text="Projects Assigned" />
 
         </RelativeLayout>
         <RelativeLayout

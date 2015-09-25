@@ -11,6 +11,25 @@ public class SimpleMessageDTO implements Serializable, Comparable<SimpleMessageD
     private List<Integer> monitorList, staffList;
     private Integer staffID, monitorID;
     private Long dateSent, dateReceived;
+    private Boolean locationRequest;
+    private LocationTrackerDTO locationTracker;
+
+    public LocationTrackerDTO getLocationTracker() {
+        return locationTracker;
+    }
+
+    public void setLocationTracker(LocationTrackerDTO locationTracker) {
+        this.locationTracker = locationTracker;
+    }
+
+
+    public Boolean isLocationRequest() {
+        return locationRequest;
+    }
+
+    public void setLocationRequest(Boolean locationRequest) {
+        this.locationRequest = locationRequest;
+    }
 
     public String getUrl() {
         return url;
@@ -95,10 +114,13 @@ public class SimpleMessageDTO implements Serializable, Comparable<SimpleMessageD
     @Override
     public int compareTo(SimpleMessageDTO msg) {
 
-        if (this.dateSent.longValue() > msg.dateSent.intValue()) {
+        if (this.dateSent == null || msg.dateSent == null) {
+            return 0;
+        }
+        if (this.dateSent.longValue() > msg.dateSent.longValue()) {
             return - 1;
         }
-        if (this.dateSent.longValue() < msg.dateSent.intValue()) {
+        if (this.dateSent.longValue() < msg.dateSent.longValue()) {
             return 1;
         }
         return 0;

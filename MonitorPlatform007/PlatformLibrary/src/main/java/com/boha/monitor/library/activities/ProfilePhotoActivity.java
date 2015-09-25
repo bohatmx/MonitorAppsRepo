@@ -416,7 +416,7 @@ public class ProfilePhotoActivity extends AppCompatActivity {
                         @Override
                         public void onDataCached(final PhotoUploadDTO photo) {
                             File file = new File(photo.getThumbFilePath());
-                            Picasso.with(ctx).load(file).into(image);
+                            Picasso.with(ctx).load(file).fit().into(image);
                             setRefreshActionButtonState(true);
                             mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
                                 @Override

@@ -33,10 +33,10 @@ import android.view.View;
 
 import com.boha.monitor.library.activities.GPSActivity;
 import com.boha.monitor.library.activities.MainUpdateActivity;
-import com.boha.monitor.library.activities.MonitorMapActivity;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.activities.PictureActivity;
 import com.boha.monitor.library.activities.ProfilePhotoActivity;
+import com.boha.monitor.library.activities.ProjectMapActivity;
 import com.boha.monitor.library.activities.StatusReportActivity;
 import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.dto.ChatMessageDTO;
@@ -520,7 +520,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
         activity = this;
         if (project.getLatitude() != null) {
-            Intent w = new Intent(this, MonitorMapActivity.class);
+            Intent w = new Intent(this, ProjectMapActivity.class);
             w.putExtra("project", project);
             startActivity(w);
             return;
@@ -699,7 +699,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
     List<Integer> monitorList, staffList;
 
-    static final int ACCURACY = 15, MONITOR_PICTURE_REQUESTED = 3412;
+    static final int ACCURACY = 20, MONITOR_PICTURE_REQUESTED = 3412;
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {

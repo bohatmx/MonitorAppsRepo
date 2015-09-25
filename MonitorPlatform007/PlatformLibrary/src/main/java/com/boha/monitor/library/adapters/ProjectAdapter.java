@@ -16,6 +16,7 @@ import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.fragments.ProjectListFragment;
+import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
@@ -96,7 +97,11 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (holder instanceof HeaderViewHolder) {
             final ProjectDTO p = projectList.get(0);
             final HeaderViewHolder hvh = (HeaderViewHolder) holder;
-            hvh.txtProgramme.setText(p.getProgrammeName());
+            if (p.getProgrammeName() != null && !p.getProgrammeName().isEmpty()) {
+                hvh.txtProgramme.setText(p.getProgrammeName());
+            } else {
+                hvh.txtProgramme.setText(SharedUtil.getCompany(ctx).getCompanyName());
+            }
             hvh.txtCount.setText("" + projectList.size());
             hvh.image.setImageDrawable(Util.getRandomBackgroundImage(ctx));
             Statics.setRobotoFontLight(ctx,hvh.txtProgramme);

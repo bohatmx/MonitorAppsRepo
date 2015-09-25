@@ -15,6 +15,7 @@ import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.dto.SimpleMessageDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
@@ -36,19 +37,26 @@ import java.util.Locale;
 public class GPSService extends Service implements LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
-    public GPSService() {
-    }
 
     Location mLocation;
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
     boolean mRequestingLocationUpdates;
     List<LocationTrackerDTO> locationTrackerList;
+    SimpleMessageDTO simpleMessage;
+
+    public GPSService() {
+    }
 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.w(LOG, "###### onStartCommand");
+        if (intent != null) {
+            Log.w(LOG, "###### onStartCommand, intent: " + intent.toString());
+            simpleMessage = (SimpleMessageDTO) intent.getSerializableExtra("simpleMessage");
+        } else {
+            Log.w(LOG, "###### onStartCommand null intent: ");
+        }
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -94,11 +102,12 @@ public class GPSService extends Service implements LocationListener,
     }
 
     GcmDeviceDTO gcmDevice;
+
     protected void startLocationUpdates() {
         Log.w(LOG, "###### startLocationUpdates: " + new Date().toString());
         gcmDevice = SharedUtil.getGCMDevice(getApplicationContext());
         if (gcmDevice == null) {
-            Log.e(LOG,"## gcmDevice is null. Not tracking this device yet");
+            Log.e(LOG, "## gcmDevice is null. Not tracking this device yet");
             return;
         }
         if (mGoogleApiClient.isConnected()) {
@@ -123,57 +132,124 @@ public class GPSService extends Service implements LocationListener,
         Log.d(LOG, "## GPSService - onLocationChanged accuracy = " + loc.getAccuracy()
                 + " - " + new Date().toString());
 
-        if (this.mLocation == null) {
-            this.mLocation = loc;
-        }
         if (loc.getAccuracy() <= ACCURACY_THRESHOLD) {
             this.mLocation = loc;
             stopLocationUpdates();
-            final LocationTrackerDTO dto = new LocationTrackerDTO();
-            StaffDTO s = SharedUtil.getCompanyStaff(
-                    getApplicationContext());
-            if (s != null)
-                dto.setStaffID(s.getStaffID());
-            MonitorDTO m = SharedUtil.getMonitor(
-                    getApplicationContext());
-            if (m != null)
-                dto.setMonitorID(m.getMonitorID());
-            dto.setAccuracy(mLocation.getAccuracy());
-            dto.setDateTracked(new Date().getTime());
-            dto.setLatitude(mLocation.getLatitude());
-            dto.setLongitude(mLocation.getLongitude());
-            try {
-                dto.setGeocodedAddress(getAddress());
-                if (dto.getGeocodedAddress() == null) {
-                    dto.setGeocodedAddress(getString(R.string.no_address));
-                }
-            } catch (Exception e) {
-                dto.setGeocodedAddress(getString(R.string.no_address));
+
+            if (simpleMessage == null) {
+                saveLocation();
+            } else {
+                sendLocationResponse();
             }
+        }
+    }
 
-            CacheUtil.addLocationTrack(getApplicationContext(), dto, new CacheUtil.AddLocationTrackerListener() {
-                @Override
-                public void onLocationTrackerAdded(ResponseDTO response) {
-                    Log.i(LOG, "onLocationTrackerAdded, tracks: " + response.getLocationTrackerList().size());
-                    locationTrackerList = response.getLocationTrackerList();
-                    index = 0;
-                    if (!WebCheck.checkNetworkAvailability(getApplicationContext()).isNetworkUnavailable()) {
-
-                        try {
-                            Log.e(LOG,"Sleeping for a few seconds ...");
-                            Thread.sleep(10000);
-                            Log.i(LOG,"waking up... controlSend...");
-                            controlSend();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }
-            });
-
+    private void sendLocationResponse() {
+        final SimpleMessageDTO sm = new SimpleMessageDTO();
+        final LocationTrackerDTO dto = new LocationTrackerDTO();
+        StaffDTO s = SharedUtil.getCompanyStaff(
+                getApplicationContext());
+        if (s != null) {
+            dto.setStaffID(s.getStaffID());
+            dto.setStaffName(s.getFullName());
+            sm.setStaffName(s.getFullName());
+        }
+        MonitorDTO m = SharedUtil.getMonitor(
+                getApplicationContext());
+        if (m != null) {
+            dto.setMonitorID(m.getMonitorID());
+            dto.setMonitorName(m.getFullName());
+            sm.setMonitorName(m.getFullName());
+        }
+        dto.setAccuracy(mLocation.getAccuracy());
+        dto.setDateTracked(new Date().getTime());
+        dto.setLatitude(mLocation.getLatitude());
+        dto.setLongitude(mLocation.getLongitude());
+        try {
+            dto.setGeocodedAddress(getAddress());
+        } catch (Exception e) {
 
         }
+
+        sm.setLocationTracker(dto);
+        sm.setStaffList(new ArrayList<Integer>());
+        if (simpleMessage.getStaffID() != null)
+            sm.getStaffList().add(simpleMessage.getStaffID());
+        sm.setMonitorList(new ArrayList<Integer>());
+        if (simpleMessage.getMonitorID() != null)
+            sm.getMonitorList().add(simpleMessage.getMonitorID());
+
+        RequestDTO w = new RequestDTO(RequestDTO.SEND_SIMPLE_MESSAGE);
+        w.setSimpleMessage(sm);
+        Log.d(LOG, "Sending location request response...");
+        NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(ResponseDTO response) {
+                Log.d(LOG, "location response sent to requestor");
+                simpleMessage = null;
+            }
+
+            @Override
+            public void onError(String message) {
+                Log.e(LOG, "location response sent: " + message);
+                message = null;
+            }
+
+            @Override
+            public void onWebSocketClose() {
+
+            }
+        });
+
+
+    }
+
+    private void saveLocation() {
+
+        final LocationTrackerDTO dto = new LocationTrackerDTO();
+        StaffDTO s = SharedUtil.getCompanyStaff(
+                getApplicationContext());
+        if (s != null)
+            dto.setStaffID(s.getStaffID());
+        MonitorDTO m = SharedUtil.getMonitor(
+                getApplicationContext());
+        if (m != null)
+            dto.setMonitorID(m.getMonitorID());
+        dto.setAccuracy(mLocation.getAccuracy());
+        dto.setDateTracked(new Date().getTime());
+        dto.setLatitude(mLocation.getLatitude());
+        dto.setLongitude(mLocation.getLongitude());
+        try {
+            dto.setGeocodedAddress(getAddress());
+            if (dto.getGeocodedAddress() == null) {
+                dto.setGeocodedAddress(getString(R.string.no_address));
+            }
+        } catch (Exception e) {
+            dto.setGeocodedAddress(getString(R.string.no_address));
+        }
+
+        CacheUtil.addLocationTrack(getApplicationContext(), dto, new CacheUtil.AddLocationTrackerListener() {
+            @Override
+            public void onLocationTrackerAdded(ResponseDTO response) {
+                Log.i(LOG, "onLocationTrackerAdded, tracks: " + response.getLocationTrackerList().size());
+                locationTrackerList = response.getLocationTrackerList();
+                index = 0;
+                if (!WebCheck.checkNetworkAvailability(getApplicationContext()).isNetworkUnavailable()) {
+
+                    try {
+                        Log.e(LOG, "Sleeping for a few seconds ...");
+                        Thread.sleep(5000);
+                        Log.i(LOG, "waking up... controlSend...");
+                        controlSend();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
+
+
     }
 
     private void controlSend() {
@@ -203,6 +279,7 @@ public class GPSService extends Service implements LocationListener,
 
         }
     }
+
     private String getAddress() {
 
         Geocoder geocoder = new Geocoder(getApplicationContext(),
@@ -238,7 +315,7 @@ public class GPSService extends Service implements LocationListener,
 
     private void send(LocationTrackerDTO dto) {
 
-        RequestDTO w = new RequestDTO(RequestDTO.ADD_LOCATION_TRACK);
+        final RequestDTO w = new RequestDTO(RequestDTO.ADD_LOCATION_TRACK);
         if (SharedUtil.getMonitor(getApplicationContext()) != null) {
             dto.setMonitorID(SharedUtil.getMonitor(getApplicationContext()).getMonitorID());
         }
@@ -252,27 +329,34 @@ public class GPSService extends Service implements LocationListener,
         }
         w.setLocationTracker(dto);
 
-        NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {
+        Thread thread = new Thread(new Runnable() {
             @Override
-            public void onResponse(ResponseDTO response) {
-                Log.e(LOG, response.getMessage());
-                if (response.getStatusCode() == 0) {
-                    index++;
-                    controlSend();
+            public void run() {
+                NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {
+                    @Override
+                    public void onResponse(ResponseDTO response) {
+                        Log.e(LOG, response.getMessage());
+                        if (response.getStatusCode() == 0) {
+                            index++;
+                            controlSend();
 
-                }
-            }
+                        }
+                    }
 
-            @Override
-            public void onError(String message) {
-                Log.e(LOG, message);
-            }
+                    @Override
+                    public void onError(String message) {
+                        Log.e(LOG, message);
+                    }
 
-            @Override
-            public void onWebSocketClose() {
-                Log.e(LOG, "### onWebSocketClose");
+                    @Override
+                    public void onWebSocketClose() {
+                        Log.e(LOG, "### onWebSocketClose");
+                    }
+                });
             }
         });
+        thread.start();
+
     }
 
     static final float ACCURACY_THRESHOLD = 30;

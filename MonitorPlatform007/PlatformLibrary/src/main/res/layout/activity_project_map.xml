@@ -36,34 +36,12 @@
     <TextView
         style="@style/RedCircle"
         android:id="@+id/count"
-        android:visibility="gone"
         android:text="999"
         android:layout_marginTop="@dimen/mon_wide"
         android:layout_marginLeft="@dimen/mon_padding"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/statusColor"
-        android:layout_width="@dimen/mon_widest"
-        android:layout_height="@dimen/mon_widest"
-        android:scaleType="centerCrop"
-        android:layout_marginTop="@dimen/mon_margin"
-        android:layout_marginLeft="@dimen/mon_wide"
-        android:src="@drawable/black_woman"
-        app:border_color="@color/white"
-        app:border_width="@dimen/mon_divider" />
-
-    <TextView
-        style="@style/RedCountBox"
-        android:id="@+id/time"
-        android:text="12:35"
-        android:visibility="gone"
-        android:layout_below="@id/statusColor"
-        android:layout_marginTop="@dimen/mon_padding"
-        android:layout_marginLeft="@dimen/mon_wide"
-        android:layout_width="@dimen/mon_hero_height_medium_lite"
-        android:layout_height="wrap_content" />
 
 
 </RelativeLayout>

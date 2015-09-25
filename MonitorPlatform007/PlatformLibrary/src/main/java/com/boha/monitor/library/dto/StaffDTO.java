@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class StaffDTO implements Serializable {
     private static final long serialVersionUID = 1L;
-    private Integer staffID, activeFlag;
+    private Integer staffID, activeFlag,statusCount, photoCount,projectCount;
     private String firstName;
     private String lastName;
     private String email, companyName;
@@ -29,6 +29,39 @@ public class StaffDTO implements Serializable {
     private List<StaffProjectDTO> staffProjectList;
 
     public StaffDTO() {
+    }
+
+    public Integer getStatusCount() {
+        if (statusCount == null) {
+            statusCount = 0;
+        }
+        return statusCount;
+    }
+
+    public void setStatusCount(Integer statusCount) {
+        this.statusCount = statusCount;
+    }
+
+    public Integer getPhotoCount() {
+        if (photoCount == null) {
+            photoCount = 0;
+        }
+        return photoCount;
+    }
+
+    public void setPhotoCount(Integer photoCount) {
+        this.photoCount = photoCount;
+    }
+
+    public Integer getProjectCount() {
+        if (projectCount == null) {
+            projectCount = 0;
+        }
+        return projectCount;
+    }
+
+    public void setProjectCount(Integer projectCount) {
+        this.projectCount = projectCount;
     }
 
     public String getFullName() {

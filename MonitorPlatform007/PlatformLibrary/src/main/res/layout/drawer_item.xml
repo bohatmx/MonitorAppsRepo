@@ -3,7 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp">
+    android:padding="@dimen/mon_padding">
 
     <ImageView
         android:id="@+id/DI_icon"
@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/mon_padding"
+        android:layout_marginLeft="@dimen/mon_margin"
         android:layout_toRightOf="@id/DI_icon"
         android:text="Name of Action" />
 

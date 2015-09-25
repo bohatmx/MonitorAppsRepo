@@ -233,8 +233,8 @@ public class StaffProfileFragment extends Fragment implements PageFragment {
         Log.d(LOG,"setPicture " + photo.getThumbFilePath() + " uri: " + photo.getUri());
         if (photo.getThumbFilePath() == null) {
             if (photo.getUri() != null) {
-                Picasso.with(getActivity()).load(photo.getUri()).into(hero);
-                Picasso.with(getActivity()).load(photo.getUri()).into(roundImage);
+                Picasso.with(getActivity()).load(photo.getUri()).fit().into(hero);
+                Picasso.with(getActivity()).load(photo.getUri()).fit().into(roundImage);
             }
 
         } else {

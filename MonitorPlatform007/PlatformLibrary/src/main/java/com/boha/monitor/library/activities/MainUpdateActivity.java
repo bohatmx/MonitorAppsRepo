@@ -184,6 +184,7 @@ public class MainUpdateActivity extends AppCompatActivity
         }
         pageFragmentList.remove(index);
         adapter.notifyDataSetChanged();
+        mViewPager.setCurrentItem(0,true);
     }
 
     @Override

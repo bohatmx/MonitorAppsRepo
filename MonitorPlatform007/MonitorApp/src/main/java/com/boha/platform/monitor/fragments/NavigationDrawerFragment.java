@@ -276,7 +276,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         if (photo.getThumbFilePath() == null) {
             if (photo.getUri() != null) {
-                Picasso.with(ctx).load(photo.getUri()).into(personImage);
+                Picasso.with(ctx).load(photo.getUri()).fit().into(personImage);
             }
 
         } else {

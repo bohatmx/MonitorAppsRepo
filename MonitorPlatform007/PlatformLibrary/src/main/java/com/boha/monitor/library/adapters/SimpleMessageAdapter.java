@@ -55,7 +55,7 @@ public class SimpleMessageAdapter extends RecyclerView.Adapter<SimpleMessageAdap
 
         final SimpleMessageDTO p = simpleMessageList.get(position);
         if (p.getUrl() != null) {
-            Picasso.with(ctx).load(p.getUrl()).into(mh.image);
+            Picasso.with(ctx).load(p.getUrl()).fit().into(mh.image);
             mh.image.setAlpha(1.0f);
         } else {
             mh.image.setImageDrawable(ContextCompat.getDrawable(ctx,R.drawable.boy));

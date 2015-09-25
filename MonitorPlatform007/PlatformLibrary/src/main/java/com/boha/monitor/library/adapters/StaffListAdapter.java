@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.boha.monitor.library.dto.MonitorDTO;
+import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
 import com.squareup.picasso.Picasso;
@@ -24,23 +24,20 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by aubreyM on 14/12/17.
  */
-public class MonitorListAdapter extends RecyclerView.Adapter<MonitorListAdapter.MonitorViewHolder> {
+public class StaffListAdapter extends RecyclerView.Adapter<StaffListAdapter.MonitorViewHolder> {
 
-    public interface MonitorListener {
-        void onPictureRequested(MonitorDTO monitor);
-        void onStatusUpdatesRequested(MonitorDTO monitor);
-        void onCheckBoxClicked(MonitorDTO monitor);
-        void onMonitorNameClicked(MonitorDTO monitor);
+    public interface StaffListListener {
+        void onStaffNameClicked(StaffDTO staff);
     }
 
-    private MonitorListener mListener;
-    private List<MonitorDTO> monitorList;
+    private StaffListListener mListener;
+    private List<StaffDTO> staffList;
     private Context ctx;
     int darkColor;
 
-    public MonitorListAdapter(List<MonitorDTO> monitorList, int darkColor,
-                              Context context, MonitorListener listener) {
-        this.monitorList = monitorList;
+    public StaffListAdapter(List<StaffDTO> staffList, int darkColor,
+                            Context context, StaffListListener listener) {
+        this.staffList = staffList;
         this.ctx = context;
         this.mListener = listener;
         this.darkColor = darkColor;
@@ -56,22 +53,16 @@ public class MonitorListAdapter extends RecyclerView.Adapter<MonitorListAdapter.
     @Override
     public void onBindViewHolder( final MonitorViewHolder holder, final int position) {
 
-        final MonitorDTO p = monitorList.get(position);
+        final StaffDTO p = staffList.get(position);
         holder.txtName.setText(p.getFullName());
         holder.statusCount.setText("" + p.getStatusCount());
         holder.projectCount.setText("" + p.getProjectCount());
         holder.photoCount.setText("" + p.getPhotoCount());
 
-        holder.photo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onPictureRequested(p);
-            }
-        });
         holder.txtName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onMonitorNameClicked(p);
+                mListener.onStaffNameClicked(p);
             }
         });
         Statics.setRobotoFontLight(ctx, holder.txtName);
@@ -92,7 +83,7 @@ public class MonitorListAdapter extends RecyclerView.Adapter<MonitorListAdapter.
 
     @Override
     public int getItemCount() {
-        return monitorList == null ? 0 : monitorList.size();
+        return staffList == null ? 0 : staffList.size();
     }
 
     static final Locale loc = Locale.getDefault();
@@ -128,5 +119,5 @@ public class MonitorListAdapter extends RecyclerView.Adapter<MonitorListAdapter.
 
     }
 
-    static final String LOG = MonitorListAdapter.class.getSimpleName();
+    static final String LOG = StaffListAdapter.class.getSimpleName();
 }

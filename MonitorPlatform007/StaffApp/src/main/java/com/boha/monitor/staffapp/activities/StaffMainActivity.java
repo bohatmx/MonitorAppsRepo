@@ -41,7 +41,6 @@ import android.widget.TextView;
 
 import com.boha.monitor.library.activities.GPSActivity;
 import com.boha.monitor.library.activities.MainUpdateActivity;
-import com.boha.monitor.library.activities.MonitorMapActivity;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.activities.PictureActivity;
 import com.boha.monitor.library.activities.ProfilePhotoActivity;
@@ -544,7 +543,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     boolean sendLocation;
     List<Integer> monitorList, staffList;
     @Override
-    public void onLocationSendRequired(List<Integer> staffList, List<Integer> monitorList) {
+    public void onLocationSendRequired(List<Integer> monitorList, List<Integer> staffList) {
         sendLocation = true;
         this.monitorList = monitorList;
         this.staffList = staffList;
@@ -723,9 +722,8 @@ public class StaffMainActivity extends AppCompatActivity implements
             AlertDialog.Builder c = new AlertDialog.Builder(this);
             c.setTitle("Project Location")
                     .setMessage("Do you want to update the location of the project?\n\n"
-                            + project.getProjectName() +
-                            "\n\nNo takes you to a map")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            + project.getProjectName())
+                    .setPositiveButton("Update GPS Location", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Intent w = new Intent(activity, GPSActivity.class);
@@ -733,10 +731,10 @@ public class StaffMainActivity extends AppCompatActivity implements
                             startActivityForResult(w, LOCATION_REQUESTED);
                         }
                     })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    .setNegativeButton("View Map", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent w = new Intent(activity, MonitorMapActivity.class);
+                            Intent w = new Intent(activity,ProjectMapActivity.class);
                             w.putExtra("project", project);
                             startActivity(w);
                         }

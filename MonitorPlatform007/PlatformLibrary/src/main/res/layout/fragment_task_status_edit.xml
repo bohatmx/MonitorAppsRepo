@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/TSE_top"
         android:background="@color/beige_pale"
-        android:padding="@dimen/mon_margin"
+        android:padding="@dimen/mon_padding"
         android:visibility="gone">
 
         <TextView
@@ -56,7 +56,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/mon_margin"
+            android:layout_marginTop="@dimen/mon_padding"
             android:text="Task Status Type Here" />
 
         <include
@@ -65,14 +65,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/TSE_statusType"
-            android:layout_marginTop="@dimen/mon_margin" />
+            android:layout_marginTop="@dimen/mon_padding" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/TSE_btn"
-            android:layout_marginBottom="@dimen/mon_margin"
-            android:layout_marginTop="@dimen/mon_margin">
+            android:layout_marginBottom="@dimen/mon_padding"
+            android:layout_marginTop="@dimen/mon_padding">
 
             <TextView
                 android:id="@+id/TSE_time"

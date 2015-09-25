@@ -19,14 +19,13 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/SMI_fromImage"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@drawable/black_woman" />
             <RelativeLayout
                 android:id="@+id/SMI_fromLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:layout_marginLeft="@dimen/mon_margin"
                 android:layout_toRightOf="@id/SMI_fromImage">
 
@@ -45,6 +44,14 @@
                     android:layout_below="@id/SMI_from"
                     android:text="12 December 2099 12:35"
                     android:textColor="@color/red_300" />
+                <ImageView
+                    android:id="@+id/SMI_iconRespond"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/mon_margin"
+                    android:src="@android:drawable/ic_menu_revert"
+                    android:tint="@color/green_700" />
 
             </RelativeLayout>
 
@@ -56,7 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/SMI_top"
-            android:padding="@dimen/mon_margin"
+            android:padding="@dimen/mon_padding"
             android:text="The message from my team mate comes here. It might be longer than your typical tweet!"
             android:textColor="@color/blue_700" />
 
@@ -64,17 +71,7 @@
             android:id="@+id/SMI_middle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/SMI_fromMsg"
-            android:layout_marginBottom="@dimen/mon_margin">
-
-            <ImageView
-                android:id="@+id/SMI_iconRespond"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="@dimen/mon_margin"
-                android:src="@android:drawable/ic_menu_revert"
-                android:tint="@color/green_700" />
+            android:layout_below="@id/SMI_fromMsg">
 
         </RelativeLayout>
 

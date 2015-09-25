@@ -231,8 +231,8 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
 
         if (photo.getThumbFilePath() == null) {
             if (photo.getUri() != null) {
-                Picasso.with(getActivity()).load(photo.getUri()).into(backDrop);
-                Picasso.with(getActivity()).load(photo.getUri()).into(roundImage);
+                Picasso.with(getActivity()).load(photo.getUri()).fit().into(backDrop);
+                Picasso.with(getActivity()).load(photo.getUri()).fit().into(roundImage);
             }
 
         } else {

@@ -75,6 +75,11 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
     private FloatingActionButton fab;
     private LinearLayout photoContainer;
     private HorizontalScrollView scrollView;
+    List<TaskStatusTypeDTO> taskStatusTypeList;
+    public static final int STAFF = 1, MONITOR = 2;
+    int type;
+    LayoutInflater inflater;
+
 
     static final String LOG = TaskStatusUpdateFragment.class.getSimpleName();
 
@@ -82,8 +87,6 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         this.projectTask = projectTask;
         if (view != null) {
             txtTaskName.setText(projectTask.getTask().getTaskName());
-        } else {
-            Log.e(LOG, "$%#$## WTF?");
         }
 
     }
@@ -120,19 +123,21 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
         actionView.setVisibility(View.GONE);
         setFields();
+
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i(LOG,"####### onResume");
         if (projectTask != null) {
             txtTaskName.setText(projectTask.getTask().getTaskName());
             getStatusTypes();
         }
 
-        return view;
     }
-
-    List<TaskStatusTypeDTO> taskStatusTypeList;
-    public static final int STAFF = 1, MONITOR = 2;
-    int type;
-    LayoutInflater inflater;
-
     public void setType(int type) {
         this.type = type;
         getStatusTypes();
@@ -246,7 +251,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         btnDone = (Button) view.findViewById(R.id.TSE_btnDone);
 
         btnSubmit.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.blue_gray_400));
-        btnSubmit.setText("Submit Task Status");
+        btnSubmit.setText("Submit Status");
         txtStatusType.setText("");
         txtTime.setText("");
         txtResult.setText("");
@@ -410,7 +415,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
             ImageView imageView = (ImageView)view.findViewById(R.id.image);
             File file = new File(p.getThumbFilePath());
             if (file.exists()) {
-                Picasso.with(getActivity()).load(file).into(imageView);
+                Picasso.with(getActivity()).load(file).fit().into(imageView);
                 photoContainer.addView(view);
             }
         }

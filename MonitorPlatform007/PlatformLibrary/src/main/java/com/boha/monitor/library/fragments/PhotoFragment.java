@@ -158,14 +158,14 @@ public class PhotoFragment extends Fragment implements PageFragment {
 
     private void setLocalImage() {
         File file = new File(photo.getThumbFilePath());
-        Picasso.with(ctx).load(file).into(image);
+        Picasso.with(ctx).load(file).fit().into(image);
     }
 
     private void setRemoteImage() {
 
         Picasso.with(getActivity())
                 .load(photo.getUri())
-                .resize(640, 640)
+                .fit()
                 .into(image);
 
     }

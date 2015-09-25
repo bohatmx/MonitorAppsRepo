@@ -1,0 +1,138 @@
+[root@new deployments]# asadmin create-domain --adminport 3838 --instanceport 3030
+Enter the value for the domain_name operand> m30domain
+Enter admin user name [Enter to accept default "admin" / no password]>aubreym
+Enter the admin password [Enter to accept default of no password]>
+Enter the admin password again>
+Using port 3838 for Admin.
+Using port 3030 for HTTP Instance.
+Default port 7676 for JMS is in use. Using 54926
+Default port 3700 for IIOP is in use. Using 57272
+Default port 8181 for HTTP_SSL is in use. Using 57212
+Using default port 3820 for IIOP_SSL.
+Using default port 3920 for IIOP_MUTUALAUTH.
+Default port 8686 for JMX_ADMIN is in use. Using 35307
+Using default port 6666 for OSGI_SHELL.
+Using default port 9009 for JAVA_DEBUGGER.
+Distinguished Name of the self-signed X.509 Server Certificate is:
+[CN=new.boha-maker.maker.com,OU=GlassFish,O=Oracle Corporation,L=Santa Clara,ST=California,C=US]
+Distinguished Name of the self-signed X.509 Server Certificate is:
+[CN=new.boha-maker.maker.com-instance,OU=GlassFish,O=Oracle Corporation,L=Santa Clara,ST=California,C=US]
+
+
+Domain m30domain created.
+Domain m30domain admin port is 3838. normal port 3030
+Domain m30domain admin user is "aubreym".
+
+Command create-domain executed successfully.
+[root@new deployments]#
+[root@new deployments]#
+[root@new deployments]# asadmin start-domain m30domain
+Waiting for m30domain to start ......
+Successfully started the domain : m30domain
+domain  Location: /opt/glassfish4/glassfish/domains/m30domain
+Log File: /opt/glassfish4/glassfish/domains/m30domain/logs/server.log
+Admin Port: 3838
+Command start-domain executed successfully.
+[root@new deployments]#
+[root@new deployments]#
+
+//root password: ^tyh#eDs1
+//m30domain admin: aubreym kktiger303$
+
+//Huawei router vodacom: 072 693 7471^
+
+//dump monitor
+ssh root@68.169.60.130
+mysqldump -u root -p  monitordb3a > /opt/deployments/monitordb3a.sql
+
+
+///create connection pool
+[root@new deployments]# asadmin --port 3838 create-jdbc-connection-pool --datasourceclassname com.mysql.jdbc.jdbc2.optional.MysqlDataSource --restype javax.sql.DataSource --property user=root:password=kktiger3:DatabaseName=monitordb:ServerName=localhost:port=3306 monPool
+Enter admin user name>  aubreym
+Enter admin password for user "aubreym">
+JDBC connection pool monPool created successfully.
+Command create-jdbc-connection-pool executed successfully.
+
+//image cdn
+cloudinary https://cloudinary.com/console/welcome
+cloud name bohatmx
+api key 397571984789619
+api secret 2RBq1clEHC5X_0eQlNP-K3yhA8U
+env. variable CLOUDINARY_URL=cloudinary://397571984789619:2RBq1clEHC5X_0eQlNP-K3yhA8U@bohatmx
+base delivery URL:	http://res.cloudinary.com/bohatmx ▼
+Secure delivery URL:	https://res.cloudinary.com/bohatmx ▼
+API Base URL:	https://api.cloudinary.com/v1_1/bohatmx
+
+
+///////////////////////// SMARTCITY STUFF
+
+I have created you a user on the oneconnect Cloud server as Roger's have asked.
+
+This is the new ports and IP's
+
+195.154.47.229:2323 - Mobile App Server SSH
+195.154.47.229:4848 - GlassFish Admin Port
+195.154.47.229:7070 - GlassFish
+195.154.47.229:7171 - GlassFish
+
+Server Public IP: 62.210.248.238
+user: aubrey
+password: zU6YGP2E6xCxTFp5
+
+Type: SSH Access
+////////////
+I removed MySQL 5.5 and Installed the official Mysql 5.6 version just now (from their repo's). 5.5 is the default that comes with the OS so had to install one specifically as you requested.
+The Default datadir has been changed to point to: /opt/mysqldb (dont delete this directory)
+
+User: root
+Password: HJNdBy5Yp94FCBe@2015
+
+asadmin --port 4848 create-jdbc-connection-pool --datasourceclassname com.mysql.jdbc.jdbc2.optional.MysqlDataSource --restype javax.sql.DataSource --property user=root:password=HJNdBy5Yp94FCBe@2015:DatabaseName=smartcity:ServerName=localhost:port=3306 platformPool
+
+
+GlassFish 4.1 is already installed and Running (install location: /opt/glassfish/)
+
+Can be stopped and started with :
+
+service glassfish start
+service glassfish stop
+
+User: admin
+Password: B9ADnUUAMqZNhrw2015
+
+This is the web interface for glasgfish's location:
+Admin Port: 4848
+https://62.210.248.238:4848/
+
+These are the Apps server ports (where the web app will display). had to change it from 8080 to 7070 because something else we will be installing later is going to clash with the 8080 port (tibco software)
+Ports 7070, 7171
+http://62.210.248.238:7070/
+
+//////////////mysql stuff /////////////////////////
+Your ASAADMIN command con be run from anywhere (it is in the path)
+
+SFTP is enabled by default
+
+
+[root@cloud-za01 ~]# su - aubrey
+[aubrey@cloud-za01 ~]$
+[aubrey@cloud-za01 ~]$ mysql -u root -p
+Enter password:
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 67
+Server version: 5.6.25 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2015, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql>
+
+
+/////////// pecanwood location
+ -25.7605694 27.8525892
+

@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class MonitorDTO implements Serializable, Comparable<MonitorDTO> {
     private static final long serialVersionUID = 1L;
-    private Integer monitorID, activeFlag;
+    private Integer monitorID, activeFlag, statusCount, photoCount,projectCount;
     private String firstName;
     private String lastName;
     private String email, companyName, IDNumber, address;
@@ -31,6 +31,43 @@ public class MonitorDTO implements Serializable, Comparable<MonitorDTO> {
     private Boolean selected = Boolean.FALSE;
 
     public MonitorDTO() {
+    }
+
+    public Integer getProjectCount() {
+        if (projectCount == null) {
+            projectCount = 0;
+        }
+        return projectCount;
+    }
+
+    public void setProjectCount(Integer projectCount) {
+        this.projectCount = projectCount;
+    }
+
+    public Integer getStatusCount() {
+        if (statusCount == null) {
+            statusCount = 0;
+        }
+        return statusCount;
+    }
+
+    public void setStatusCount(Integer statusCount) {
+        this.statusCount = statusCount;
+    }
+
+    public Integer getPhotoCount() {
+        if (photoCount == null) {
+            photoCount = 0;
+        }
+        return photoCount;
+    }
+
+    public void setPhotoCount(Integer photoCount) {
+        this.photoCount = photoCount;
+    }
+
+    public Boolean getSelected() {
+        return selected;
     }
 
     public Short getGender() {

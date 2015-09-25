@@ -211,7 +211,7 @@ public class CompanyListFragment extends Fragment {
         });
         recyclerView.setAdapter(adapter);
 //        txtHeader.setText("Subscriber Organisations");
-//        txtCount.setText("" + response.getCompanyList().size());
+//        statusCount.setText("" + response.getCompanyList().size());
     }
     @Override
     public void onAttach(Activity activity) {

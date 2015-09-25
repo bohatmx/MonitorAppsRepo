@@ -134,13 +134,16 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
     private void setLocalImage(final ImageView image, PhotoUploadDTO p) {
         File file = new File(p.getThumbFilePath());
-        Picasso.with(ctx).load(file).into(image);
+        Picasso.with(ctx)
+                .load(file)
+                .fit()
+                .into(image);
     }
 
     private void setRemoteImage(final ImageView image, PhotoUploadDTO p) {
         Picasso.with(ctx).load(p.getUri())
                 .placeholder(R.drawable.back13)
-                .resize(240,240)
+                .fit()
                 .into(image);
     }
 

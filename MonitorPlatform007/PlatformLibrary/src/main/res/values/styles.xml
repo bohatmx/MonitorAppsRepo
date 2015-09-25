@@ -378,7 +378,6 @@
 
     <style name="TextStyleSmall" parent="@android:style/TextAppearance.Small">
         <item name="android:textStyle">normal</item>
-        <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/black</item>
     </style>
 
