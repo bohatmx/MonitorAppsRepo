@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.boha.monitor.library.dto.CompanyDTO;
+import com.boha.monitor.library.dto.CreditCardDTO;
 import com.boha.monitor.library.dto.GcmDeviceDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
@@ -34,6 +35,7 @@ public class SharedUtil {
             SITE_LOCATION = "siteLocation",
             DRAWER = "drawer",
             THEME = "theme",
+            CREDIT_CARD = "credCard",
             PHOTO = "photo",
             LOG = "SharedUtil",
             REMINDER_TIME = "reminderTime",
@@ -228,6 +230,31 @@ public class SharedUtil {
         CompanyDTO co = null;
         if (adm != null) {
             co = gson.fromJson(adm, CompanyDTO.class);
+
+        }
+        return co;
+    }
+
+    public static void saveCreditCard( Context ctx,  CreditCardDTO dto) {
+
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        String x = gson.toJson(dto);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putString(CREDIT_CARD, x);
+        ed.commit();
+        Log.e("SharedUtil", "%%%%% CreditCard saved in SharedPreferences");
+    }
+
+
+    public static CreditCardDTO getCreditCard( Context ctx) {
+
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        String adm = sp.getString(CREDIT_CARD, null);
+        CreditCardDTO co = null;
+        if (adm != null) {
+            co = gson.fromJson(adm, CreditCardDTO.class);
 
         }
         return co;

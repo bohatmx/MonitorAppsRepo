@@ -89,7 +89,6 @@ public class ProjectTaskAdapter extends RecyclerView.Adapter<ProjectTaskAdapter.
             }
         });
 
-        Util.expand(holder.card, 300, null);
     }
 
     @Override

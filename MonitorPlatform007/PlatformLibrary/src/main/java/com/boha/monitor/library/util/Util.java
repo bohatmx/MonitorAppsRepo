@@ -26,6 +26,7 @@ import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.text.Html;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -61,6 +62,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -73,6 +76,44 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Util {
+
+    public static String getAnotherHash(String hashMe) throws NoSuchAlgorithmException{
+        MessageDigest md = null;
+        md = MessageDigest.getInstance("SHA-512");
+        md.update(hashMe.getBytes());
+        byte byteData[] = md.digest();
+        String base64 = Base64.encodeToString(byteData, Base64.NO_WRAP);
+
+        return base64;
+    }
+
+    public static String getHash(String hashMe) throws NoSuchAlgorithmException {
+
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        md.update(hashMe.getBytes());
+
+        byte byteData[] = md.digest();
+
+        //convert the byte to hex format method 1
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < byteData.length; i++) {
+            sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+
+        }
+
+
+        System.out.println("Hex format : " + sb.toString());
+
+        //convert the byte to hex format method 2
+        StringBuffer hexString = new StringBuffer();
+        for (int i = 0; i < byteData.length; i++) {
+            String hex = Integer.toHexString(0xff & byteData[i]);
+            if (hex.length() == 1) hexString.append('0');
+            hexString.append(hex);
+        }
+        System.out.println("Hex format : " + hexString.toString());
+        return sb.toString();
+    }
 
     public static Bitmap drawableToBitmap(Drawable drawable) {
         Bitmap bitmap = null;
@@ -115,8 +156,9 @@ public class Util {
         view.draw(canvas);
         return bitmap;
     }
+
     public static Bitmap decodeSampledBitmap(File file,
-                                                         int reqWidth, int reqHeight) {
+                                             int reqWidth, int reqHeight) {
 
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -128,10 +170,9 @@ public class Util {
         Bitmap out = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
 
 
-
-
         return out;
     }
+
     public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
                                                          int reqWidth, int reqHeight) {
 
@@ -147,6 +188,7 @@ public class Util {
         options.inJustDecodeBounds = false;
         return BitmapFactory.decodeResource(res, resId, options);
     }
+
     public static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image
@@ -169,6 +211,7 @@ public class Util {
 
         return inSampleSize;
     }
+
     public static void rotateViewWithDelay(
             final Activity activity, final View view,
             final int duration, int delay, final UtilAnimationListener listener) {
@@ -218,7 +261,7 @@ public class Util {
     }
 
     public static ImageView setCustomActionBar(Context ctx,
-                                          ActionBar actionBar, String text, Drawable image) {
+                                               ActionBar actionBar, String text, Drawable image) {
         actionBar.setDisplayShowCustomEnabled(true);
 
         LayoutInflater inflator = (LayoutInflater)
@@ -233,6 +276,7 @@ public class Util {
         actionBar.setTitle("");
         return logo;
     }
+
     public static ImageView setCustomActionBar(Context ctx,
                                                ActionBar actionBar, String text, String subText, Drawable image) {
         actionBar.setDisplayShowCustomEnabled(true);
@@ -661,7 +705,7 @@ public class Util {
         ind.setText("E");
         Statics.setRobotoFontLight(ctx, txt);
         ind.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xred_oval_small));
-        txt.setTextColor(ContextCompat.getColor(ctx,R.color.absa_red));
+        txt.setTextColor(ContextCompat.getColor(ctx, R.color.absa_red));
         txt.setText(caption);
         Toast customtoast = new Toast(ctx);
 
@@ -680,7 +724,7 @@ public class Util {
         TextView ind = (TextView) view.findViewById(R.id.MONTOAST_indicator);
         ind.setText("M");
         ind.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xblue_oval_small));
-        txt.setTextColor(ContextCompat.getColor(ctx,R.color.blue));
+        txt.setTextColor(ContextCompat.getColor(ctx, R.color.blue));
         txt.setText(caption);
 
         Toast customtoast = new Toast(ctx);

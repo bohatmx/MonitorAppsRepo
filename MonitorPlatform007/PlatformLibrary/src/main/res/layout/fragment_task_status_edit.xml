@@ -6,7 +6,7 @@
     <RelativeLayout
         android:id="@+id/TSE_top"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/mon_hero_height_medium">
+        android:layout_height="@dimen/mon_hero_height_medium_lite">
 
         <ImageView
             android:id="@+id/TSE_backdrop"
@@ -36,6 +36,14 @@
             android:padding="@dimen/mon_padding"
             android:text="Task Name Here"
             android:textColor="@color/white" />
+        <ImageView
+            android:id="@+id/TSE_iconCancel"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:tint="@color/white"
+            android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/mon_margin"
+            android:src="@drawable/ic_action_clear" />
 
 
     </RelativeLayout>
@@ -127,6 +135,7 @@
         android:id="@+id/TSE_btnLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/mon_wide"
         android:layout_below="@id/TSE_pLayout"
         android:padding="@dimen/mon_margin">
 
@@ -148,8 +157,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/TSE_btnLayout"
-        android:layout_marginTop="@dimen/mon_divider"
-        android:padding="@dimen/mon_divider"
+        android:layout_marginTop="@dimen/mon_padding"
+        android:layout_marginLeft="@dimen/mon_padding"
+        android:layout_marginRight="@dimen/mon_padding"
         android:scrollbars="vertical" />
 
 
@@ -159,7 +169,7 @@
         android:layout_height="56dp"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/mon_wide"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="100dp"
         android:elevation="@dimen/mon_margin"
         android:src="@drawable/camera_a32" />
 

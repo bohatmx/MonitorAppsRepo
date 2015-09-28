@@ -148,19 +148,34 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        Log.d(LOG,"++ onAttach");
+        Log.d(LOG,"++ onAttach ...........");
         try {
-            mListener = (StatusUpdateListener) activity;
+            mListener = (ProjectTaskListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement StatusUpdateListener");
         }
     }
-    StatusUpdateListener mListener;
+    ProjectTaskListener mListener;
+
+    public void setProject(ProjectDTO project) {
+        this.project = project;
+        projectTaskList = project.getProjectTaskList();
+        try {
+            setList();
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void setListener(ProjectTaskListener mListener) {
+        this.mListener = mListener;
+    }
+
     @Override
     public void onDetach() {
         super.onDetach();
-//        mListener = null;
+        mListener = null;
     }
 
     @Override
@@ -198,7 +213,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
         this.darkColor = darkColor;
     }
 
-    public interface StatusUpdateListener {
+    public interface ProjectTaskListener {
         void onStatusUpdateRequested(ProjectTaskDTO task, int position);
         void onCameraRequested(ProjectTaskDTO task);
     }

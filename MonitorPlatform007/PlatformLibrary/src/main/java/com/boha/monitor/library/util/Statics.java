@@ -13,16 +13,16 @@ public class Statics {
      * 68.169.60.130
      */
 
-    public static final String WEBSOCKET_URL = "ws://bohamaker.com:3030/mp/";
-    public static final String URL = "http://bohamaker.com:3030/mp/";
-    public static final String IMAGE_URL = "http://bohamaker.com:3030/monitor_images/";
-    public static final String PDF_URL = "http://bohamaker.com:3030/monitor_documents/";
+//    public static final String WEBSOCKET_URL = "ws://bohamaker.com:3030/mp/";
+//    public static final String URL = "http://bohamaker.com:3030/mp/";
+//    public static final String IMAGE_URL = "http://bohamaker.com:3030/monitor_images/";
+//    public static final String PDF_URL = "http://bohamaker.com:3030/monitor_documents/";
 
     //pecanwood IS MY HOME!!!
-//    public static final String WEBSOCKET_URL = "ws://192.168.1.33:8080/mp/";
-//    public static final String URL = "http://192.168.1.33:8080/mp/";
-//    public static final String IMAGE_URL = "http://192.168.1.33:8080/monitor_images/";
-//    public static final String PDF_URL = "http://192.168.1.33:8080/monitor_documents/";
+    public static final String WEBSOCKET_URL = "ws://192.168.1.33:8080/mp/";
+    public static final String URL = "http://192.168.1.33:8080/mp/";
+    public static final String IMAGE_URL = "http://192.168.1.33:8080/monitor_images/";
+    public static final String PDF_URL = "http://192.168.1.33:8080/monitor_documents/";
 
 //codetribe
 
@@ -50,6 +50,8 @@ public class Statics {
     public static final String SESSION_ID = "sessionID";
     public static final String SENT_TOKEN_TO_SERVER = "sentTokenToServer";
     public static final String REGISTRATION_COMPLETE = "registrationComplete";
+
+
 
 
     public static void setDroidFontBold( Context ctx,  TextView txt) {

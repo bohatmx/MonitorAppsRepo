@@ -32,13 +32,13 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.boha.monitor.library.activities.GPSActivity;
-import com.boha.monitor.library.activities.MainUpdateActivity;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.activities.PictureActivity;
 import com.boha.monitor.library.activities.ProfilePhotoActivity;
 import com.boha.monitor.library.activities.ProjectMapActivity;
 import com.boha.monitor.library.activities.StatusReportActivity;
 import com.boha.monitor.library.activities.ThemeSelectorActivity;
+import com.boha.monitor.library.activities.UpdateActivity;
 import com.boha.monitor.library.dto.ChatMessageDTO;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
@@ -387,6 +387,9 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
                 + reqCode + " resCode: " + resCode);
         switch (reqCode) {
 
+            case REQUEST_STATUS_UPDATE:
+                getCachedData();
+                break;
             case REQUEST_THEME_CHANGE:
                 finish();
                 Intent w = new Intent(this, MonitorAppDrawerActivity.class);
@@ -468,7 +471,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     }
 
 
-    static final int REQUEST_CAMERA = 3329;
+    static final int REQUEST_CAMERA = 3329, REQUEST_STATUS_UPDATE = 9687;
 
     @Override
     public void onCameraRequired(ProjectDTO project) {
@@ -486,16 +489,16 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         CacheUtil.getCachedMonitorProjects(ctx, new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
-                int type = MainUpdateActivity.NO_TYPES;
+                int type = UpdateActivity.NO_TYPES;
                 if (!response.getTaskTypeList().isEmpty()) {
-                    type = MainUpdateActivity.TYPES;
+                    type = UpdateActivity.TYPES;
                 }
                 Intent w = new Intent(getApplicationContext(),
-                        MainUpdateActivity.class);
+                        UpdateActivity.class);
                 w.putExtra("project", project);
                 w.putExtra("darkColor", themeDarkColor);
                 w.putExtra("type", type);
-                startActivity(w);
+                startActivityForResult(w,REQUEST_STATUS_UPDATE);
             }
 
             @Override

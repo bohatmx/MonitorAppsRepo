@@ -601,7 +601,7 @@ public class CacheUtil {
             } catch (FileNotFoundException e) {
                 Log.d(LOG, "#### cache file not found - returning a new response object, type = " + dataType);
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Log.v(LOG, "------------ Failed to retrieve cache", e);
             }
 

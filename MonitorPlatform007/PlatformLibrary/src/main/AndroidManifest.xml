@@ -17,7 +17,6 @@
 
         <!-- SERVICES -->
         <service android:name="com.boha.monitor.library.services.GPSService" />
-
         <service android:name="com.boha.monitor.library.services.PhotoUploadService" />
         <service android:name="com.boha.monitor.library.services.RequestSyncService" />
         <service android:name="com.squareup.leakcanary.DisplayLeakService" />
@@ -53,6 +52,10 @@
         <activity
             android:name="com.boha.monitor.library.activities.MainUpdateActivity"
             android:label="@string/title_activity_main_update" >
+        </activity>
+        <activity
+            android:name="com.boha.monitor.library.activities.UpdateActivity"
+            android:label="@string/title_activity_update" >
         </activity>
     </application>
 

@@ -83,13 +83,13 @@ public class TaskTypeListActivity extends AppCompatActivity implements TaskTypeL
 
     @Override
     public void onTaskTypeClicked(TaskTypeDTO taskType) {
-        Intent w = new Intent(this,ProjectTaskListActivity.class);
-        w.putExtra("project",projectDTO);
-        w.putExtra("taskType",taskType);
-        w.putExtra("type",type);
-        w.putExtra("darkColor", themeDarkColor);
-
-        startActivity(w);
+//        Intent w = new Intent(this,ProjectTaskListActivity.class);
+//        w.putExtra("project",projectDTO);
+//        w.putExtra("taskType",taskType);
+//        w.putExtra("type",type);
+//        w.putExtra("darkColor", themeDarkColor);
+//
+//        startActivity(w);
     }
 
     @Override

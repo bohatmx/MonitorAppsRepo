@@ -40,13 +40,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.boha.monitor.library.activities.GPSActivity;
-import com.boha.monitor.library.activities.MainUpdateActivity;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.activities.PictureActivity;
 import com.boha.monitor.library.activities.ProfilePhotoActivity;
 import com.boha.monitor.library.activities.ProjectMapActivity;
 import com.boha.monitor.library.activities.StatusReportActivity;
 import com.boha.monitor.library.activities.ThemeSelectorActivity;
+import com.boha.monitor.library.activities.UpdateActivity;
 import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
@@ -705,7 +705,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     public void onStatusUpdateRequired(ProjectDTO project) {
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
 //        Intent w = new Intent(this, TaskTypeListActivity.class);
-        Intent w = new Intent(this, MainUpdateActivity.class);
+        Intent w = new Intent(this, UpdateActivity.class);
         w.putExtra("project", project);
         w.putExtra("darkColor", themeDarkColor);
         w.putExtra("type", TaskTypeListFragment.STAFF);
