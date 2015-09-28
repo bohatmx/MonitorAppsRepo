@@ -119,6 +119,12 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
         return view;
     }
 
+    private int selectedIndex;
+
+    public void setSelectedIndex(int selectedIndex) {
+        this.selectedIndex = selectedIndex;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -141,7 +147,9 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
 
 
         });
+
         mRecyclerView.setAdapter(projectTaskAdapter);
+        mRecyclerView.scrollToPosition(selectedIndex);
 
     }
     private ProjectTaskDTO projectTask;

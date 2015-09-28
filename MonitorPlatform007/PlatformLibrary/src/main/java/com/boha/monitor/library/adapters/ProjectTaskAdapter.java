@@ -2,6 +2,7 @@ package com.boha.monitor.library.adapters;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.dto.ProjectTaskDTO;
+import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
+import com.boha.monitor.library.dto.TaskStatusTypeDTO;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
@@ -56,15 +59,33 @@ public class ProjectTaskAdapter extends RecyclerView.Adapter<ProjectTaskAdapter.
 
         final ProjectTaskDTO p = projectTaskList.get(position);
 
+        holder.txtStatusColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xgrey_oval_small));
+        holder.txtStatusColor.setHeight(20);
+        holder.txtStatusColor.setWidth(20);
+
         if (p.getProjectTaskStatusList() != null && !p.getProjectTaskStatusList().isEmpty()) {
             if (p.getProjectTaskStatusList().get(0) == null) {
                 Log.e("TaskAdapter", "--- p.getProjectTaskStatusList().get(0) is NULL");
             } else {
                 holder.txtLastDate.setText(sdf.format(new Date(p.getProjectTaskStatusList().get(0).getDateUpdated())));
+                ProjectTaskStatusDTO m = p.getProjectTaskStatusList().get(0);
+                holder.txtStatusName.setText(m.getTaskStatusType().getTaskStatusTypeName());
+                switch (m.getTaskStatusType().getStatusColor()) {
+                    case TaskStatusTypeDTO.STATUS_COLOR_RED:
+                        holder.txtStatusColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xred_oval_small));
+                        break;
+                    case TaskStatusTypeDTO.STATUS_COLOR_AMBER:
+                        holder.txtStatusColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xamber_oval_small));
+                        break;
+                    case TaskStatusTypeDTO.STATUS_COLOR_GREEN:
+                        holder.txtStatusColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xgreen_oval_small));
+                        break;
+                }
             }
             holder.txtStatusCount.setText(df.format(p.getProjectTaskStatusList().size()));
         } else {
             holder.txtLastDate.setText("No Status Date");
+            holder.txtStatusName.setText("No Status");
             holder.txtStatusCount.setText("0");
         }
         holder.txtTaskName.setText(p.getTask().getTaskName());
@@ -103,7 +124,8 @@ public class ProjectTaskAdapter extends RecyclerView.Adapter<ProjectTaskAdapter.
     public class TaskViewHolder extends RecyclerView.ViewHolder {
         protected ImageView image;
         protected CardView card;
-        protected TextView txtTaskName, txtStatusCount, txtLastDate, txtPhotos;
+        protected TextView txtTaskName, txtStatusCount, txtStatusColor,
+                txtStatusName,txtLastDate, txtPhotos;
         protected View nameView;
 
 
@@ -114,6 +136,8 @@ public class ProjectTaskAdapter extends RecyclerView.Adapter<ProjectTaskAdapter.
             txtTaskName = (TextView) itemView.findViewById(R.id.TSK_taskName);
             txtPhotos = (TextView) itemView.findViewById(R.id.TSK_photoCount);
             txtStatusCount = (TextView) itemView.findViewById(R.id.TSK_statusCount);
+            txtStatusColor = (TextView) itemView.findViewById(R.id.TSK_statusColor);
+            txtStatusName = (TextView) itemView.findViewById(R.id.TSK_label3a);
             txtLastDate = (TextView) itemView.findViewById(R.id.TSK_date);
             nameView = itemView.findViewById(R.id.TSK_top);
         }

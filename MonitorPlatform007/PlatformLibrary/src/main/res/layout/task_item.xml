@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:padding="@dimen/mon_padding">
+        android:padding="@dimen/mon_margin">
 
         <RelativeLayout
             android:id="@+id/TSK_top"
@@ -87,8 +87,9 @@
 
         <RelativeLayout
             android:id="@+id/TSK_middle2"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:layout_below="@id/TSK_middle"
             android:padding="@dimen/mon_divider_tiny">
 
@@ -98,20 +99,48 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="Photos taken for Task:"
+                android:text="Photos:"
                 android:textStyle="normal" />
 
             <TextView
                 android:id="@+id/TSK_photoCount"
-                style="@style/TextStyle"
-                android:textColor="@color/red_500"
+                style="@style/TextStyleBold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/mon_margin"
                 android:layout_marginRight="@dimen/mon_margin"
                 android:layout_toRightOf="@id/TSK_label3"
-                android:text="3,703" />
+                android:text="703" />
+
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/TSK_middle3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/TSK_middle2"
+            android:padding="@dimen/mon_divider_tiny">
+
+            <TextView
+                android:id="@+id/TSK_label3a"
+                style="@style/TextStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="Last Status:"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/TSK_statusColor"
+                android:background="@drawable/xgrey_oval_small"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:layout_toRightOf="@id/TSK_label3a" />
 
 
         </RelativeLayout>

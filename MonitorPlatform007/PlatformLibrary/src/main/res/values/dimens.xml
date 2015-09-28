@@ -6,6 +6,7 @@
     <dimen name="mon_divider_small">2dp</dimen>
     <dimen name="mon_divider_tiny">1dp</dimen>
     <dimen name="mon_divider">4dp</dimen>
+
     <dimen name="mon_padding">8dp</dimen>
     <dimen name="mon_margin">16dp</dimen>
     <dimen name="mon_middle">12dp</dimen>

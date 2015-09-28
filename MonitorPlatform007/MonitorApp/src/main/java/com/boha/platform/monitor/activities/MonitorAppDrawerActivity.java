@@ -160,12 +160,13 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
                 SharedUtil.getCompany(ctx).getCompanyName(),
                 "Project Monitoring",
                 ContextCompat.getDrawable(ctx, R.drawable.glasses48));
+        mNavigationDrawerFragment.openDrawer();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mNavigationDrawerFragment.openDrawer();
+
     }
 
     private void getCachedData() {

@@ -23,7 +23,7 @@
         <!-- Keys and metadata -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyCvqpSPbAdN4b-jPvn9RNn1G-iHGe674DQ" />
+            android:value="AIzaSyDUJzuwSOkUzbx9X1_pJQspwXsDF6KoF-w" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -75,20 +75,11 @@
             android:parentActivityName=".activities.MonitorAppDrawerActivity"/>
         <activity android:name="com.boha.monitor.library.activities.StatusReportActivity"
             android:parentActivityName=".activities.MonitorAppDrawerActivity"/>
-        <activity
-            android:name="com.boha.monitor.library.activities.ProjectTaskListActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName="com.boha.monitor.library.activities.TaskTypeListActivity" >
-        </activity>
+
         <activity android:name="com.boha.monitor.library.activities.CameraActivity"/>
         <activity android:name="com.boha.monitor.library.activities.ThemeSelectorActivity"
             android:screenOrientation="portrait"/>
-        <activity
-            android:name="com.boha.monitor.library.activities.TaskUpdateActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName="com.boha.monitor.library.activities.TaskTypeListActivity"
-            android:label="@string/title_activity_task_update" >
-        </activity>
+
         <activity
             android:name="com.boha.monitor.library.activities.TaskTypeListActivity"
             android:screenOrientation="portrait"
@@ -106,6 +97,8 @@
         <activity android:name="com.boha.monitor.library.activities.MonitorMapActivity"
             android:parentActivityName=".activities.MonitorAppDrawerActivity"/>
         <activity android:name="com.boha.monitor.library.activities.ProfilePhotoActivity"
+            android:parentActivityName=".activities.MonitorAppDrawerActivity"/>
+        <activity android:name="com.boha.monitor.library.activities.UpdateActivity"
             android:parentActivityName=".activities.MonitorAppDrawerActivity"/>
     </application>
 

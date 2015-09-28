@@ -42,8 +42,10 @@ public class UpdateActivity extends AppCompatActivity
     private ProjectTaskListFragment projectTaskListFragment;
     private TaskStatusUpdateFragment taskStatusUpdateFragment;
     private TaskTypeListFragment taskTypeListFragment;
-    private int type, darkColor, primaryColor;
+    private int type, darkColor, primaryColor, position;
     public static final int NO_TYPES = 1, TYPES = 2;
+    private boolean isStatusUpdate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ThemeChooser.setTheme(this);
@@ -55,8 +57,11 @@ public class UpdateActivity extends AppCompatActivity
         primaryColor = typedValue.data;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update);
-        project = (ProjectDTO)getIntent().getSerializableExtra("project");
+        project = (ProjectDTO) getIntent().getSerializableExtra("project");
         type = getIntent().getIntExtra("type", 0);
+
+        //getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Util.setCustomActionBar(
                 getApplicationContext(),
@@ -76,20 +81,23 @@ public class UpdateActivity extends AppCompatActivity
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
 
+        ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
         projectTaskListFragment = ProjectTaskListFragment.newInstance(project);
-        projectTaskListFragment.setThemeColors(primaryColor,darkColor);
+        projectTaskListFragment.setThemeColors(primaryColor, darkColor);
         projectTaskListFragment.setListener(this);
         ft.add(R.id.frameLayout, projectTaskListFragment);
         ft.commit();
     }
+
     private void replaceWithStatusFragment() {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
 
-        taskStatusUpdateFragment  = new TaskStatusUpdateFragment();
+        ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+        taskStatusUpdateFragment = new TaskStatusUpdateFragment();
         taskStatusUpdateFragment.setProjectTask(projectTask);
         taskStatusUpdateFragment.setType(type);
-        taskStatusUpdateFragment.setThemeColors(primaryColor,darkColor);
+        taskStatusUpdateFragment.setThemeColors(primaryColor, darkColor);
         taskStatusUpdateFragment.setListener(this);
         ft.replace(R.id.frameLayout, taskStatusUpdateFragment);
         ft.commit();
@@ -98,6 +106,8 @@ public class UpdateActivity extends AppCompatActivity
     @Override
     public void onStatusUpdateRequested(ProjectTaskDTO task, int position) {
         this.projectTask = task;
+        this.position = position;
+        isStatusUpdate = true;
         replaceWithStatusFragment();
     }
 
@@ -127,26 +137,25 @@ public class UpdateActivity extends AppCompatActivity
     @Override
     public void onStatusComplete(ProjectTaskDTO projectTask) {
 
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-
-        projectTaskListFragment  = ProjectTaskListFragment.newInstance(project);
-        projectTaskListFragment.setListener(this);
-        projectTaskListFragment.setThemeColors(primaryColor,darkColor);
-        ft.replace(R.id.frameLayout, projectTaskListFragment);
-        ft.commit();
-
+        replaceWithTaskList();
+        isStatusUpdate = false;
         refreshData(projectTask.getProjectID());
     }
 
-    @Override
-    public void onCancelStatusUpdate(ProjectTaskDTO projectTask) {
+    private void replaceWithTaskList() {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        projectTaskListFragment  = ProjectTaskListFragment.newInstance(project);
+        ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
+        projectTaskListFragment = ProjectTaskListFragment.newInstance(project);
         projectTaskListFragment.setListener(this);
+        projectTaskListFragment.setThemeColors(primaryColor, darkColor);
+        projectTaskListFragment.setSelectedIndex(position);
         ft.replace(R.id.frameLayout, projectTaskListFragment);
         ft.commit();
+    }
+    @Override
+    public void onCancelStatusUpdate(ProjectTaskDTO projectTask) {
+        replaceWithTaskList();
     }
 
     @Override
@@ -166,7 +175,7 @@ public class UpdateActivity extends AppCompatActivity
     }
 
     private void refreshData(final Integer projectID) {
-        Log.w(LOG,"###### refreshData projectID: " + projectID.intValue());
+        Log.w(LOG, "###### refreshData projectID: " + projectID.intValue());
         final StaffDTO staff = SharedUtil.getCompanyStaff(getApplicationContext());
         final MonitorDTO monitor = SharedUtil.getMonitor(getApplicationContext());
 
@@ -222,7 +231,19 @@ public class UpdateActivity extends AppCompatActivity
         });
 
     }
+
+    @Override
+    public void onBackPressed() {
+        if (isStatusUpdate) {
+            isStatusUpdate = false;
+            replaceWithTaskList();
+        } else {
+            finish();
+        }
+    }
+
     Menu mMenu;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_status_update, menu);
@@ -238,7 +259,7 @@ public class UpdateActivity extends AppCompatActivity
             return true;
         }
         if (id == R.id.action_help) {
-            Util.showToast(getApplicationContext(),"Help under construction");
+            Util.showToast(getApplicationContext(), "Help under construction");
             return true;
         }
 
@@ -249,6 +270,7 @@ public class UpdateActivity extends AppCompatActivity
     public void setBusy(boolean busy) {
         setRefreshActionButtonState(busy);
     }
+
     public void setRefreshActionButtonState(final boolean refreshing) {
         if (mMenu != null) {
             final MenuItem refreshItem = mMenu.findItem(R.id.action_help);
