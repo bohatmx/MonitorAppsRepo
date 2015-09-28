@@ -607,6 +607,9 @@ public class StaffMainActivity extends AppCompatActivity implements
     public void onActivityResult(int reqCode, int resCode, Intent data) {
         Log.d(LOG, "onActivityResult reqCode " + reqCode + " resCode " + resCode);
         switch (reqCode) {
+            case REQUEST_STATUS_UPDATE:
+                getCache();
+                break;
             case STAFF_PICTURE_REQUESTED:
                 if (resCode == RESULT_OK) {
                     PhotoUploadDTO x = (PhotoUploadDTO) data.getSerializableExtra("photo");
@@ -690,7 +693,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
     }
 
-    static final int REQUEST_CAMERA = 3329, LOCATION_REQUESTED = 9031;
+    static final int REQUEST_CAMERA = 3329, LOCATION_REQUESTED = 9031, REQUEST_STATUS_UPDATE = 3291;
 
     @Override
     public void onCameraRequired(ProjectDTO project) {
@@ -709,7 +712,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         w.putExtra("project", project);
         w.putExtra("darkColor", themeDarkColor);
         w.putExtra("type", TaskTypeListFragment.STAFF);
-        startActivity(w);
+        startActivityForResult(w, REQUEST_STATUS_UPDATE);
     }
 
     Activity activity;

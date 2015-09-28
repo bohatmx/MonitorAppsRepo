@@ -319,7 +319,7 @@ public class ProjectMapActivity extends AppCompatActivity
             name.setText(project.getProjectName());
             Bitmap bitmap = null;
             BitmapDescriptor desc = null;
-            st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgrey_oval_small));
+            st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xblack_oval_small));
             if (status != null) {
                 Short color = status.getTaskStatusType().getStatusColor();
                 switch (color) {
@@ -333,7 +333,7 @@ public class ProjectMapActivity extends AppCompatActivity
                         st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xamber_oval_small));
                         break;
                     default:
-                        st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgrey_oval_small));
+                        st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xblack_oval_small));
 
                         break;
                 }
@@ -378,6 +378,7 @@ public class ProjectMapActivity extends AppCompatActivity
         TextView st = (TextView)view.findViewById(R.id.statusColor);
         ProjectTaskStatusDTO status = getLastStatus(project);
         name.setText(project.getProjectName());
+        st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xblack_oval_small));
         if (status != null) {
             switch (status.getTaskStatusType().getStatusColor()) {
                 case TaskStatusTypeDTO.STATUS_COLOR_AMBER:
@@ -392,7 +393,7 @@ public class ProjectMapActivity extends AppCompatActivity
 
             }
         } else {
-            st.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xgrey_oval_small));
+            st.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xblack_oval_small));
         }
         Bitmap bmBitmap = Util.createBitmapFromView(ctx,view,displayMetrics);
         BitmapDescriptor desc = BitmapDescriptorFactory.fromBitmap(bmBitmap);
