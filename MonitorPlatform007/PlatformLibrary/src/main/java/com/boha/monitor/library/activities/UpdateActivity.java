@@ -1,8 +1,12 @@
 package com.boha.monitor.library.activities;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -23,6 +27,8 @@ import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.fragments.ProjectTaskListFragment;
 import com.boha.monitor.library.fragments.TaskStatusUpdateFragment;
 import com.boha.monitor.library.fragments.TaskTypeListFragment;
+import com.boha.monitor.library.services.PhotoUploadService;
+import com.boha.monitor.library.services.RequestSyncService;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
@@ -30,6 +36,9 @@ import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.library.util.WebCheck;
 import com.boha.platform.library.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class manages the task status update process
@@ -59,7 +68,8 @@ public class UpdateActivity extends AppCompatActivity
         setContentView(R.layout.activity_update);
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
         type = getIntent().getIntExtra("type", 0);
-
+        monitor = SharedUtil.getMonitor(getApplicationContext());
+        staff = SharedUtil.getCompanyStaff(getApplicationContext());
         //getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -135,11 +145,22 @@ public class UpdateActivity extends AppCompatActivity
     }
 
     @Override
-    public void onStatusComplete(ProjectTaskDTO projectTask) {
-
+    public void onStatusComplete(ProjectTaskDTO projectTask, ProjectTaskStatusDTO projectTaskStatus) {
+        for (ProjectTaskDTO m: project.getProjectTaskList()) {
+            if (m.getProjectTaskID().intValue() == projectTask.getProjectTaskID().intValue()) {
+                if (m.getProjectTaskStatusList() == null) {
+                    m.setProjectTaskStatusList(new ArrayList<ProjectTaskStatusDTO>());
+                }
+                m.getProjectTaskStatusList().add(projectTaskStatus);
+                break;
+            }
+        }
         replaceWithTaskList();
+        projectTaskListFragment.setProject(project);
+        cacheProject();
         isStatusUpdate = false;
-        refreshData(projectTask.getProjectID());
+        //todo - do i need this refresh?
+//        refreshData(projectTask.getProjectID());
     }
 
     private void replaceWithTaskList() {
@@ -174,10 +195,12 @@ public class UpdateActivity extends AppCompatActivity
         }
     }
 
+    StaffDTO staff;
+    MonitorDTO monitor;
+
     private void refreshData(final Integer projectID) {
         Log.w(LOG, "###### refreshData projectID: " + projectID.intValue());
-        final StaffDTO staff = SharedUtil.getCompanyStaff(getApplicationContext());
-        final MonitorDTO monitor = SharedUtil.getMonitor(getApplicationContext());
+
 
         RequestDTO w = new RequestDTO();
         if (staff != null) {
@@ -191,12 +214,14 @@ public class UpdateActivity extends AppCompatActivity
         if (WebCheck.checkNetworkAvailability(getApplicationContext()).isNetworkUnavailable()) {
             return;
         }
+        setBusy(true);
         NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(final ResponseDTO response) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        setBusy(false);
                         for (ProjectDTO x : response.getProjectList()) {
                             if (x.getProjectID().intValue() == projectID.intValue()) {
                                 project = x;
@@ -219,6 +244,7 @@ public class UpdateActivity extends AppCompatActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        setBusy(false);
                         Util.showErrorToast(getApplicationContext(), message);
                     }
                 });
@@ -232,6 +258,64 @@ public class UpdateActivity extends AppCompatActivity
 
     }
 
+    private void cacheProject() {
+        if (staff != null) {
+            CacheUtil.getCachedStaffData(getApplicationContext(), new CacheUtil.CacheUtilListener() {
+                @Override
+                public void onFileDataDeserialized(ResponseDTO response) {
+                    for (ProjectDTO m : response.getProjectList()) {
+                        if (m.getProjectID().intValue() == project.getProjectID().intValue()) {
+                            m = project;
+                            break;
+                        }
+                    }
+                    CacheUtil.cacheStaffData(getApplicationContext(), response, null);
+                }
+
+                @Override
+                public void onDataCached() {
+
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
+        }
+        if (monitor != null) {
+            CacheUtil.getCachedMonitorProjects(getApplicationContext(), new CacheUtil.CacheUtilListener() {
+                @Override
+                public void onFileDataDeserialized(ResponseDTO response) {
+                    for (ProjectDTO m: response.getProjectList()) {
+                        if (m.getProjectID().intValue() == project.getProjectID().intValue()) {
+                            m = project;
+                            break;
+                        }
+                    }
+                    //todo -remove after debug
+                    for (ProjectDTO m: response.getProjectList()) {
+                        for (ProjectTaskDTO c: m.getProjectTaskList()) {
+                            Log.d(LOG, c.getTask().getTaskName() + " " + c.getProjectTaskStatusList().size());;
+
+                        }
+                    }
+
+                    CacheUtil.cacheMonitorProjects(getApplicationContext(),response,null);
+                }
+
+                @Override
+                public void onDataCached() {
+
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
+        }
+    }
     @Override
     public void onBackPressed() {
         if (isStatusUpdate) {
@@ -283,6 +367,109 @@ public class UpdateActivity extends AppCompatActivity
             }
         }
     }
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.i(LOG, "## onStart Bind to PhotoUploadService, RequestSyncService");
+        Intent intent = new Intent(this, PhotoUploadService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
+        Intent intentw = new Intent(this, RequestSyncService.class);
+        bindService(intentw, rConnection, Context.BIND_AUTO_CREATE);
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.e(LOG, "## onStop unBind from PhotoUploadService, RequestSyncService");
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
+        if (rBound) {
+            unbindService(rConnection);
+            rBound = false;
+        }
+
+    }
+
+    boolean mBound, rBound;
+    PhotoUploadService mService;
+    RequestSyncService rService;
+
+
+    private ServiceConnection rConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            Log.w(LOG, "## RequestSyncService ServiceConnection onServiceConnected");
+            RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
+            rService = binder.getService();
+            rBound = true;
+            rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
+                @Override
+                public void onTasksSynced(int goodResponses, int badResponses) {
+                    Log.i(LOG, "## onTasksSynced, goodResponses: " + goodResponses + " badResponses: " + badResponses);
+                    if (goodResponses > 0) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                refreshData(project.getProjectID());
+                            }
+                        });
+
+                    }
+                }
+
+                @Override
+                public void onError(String message) {
+                    Log.e(LOG, "Error with sync: " + message);
+                }
+            });
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.w(LOG, "## RequestSyncService onServiceDisconnected");
+            mBound = false;
+        }
+    };
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            Log.w(LOG, "## PhotoUploadService ServiceConnection onServiceConnected");
+            PhotoUploadService.LocalBinder binder = (PhotoUploadService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+            mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
+                @Override
+                public void onUploadsComplete(final List<PhotoUploadDTO> list) {
+                    Log.w(LOG, "$$$ onUploadsComplete, list: " + list.size());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!list.isEmpty()) {
+                                refreshData(project.getProjectID());
+                            }
+                        }
+                    });
+
+                }
+            });
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.w(LOG, "## PhotoUploadService onServiceDisconnected");
+            mBound = false;
+        }
+    };
 
     static final int GET_PROJECT_TASK_PHOTO = 6382;
     static final String LOG = UpdateActivity.class.getSimpleName();

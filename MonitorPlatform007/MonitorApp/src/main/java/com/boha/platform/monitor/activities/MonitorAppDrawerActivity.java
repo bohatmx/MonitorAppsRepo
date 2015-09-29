@@ -196,11 +196,15 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
     private void getRemoteData() {
 
+        if (busyGettingRemoteData) {
+            return;
+        }
         RequestDTO w = new RequestDTO(RequestDTO.GET_MONITOR_PROJECTS);
         w.setMonitorID(SharedUtil.getMonitor(ctx).getMonitorID());
 
         setRefreshActionButtonState(true);
         Util.setActionBarIconSpinning(mMenu, R.id.action_refresh, true);
+        busyGettingRemoteData = true;
         NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(final ResponseDTO r) {
@@ -208,6 +212,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
                     @Override
                     public void run() {
                         setRefreshActionButtonState(false);
+                        busyGettingRemoteData = false;
                         response = r;
                         if (response.getStatusCode() > 0) {
                             Util.showErrorToast(ctx, response.getMessage());
@@ -232,6 +237,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
                     @Override
                     public void run() {
                         setRefreshActionButtonState(false);
+                        busyGettingRemoteData = false;
                         Util.showErrorToast(ctx, message);
                     }
                 });
@@ -384,11 +390,12 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
     @Override
     public void onActivityResult(int reqCode, int resCode, Intent data) {
-        Log.e(LOG, "##------> onActivityResult reqCode: "
+        Log.d(LOG, "##------> onActivityResult reqCode: "
                 + reqCode + " resCode: " + resCode);
         switch (reqCode) {
 
             case REQUEST_STATUS_UPDATE:
+                Log.e(LOG,"++++ getCachedData after possible update to cache");
                 getCachedData();
                 break;
             case REQUEST_THEME_CHANGE:
@@ -833,8 +840,17 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
             rBound = true;
             rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
                 @Override
-                public void onTasksSynced(int goodResponses, int badResponses) {
+                public void onTasksSynced(final int goodResponses, int badResponses) {
                     Log.i(LOG, "## onTasksSynced, goodResponses: " + goodResponses + " badResponses: " + badResponses);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (goodResponses > 0) {
+                                getRemoteData();
+                            }
+                        }
+                    });
+
                 }
 
                 @Override
@@ -863,8 +879,17 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
             mBound = true;
             mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
                 @Override
-                public void onUploadsComplete(List<PhotoUploadDTO> list) {
+                public void onUploadsComplete(final List<PhotoUploadDTO> list) {
                     Log.w(LOG, "$$$ onUploadsComplete, list: " + list.size());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!list.isEmpty()) {
+                                getRemoteData();
+                            }
+                        }
+                    });
+
                 }
             });
         }
@@ -876,6 +901,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         }
     };
 
+    boolean busyGettingRemoteData;
     private boolean checkSettings() {
 
 

@@ -60,10 +60,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_marginLeft="@dimen/mon_padding"
                 android:layout_marginRight="@dimen/mon_margin"
                 android:layout_toRightOf="@id/TSK_label1"
-                android:text="303" />
+                android:text="130,399" />
 
             <TextView
                 android:id="@+id/TSK_label2"
@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/TSK_statusCount"
-                android:text="Last Date" />
+                android:text="Last" />
 
             <TextView
                 android:id="@+id/TSK_date"
@@ -80,9 +80,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_marginLeft="@dimen/mon_padding"
                 android:layout_toRightOf="@id/TSK_label2"
-                android:text="23 December 2099" />
+                android:text="23 December 2099 11:33" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -111,7 +111,7 @@
                 android:layout_marginLeft="@dimen/mon_margin"
                 android:layout_marginRight="@dimen/mon_margin"
                 android:layout_toRightOf="@id/TSK_label3"
-                android:text="703" />
+                android:text="45,703" />
 
 
         </RelativeLayout>

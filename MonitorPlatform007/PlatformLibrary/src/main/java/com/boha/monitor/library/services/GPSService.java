@@ -282,6 +282,9 @@ public class GPSService extends Service implements LocationListener,
 
     private String getAddress() {
 
+        if (WebCheck.checkNetworkAvailability(getApplicationContext()).isNetworkUnavailable()) {
+            return "Address not available";
+        }
         Geocoder geocoder = new Geocoder(getApplicationContext(),
                 Locale.getDefault());
         try {

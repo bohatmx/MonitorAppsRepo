@@ -62,7 +62,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
         void onProjectTaskCameraRequested(ProjectTaskDTO projectTask);
 
-        void onStatusComplete(ProjectTaskDTO projectTask);
+        void onStatusComplete(ProjectTaskDTO projectTask, ProjectTaskStatusDTO projectTaskStatus);
 
         void onCancelStatusUpdate(ProjectTaskDTO projectTask);
 
@@ -194,7 +194,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
     TaskStatusTypeAdapter adapter;
 
     private void setList() {
-        Log.d(LOG,"+++++++ setList");
+        Log.d(LOG, "+++++++ setList");
         txtTaskName.setText(projectTask.getTask().getTaskName());
 
         adapter = new TaskStatusTypeAdapter(taskStatusTypeList, darkColor, getActivity(), new TaskStatusTypeAdapter.TaskStatusTypeListener() {
@@ -311,7 +311,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         Util.collapse(actionView, 1000, null);
         btnDone.setVisibility(View.GONE);
         scrollView.setVisibility(View.GONE);
-        mListener.onStatusComplete(projectTask);
+        mListener.onStatusComplete(projectTask, projectTaskStatus);
 
 
     }
@@ -321,6 +321,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
     }
 
     TaskStatusTypeDTO taskStatusType;
+    ProjectTaskStatusDTO projectTaskStatus;
 
     private TextView txtTime;
     static final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
@@ -329,7 +330,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
     private void processRequest() {
 
         btnSubmit.setEnabled(false);
-        ProjectTaskStatusDTO projectTaskStatus = new ProjectTaskStatusDTO();
+        projectTaskStatus = new ProjectTaskStatusDTO();
         MonitorDTO m = SharedUtil.getMonitor(getActivity());
         if (m != null) {
             projectTaskStatus.setMonitorID(m.getMonitorID());
@@ -348,17 +349,17 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
         TaskStatusTypeDTO r = new TaskStatusTypeDTO();
         r.setTaskStatusTypeID(taskStatusType.getTaskStatusTypeID());
-        projectTaskStatus.setTaskStatusType(r);
+        projectTaskStatus.setTaskStatusType(taskStatusType);
         projectTaskStatus.setStatusDate(new Date().getTime());
+        projectTaskStatus.setDateUpdated(new Date().getTime());
         projectTaskStatus.setProjectTask(pt);
         //
         final RequestDTO request = new RequestDTO(RequestDTO.ADD_PROJECT_TASK_STATUS);
         request.setProjectTaskStatus(projectTaskStatus);
 
-        if (WebCheck.checkNetworkAvailability(getActivity(), true).isNetworkUnavailable()) {
+        if (WebCheck.checkNetworkAvailability(getActivity()).isNetworkUnavailable()) {
             saveRequestInCache(request);
             btnSubmit.setEnabled(true);
-            showCameraDialog();
             return;
         }
 
@@ -373,7 +374,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
                         btnSubmit.setEnabled(true);
                         if (response.getProjectTaskStatusList() != null && !response.getProjectTaskStatusList().isEmpty()) {
                             returnedStatus = response.getProjectTaskStatusList().get(0);
-                            Snackbar.make(mRecyclerView, "The task status update has been sent", Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(mRecyclerView, "The status update has been sent", Snackbar.LENGTH_LONG).show();
                             txtTime.setText(sdf.format(new Date()));
                             txtResult.setText("Status updated: " + projectTask.getTask().getTaskName());
 
@@ -408,23 +409,29 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
     }
 
     private void showCameraDialog() {
-        AlertDialog.Builder diag = new AlertDialog.Builder(getActivity());
-        diag.setTitle("Task Status Photo")
-                .setMessage("Do you want to take pictures for this update?\n\n"
-                        + projectTask.getTask().getTaskName())
-                .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mListener.onProjectTaskCameraRequested(projectTask);
-                    }
-                })
-                .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mListener.onStatusComplete(projectTask);
-                    }
-                })
-                .show();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder diag = new AlertDialog.Builder(getActivity());
+                diag.setTitle("Task Status Photo")
+                        .setMessage("Do you want to take pictures for this update?\n\n"
+                                + projectTask.getTask().getTaskName())
+                        .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mListener.onProjectTaskCameraRequested(projectTask);
+                            }
+                        })
+                        .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mListener.onStatusComplete(projectTask,projectTaskStatus);
+                            }
+                        })
+                        .show();
+            }
+        });
+
     }
 
     private List<PhotoUploadDTO> photoUploadList;
@@ -473,7 +480,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
             @Override
             public void onRequestAdded() {
                 Snackbar.make(mRecyclerView, "The task status update has been saved", Snackbar.LENGTH_LONG).show();
-                mListener.onStatusCameraRequested(projectTask, null);
+                showCameraDialog();
             }
 
             @Override

@@ -67,6 +67,9 @@ public class ProjectTaskAdapter extends RecyclerView.Adapter<ProjectTaskAdapter.
             if (p.getProjectTaskStatusList().get(0) == null) {
                 Log.e("TaskAdapter", "--- p.getProjectTaskStatusList().get(0) is NULL");
             } else {
+                if (p.getProjectTaskStatusList().get(0).getDateUpdated() == null) {
+                    p.getProjectTaskStatusList().get(0).setDateUpdated(new Date().getTime());
+                }
                 holder.txtLastDate.setText(sdf.format(new Date(p.getProjectTaskStatusList().get(0).getDateUpdated())));
                 ProjectTaskStatusDTO m = p.getProjectTaskStatusList().get(0);
                 holder.txtStatusName.setText(m.getTaskStatusType().getTaskStatusTypeName());
