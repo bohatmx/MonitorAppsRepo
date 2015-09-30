@@ -121,9 +121,13 @@ public class UpdateActivity extends AppCompatActivity
         replaceWithStatusFragment();
     }
 
+    static final int GET_PROJECT_PHOTO = 1385;
     @Override
-    public void onCameraRequested(ProjectTaskDTO task) {
-
+    public void onCameraRequested(ProjectDTO project) {
+        Intent w = new Intent(this, PictureActivity.class);
+        w.putExtra("project", project);
+        w.putExtra("type", PhotoUploadDTO.PROJECT_IMAGE);
+        startActivityForResult(w, GET_PROJECT_PHOTO);
     }
 
     @Override
@@ -151,7 +155,7 @@ public class UpdateActivity extends AppCompatActivity
                 if (m.getProjectTaskStatusList() == null) {
                     m.setProjectTaskStatusList(new ArrayList<ProjectTaskStatusDTO>());
                 }
-                m.getProjectTaskStatusList().add(projectTaskStatus);
+                m.getProjectTaskStatusList().add(0,projectTaskStatus);
                 break;
             }
         }
@@ -160,7 +164,7 @@ public class UpdateActivity extends AppCompatActivity
         cacheProject();
         isStatusUpdate = false;
         //todo - do i need this refresh?
-//        refreshData(projectTask.getProjectID());
+        //refreshData(projectTask.getProjectID());
     }
 
     private void replaceWithTaskList() {
@@ -184,6 +188,16 @@ public class UpdateActivity extends AppCompatActivity
         Log.i(LOG, "## onActivityResult");
         switch (reqCode) {
 
+            case GET_PROJECT_PHOTO:
+                if (resCode == RESULT_OK) {
+                    ResponseDTO resp = (ResponseDTO) data.getSerializableExtra("response");
+                    if (project.getPhotoUploadList() == null) {
+                        project.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
+                    }
+                    project.getPhotoUploadList().addAll(resp.getPhotoUploadList());
+                }
+
+                break;
             case GET_PROJECT_TASK_PHOTO:
                 if (resCode == RESULT_OK) {
                     ResponseDTO resp = (ResponseDTO) data.getSerializableExtra("response");
@@ -296,7 +310,7 @@ public class UpdateActivity extends AppCompatActivity
                     //todo -remove after debug
                     for (ProjectDTO m: response.getProjectList()) {
                         for (ProjectTaskDTO c: m.getProjectTaskList()) {
-                            Log.d(LOG, c.getTask().getTaskName() + " " + c.getProjectTaskStatusList().size());;
+//                            Log.d(LOG, c.getTask().getTaskName() + " " + c.getProjectTaskStatusList().size());;
 
                         }
                     }

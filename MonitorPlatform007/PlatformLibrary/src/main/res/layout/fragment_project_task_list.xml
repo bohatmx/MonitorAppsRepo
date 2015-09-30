@@ -36,13 +36,13 @@
                 android:layout_alignParentTop="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Project Tasks/Modules" />
+                android:text="Things to Monitor" />
             <TextView
                 android:id="@+id/PRH_count"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="@dimen/mon_margin"
-                android:layout_marginRight="@dimen/mon_margin"
+                android:layout_marginRight="@dimen/mon_wider"
                 style="@style/TransparentCircleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -65,5 +65,13 @@
         android:layout_height="match_parent"/>
 
     </RelativeLayout>
-
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/mon_wide"
+        android:layout_marginTop="68dp"
+        android:elevation="@dimen/mon_margin"
+        android:src="@drawable/camera_a32" />
 </RelativeLayout>

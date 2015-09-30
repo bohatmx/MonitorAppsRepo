@@ -55,12 +55,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/TSE_top"
         android:background="@color/beige_pale"
-        android:padding="@dimen/mon_padding"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <TextView
             android:id="@+id/TSE_statusType"
-            style="@style/Title3TextStyleBlack"
+            style="@style/Title2TextStyleBlue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -72,6 +71,8 @@
             layout="@layout/btn_red"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/mon_wide"
+            android:layout_marginRight="@dimen/mon_wide"
             android:layout_below="@id/TSE_statusType"
             android:layout_marginTop="@dimen/mon_padding" />
 
@@ -79,6 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/TSE_btn"
+            android:visibility="gone"
             android:layout_marginBottom="@dimen/mon_padding"
             android:layout_marginTop="@dimen/mon_padding">
 
@@ -135,7 +137,6 @@
         android:id="@+id/TSE_btnLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/mon_wide"
         android:layout_below="@id/TSE_pLayout"
         android:padding="@dimen/mon_margin">
 
@@ -146,8 +147,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/mon_margin"
-            android:paddingLeft="@dimen/mon_margin"
-            android:paddingRight="@dimen/mon_margin"
+            android:layout_marginRight="@dimen/mon_margin"
             android:text="Status Completed" />
 
     </RelativeLayout>

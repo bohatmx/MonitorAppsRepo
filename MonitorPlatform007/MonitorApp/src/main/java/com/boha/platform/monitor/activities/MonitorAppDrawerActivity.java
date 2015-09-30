@@ -61,6 +61,7 @@ import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
+import com.boha.monitor.library.util.WebCheck;
 import com.boha.platform.monitor.R;
 import com.boha.platform.monitor.fragments.NavigationDrawerFragment;
 import com.boha.platform.monitor.fragments.NoProjectsAssignedFragment;
@@ -395,8 +396,12 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         switch (reqCode) {
 
             case REQUEST_STATUS_UPDATE:
-                Log.e(LOG,"++++ getCachedData after possible update to cache");
-                getCachedData();
+                Log.e(LOG, "++++ getCachedData after possible update to cache");
+                if (WebCheck.checkNetworkAvailability(getApplicationContext()).isNetworkUnavailable()) {
+                    getCachedData();
+                } else {
+                    getRemoteData();
+                }
                 break;
             case REQUEST_THEME_CHANGE:
                 finish();

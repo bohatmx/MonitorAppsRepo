@@ -2,6 +2,7 @@ package com.boha.monitor.library.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
@@ -38,6 +39,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
     private RecyclerView mRecyclerView;
     private List<ProjectTaskDTO> projectTaskList;
     private ProjectTaskAdapter projectTaskAdapter;
+    private FloatingActionButton fab;
     static final String LOG = ProjectTaskListFragment.class.getSimpleName();
 
 
@@ -96,6 +98,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
         txtCount = (TextView)view.findViewById(R.id.PRH_count);
         txtTaskType = (TextView)view.findViewById(R.id.PRH_programme);
 
+        fab = (FloatingActionButton) view.findViewById(R.id.fab);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getActivity())
                 .color(ContextCompat.getColor(getActivity(), R.color.blue_gray_500))
@@ -114,7 +117,12 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
         } else {
             txtTaskType.setText("");
         }
-
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onCameraRequested(project);
+            }
+        });
 
         return view;
     }
@@ -223,7 +231,8 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
 
     public interface ProjectTaskListener {
         void onStatusUpdateRequested(ProjectTaskDTO task, int position);
-        void onCameraRequested(ProjectTaskDTO task);
+        void onCameraRequested(ProjectDTO project);
+
     }
     int primaryColor, darkColor;
     @Override
