@@ -7,12 +7,47 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7D0734DA1BEDE29200E9EF46 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 7D0734D91BEDE29200E9EF46 /* Podfile */; settings = {ASSET_TAGS = (); }; };
 		7D184EFA1BEDDE24007E02D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184EF91BEDDE24007E02D5 /* AppDelegate.swift */; };
-		7D184EFC1BEDDE24007E02D5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184EFB1BEDDE24007E02D5 /* ViewController.swift */; };
+		7D184EFC1BEDDE24007E02D5 /* SignInController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184EFB1BEDDE24007E02D5 /* SignInController.swift */; };
 		7D184EFF1BEDDE24007E02D5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D184EFD1BEDDE24007E02D5 /* Main.storyboard */; };
 		7D184F011BEDDE24007E02D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D184F001BEDDE24007E02D5 /* Assets.xcassets */; };
 		7D184F041BEDDE24007E02D5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D184F021BEDDE24007E02D5 /* LaunchScreen.storyboard */; };
 		7D184F0F1BEDDE24007E02D5 /* MonStaffTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F0E1BEDDE24007E02D5 /* MonStaffTests.swift */; };
+		7D184F3A1BEDDFFD007E02D5 /* ProjectTaskStatusDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F1A1BEDDFFD007E02D5 /* ProjectTaskStatusDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F3B1BEDDFFD007E02D5 /* TaskDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F1B1BEDDFFD007E02D5 /* TaskDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F3C1BEDDFFD007E02D5 /* TaskStatusTypeDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F1C1BEDDFFD007E02D5 /* TaskStatusTypeDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F3D1BEDDFFD007E02D5 /* CityDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F1D1BEDDFFD007E02D5 /* CityDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F3E1BEDDFFD007E02D5 /* CompanyDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F1E1BEDDFFD007E02D5 /* CompanyDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F3F1BEDDFFD007E02D5 /* CountryDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F1F1BEDDFFD007E02D5 /* CountryDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F401BEDDFFD007E02D5 /* ErrorStoreAndroidDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F201BEDDFFD007E02D5 /* ErrorStoreAndroidDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F411BEDDFFD007E02D5 /* ErrorStoreDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F211BEDDFFD007E02D5 /* ErrorStoreDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F421BEDDFFD007E02D5 /* GcmDeviceDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F221BEDDFFD007E02D5 /* GcmDeviceDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F431BEDDFFD007E02D5 /* LocationTrackerDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F231BEDDFFD007E02D5 /* LocationTrackerDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F441BEDDFFD007E02D5 /* MonitorDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F241BEDDFFD007E02D5 /* MonitorDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F451BEDDFFD007E02D5 /* MonitorProjectDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F251BEDDFFD007E02D5 /* MonitorProjectDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F461BEDDFFD007E02D5 /* MonitorTradeDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F261BEDDFFD007E02D5 /* MonitorTradeDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F471BEDDFFD007E02D5 /* MunicipalityDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F271BEDDFFD007E02D5 /* MunicipalityDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F481BEDDFFD007E02D5 /* PhotoUploadDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F281BEDDFFD007E02D5 /* PhotoUploadDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F491BEDDFFD007E02D5 /* PortfolioDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F291BEDDFFD007E02D5 /* PortfolioDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F4A1BEDDFFD007E02D5 /* ProgrammeDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F2A1BEDDFFD007E02D5 /* ProgrammeDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F4B1BEDDFFD007E02D5 /* ProjectDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F2B1BEDDFFD007E02D5 /* ProjectDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F4C1BEDDFFD007E02D5 /* ProjectStatusDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F2C1BEDDFFD007E02D5 /* ProjectStatusDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F4D1BEDDFFD007E02D5 /* ProjectStatusTypeDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F2D1BEDDFFD007E02D5 /* ProjectStatusTypeDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F4E1BEDDFFD007E02D5 /* ProjectTaskDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F2E1BEDDFFD007E02D5 /* ProjectTaskDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F4F1BEDDFFD007E02D5 /* ProvinceDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F2F1BEDDFFD007E02D5 /* ProvinceDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F501BEDDFFD007E02D5 /* RequestDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F301BEDDFFD007E02D5 /* RequestDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F511BEDDFFD007E02D5 /* RequestList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F311BEDDFFD007E02D5 /* RequestList.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F521BEDDFFD007E02D5 /* ResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F321BEDDFFD007E02D5 /* ResponseDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F531BEDDFFD007E02D5 /* SimpleMessageDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F331BEDDFFD007E02D5 /* SimpleMessageDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F541BEDDFFD007E02D5 /* StaffDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F341BEDDFFD007E02D5 /* StaffDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F551BEDDFFD007E02D5 /* StaffProjectDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F351BEDDFFD007E02D5 /* StaffProjectDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F561BEDDFFD007E02D5 /* StaffTypeDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F361BEDDFFD007E02D5 /* StaffTypeDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F571BEDDFFD007E02D5 /* SubTaskDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F371BEDDFFD007E02D5 /* SubTaskDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F581BEDDFFD007E02D5 /* TaskTypeDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F381BEDDFFD007E02D5 /* TaskTypeDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D184F591BEDDFFD007E02D5 /* VideoUploadDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F391BEDDFFD007E02D5 /* VideoUploadDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		9BCEAB44CC5ABF99F49CF212 /* Pods_MonStaffTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6CB0D2CEF77ECC65754CF582 /* Pods_MonStaffTests.framework */; };
+		BF657CF7C4FE029B6301865D /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88D94C01B111661B00009A17 /* Pods.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -26,9 +61,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		186396D97B8E8D3A0523E322 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		6CB0D2CEF77ECC65754CF582 /* Pods_MonStaffTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MonStaffTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D0734D91BEDE29200E9EF46 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		7D184EF61BEDDE24007E02D5 /* MonStaff.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MonStaff.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D184EF91BEDDE24007E02D5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		7D184EFB1BEDDE24007E02D5 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		7D184EFB1BEDDE24007E02D5 /* SignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInController.swift; sourceTree = "<group>"; };
 		7D184EFE1BEDDE24007E02D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7D184F001BEDDE24007E02D5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7D184F031BEDDE24007E02D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -36,6 +74,42 @@
 		7D184F0A1BEDDE24007E02D5 /* MonStaffTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MonStaffTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D184F0E1BEDDE24007E02D5 /* MonStaffTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonStaffTests.swift; sourceTree = "<group>"; };
 		7D184F101BEDDE24007E02D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7D184F1A1BEDDFFD007E02D5 /* ProjectTaskStatusDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectTaskStatusDTO.swift; path = "../../xcode-projects/Tester2/Tester2/ProjectTaskStatusDTO.swift"; sourceTree = "<group>"; };
+		7D184F1B1BEDDFFD007E02D5 /* TaskDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TaskDTO.swift; path = "../../xcode-projects/Tester2/Tester2/TaskDTO.swift"; sourceTree = "<group>"; };
+		7D184F1C1BEDDFFD007E02D5 /* TaskStatusTypeDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TaskStatusTypeDTO.swift; path = "../../xcode-projects/Tester2/Tester2/TaskStatusTypeDTO.swift"; sourceTree = "<group>"; };
+		7D184F1D1BEDDFFD007E02D5 /* CityDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CityDTO.swift; path = "../../xcode-projects/Tester2/Tester2/CityDTO.swift"; sourceTree = "<group>"; };
+		7D184F1E1BEDDFFD007E02D5 /* CompanyDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompanyDTO.swift; path = "../../xcode-projects/Tester2/Tester2/CompanyDTO.swift"; sourceTree = "<group>"; };
+		7D184F1F1BEDDFFD007E02D5 /* CountryDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CountryDTO.swift; path = "../../xcode-projects/Tester2/Tester2/CountryDTO.swift"; sourceTree = "<group>"; };
+		7D184F201BEDDFFD007E02D5 /* ErrorStoreAndroidDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ErrorStoreAndroidDTO.swift; path = "../../xcode-projects/Tester2/Tester2/ErrorStoreAndroidDTO.swift"; sourceTree = "<group>"; };
+		7D184F211BEDDFFD007E02D5 /* ErrorStoreDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ErrorStoreDTO.swift; path = "../../xcode-projects/Tester2/Tester2/ErrorStoreDTO.swift"; sourceTree = "<group>"; };
+		7D184F221BEDDFFD007E02D5 /* GcmDeviceDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GcmDeviceDTO.swift; path = "../../xcode-projects/Tester2/Tester2/GcmDeviceDTO.swift"; sourceTree = "<group>"; };
+		7D184F231BEDDFFD007E02D5 /* LocationTrackerDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationTrackerDTO.swift; path = "../../xcode-projects/Tester2/Tester2/LocationTrackerDTO.swift"; sourceTree = "<group>"; };
+		7D184F241BEDDFFD007E02D5 /* MonitorDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MonitorDTO.swift; path = "../../xcode-projects/Tester2/Tester2/MonitorDTO.swift"; sourceTree = "<group>"; };
+		7D184F251BEDDFFD007E02D5 /* MonitorProjectDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MonitorProjectDTO.swift; path = "../../xcode-projects/Tester2/Tester2/MonitorProjectDTO.swift"; sourceTree = "<group>"; };
+		7D184F261BEDDFFD007E02D5 /* MonitorTradeDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MonitorTradeDTO.swift; path = "../../xcode-projects/Tester2/Tester2/MonitorTradeDTO.swift"; sourceTree = "<group>"; };
+		7D184F271BEDDFFD007E02D5 /* MunicipalityDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MunicipalityDTO.swift; path = "../../xcode-projects/Tester2/Tester2/MunicipalityDTO.swift"; sourceTree = "<group>"; };
+		7D184F281BEDDFFD007E02D5 /* PhotoUploadDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PhotoUploadDTO.swift; path = "../../xcode-projects/Tester2/Tester2/PhotoUploadDTO.swift"; sourceTree = "<group>"; };
+		7D184F291BEDDFFD007E02D5 /* PortfolioDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PortfolioDTO.swift; path = "../../xcode-projects/Tester2/Tester2/PortfolioDTO.swift"; sourceTree = "<group>"; };
+		7D184F2A1BEDDFFD007E02D5 /* ProgrammeDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProgrammeDTO.swift; path = "../../xcode-projects/Tester2/Tester2/ProgrammeDTO.swift"; sourceTree = "<group>"; };
+		7D184F2B1BEDDFFD007E02D5 /* ProjectDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectDTO.swift; path = "../../xcode-projects/Tester2/Tester2/ProjectDTO.swift"; sourceTree = "<group>"; };
+		7D184F2C1BEDDFFD007E02D5 /* ProjectStatusDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectStatusDTO.swift; path = "../../xcode-projects/Tester2/Tester2/ProjectStatusDTO.swift"; sourceTree = "<group>"; };
+		7D184F2D1BEDDFFD007E02D5 /* ProjectStatusTypeDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectStatusTypeDTO.swift; path = "../../xcode-projects/Tester2/Tester2/ProjectStatusTypeDTO.swift"; sourceTree = "<group>"; };
+		7D184F2E1BEDDFFD007E02D5 /* ProjectTaskDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectTaskDTO.swift; path = "../../xcode-projects/Tester2/Tester2/ProjectTaskDTO.swift"; sourceTree = "<group>"; };
+		7D184F2F1BEDDFFD007E02D5 /* ProvinceDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProvinceDTO.swift; path = "../../xcode-projects/Tester2/Tester2/ProvinceDTO.swift"; sourceTree = "<group>"; };
+		7D184F301BEDDFFD007E02D5 /* RequestDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RequestDTO.swift; path = "../../xcode-projects/Tester2/Tester2/RequestDTO.swift"; sourceTree = "<group>"; };
+		7D184F311BEDDFFD007E02D5 /* RequestList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RequestList.swift; path = "../../xcode-projects/Tester2/Tester2/RequestList.swift"; sourceTree = "<group>"; };
+		7D184F321BEDDFFD007E02D5 /* ResponseDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ResponseDTO.swift; path = "../../xcode-projects/Tester2/Tester2/ResponseDTO.swift"; sourceTree = "<group>"; };
+		7D184F331BEDDFFD007E02D5 /* SimpleMessageDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SimpleMessageDTO.swift; path = "../../xcode-projects/Tester2/Tester2/SimpleMessageDTO.swift"; sourceTree = "<group>"; };
+		7D184F341BEDDFFD007E02D5 /* StaffDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StaffDTO.swift; path = "../../xcode-projects/Tester2/Tester2/StaffDTO.swift"; sourceTree = "<group>"; };
+		7D184F351BEDDFFD007E02D5 /* StaffProjectDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StaffProjectDTO.swift; path = "../../xcode-projects/Tester2/Tester2/StaffProjectDTO.swift"; sourceTree = "<group>"; };
+		7D184F361BEDDFFD007E02D5 /* StaffTypeDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StaffTypeDTO.swift; path = "../../xcode-projects/Tester2/Tester2/StaffTypeDTO.swift"; sourceTree = "<group>"; };
+		7D184F371BEDDFFD007E02D5 /* SubTaskDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SubTaskDTO.swift; path = "../../xcode-projects/Tester2/Tester2/SubTaskDTO.swift"; sourceTree = "<group>"; };
+		7D184F381BEDDFFD007E02D5 /* TaskTypeDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TaskTypeDTO.swift; path = "../../xcode-projects/Tester2/Tester2/TaskTypeDTO.swift"; sourceTree = "<group>"; };
+		7D184F391BEDDFFD007E02D5 /* VideoUploadDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VideoUploadDTO.swift; path = "../../xcode-projects/Tester2/Tester2/VideoUploadDTO.swift"; sourceTree = "<group>"; };
+		88D94C01B111661B00009A17 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA67A0108795DA479B8A8688 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		F4F5288201C20B7431F4E7A0 /* Pods-MonStaffTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MonStaffTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MonStaffTests/Pods-MonStaffTests.debug.xcconfig"; sourceTree = "<group>"; };
+		FF9317FD2B31FABE60324B64 /* Pods-MonStaffTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MonStaffTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MonStaffTests/Pods-MonStaffTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +117,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF657CF7C4FE029B6301865D /* Pods.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -50,18 +125,42 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9BCEAB44CC5ABF99F49CF212 /* Pods_MonStaffTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2E1511C113A6244CF768CF39 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6CB0D2CEF77ECC65754CF582 /* Pods_MonStaffTests.framework */,
+				88D94C01B111661B00009A17 /* Pods.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		63D063B56D3D07B31814890A /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				F4F5288201C20B7431F4E7A0 /* Pods-MonStaffTests.debug.xcconfig */,
+				FF9317FD2B31FABE60324B64 /* Pods-MonStaffTests.release.xcconfig */,
+				186396D97B8E8D3A0523E322 /* Pods.debug.xcconfig */,
+				CA67A0108795DA479B8A8688 /* Pods.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		7D184EED1BEDDE24007E02D5 = {
 			isa = PBXGroup;
 			children = (
+				7D0734D91BEDE29200E9EF46 /* Podfile */,
 				7D184EF81BEDDE24007E02D5 /* MonStaff */,
 				7D184F0D1BEDDE24007E02D5 /* MonStaffTests */,
 				7D184EF71BEDDE24007E02D5 /* Products */,
+				63D063B56D3D07B31814890A /* Pods */,
+				2E1511C113A6244CF768CF39 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -77,8 +176,9 @@
 		7D184EF81BEDDE24007E02D5 /* MonStaff */ = {
 			isa = PBXGroup;
 			children = (
+				7D184F191BEDDF6D007E02D5 /* Data */,
 				7D184EF91BEDDE24007E02D5 /* AppDelegate.swift */,
-				7D184EFB1BEDDE24007E02D5 /* ViewController.swift */,
+				7D184EFB1BEDDE24007E02D5 /* SignInController.swift */,
 				7D184EFD1BEDDE24007E02D5 /* Main.storyboard */,
 				7D184F001BEDDE24007E02D5 /* Assets.xcassets */,
 				7D184F021BEDDE24007E02D5 /* LaunchScreen.storyboard */,
@@ -96,6 +196,45 @@
 			path = MonStaffTests;
 			sourceTree = "<group>";
 		};
+		7D184F191BEDDF6D007E02D5 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				7D184F1A1BEDDFFD007E02D5 /* ProjectTaskStatusDTO.swift */,
+				7D184F1B1BEDDFFD007E02D5 /* TaskDTO.swift */,
+				7D184F1C1BEDDFFD007E02D5 /* TaskStatusTypeDTO.swift */,
+				7D184F1D1BEDDFFD007E02D5 /* CityDTO.swift */,
+				7D184F1E1BEDDFFD007E02D5 /* CompanyDTO.swift */,
+				7D184F1F1BEDDFFD007E02D5 /* CountryDTO.swift */,
+				7D184F201BEDDFFD007E02D5 /* ErrorStoreAndroidDTO.swift */,
+				7D184F211BEDDFFD007E02D5 /* ErrorStoreDTO.swift */,
+				7D184F221BEDDFFD007E02D5 /* GcmDeviceDTO.swift */,
+				7D184F231BEDDFFD007E02D5 /* LocationTrackerDTO.swift */,
+				7D184F241BEDDFFD007E02D5 /* MonitorDTO.swift */,
+				7D184F251BEDDFFD007E02D5 /* MonitorProjectDTO.swift */,
+				7D184F261BEDDFFD007E02D5 /* MonitorTradeDTO.swift */,
+				7D184F271BEDDFFD007E02D5 /* MunicipalityDTO.swift */,
+				7D184F281BEDDFFD007E02D5 /* PhotoUploadDTO.swift */,
+				7D184F291BEDDFFD007E02D5 /* PortfolioDTO.swift */,
+				7D184F2A1BEDDFFD007E02D5 /* ProgrammeDTO.swift */,
+				7D184F2B1BEDDFFD007E02D5 /* ProjectDTO.swift */,
+				7D184F2C1BEDDFFD007E02D5 /* ProjectStatusDTO.swift */,
+				7D184F2D1BEDDFFD007E02D5 /* ProjectStatusTypeDTO.swift */,
+				7D184F2E1BEDDFFD007E02D5 /* ProjectTaskDTO.swift */,
+				7D184F2F1BEDDFFD007E02D5 /* ProvinceDTO.swift */,
+				7D184F301BEDDFFD007E02D5 /* RequestDTO.swift */,
+				7D184F311BEDDFFD007E02D5 /* RequestList.swift */,
+				7D184F321BEDDFFD007E02D5 /* ResponseDTO.swift */,
+				7D184F331BEDDFFD007E02D5 /* SimpleMessageDTO.swift */,
+				7D184F341BEDDFFD007E02D5 /* StaffDTO.swift */,
+				7D184F351BEDDFFD007E02D5 /* StaffProjectDTO.swift */,
+				7D184F361BEDDFFD007E02D5 /* StaffTypeDTO.swift */,
+				7D184F371BEDDFFD007E02D5 /* SubTaskDTO.swift */,
+				7D184F381BEDDFFD007E02D5 /* TaskTypeDTO.swift */,
+				7D184F391BEDDFFD007E02D5 /* VideoUploadDTO.swift */,
+			);
+			name = Data;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -103,9 +242,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7D184F131BEDDE24007E02D5 /* Build configuration list for PBXNativeTarget "MonStaff" */;
 			buildPhases = (
+				71038DDE3CC930E89F029647 /* Check Pods Manifest.lock */,
 				7D184EF21BEDDE24007E02D5 /* Sources */,
 				7D184EF31BEDDE24007E02D5 /* Frameworks */,
 				7D184EF41BEDDE24007E02D5 /* Resources */,
+				46CA2B35E5B662246BBBB635 /* Embed Pods Frameworks */,
+				3A8AE9EE9F0B8D3655ECCC0E /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -120,9 +262,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7D184F161BEDDE24007E02D5 /* Build configuration list for PBXNativeTarget "MonStaffTests" */;
 			buildPhases = (
+				2594521DA72A989BE1675FCA /* Check Pods Manifest.lock */,
 				7D184F061BEDDE24007E02D5 /* Sources */,
 				7D184F071BEDDE24007E02D5 /* Frameworks */,
 				7D184F081BEDDE24007E02D5 /* Resources */,
+				EBA46A680EEE4C0CD4A9CB96 /* Embed Pods Frameworks */,
+				F5EA915CFFC07697F3688661 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -178,6 +323,7 @@
 			files = (
 				7D184F041BEDDE24007E02D5 /* LaunchScreen.storyboard in Resources */,
 				7D184F011BEDDE24007E02D5 /* Assets.xcassets in Resources */,
+				7D0734DA1BEDE29200E9EF46 /* Podfile in Resources */,
 				7D184EFF1BEDDE24007E02D5 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -191,13 +337,138 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		2594521DA72A989BE1675FCA /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		3A8AE9EE9F0B8D3655ECCC0E /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		46CA2B35E5B662246BBBB635 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		71038DDE3CC930E89F029647 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		EBA46A680EEE4C0CD4A9CB96 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MonStaffTests/Pods-MonStaffTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F5EA915CFFC07697F3688661 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MonStaffTests/Pods-MonStaffTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		7D184EF21BEDDE24007E02D5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7D184EFC1BEDDE24007E02D5 /* ViewController.swift in Sources */,
+				7D184F451BEDDFFD007E02D5 /* MonitorProjectDTO.swift in Sources */,
+				7D184F3A1BEDDFFD007E02D5 /* ProjectTaskStatusDTO.swift in Sources */,
+				7D184F3E1BEDDFFD007E02D5 /* CompanyDTO.swift in Sources */,
+				7D184F411BEDDFFD007E02D5 /* ErrorStoreDTO.swift in Sources */,
+				7D184F431BEDDFFD007E02D5 /* LocationTrackerDTO.swift in Sources */,
+				7D184F461BEDDFFD007E02D5 /* MonitorTradeDTO.swift in Sources */,
+				7D184EFC1BEDDE24007E02D5 /* SignInController.swift in Sources */,
+				7D184F3D1BEDDFFD007E02D5 /* CityDTO.swift in Sources */,
+				7D184F501BEDDFFD007E02D5 /* RequestDTO.swift in Sources */,
+				7D184F3B1BEDDFFD007E02D5 /* TaskDTO.swift in Sources */,
+				7D184F591BEDDFFD007E02D5 /* VideoUploadDTO.swift in Sources */,
+				7D184F561BEDDFFD007E02D5 /* StaffTypeDTO.swift in Sources */,
+				7D184F4F1BEDDFFD007E02D5 /* ProvinceDTO.swift in Sources */,
+				7D184F541BEDDFFD007E02D5 /* StaffDTO.swift in Sources */,
+				7D184F4D1BEDDFFD007E02D5 /* ProjectStatusTypeDTO.swift in Sources */,
+				7D184F4C1BEDDFFD007E02D5 /* ProjectStatusDTO.swift in Sources */,
+				7D184F571BEDDFFD007E02D5 /* SubTaskDTO.swift in Sources */,
+				7D184F511BEDDFFD007E02D5 /* RequestList.swift in Sources */,
+				7D184F581BEDDFFD007E02D5 /* TaskTypeDTO.swift in Sources */,
+				7D184F521BEDDFFD007E02D5 /* ResponseDTO.swift in Sources */,
+				7D184F551BEDDFFD007E02D5 /* StaffProjectDTO.swift in Sources */,
+				7D184F441BEDDFFD007E02D5 /* MonitorDTO.swift in Sources */,
+				7D184F481BEDDFFD007E02D5 /* PhotoUploadDTO.swift in Sources */,
 				7D184EFA1BEDDE24007E02D5 /* AppDelegate.swift in Sources */,
+				7D184F421BEDDFFD007E02D5 /* GcmDeviceDTO.swift in Sources */,
+				7D184F531BEDDFFD007E02D5 /* SimpleMessageDTO.swift in Sources */,
+				7D184F3F1BEDDFFD007E02D5 /* CountryDTO.swift in Sources */,
+				7D184F4E1BEDDFFD007E02D5 /* ProjectTaskDTO.swift in Sources */,
+				7D184F401BEDDFFD007E02D5 /* ErrorStoreAndroidDTO.swift in Sources */,
+				7D184F3C1BEDDFFD007E02D5 /* TaskStatusTypeDTO.swift in Sources */,
+				7D184F4A1BEDDFFD007E02D5 /* ProgrammeDTO.swift in Sources */,
+				7D184F4B1BEDDFFD007E02D5 /* ProjectDTO.swift in Sources */,
+				7D184F491BEDDFFD007E02D5 /* PortfolioDTO.swift in Sources */,
+				7D184F471BEDDFFD007E02D5 /* MunicipalityDTO.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,6 +595,7 @@
 		};
 		7D184F141BEDDE24007E02D5 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 186396D97B8E8D3A0523E322 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = MonStaff/Info.plist;
@@ -335,6 +607,7 @@
 		};
 		7D184F151BEDDE24007E02D5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CA67A0108795DA479B8A8688 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = MonStaff/Info.plist;
@@ -346,6 +619,7 @@
 		};
 		7D184F171BEDDE24007E02D5 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F4F5288201C20B7431F4E7A0 /* Pods-MonStaffTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = MonStaffTests/Info.plist;
@@ -358,6 +632,7 @@
 		};
 		7D184F181BEDDE24007E02D5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = FF9317FD2B31FABE60324B64 /* Pods-MonStaffTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = MonStaffTests/Info.plist;
@@ -387,6 +662,7 @@
 				7D184F151BEDDE24007E02D5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		7D184F161BEDDE24007E02D5 /* Build configuration list for PBXNativeTarget "MonStaffTests" */ = {
 			isa = XCConfigurationList;
@@ -395,6 +671,7 @@
 				7D184F181BEDDE24007E02D5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
