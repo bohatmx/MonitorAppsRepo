@@ -46,6 +46,20 @@
 		7D184F571BEDDFFD007E02D5 /* SubTaskDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F371BEDDFFD007E02D5 /* SubTaskDTO.swift */; settings = {ASSET_TAGS = (); }; };
 		7D184F581BEDDFFD007E02D5 /* TaskTypeDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F381BEDDFFD007E02D5 /* TaskTypeDTO.swift */; settings = {ASSET_TAGS = (); }; };
 		7D184F591BEDDFFD007E02D5 /* VideoUploadDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F391BEDDFFD007E02D5 /* VideoUploadDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A291BEDE5F0003D6DCC /* Comms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A231BEDE5F0003D6DCC /* Comms.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A2A1BEDE5F0003D6DCC /* Mappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A241BEDE5F0003D6DCC /* Mappable.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A2B1BEDE5F0003D6DCC /* DataParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A251BEDE5F0003D6DCC /* DataParser.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A2C1BEDE5F0003D6DCC /* JSONSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A261BEDE5F0003D6DCC /* JSONSerializer.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A2D1BEDE5F0003D6DCC /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A271BEDE5F0003D6DCC /* Util.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A2E1BEDE5F0003D6DCC /* StringBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A281BEDE5F0003D6DCC /* StringBuilder.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A331BEDE899003D6DCC /* libz.1.1.3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DEA8A2F1BEDE899003D6DCC /* libz.1.1.3.tbd */; };
+		7DEA8A341BEDE899003D6DCC /* libz.1.2.5.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DEA8A301BEDE899003D6DCC /* libz.1.2.5.tbd */; };
+		7DEA8A351BEDE899003D6DCC /* libz.1.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DEA8A311BEDE899003D6DCC /* libz.1.tbd */; };
+		7DEA8A361BEDE899003D6DCC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DEA8A321BEDE899003D6DCC /* libz.tbd */; };
+		7DEA8A3A1BEDEC6D003D6DCC /* ChatDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A371BEDEC6D003D6DCC /* ChatDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A3B1BEDEC6D003D6DCC /* ChatMemberDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A381BEDEC6D003D6DCC /* ChatMemberDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A3C1BEDEC6D003D6DCC /* ChatMessageDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A391BEDEC6D003D6DCC /* ChatMessageDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A651BEDF782003D6DCC /* dylib1.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DEA8A641BEDF782003D6DCC /* dylib1.o */; };
 		9BCEAB44CC5ABF99F49CF212 /* Pods_MonStaffTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6CB0D2CEF77ECC65754CF582 /* Pods_MonStaffTests.framework */; };
 		BF657CF7C4FE029B6301865D /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88D94C01B111661B00009A17 /* Pods.framework */; };
 /* End PBXBuildFile section */
@@ -63,7 +77,7 @@
 /* Begin PBXFileReference section */
 		186396D97B8E8D3A0523E322 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		6CB0D2CEF77ECC65754CF582 /* Pods_MonStaffTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MonStaffTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7D0734D91BEDE29200E9EF46 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
+		7D0734D91BEDE29200E9EF46 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		7D184EF61BEDDE24007E02D5 /* MonStaff.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MonStaff.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D184EF91BEDDE24007E02D5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7D184EFB1BEDDE24007E02D5 /* SignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInController.swift; sourceTree = "<group>"; };
@@ -106,6 +120,21 @@
 		7D184F371BEDDFFD007E02D5 /* SubTaskDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SubTaskDTO.swift; path = "../../xcode-projects/Tester2/Tester2/SubTaskDTO.swift"; sourceTree = "<group>"; };
 		7D184F381BEDDFFD007E02D5 /* TaskTypeDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TaskTypeDTO.swift; path = "../../xcode-projects/Tester2/Tester2/TaskTypeDTO.swift"; sourceTree = "<group>"; };
 		7D184F391BEDDFFD007E02D5 /* VideoUploadDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VideoUploadDTO.swift; path = "../../xcode-projects/Tester2/Tester2/VideoUploadDTO.swift"; sourceTree = "<group>"; };
+		7DEA8A231BEDE5F0003D6DCC /* Comms.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Comms.swift; path = "../../xcode-projects/Tester2/Tester2/Comms.swift"; sourceTree = "<group>"; };
+		7DEA8A241BEDE5F0003D6DCC /* Mappable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Mappable.swift; path = "../../xcode-projects/Tester2/Tester2/Mappable.swift"; sourceTree = "<group>"; };
+		7DEA8A251BEDE5F0003D6DCC /* DataParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DataParser.swift; path = "../../xcode-projects/Tester2/Tester2/DataParser.swift"; sourceTree = "<group>"; };
+		7DEA8A261BEDE5F0003D6DCC /* JSONSerializer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JSONSerializer.swift; path = "../../xcode-projects/Tester2/Tester2/JSONSerializer.swift"; sourceTree = "<group>"; };
+		7DEA8A271BEDE5F0003D6DCC /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Util.swift; path = "../../xcode-projects/Tester2/Tester2/Util.swift"; sourceTree = "<group>"; };
+		7DEA8A281BEDE5F0003D6DCC /* StringBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StringBuilder.swift; path = "../../xcode-projects/Tester2/Tester2/StringBuilder.swift"; sourceTree = "<group>"; };
+		7DEA8A2F1BEDE899003D6DCC /* libz.1.1.3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.1.3.tbd; path = usr/lib/libz.1.1.3.tbd; sourceTree = SDKROOT; };
+		7DEA8A301BEDE899003D6DCC /* libz.1.2.5.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.2.5.tbd; path = usr/lib/libz.1.2.5.tbd; sourceTree = SDKROOT; };
+		7DEA8A311BEDE899003D6DCC /* libz.1.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.tbd; path = usr/lib/libz.1.tbd; sourceTree = SDKROOT; };
+		7DEA8A321BEDE899003D6DCC /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		7DEA8A371BEDEC6D003D6DCC /* ChatDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ChatDTO.swift; path = "../../xcode-projects/Tester2/Tester2/ChatDTO.swift"; sourceTree = "<group>"; };
+		7DEA8A381BEDEC6D003D6DCC /* ChatMemberDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ChatMemberDTO.swift; path = "../../xcode-projects/Tester2/Tester2/ChatMemberDTO.swift"; sourceTree = "<group>"; };
+		7DEA8A391BEDEC6D003D6DCC /* ChatMessageDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ChatMessageDTO.swift; path = "../../xcode-projects/Tester2/Tester2/ChatMessageDTO.swift"; sourceTree = "<group>"; };
+		7DEA8A641BEDF782003D6DCC /* dylib1.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; name = dylib1.o; path = usr/lib/dylib1.o; sourceTree = SDKROOT; };
+		7DEA8A671BEDFE7B003D6DCC /* MonStaff-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MonStaff-Bridging-Header.h"; sourceTree = "<group>"; };
 		88D94C01B111661B00009A17 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA67A0108795DA479B8A8688 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		F4F5288201C20B7431F4E7A0 /* Pods-MonStaffTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MonStaffTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MonStaffTests/Pods-MonStaffTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -117,6 +146,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7DEA8A651BEDF782003D6DCC /* dylib1.o in Frameworks */,
+				7DEA8A331BEDE899003D6DCC /* libz.1.1.3.tbd in Frameworks */,
+				7DEA8A341BEDE899003D6DCC /* libz.1.2.5.tbd in Frameworks */,
+				7DEA8A351BEDE899003D6DCC /* libz.1.tbd in Frameworks */,
+				7DEA8A361BEDE899003D6DCC /* libz.tbd in Frameworks */,
 				BF657CF7C4FE029B6301865D /* Pods.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -135,6 +169,11 @@
 		2E1511C113A6244CF768CF39 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7DEA8A641BEDF782003D6DCC /* dylib1.o */,
+				7DEA8A2F1BEDE899003D6DCC /* libz.1.1.3.tbd */,
+				7DEA8A301BEDE899003D6DCC /* libz.1.2.5.tbd */,
+				7DEA8A311BEDE899003D6DCC /* libz.1.tbd */,
+				7DEA8A321BEDE899003D6DCC /* libz.tbd */,
 				6CB0D2CEF77ECC65754CF582 /* Pods_MonStaffTests.framework */,
 				88D94C01B111661B00009A17 /* Pods.framework */,
 			);
@@ -161,6 +200,7 @@
 				7D184EF71BEDDE24007E02D5 /* Products */,
 				63D063B56D3D07B31814890A /* Pods */,
 				2E1511C113A6244CF768CF39 /* Frameworks */,
+				7DEA8A671BEDFE7B003D6DCC /* MonStaff-Bridging-Header.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -176,6 +216,7 @@
 		7D184EF81BEDDE24007E02D5 /* MonStaff */ = {
 			isa = PBXGroup;
 			children = (
+				7DEA8A221BEDE58A003D6DCC /* Utilities */,
 				7D184F191BEDDF6D007E02D5 /* Data */,
 				7D184EF91BEDDE24007E02D5 /* AppDelegate.swift */,
 				7D184EFB1BEDDE24007E02D5 /* SignInController.swift */,
@@ -199,6 +240,9 @@
 		7D184F191BEDDF6D007E02D5 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				7DEA8A371BEDEC6D003D6DCC /* ChatDTO.swift */,
+				7DEA8A381BEDEC6D003D6DCC /* ChatMemberDTO.swift */,
+				7DEA8A391BEDEC6D003D6DCC /* ChatMessageDTO.swift */,
 				7D184F1A1BEDDFFD007E02D5 /* ProjectTaskStatusDTO.swift */,
 				7D184F1B1BEDDFFD007E02D5 /* TaskDTO.swift */,
 				7D184F1C1BEDDFFD007E02D5 /* TaskStatusTypeDTO.swift */,
@@ -233,6 +277,19 @@
 				7D184F391BEDDFFD007E02D5 /* VideoUploadDTO.swift */,
 			);
 			name = Data;
+			sourceTree = "<group>";
+		};
+		7DEA8A221BEDE58A003D6DCC /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				7DEA8A231BEDE5F0003D6DCC /* Comms.swift */,
+				7DEA8A241BEDE5F0003D6DCC /* Mappable.swift */,
+				7DEA8A251BEDE5F0003D6DCC /* DataParser.swift */,
+				7DEA8A261BEDE5F0003D6DCC /* JSONSerializer.swift */,
+				7DEA8A271BEDE5F0003D6DCC /* Util.swift */,
+				7DEA8A281BEDE5F0003D6DCC /* StringBuilder.swift */,
+			);
+			name = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -285,6 +342,7 @@
 		7D184EEE1BEDDE24007E02D5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Aubrey Malabie";
 				TargetAttributes = {
@@ -437,11 +495,16 @@
 			files = (
 				7D184F451BEDDFFD007E02D5 /* MonitorProjectDTO.swift in Sources */,
 				7D184F3A1BEDDFFD007E02D5 /* ProjectTaskStatusDTO.swift in Sources */,
+				7DEA8A3C1BEDEC6D003D6DCC /* ChatMessageDTO.swift in Sources */,
 				7D184F3E1BEDDFFD007E02D5 /* CompanyDTO.swift in Sources */,
 				7D184F411BEDDFFD007E02D5 /* ErrorStoreDTO.swift in Sources */,
 				7D184F431BEDDFFD007E02D5 /* LocationTrackerDTO.swift in Sources */,
+				7DEA8A3A1BEDEC6D003D6DCC /* ChatDTO.swift in Sources */,
+				7DEA8A2B1BEDE5F0003D6DCC /* DataParser.swift in Sources */,
 				7D184F461BEDDFFD007E02D5 /* MonitorTradeDTO.swift in Sources */,
+				7DEA8A2D1BEDE5F0003D6DCC /* Util.swift in Sources */,
 				7D184EFC1BEDDE24007E02D5 /* SignInController.swift in Sources */,
+				7DEA8A2A1BEDE5F0003D6DCC /* Mappable.swift in Sources */,
 				7D184F3D1BEDDFFD007E02D5 /* CityDTO.swift in Sources */,
 				7D184F501BEDDFFD007E02D5 /* RequestDTO.swift in Sources */,
 				7D184F3B1BEDDFFD007E02D5 /* TaskDTO.swift in Sources */,
@@ -452,11 +515,14 @@
 				7D184F4D1BEDDFFD007E02D5 /* ProjectStatusTypeDTO.swift in Sources */,
 				7D184F4C1BEDDFFD007E02D5 /* ProjectStatusDTO.swift in Sources */,
 				7D184F571BEDDFFD007E02D5 /* SubTaskDTO.swift in Sources */,
+				7DEA8A2E1BEDE5F0003D6DCC /* StringBuilder.swift in Sources */,
 				7D184F511BEDDFFD007E02D5 /* RequestList.swift in Sources */,
 				7D184F581BEDDFFD007E02D5 /* TaskTypeDTO.swift in Sources */,
+				7DEA8A2C1BEDE5F0003D6DCC /* JSONSerializer.swift in Sources */,
 				7D184F521BEDDFFD007E02D5 /* ResponseDTO.swift in Sources */,
 				7D184F551BEDDFFD007E02D5 /* StaffProjectDTO.swift in Sources */,
 				7D184F441BEDDFFD007E02D5 /* MonitorDTO.swift in Sources */,
+				7DEA8A291BEDE5F0003D6DCC /* Comms.swift in Sources */,
 				7D184F481BEDDFFD007E02D5 /* PhotoUploadDTO.swift in Sources */,
 				7D184EFA1BEDDE24007E02D5 /* AppDelegate.swift in Sources */,
 				7D184F421BEDDFFD007E02D5 /* GcmDeviceDTO.swift in Sources */,
@@ -467,6 +533,7 @@
 				7D184F3C1BEDDFFD007E02D5 /* TaskStatusTypeDTO.swift in Sources */,
 				7D184F4A1BEDDFFD007E02D5 /* ProgrammeDTO.swift in Sources */,
 				7D184F4B1BEDDFFD007E02D5 /* ProjectDTO.swift in Sources */,
+				7DEA8A3B1BEDEC6D003D6DCC /* ChatMemberDTO.swift in Sources */,
 				7D184F491BEDDFFD007E02D5 /* PortfolioDTO.swift in Sources */,
 				7D184F471BEDDFFD007E02D5 /* MunicipalityDTO.swift in Sources */,
 			);
@@ -598,10 +665,14 @@
 			baseConfigurationReference = 186396D97B8E8D3A0523E322 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = MonStaff/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = BohaTMX.MonStaff;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "MonStaff-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -610,10 +681,13 @@
 			baseConfigurationReference = CA67A0108795DA479B8A8688 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = MonStaff/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = BohaTMX.MonStaff;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "MonStaff-Bridging-Header.h";
 			};
 			name = Release;
 		};
