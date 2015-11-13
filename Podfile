@@ -17,4 +17,5 @@ pod 'SwiftyJSON', '~> 2.3'
 pod 'OCMapper', '~> 2.1'
 pod 'ObjectMapper', '~> 1.0'
 pod 'SSZipArchive'
-
+pod 'GoogleMaps'
+pod 'DrawerController', '~> 1.0'

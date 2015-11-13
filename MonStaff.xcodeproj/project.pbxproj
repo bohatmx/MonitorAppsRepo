@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		7D0734DA1BEDE29200E9EF46 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 7D0734D91BEDE29200E9EF46 /* Podfile */; settings = {ASSET_TAGS = (); }; };
 		7D184EFA1BEDDE24007E02D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184EF91BEDDE24007E02D5 /* AppDelegate.swift */; };
-		7D184EFC1BEDDE24007E02D5 /* SignInController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184EFB1BEDDE24007E02D5 /* SignInController.swift */; };
 		7D184EFF1BEDDE24007E02D5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D184EFD1BEDDE24007E02D5 /* Main.storyboard */; };
 		7D184F011BEDDE24007E02D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D184F001BEDDE24007E02D5 /* Assets.xcassets */; };
 		7D184F041BEDDE24007E02D5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D184F021BEDDE24007E02D5 /* LaunchScreen.storyboard */; };
@@ -46,6 +45,12 @@
 		7D184F571BEDDFFD007E02D5 /* SubTaskDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F371BEDDFFD007E02D5 /* SubTaskDTO.swift */; settings = {ASSET_TAGS = (); }; };
 		7D184F581BEDDFFD007E02D5 /* TaskTypeDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F381BEDDFFD007E02D5 /* TaskTypeDTO.swift */; settings = {ASSET_TAGS = (); }; };
 		7D184F591BEDDFFD007E02D5 /* VideoUploadDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F391BEDDFFD007E02D5 /* VideoUploadDTO.swift */; settings = {ASSET_TAGS = (); }; };
+		7D5D0BFC1BF1191D004B8C50 /* libchilkatIos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D5D0BFB1BF1191D004B8C50 /* libchilkatIos.a */; };
+		7D5D0BFE1BF1193B004B8C50 /* libchilkatSimIos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D5D0BFD1BF1193B004B8C50 /* libchilkatSimIos.a */; };
+		7D5D0C001BF11BA1004B8C50 /* MyZip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5D0BFF1BF11BA1004B8C50 /* MyZip.swift */; settings = {ASSET_TAGS = (); }; };
+		7D7314F71BF2CCF600924C4D /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7D7314F51BF2CCF600924C4D /* DataModel.xcdatamodeld */; settings = {ASSET_TAGS = (); }; };
+		7D7315841BF2D2ED00924C4D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7315831BF2D2ED00924C4D /* ViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		7D7315861BF2D39D00924C4D /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7315851BF2D39D00924C4D /* SignInViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		7DEA8A291BEDE5F0003D6DCC /* Comms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A231BEDE5F0003D6DCC /* Comms.swift */; settings = {ASSET_TAGS = (); }; };
 		7DEA8A2A1BEDE5F0003D6DCC /* Mappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A241BEDE5F0003D6DCC /* Mappable.swift */; settings = {ASSET_TAGS = (); }; };
 		7DEA8A2B1BEDE5F0003D6DCC /* DataParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A251BEDE5F0003D6DCC /* DataParser.swift */; settings = {ASSET_TAGS = (); }; };
@@ -60,6 +65,19 @@
 		7DEA8A3B1BEDEC6D003D6DCC /* ChatMemberDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A381BEDEC6D003D6DCC /* ChatMemberDTO.swift */; settings = {ASSET_TAGS = (); }; };
 		7DEA8A3C1BEDEC6D003D6DCC /* ChatMessageDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A391BEDEC6D003D6DCC /* ChatMessageDTO.swift */; settings = {ASSET_TAGS = (); }; };
 		7DEA8A651BEDF782003D6DCC /* dylib1.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DEA8A641BEDF782003D6DCC /* dylib1.o */; };
+		7DEA8A701BEE4EEB003D6DCC /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A6F1BEE4EEB003D6DCC /* ProfileViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A721BEE53BA003D6DCC /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A711BEE53BA003D6DCC /* DashboardViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A741BEE53D6003D6DCC /* MonitorSummaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A731BEE53D6003D6DCC /* MonitorSummaryViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A761BEE5608003D6DCC /* ProjectTableTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A751BEE5608003D6DCC /* ProjectTableTableViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A781BEE563C003D6DCC /* MonitorTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A771BEE563C003D6DCC /* MonitorTableViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A7A1BEE5654003D6DCC /* StaffTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A791BEE5654003D6DCC /* StaffTableViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A7F1BEE7A66003D6DCC /* ProjTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A7E1BEE7A66003D6DCC /* ProjTableViewCell.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A811BEF0A5B003D6DCC /* ProjectMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A801BEF0A5B003D6DCC /* ProjectMapViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A831BEF13FC003D6DCC /* MapMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A821BEF13FC003D6DCC /* MapMarker.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A851BEF19FE003D6DCC /* VCMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A841BEF19FE003D6DCC /* VCMapView.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A8B1BEF33F7003D6DCC /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DEA8A8A1BEF33F7003D6DCC /* MapKit.framework */; };
+		7DEA8A931BEFA6CA003D6DCC /* PicturesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A921BEFA6CA003D6DCC /* PicturesViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		7DEA8A951BEFA93C003D6DCC /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A941BEFA93C003D6DCC /* CollectionViewCell.swift */; settings = {ASSET_TAGS = (); }; };
 		9BCEAB44CC5ABF99F49CF212 /* Pods_MonStaffTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6CB0D2CEF77ECC65754CF582 /* Pods_MonStaffTests.framework */; };
 		BF657CF7C4FE029B6301865D /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88D94C01B111661B00009A17 /* Pods.framework */; };
 /* End PBXBuildFile section */
@@ -80,7 +98,6 @@
 		7D0734D91BEDE29200E9EF46 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		7D184EF61BEDDE24007E02D5 /* MonStaff.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MonStaff.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D184EF91BEDDE24007E02D5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		7D184EFB1BEDDE24007E02D5 /* SignInController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInController.swift; sourceTree = "<group>"; };
 		7D184EFE1BEDDE24007E02D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7D184F001BEDDE24007E02D5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7D184F031BEDDE24007E02D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -120,6 +137,13 @@
 		7D184F371BEDDFFD007E02D5 /* SubTaskDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SubTaskDTO.swift; path = "../../xcode-projects/Tester2/Tester2/SubTaskDTO.swift"; sourceTree = "<group>"; };
 		7D184F381BEDDFFD007E02D5 /* TaskTypeDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TaskTypeDTO.swift; path = "../../xcode-projects/Tester2/Tester2/TaskTypeDTO.swift"; sourceTree = "<group>"; };
 		7D184F391BEDDFFD007E02D5 /* VideoUploadDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VideoUploadDTO.swift; path = "../../xcode-projects/Tester2/Tester2/VideoUploadDTO.swift"; sourceTree = "<group>"; };
+		7D5D0BFB1BF1191D004B8C50 /* libchilkatIos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libchilkatIos.a; path = "../xcode-projects/chilkat-9.5.0-ios9/lib/libchilkatIos.a"; sourceTree = "<group>"; };
+		7D5D0BFD1BF1193B004B8C50 /* libchilkatSimIos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libchilkatSimIos.a; path = "../xcode-projects/chilkat-9.5.0-ios9/lib/libchilkatSimIos.a"; sourceTree = "<group>"; };
+		7D5D0BFF1BF11BA1004B8C50 /* MyZip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyZip.swift; sourceTree = "<group>"; };
+		7D5D0C011BF127F5004B8C50 /* MonStaff-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MonStaff-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
+		7D7314F61BF2CCF600924C4D /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
+		7D7315831BF2D2ED00924C4D /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		7D7315851BF2D39D00924C4D /* SignInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		7DEA8A231BEDE5F0003D6DCC /* Comms.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Comms.swift; path = "../../xcode-projects/Tester2/Tester2/Comms.swift"; sourceTree = "<group>"; };
 		7DEA8A241BEDE5F0003D6DCC /* Mappable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Mappable.swift; path = "../../xcode-projects/Tester2/Tester2/Mappable.swift"; sourceTree = "<group>"; };
 		7DEA8A251BEDE5F0003D6DCC /* DataParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DataParser.swift; path = "../../xcode-projects/Tester2/Tester2/DataParser.swift"; sourceTree = "<group>"; };
@@ -134,7 +158,19 @@
 		7DEA8A381BEDEC6D003D6DCC /* ChatMemberDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ChatMemberDTO.swift; path = "../../xcode-projects/Tester2/Tester2/ChatMemberDTO.swift"; sourceTree = "<group>"; };
 		7DEA8A391BEDEC6D003D6DCC /* ChatMessageDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ChatMessageDTO.swift; path = "../../xcode-projects/Tester2/Tester2/ChatMessageDTO.swift"; sourceTree = "<group>"; };
 		7DEA8A641BEDF782003D6DCC /* dylib1.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; name = dylib1.o; path = usr/lib/dylib1.o; sourceTree = SDKROOT; };
-		7DEA8A671BEDFE7B003D6DCC /* MonStaff-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MonStaff-Bridging-Header.h"; sourceTree = "<group>"; };
+		7DEA8A6F1BEE4EEB003D6DCC /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		7DEA8A711BEE53BA003D6DCC /* DashboardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
+		7DEA8A731BEE53D6003D6DCC /* MonitorSummaryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonitorSummaryViewController.swift; sourceTree = "<group>"; };
+		7DEA8A751BEE5608003D6DCC /* ProjectTableTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectTableTableViewController.swift; sourceTree = "<group>"; };
+		7DEA8A771BEE563C003D6DCC /* MonitorTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonitorTableViewController.swift; sourceTree = "<group>"; };
+		7DEA8A791BEE5654003D6DCC /* StaffTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaffTableViewController.swift; sourceTree = "<group>"; };
+		7DEA8A7E1BEE7A66003D6DCC /* ProjTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjTableViewCell.swift; sourceTree = "<group>"; };
+		7DEA8A801BEF0A5B003D6DCC /* ProjectMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectMapViewController.swift; sourceTree = "<group>"; };
+		7DEA8A821BEF13FC003D6DCC /* MapMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapMarker.swift; sourceTree = "<group>"; };
+		7DEA8A841BEF19FE003D6DCC /* VCMapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VCMapView.swift; sourceTree = "<group>"; };
+		7DEA8A8A1BEF33F7003D6DCC /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		7DEA8A921BEFA6CA003D6DCC /* PicturesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicturesViewController.swift; sourceTree = "<group>"; };
+		7DEA8A941BEFA93C003D6DCC /* CollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
 		88D94C01B111661B00009A17 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA67A0108795DA479B8A8688 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		F4F5288201C20B7431F4E7A0 /* Pods-MonStaffTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MonStaffTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MonStaffTests/Pods-MonStaffTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -146,10 +182,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D5D0BFE1BF1193B004B8C50 /* libchilkatSimIos.a in Frameworks */,
+				7D5D0BFC1BF1191D004B8C50 /* libchilkatIos.a in Frameworks */,
 				7DEA8A651BEDF782003D6DCC /* dylib1.o in Frameworks */,
 				7DEA8A331BEDE899003D6DCC /* libz.1.1.3.tbd in Frameworks */,
 				7DEA8A341BEDE899003D6DCC /* libz.1.2.5.tbd in Frameworks */,
 				7DEA8A351BEDE899003D6DCC /* libz.1.tbd in Frameworks */,
+				7DEA8A8B1BEF33F7003D6DCC /* MapKit.framework in Frameworks */,
 				7DEA8A361BEDE899003D6DCC /* libz.tbd in Frameworks */,
 				BF657CF7C4FE029B6301865D /* Pods.framework in Frameworks */,
 			);
@@ -169,6 +208,9 @@
 		2E1511C113A6244CF768CF39 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7D5D0BFD1BF1193B004B8C50 /* libchilkatSimIos.a */,
+				7D5D0BFB1BF1191D004B8C50 /* libchilkatIos.a */,
+				7DEA8A8A1BEF33F7003D6DCC /* MapKit.framework */,
 				7DEA8A641BEDF782003D6DCC /* dylib1.o */,
 				7DEA8A2F1BEDE899003D6DCC /* libz.1.1.3.tbd */,
 				7DEA8A301BEDE899003D6DCC /* libz.1.2.5.tbd */,
@@ -200,7 +242,6 @@
 				7D184EF71BEDDE24007E02D5 /* Products */,
 				63D063B56D3D07B31814890A /* Pods */,
 				2E1511C113A6244CF768CF39 /* Frameworks */,
-				7DEA8A671BEDFE7B003D6DCC /* MonStaff-Bridging-Header.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -216,10 +257,12 @@
 		7D184EF81BEDDE24007E02D5 /* MonStaff */ = {
 			isa = PBXGroup;
 			children = (
+				7D5D0C011BF127F5004B8C50 /* MonStaff-Bridging-Header.h */,
+				7DEA8A7B1BEE6119003D6DCC /* TableViewCells */,
+				7DEA8A6A1BEE4346003D6DCC /* ViewControllers */,
 				7DEA8A221BEDE58A003D6DCC /* Utilities */,
 				7D184F191BEDDF6D007E02D5 /* Data */,
 				7D184EF91BEDDE24007E02D5 /* AppDelegate.swift */,
-				7D184EFB1BEDDE24007E02D5 /* SignInController.swift */,
 				7D184EFD1BEDDE24007E02D5 /* Main.storyboard */,
 				7D184F001BEDDE24007E02D5 /* Assets.xcassets */,
 				7D184F021BEDDE24007E02D5 /* LaunchScreen.storyboard */,
@@ -275,6 +318,8 @@
 				7D184F371BEDDFFD007E02D5 /* SubTaskDTO.swift */,
 				7D184F381BEDDFFD007E02D5 /* TaskTypeDTO.swift */,
 				7D184F391BEDDFFD007E02D5 /* VideoUploadDTO.swift */,
+				7DEA8A821BEF13FC003D6DCC /* MapMarker.swift */,
+				7D7314F51BF2CCF600924C4D /* DataModel.xcdatamodeld */,
 			);
 			name = Data;
 			sourceTree = "<group>";
@@ -288,8 +333,36 @@
 				7DEA8A261BEDE5F0003D6DCC /* JSONSerializer.swift */,
 				7DEA8A271BEDE5F0003D6DCC /* Util.swift */,
 				7DEA8A281BEDE5F0003D6DCC /* StringBuilder.swift */,
+				7DEA8A841BEF19FE003D6DCC /* VCMapView.swift */,
+				7D5D0BFF1BF11BA1004B8C50 /* MyZip.swift */,
 			);
 			name = Utilities;
+			sourceTree = "<group>";
+		};
+		7DEA8A6A1BEE4346003D6DCC /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				7DEA8A6F1BEE4EEB003D6DCC /* ProfileViewController.swift */,
+				7DEA8A711BEE53BA003D6DCC /* DashboardViewController.swift */,
+				7DEA8A731BEE53D6003D6DCC /* MonitorSummaryViewController.swift */,
+				7DEA8A751BEE5608003D6DCC /* ProjectTableTableViewController.swift */,
+				7DEA8A771BEE563C003D6DCC /* MonitorTableViewController.swift */,
+				7DEA8A791BEE5654003D6DCC /* StaffTableViewController.swift */,
+				7DEA8A801BEF0A5B003D6DCC /* ProjectMapViewController.swift */,
+				7DEA8A921BEFA6CA003D6DCC /* PicturesViewController.swift */,
+				7DEA8A941BEFA93C003D6DCC /* CollectionViewCell.swift */,
+				7D7315831BF2D2ED00924C4D /* ViewController.swift */,
+				7D7315851BF2D39D00924C4D /* SignInViewController.swift */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		7DEA8A7B1BEE6119003D6DCC /* TableViewCells */ = {
+			isa = PBXGroup;
+			children = (
+				7DEA8A7E1BEE7A66003D6DCC /* ProjTableViewCell.swift */,
+			);
+			name = TableViewCells;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -348,6 +421,11 @@
 				TargetAttributes = {
 					7D184EF51BEDDE24007E02D5 = {
 						CreatedOnToolsVersion = 7.0.1;
+						SystemCapabilities = {
+							com.apple.Maps.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 					7D184F091BEDDE24007E02D5 = {
 						CreatedOnToolsVersion = 7.0.1;
@@ -493,31 +571,39 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7DEA8A781BEE563C003D6DCC /* MonitorTableViewController.swift in Sources */,
 				7D184F451BEDDFFD007E02D5 /* MonitorProjectDTO.swift in Sources */,
 				7D184F3A1BEDDFFD007E02D5 /* ProjectTaskStatusDTO.swift in Sources */,
 				7DEA8A3C1BEDEC6D003D6DCC /* ChatMessageDTO.swift in Sources */,
 				7D184F3E1BEDDFFD007E02D5 /* CompanyDTO.swift in Sources */,
+				7DEA8A721BEE53BA003D6DCC /* DashboardViewController.swift in Sources */,
 				7D184F411BEDDFFD007E02D5 /* ErrorStoreDTO.swift in Sources */,
 				7D184F431BEDDFFD007E02D5 /* LocationTrackerDTO.swift in Sources */,
 				7DEA8A3A1BEDEC6D003D6DCC /* ChatDTO.swift in Sources */,
 				7DEA8A2B1BEDE5F0003D6DCC /* DataParser.swift in Sources */,
+				7D7315861BF2D39D00924C4D /* SignInViewController.swift in Sources */,
 				7D184F461BEDDFFD007E02D5 /* MonitorTradeDTO.swift in Sources */,
+				7DEA8A831BEF13FC003D6DCC /* MapMarker.swift in Sources */,
 				7DEA8A2D1BEDE5F0003D6DCC /* Util.swift in Sources */,
-				7D184EFC1BEDDE24007E02D5 /* SignInController.swift in Sources */,
 				7DEA8A2A1BEDE5F0003D6DCC /* Mappable.swift in Sources */,
 				7D184F3D1BEDDFFD007E02D5 /* CityDTO.swift in Sources */,
 				7D184F501BEDDFFD007E02D5 /* RequestDTO.swift in Sources */,
 				7D184F3B1BEDDFFD007E02D5 /* TaskDTO.swift in Sources */,
+				7D7314F71BF2CCF600924C4D /* DataModel.xcdatamodeld in Sources */,
 				7D184F591BEDDFFD007E02D5 /* VideoUploadDTO.swift in Sources */,
 				7D184F561BEDDFFD007E02D5 /* StaffTypeDTO.swift in Sources */,
 				7D184F4F1BEDDFFD007E02D5 /* ProvinceDTO.swift in Sources */,
+				7DEA8A951BEFA93C003D6DCC /* CollectionViewCell.swift in Sources */,
 				7D184F541BEDDFFD007E02D5 /* StaffDTO.swift in Sources */,
 				7D184F4D1BEDDFFD007E02D5 /* ProjectStatusTypeDTO.swift in Sources */,
 				7D184F4C1BEDDFFD007E02D5 /* ProjectStatusDTO.swift in Sources */,
 				7D184F571BEDDFFD007E02D5 /* SubTaskDTO.swift in Sources */,
 				7DEA8A2E1BEDE5F0003D6DCC /* StringBuilder.swift in Sources */,
 				7D184F511BEDDFFD007E02D5 /* RequestList.swift in Sources */,
+				7D5D0C001BF11BA1004B8C50 /* MyZip.swift in Sources */,
+				7DEA8A811BEF0A5B003D6DCC /* ProjectMapViewController.swift in Sources */,
 				7D184F581BEDDFFD007E02D5 /* TaskTypeDTO.swift in Sources */,
+				7DEA8A851BEF19FE003D6DCC /* VCMapView.swift in Sources */,
 				7DEA8A2C1BEDE5F0003D6DCC /* JSONSerializer.swift in Sources */,
 				7D184F521BEDDFFD007E02D5 /* ResponseDTO.swift in Sources */,
 				7D184F551BEDDFFD007E02D5 /* StaffProjectDTO.swift in Sources */,
@@ -525,14 +611,21 @@
 				7DEA8A291BEDE5F0003D6DCC /* Comms.swift in Sources */,
 				7D184F481BEDDFFD007E02D5 /* PhotoUploadDTO.swift in Sources */,
 				7D184EFA1BEDDE24007E02D5 /* AppDelegate.swift in Sources */,
+				7D7315841BF2D2ED00924C4D /* ViewController.swift in Sources */,
 				7D184F421BEDDFFD007E02D5 /* GcmDeviceDTO.swift in Sources */,
+				7DEA8A7A1BEE5654003D6DCC /* StaffTableViewController.swift in Sources */,
+				7DEA8A7F1BEE7A66003D6DCC /* ProjTableViewCell.swift in Sources */,
 				7D184F531BEDDFFD007E02D5 /* SimpleMessageDTO.swift in Sources */,
 				7D184F3F1BEDDFFD007E02D5 /* CountryDTO.swift in Sources */,
 				7D184F4E1BEDDFFD007E02D5 /* ProjectTaskDTO.swift in Sources */,
+				7DEA8A701BEE4EEB003D6DCC /* ProfileViewController.swift in Sources */,
+				7DEA8A761BEE5608003D6DCC /* ProjectTableTableViewController.swift in Sources */,
 				7D184F401BEDDFFD007E02D5 /* ErrorStoreAndroidDTO.swift in Sources */,
 				7D184F3C1BEDDFFD007E02D5 /* TaskStatusTypeDTO.swift in Sources */,
+				7DEA8A741BEE53D6003D6DCC /* MonitorSummaryViewController.swift in Sources */,
 				7D184F4A1BEDDFFD007E02D5 /* ProgrammeDTO.swift in Sources */,
 				7D184F4B1BEDDFFD007E02D5 /* ProjectDTO.swift in Sources */,
+				7DEA8A931BEFA6CA003D6DCC /* PicturesViewController.swift in Sources */,
 				7DEA8A3B1BEDEC6D003D6DCC /* ChatMemberDTO.swift in Sources */,
 				7D184F491BEDDFFD007E02D5 /* PortfolioDTO.swift in Sources */,
 				7D184F471BEDDFFD007E02D5 /* MunicipalityDTO.swift in Sources */,
@@ -667,11 +760,35 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
+				DEFINES_MODULE = YES;
+				"HEADER_SEARCH_PATHS[arch=*]" = "/Volumes/HardDrive/xcode-projects/chilkat-9.5.0-ios9/include";
 				INFOPLIST_FILE = MonStaff/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = BohaTMX.MonStaff;
+				LIBRARY_SEARCH_PATHS = "/Volumes/HardDrive/xcode-projects/chilkat-9.5.0-ios9/lib";
+				"OTHER_LDFLAGS[arch=*]" = (
+					"$(inherited)",
+					"-framework",
+					"\"Alamofire\"",
+					"-framework",
+					"\"FLKAutoLayout\"",
+					"-framework",
+					"\"OCMapper\"",
+					"-framework",
+					"\"ORStackView\"",
+					"-framework",
+					"\"ObjectMapper\"",
+					"-framework",
+					"\"SSZipArchive\"",
+					"-framework",
+					"\"SwiftyJSON\"",
+					"-lstdc++",
+					"-lresolv",
+					"-lpthread",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.boha.monitor.ios.staff;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "MonStaff-Bridging-Header.h";
+				SWIFT_INCLUDE_PATHS = /Volumes/HardDrive/;
+				SWIFT_OBJC_BRIDGING_HEADER = "/Volumes/HardDrive/MonStaff/MonStaff-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -683,11 +800,35 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
+				DEFINES_MODULE = YES;
+				"HEADER_SEARCH_PATHS[arch=*]" = "/Volumes/HardDrive/xcode-projects/chilkat-9.5.0-ios9/include";
 				INFOPLIST_FILE = MonStaff/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = BohaTMX.MonStaff;
+				LIBRARY_SEARCH_PATHS = "/Volumes/HardDrive/xcode-projects/chilkat-9.5.0-ios9/lib";
+				"OTHER_LDFLAGS[arch=*]" = (
+					"$(inherited)",
+					"-framework",
+					"\"Alamofire\"",
+					"-framework",
+					"\"FLKAutoLayout\"",
+					"-framework",
+					"\"OCMapper\"",
+					"-framework",
+					"\"ORStackView\"",
+					"-framework",
+					"\"ObjectMapper\"",
+					"-framework",
+					"\"SSZipArchive\"",
+					"-framework",
+					"\"SwiftyJSON\"",
+					"-lstdc++",
+					"-lresolv",
+					"-lpthread",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.boha.monitor.ios.staff;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "MonStaff-Bridging-Header.h";
+				SWIFT_INCLUDE_PATHS = /Volumes/HardDrive/;
+				SWIFT_OBJC_BRIDGING_HEADER = "/Volumes/HardDrive/MonStaff/MonStaff-Bridging-Header.h";
 			};
 			name = Release;
 		};
@@ -748,6 +889,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		7D7314F51BF2CCF600924C4D /* DataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				7D7314F61BF2CCF600924C4D /* DataModel.xcdatamodel */,
+			);
+			currentVersion = 7D7314F61BF2CCF600924C4D /* DataModel.xcdatamodel */;
+			path = DataModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 7D184EEE1BEDDE24007E02D5 /* Project object */;
 }
