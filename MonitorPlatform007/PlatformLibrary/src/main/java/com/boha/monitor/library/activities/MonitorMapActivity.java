@@ -98,6 +98,7 @@ public class MonitorMapActivity extends AppCompatActivity
             trackList = w.getLocationTrackerList();
         }
 
+
         index = getIntent().getIntExtra("index", 0);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -123,20 +124,28 @@ public class MonitorMapActivity extends AppCompatActivity
         setGoogleMap();
         if (track != null) {
             getPersonPhotos();
-            final String name = setPersonMarker();
-            Util.setCustomActionBar(ctx,getSupportActionBar(),name,"Location",
-                    ContextCompat.getDrawable(ctx,R.drawable.glasses48));
+            setPersonMarker();
+            String name = "";
+            if (track.getStaffName() != null) {
+                name = track.getStaffName();
+            }
+            if (track.getMonitorName() != null) {
+                name = track.getMonitorName();
+            }
+            final String dispName = name;
+            Util.setCustomActionBar(ctx, getSupportActionBar(), dispName, "Location",
+                    ContextCompat.getDrawable(ctx, R.drawable.glasses48));
 
             txtTime.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    showPopup(track.getLatitude(), track.getLongitude(), name);
+                    showPopup(track.getLatitude(), track.getLongitude(), dispName);
                 }
             });
             image.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    showPopup(track.getLatitude(),track.getLongitude(), name);
+                    showPopup(track.getLatitude(), track.getLongitude(), dispName);
                 }
             });
         }
@@ -149,6 +158,7 @@ public class MonitorMapActivity extends AppCompatActivity
 
     Activity activity;
     static final SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy HH:mm");
+
     private void setGoogleMap() {
         activity = this;
         googleMap.setMyLocationEnabled(true);
@@ -193,30 +203,7 @@ public class MonitorMapActivity extends AppCompatActivity
 
         for (LocationTrackerDTO track : trackList) {
             if (track.getLatitude() == null) continue;
-
-            LatLng pnt = new LatLng(track.getLatitude(), track.getLongitude());
-            View view = getLayoutInflater().inflate(R.layout.location_track_item, null);
-            TextView date = (TextView)view.findViewById(R.id.LTI_date);
-            TextView time = (TextView)view.findViewById(R.id.LTI_time);
-            TextView name = (TextView)view.findViewById(R.id.LTI_name);
-            if (track.getStaffName() != null) {
-                name.setText(track.getStaffName());
-            }
-            if (track.getMonitorName() != null) {
-                name.setText(track.getMonitorName());
-            }
-            date.setText(fDate.format(new Date(track.getDateTracked())));
-            time.setText(fTime.format(new Date(track.getDateTracked())));
-            Bitmap bmBitmap = Util.createBitmapFromView(ctx, view, displayMetrics);
-            BitmapDescriptor desc = BitmapDescriptorFactory.fromBitmap(bmBitmap);
-
-            Marker m =
-                    googleMap.addMarker(new MarkerOptions()
-                            .title(track.getMonitorName())
-                            .icon(desc)
-                            .snippet(track.getMonitorName())
-                            .position(pnt));
-            markers.add(m);
+            doMarker(track);
             index++;
             count++;
         }
@@ -240,17 +227,37 @@ public class MonitorMapActivity extends AppCompatActivity
 
     }
 
-    private String setPersonMarker() {
+    private void setPersonMarker() {
 
         LatLng pnt = new LatLng(track.getLatitude(), track.getLongitude());
+        doMarker(track);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pnt, 1.0f));
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
+    }
+
+    private void doMarker(LocationTrackerDTO track) {
+        LatLng pnt = new LatLng(track.getLatitude(), track.getLongitude());
         View view = getLayoutInflater().inflate(R.layout.location_track_item, null);
-        TextView date = (TextView)view.findViewById(R.id.LTI_date);
-        TextView time = (TextView)view.findViewById(R.id.LTI_time);
-        TextView name = (TextView)view.findViewById(R.id.LTI_name);
+        TextView date = (TextView) view.findViewById(R.id.LTI_date);
+        TextView time = (TextView) view.findViewById(R.id.LTI_time);
+        TextView name = (TextView) view.findViewById(R.id.LTI_name);
+        TextView model = (TextView) view.findViewById(R.id.LTI_model);
+        TextView manuf = (TextView) view.findViewById(R.id.LTI_device);
+        View deviceLayout = view.findViewById(R.id.LTI_bottom2);
+        if (track.getGcmDevice() != null) {
+            deviceLayout.setVisibility(View.VISIBLE);
+            manuf.setText(track.getGcmDevice().getManufacturer());
+            model.setText(track.getGcmDevice().getModel());
+        } else {
+            deviceLayout.setVisibility(View.GONE);
+        }
         if (track.getStaffName() != null) {
             name.setText(track.getStaffName());
         }
         if (track.getMonitorName() != null) {
+            name.setText(track.getMonitorName());
+        }
+        if (track.getStaffName() != null) {
             name.setText(track.getMonitorName());
         }
         date.setText(fDate.format(new Date(track.getDateTracked())));
@@ -265,9 +272,6 @@ public class MonitorMapActivity extends AppCompatActivity
                         .snippet(name.getText().toString())
                         .position(pnt));
         markers.add(m);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pnt, 1.0f));
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
-        return name.getText().toString();
     }
 
     List<String> list;
@@ -318,8 +322,6 @@ public class MonitorMapActivity extends AppCompatActivity
     }
 
 
-
-
     private void startDirectionsMap(double lat, double lng) {
         Log.i(LOG, "startDirectionsMap ..........");
         String url = "http://maps.google.com/maps?saddr="
@@ -355,7 +357,7 @@ public class MonitorMapActivity extends AppCompatActivity
         Log.e(LOG, "####### onLocationChanged");
     }
 
-      @Override
+    @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
 
     }

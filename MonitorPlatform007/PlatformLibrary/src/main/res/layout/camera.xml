@@ -7,42 +7,11 @@
     android:background="?attr/colorPrimary"
     android:padding="0dp">
 
-    <RelativeLayout
-        android:id="@+id/CAM_layout0"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/mon_padding">
-
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/CAM_radioPhoto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:paddingRight="@dimen/mon_wide"
-                android:text="Photo"
-                android:textColor="@color/white" />
-
-
-            <RadioButton
-                android:id="@+id/CAM_radioVideo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:text="Video"
-                android:textColor="@color/white" />
-        </RadioGroup>
-    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/CAM_layout1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/CAM_layout0">
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/CAM_projectName"

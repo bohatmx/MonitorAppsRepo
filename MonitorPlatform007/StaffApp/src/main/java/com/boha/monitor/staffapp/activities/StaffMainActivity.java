@@ -47,6 +47,7 @@ import com.boha.monitor.library.activities.ProjectMapActivity;
 import com.boha.monitor.library.activities.StatusReportActivity;
 import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.activities.UpdateActivity;
+import com.boha.monitor.library.activities.VideoActivity;
 import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
@@ -55,6 +56,7 @@ import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
+import com.boha.monitor.library.fragments.MediaDialogFragment;
 import com.boha.monitor.library.fragments.MonitorListFragment;
 import com.boha.monitor.library.fragments.PageFragment;
 import com.boha.monitor.library.fragments.ProjectListFragment;
@@ -252,7 +254,12 @@ public class StaffMainActivity extends AppCompatActivity implements
             @Override
             public void onFileDataDeserialized(ResponseDTO r) {
                 response = r;
-                buildPages();
+                if (!response.getProjectList().isEmpty()) {
+                    buildPages();
+                } else {
+                    getRemoteStaffData();
+                }
+
             }
 
             @Override
@@ -262,7 +269,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
             @Override
             public void onError() {
-
+                getRemoteStaffData();
             }
         });
     }
@@ -693,15 +700,34 @@ public class StaffMainActivity extends AppCompatActivity implements
 
     }
 
-    static final int REQUEST_CAMERA = 3329, LOCATION_REQUESTED = 9031, REQUEST_STATUS_UPDATE = 3291;
+    static final int REQUEST_CAMERA = 3329,
+    REQUEST_VIDEO = 3488,
+    LOCATION_REQUESTED = 9031, REQUEST_STATUS_UPDATE = 3291;
 
     @Override
-    public void onCameraRequired(ProjectDTO project) {
+    public void onCameraRequired(final ProjectDTO project) {
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
-        Intent w = new Intent(this, PictureActivity.class);
-        w.putExtra("project", project);
-        w.putExtra("type", PhotoUploadDTO.PROJECT_IMAGE);
-        startActivityForResult(w, REQUEST_CAMERA);
+        MediaDialogFragment mdf = new MediaDialogFragment();
+        mdf.setCancelable(false);
+        mdf.setListener(new MediaDialogFragment.MediaDialogListener() {
+            @Override
+            public void onVideoSelected() {
+                Intent w = new Intent(getApplicationContext(), VideoActivity.class);
+                w.putExtra("project", project);
+                startActivityForResult(w, REQUEST_VIDEO);
+            }
+
+            @Override
+            public void onPhotoSelected() {
+
+                Intent w = new Intent(getApplicationContext(), PictureActivity.class);
+                w.putExtra("project", project);
+                w.putExtra("type", PhotoUploadDTO.PROJECT_IMAGE);
+                startActivityForResult(w, REQUEST_CAMERA);
+            }
+        });
+        mdf.show(getSupportFragmentManager(), "projectDiag");
+
     }
 
     @Override

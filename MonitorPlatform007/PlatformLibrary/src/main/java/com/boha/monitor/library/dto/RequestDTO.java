@@ -23,6 +23,7 @@ public class RequestDTO implements Serializable {
     }
 
     private Boolean rideWebSocket = false;
+    private Boolean zipResponse = false;
 
     private Long requestCacheID = new Date().getTime();
     private Integer requestType, companyID, staffID,
@@ -81,7 +82,8 @@ public class RequestDTO implements Serializable {
             ADD_PROJECT_TASK_STATUS = 13,
             ADD_PROJECT_STATUS = 13,
             ADD_DEVICE = 17,
-            ADD_PHOTO = 18;
+            ADD_PHOTO = 18,
+            ADD_VIDEO = 19;
     //get stuff
     public static final int
             GET_COMPANY_LIST = 100,
@@ -196,6 +198,14 @@ public class RequestDTO implements Serializable {
 
     public void setSimpleMessage(SimpleMessageDTO simpleMessage) {
         this.simpleMessage = simpleMessage;
+    }
+
+    public Boolean getZipResponse() {
+        return zipResponse;
+    }
+
+    public void setZipResponse(Boolean zipResponse) {
+        this.zipResponse = zipResponse;
     }
 
     public Boolean getRideWebSocket() {

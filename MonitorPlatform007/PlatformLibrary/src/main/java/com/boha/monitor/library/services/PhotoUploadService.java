@@ -27,7 +27,7 @@ import java.util.List;
  * It may be started by a startService call or may be bound to an activity via the
  * IBinder interface.
  * <p/>
- * Entry points: onHandleIntent, uploadCachedPhotos
+ * Entry points: onHandleIntent, uploadCachedVideos
  */
 public class PhotoUploadService extends IntentService {
 

@@ -24,6 +24,7 @@ import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
+import com.boha.monitor.library.fragments.MediaDialogFragment;
 import com.boha.monitor.library.fragments.ProjectTaskListFragment;
 import com.boha.monitor.library.fragments.TaskStatusUpdateFragment;
 import com.boha.monitor.library.fragments.TaskTypeListFragment;
@@ -121,31 +122,79 @@ public class UpdateActivity extends AppCompatActivity
         replaceWithStatusFragment();
     }
 
-    static final int GET_PROJECT_PHOTO = 1385;
+    static final int GET_PROJECT_PHOTO = 1385,GET_PROJECT_VIDEO = 1389;
     @Override
-    public void onCameraRequested(ProjectDTO project) {
-        Intent w = new Intent(this, PictureActivity.class);
-        w.putExtra("project", project);
-        w.putExtra("type", PhotoUploadDTO.PROJECT_IMAGE);
-        startActivityForResult(w, GET_PROJECT_PHOTO);
+    public void onCameraRequested(final ProjectDTO project) {
+
+        MediaDialogFragment mdf = new MediaDialogFragment();
+        mdf.setListener(new MediaDialogFragment.MediaDialogListener() {
+            @Override
+            public void onVideoSelected() {
+                Intent w = new Intent(getApplicationContext(), VideoActivity.class);
+                w.putExtra("project", project);
+                startActivityForResult(w, GET_PROJECT_VIDEO);
+            }
+
+            @Override
+            public void onPhotoSelected() {
+                Intent w = new Intent(getApplicationContext(), PictureActivity.class);
+                w.putExtra("project", project);
+                w.putExtra("type", PhotoUploadDTO.PROJECT_IMAGE);
+                startActivityForResult(w, GET_PROJECT_PHOTO);
+            }
+        });
+        mdf.show(getSupportFragmentManager(), "xxx");
+
     }
 
     @Override
     public void onStatusCameraRequested(ProjectTaskDTO task, ProjectTaskStatusDTO projectTaskStatus) {
         projectTask.getProjectTaskStatusList().add(projectTaskStatus);
 
-        Intent w = new Intent(this, PictureActivity.class);
-        w.putExtra("projectTask", projectTask);
-        w.putExtra("type", PhotoUploadDTO.TASK_IMAGE);
-        startActivityForResult(w, GET_PROJECT_TASK_PHOTO);
+        MediaDialogFragment mdf = new MediaDialogFragment();
+        mdf.setListener(new MediaDialogFragment.MediaDialogListener() {
+            @Override
+            public void onVideoSelected() {
+                Intent w = new Intent(getApplicationContext(), VideoActivity.class);
+                w.putExtra("projectTask", projectTask);
+                startActivityForResult(w, GET_PROJECT_TASK_VIDEO);
+            }
+
+            @Override
+            public void onPhotoSelected() {
+
+                Intent w = new Intent(getApplicationContext(), PictureActivity.class);
+                w.putExtra("projectTask", projectTask);
+                w.putExtra("type", PhotoUploadDTO.TASK_IMAGE);
+                startActivityForResult(w, GET_PROJECT_TASK_PHOTO);
+            }
+        });
+        mdf.show(getSupportFragmentManager(), "xxx");
     }
 
     @Override
-    public void onProjectTaskCameraRequested(ProjectTaskDTO projectTask) {
-        Intent w = new Intent(this, PictureActivity.class);
-        w.putExtra("projectTask", projectTask);
-        w.putExtra("type", PhotoUploadDTO.TASK_IMAGE);
-        startActivityForResult(w, GET_PROJECT_TASK_PHOTO);
+    public void onProjectTaskCameraRequested(final ProjectTaskDTO projectTask) {
+
+        MediaDialogFragment mdf = new MediaDialogFragment();
+        mdf.setListener(new MediaDialogFragment.MediaDialogListener() {
+            @Override
+            public void onVideoSelected() {
+                Intent w = new Intent(getApplicationContext(), VideoActivity.class);
+                w.putExtra("projectTask", projectTask);
+                startActivityForResult(w, GET_PROJECT_TASK_VIDEO);
+            }
+
+            @Override
+            public void onPhotoSelected() {
+
+                Intent w = new Intent(getApplicationContext(), PictureActivity.class);
+                w.putExtra("projectTask", projectTask);
+                w.putExtra("type", PhotoUploadDTO.TASK_IMAGE);
+                startActivityForResult(w, GET_PROJECT_TASK_PHOTO);
+            }
+        });
+        mdf.show(getSupportFragmentManager(), "PROJTASK1");
+
     }
 
     @Override
@@ -205,6 +254,12 @@ public class UpdateActivity extends AppCompatActivity
                 } else {
                     taskStatusUpdateFragment.onNoPhotoTaken();
                 }
+                break;
+            case GET_PROJECT_VIDEO:
+
+                break;
+            case GET_PROJECT_TASK_VIDEO:
+
                 break;
         }
     }
@@ -485,6 +540,7 @@ public class UpdateActivity extends AppCompatActivity
         }
     };
 
-    static final int GET_PROJECT_TASK_PHOTO = 6382;
+    static final int GET_PROJECT_TASK_PHOTO = 6382,
+            GET_PROJECT_TASK_VIDEO = 7896;
     static final String LOG = UpdateActivity.class.getSimpleName();
 }

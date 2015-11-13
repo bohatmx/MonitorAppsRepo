@@ -18,11 +18,19 @@ public class VideoUploadDTO {
     private Integer height;
     private Integer bytes;
     private String audioCodec;
-    private String videoCodec;
+    private String videoCodec, videoUri;
     private Double frameRate;
     private Integer bitRate;
     private Double duration;
     private Integer staffID, monitorID,  projectID,  projectTaskID;
+
+    public String getVideoUri() {
+        return videoUri;
+    }
+
+    public void setVideoUri(String videoUri) {
+        this.videoUri = videoUri;
+    }
 
     public String getFilePath() {
         return filePath;

@@ -165,6 +165,7 @@ public class GPSService extends Service implements LocationListener,
         dto.setDateTracked(new Date().getTime());
         dto.setLatitude(mLocation.getLatitude());
         dto.setLongitude(mLocation.getLongitude());
+        dto.setGcmDevice(SharedUtil.getGCMDevice(getApplicationContext()));
         try {
             dto.setGeocodedAddress(getAddress());
         } catch (Exception e) {
@@ -219,6 +220,7 @@ public class GPSService extends Service implements LocationListener,
         dto.setDateTracked(new Date().getTime());
         dto.setLatitude(mLocation.getLatitude());
         dto.setLongitude(mLocation.getLongitude());
+        dto.setGcmDevice(SharedUtil.getGCMDevice(getApplicationContext()));
         try {
             dto.setGeocodedAddress(getAddress());
             if (dto.getGeocodedAddress() == null) {

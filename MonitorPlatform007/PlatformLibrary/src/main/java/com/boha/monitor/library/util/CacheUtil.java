@@ -32,6 +32,7 @@ public class CacheUtil {
 
         public void onError();
     }
+
     public interface AddLocationTrackerListener {
         void onLocationTrackerAdded(ResponseDTO response);
     }
@@ -63,6 +64,7 @@ public class CacheUtil {
     }
 
     static Integer companyID;
+
     public static void cacheCompanyData(Context context, ResponseDTO r, Integer cID, CacheUtilListener cacheUtilListener) {
         dataType = CACHE_COMPANY;
         response = r;
@@ -71,6 +73,7 @@ public class CacheUtil {
         ctx = context;
         new CacheTask().execute();
     }
+
     public static void cachePortfolios(Context context, ResponseDTO r, CacheUtilListener cacheUtilListener) {
         dataType = CACHE_PORTFOLIOS;
         response = r;
@@ -78,6 +81,7 @@ public class CacheUtil {
         ctx = context;
         new CacheTask().execute();
     }
+
     public static void cacheProjectData(Context context, ResponseDTO r, Integer pID, CacheUtilListener cacheUtilListener) {
         dataType = CACHE_PROJECT;
         response = r;
@@ -94,6 +98,7 @@ public class CacheUtil {
         ctx = context;
         new CacheTask().execute();
     }
+
     public static void cacheMonitorProjects(Context context, ResponseDTO r, CacheUtilListener cacheUtilListener) {
         dataType = CACHE_MONITOR_PROJECTS;
         response = r;
@@ -196,20 +201,19 @@ public class CacheUtil {
             @Override
             public void run() {
                 FileInputStream stream = null;
+                ResponseDTO response = new ResponseDTO();
+                response.setLocationTrackerList(new ArrayList<LocationTrackerDTO>());
+
                 try {
                     stream = context.openFileInput(JSON_TRACKER);
                     String json = getStringFromInputStream(stream);
-                    ResponseDTO response = gson.fromJson(json, ResponseDTO.class);
+                    response = gson.fromJson(json, ResponseDTO.class);
                     cacheUtilListener.onFileDataDeserialized(response);
                 } catch (JsonSyntaxException e) {
                     Log.e(LOG, "Error getting track cache: " + e.getMessage());
-                    ResponseDTO response = new ResponseDTO();
-                    response.setLocationTrackerList(new ArrayList<LocationTrackerDTO>());
                     cacheUtilListener.onFileDataDeserialized(response);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     Log.e(LOG, "## cache not found, starting new cache");
-                    ResponseDTO response = new ResponseDTO();
-                    response.setLocationTrackerList(new ArrayList<LocationTrackerDTO>());
                     cacheUtilListener.onFileDataDeserialized(response);
                 }
 
@@ -218,7 +222,7 @@ public class CacheUtil {
         thread.start();
     }
 
-    public static void addMessage(final Context context, final SimpleMessageDTO s, final  CacheUtilListener cacheUtilListener) {
+    public static void addMessage(final Context context, final SimpleMessageDTO s, final CacheUtilListener cacheUtilListener) {
 
         getCachedMessages(context, new CacheUtilListener() {
             @Override
@@ -241,6 +245,7 @@ public class CacheUtil {
             }
         });
     }
+
     public static void cacheMessages(final Context context, final ResponseDTO r, final CacheUtilListener cacheUtilListener) {
 
         Thread thread = new Thread(new Runnable() {
@@ -299,12 +304,14 @@ public class CacheUtil {
         ctx = context;
         new CacheRetrieveTask().execute();
     }
+
     public static void getCachedMonitorProjects(Context context, CacheUtilListener cacheUtilListener) {
         dataType = CACHE_MONITOR_PROJECTS;
         utilListener = cacheUtilListener;
         ctx = context;
         new CacheRetrieveTask().execute();
     }
+
     public static void getCachedProjectData(Context context, Integer id, CacheUtilListener cacheUtilListener) {
         Log.d(LOG, "################ getting cached project data ..................");
         dataType = CACHE_PROJECT;
@@ -339,6 +346,7 @@ public class CacheUtil {
         projectID = id;
         new CacheRetrieveTask().execute();
     }
+
     public static void getCachedPortfolioList(Context context, CacheUtilListener cacheUtilListener) {
         dataType = CACHE_PORTFOLIOS;
         utilListener = cacheUtilListener;

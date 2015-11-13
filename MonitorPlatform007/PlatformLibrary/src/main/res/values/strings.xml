@@ -20,7 +20,7 @@
     <string name="messaging">Messaging</string>
     <string name="profile">Profile</string>
     <string name="get_status">Get Status</string>
-    <string name="take_picture">Take Photo</string>
+    <string name="take_picture">Take Photos</string>
     <string name="send_app_link">Send App Invitation Link</string>
     <string name="edit">Edit Details</string>
     <string name="under_cons">Under Construction</string>
@@ -65,5 +65,6 @@
     <string name="title_activity_messaging">MessagingActivity</string>
     <string name="title_activity_main_update">MainUpdateActivity</string>
     <string name="title_activity_update">UpdateActivity</string>
+    <string name="select_media">Please select the media you want to use for this update. Video clips should be no longer than 2 minutes long.</string>
 
 </resources>

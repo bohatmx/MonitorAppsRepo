@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,7 +30,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.boha.monitor.library.adapters.PhotoAdapter;
@@ -42,9 +40,7 @@ import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
-import com.boha.monitor.library.dto.VideoClipDTO;
 import com.boha.monitor.library.services.PhotoUploadService;
-import com.boha.monitor.library.util.CacheVideoUtil;
 import com.boha.monitor.library.util.ImageUtil;
 import com.boha.monitor.library.util.PMException;
 import com.boha.monitor.library.util.PhotoCacheUtil;
@@ -52,7 +48,6 @@ import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.SpacesItemDecoration;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
-import com.boha.monitor.library.util.VideoClipContainer;
 import com.boha.platform.library.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -70,6 +65,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * Manages picture taking - starts onboard camera app and caches
+ * the resultant image. Invokes a service to upload the image to cloudinary CDN
+ *
  * Created by aubreyM on 2014/04/21.
  */
 public class PictureActivity extends AppCompatActivity implements LocationListener,
@@ -82,7 +80,23 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     Long localID;
     int themeDarkColor,themePrimaryColor;
     ProjectTaskStatusDTO projectTaskStatus;
-    RadioButton radioPhoto, radioVideo;
+    String mCurrentPhotoPath;
+    ProjectDTO project;
+    StaffDTO staff;
+    ProjectTaskDTO projectTask;
+    File photoFile;
+    File currentThumbFile;
+    Uri thumbUri;
+
+    Menu mMenu;
+    int type;
+    boolean pictureChanged;
+    Context ctx;
+    Uri fileUri;
+    Bitmap bitmapForScreen;
+    FloatingActionButton fab;
+    public static final int CAPTURE_IMAGE = 9908;
+    static final String LOG = PictureActivity.class.getSimpleName();
 
     public void onCreate(Bundle savedInstanceState) {
         ThemeChooser.setTheme(this);
@@ -208,18 +222,12 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         super.onRestoreInstanceState(savedInstanceState);
     }
 
-    FloatingActionButton fab;
 
     private void setFields() {
         activity = this;
-        radioPhoto = (RadioButton) findViewById(R.id.CAM_radioPhoto);
-        radioVideo = (RadioButton) findViewById(R.id.CAM_radioVideo);
-
         txtProject = (TextView) findViewById(R.id.CAM_projectName);
         txtTaskName = (TextView) findViewById(R.id.CAM_siteName);
 
-        txtProject = (TextView) findViewById(R.id.CAM_projectName);
-        txtTaskName = (TextView) findViewById(R.id.CAM_siteName);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         txtProject.setText("");
         txtTaskName.setText("");
@@ -228,12 +236,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (radioPhoto.isChecked()) {
-                    dispatchTakePictureIntent();
-                }
-                if (radioVideo.isChecked()) {
-                    dispatchTakeVideoIntent();
-                }
+                dispatchTakePictureIntent();
             }
         });
 
@@ -254,30 +257,22 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                     }
                 }
                 break;
-            case REQUEST_VIDEO_CAPTURE:
-                if (resultCode == Activity.RESULT_OK) {
-                    Uri videoUri = data.getData();
-                    new FileTask(videoUri);
-                    //mVideoView.setVideoURI(videoUri);
-                }
-                break;
+
         }
     }
 
     @Override
     public void onLocationChanged(Location loc) {
         Log.d(LOG, "## onLocationChanged accuracy = " + loc.getAccuracy());
-
-        if (this.location == null) {
-            this.location = loc;
-        }
         if (loc.getAccuracy() <= ACCURACY_THRESHOLD) {
             this.location = loc;
             stopLocationUpdates();
         }
     }
 
-
+    /**
+     * Connect the GoogleApiClient and bind to PhotoUploadService
+     */
     @Override
     public void onStart() {
         Log.i(LOG,
@@ -308,7 +303,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     }
 
     Location location;
-    static final float ACCURACY_THRESHOLD = 15;
+    static final float ACCURACY_THRESHOLD = 30;
     PictureActivity activity;
     boolean mRequestingLocationUpdates;
 
@@ -332,6 +327,9 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
     }
 
+    /**
+     * Start GPS location search
+     */
     protected void startLocationUpdates() {
         if (googleApiClient.isConnected()) {
             mRequestingLocationUpdates = true;
@@ -340,6 +338,9 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         }
     }
 
+    /**
+     * Stop GPS location search
+     */
     protected void stopLocationUpdates() {
         if (googleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(
@@ -354,76 +355,9 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                 "Google LocationClient onConnectionFailed: " + connectionResult.getErrorCode()));
     }
 
-
-    class FileTask {
-        Uri uri;
-
-        public FileTask(Uri uri) {
-            this.uri = uri;
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    int res = getVideo();
-                    if (res == 0) {
-
-                    }
-                }
-            });
-            thread.start();
-
-        }
-
-        protected int getVideo() {
-            VideoClipDTO clip = new VideoClipDTO();
-            clip.setVideoDate(new Date().getTime());
-            clip.setUriString(uri.toString());
-            File f;
-            try {
-                f = ImageUtil.getFileFromUri(ctx, uri);
-                clip.setFilePath(f.getAbsolutePath());
-                clip.setLength(f.length());
-                if (projectTask != null) {
-                    clip.setProjectID(projectTask.getProjectID());
-                    clip.setProjectTaskID(projectTask.getProjectTaskID());
-                }
-                if (project != null) {
-                    clip.setProjectID(project.getProjectID());
-                }
-                if (vcc == null) {
-                    vcc = new VideoClipContainer();
-                }
-                vcc.addVideo(clip);
-                CacheVideoUtil.cacheVideo(ctx, vcc);
-            } catch (Exception e) {
-                Log.e(LOG, "Video file save failed", e);
-                return 9;
-            }
-
-            return 0;
-        }
-    }
-
-    VideoClipContainer vcc;
-
-    private void dispatchTakeVideoIntent() {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        final Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-
-        CacheVideoUtil.getCachedVideo(ctx, new CacheVideoUtil.CacheVideoListener() {
-            @Override
-            public void onDataDeserialized(VideoClipContainer x) {
-                vcc = x;
-                if (vcc != null) {
-                    if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
-                        startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
-                    }
-                }
-            }
-        });
-
-
-    }
-
+    /**
+     * Start default on-board camera app
+     */
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -581,6 +515,9 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     }
 
 
+    /**
+     * AsyncTask to process the image received from the camera
+     */
     class PhotoTask extends AsyncTask<Void, Void, Integer> {
 
 
@@ -774,7 +711,10 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     boolean mBound;
     PhotoUploadService mService;
 
-
+    /**
+     * ServiceConnection to PhotoUploadService - start upload of
+     * cached photos to CDN on ServiceConnected
+     */
     private ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
@@ -784,6 +724,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
             PhotoUploadService.LocalBinder binder = (PhotoUploadService.LocalBinder) service;
             mService = binder.getService();
             mBound = true;
+
             mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
                 @Override
                 public void onUploadsComplete(List<PhotoUploadDTO> list) {
@@ -799,29 +740,6 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         }
     };
 
-    String mCurrentPhotoPath;
-    ProjectDTO project;
-    StaffDTO staff;
-    ProjectTaskDTO projectTask;
-
-    File photoFile;
-    boolean isUploaded;
-    static final int REQUEST_VIDEO_CAPTURE = 1;
-
-
-    File currentThumbFile;
-    Uri thumbUri;
-    static final String LOG = PictureActivity.class.getSimpleName();
-
-    Menu mMenu;
-    int type;
-
-    boolean pictureChanged;
-    Context ctx;
-    Uri fileUri;
-    public static final int CAPTURE_IMAGE = 9908;
-
-    Bitmap bitmapForScreen;
 
 
     public void addProjectTaskPicture(final PhotoCacheUtil.PhotoCacheListener listener) {

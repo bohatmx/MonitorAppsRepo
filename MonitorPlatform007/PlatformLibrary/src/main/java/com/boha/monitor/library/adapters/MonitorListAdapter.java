@@ -83,7 +83,6 @@ public class MonitorListAdapter extends RecyclerView.Adapter<MonitorListAdapter.
             holder.photo.setAlpha(1.0f);
             Picasso.with(ctx)
                     .load(p.getPhotoUploadList().get(0).getUri())
-                    .fit()
                     .into(holder.photo);
         }
 

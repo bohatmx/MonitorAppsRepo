@@ -1,8 +1,6 @@
 package com.boha.monitor.library.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,8 +18,6 @@ import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.process.BitmapProcessor;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -63,21 +59,6 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (options == null) {
-            BitmapFactory.Options resizeOptions = new BitmapFactory.Options();
-            resizeOptions.inSampleSize = 2; // decrease size 3 times
-            resizeOptions.inScaled = true;
-            options = new DisplayImageOptions.Builder()
-                    .showImageForEmptyUri(R.drawable.back8)
-                    .decodingOptions(resizeOptions)
-                    .postProcessor(new BitmapProcessor() {
-                        @Override
-                        public Bitmap process(Bitmap bmp) {
-                            return Bitmap.createScaledBitmap(bmp, 300, 300, false);
-                        }
-                    })
-                    .build();
-        }
 
         if (viewType == HEADER) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.project_list_header, parent, false);
@@ -89,7 +70,6 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     }
 
-    DisplayImageOptions options;
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
@@ -264,6 +244,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 iconCamera, iconDirections, iconDoStatus,
                 iconLocation;
         protected View imageLayout;
+
 
 
         public ProjectViewHolder(View itemView) {

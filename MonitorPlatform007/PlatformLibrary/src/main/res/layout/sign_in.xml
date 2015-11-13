@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/mon_hero_height_medium"
         android:scaleType="centerCrop"
-        android:src="@drawable/banner_construction11" />
+        android:src="@drawable/banner_construction4" />
 
     <TextView
         android:id="@+id/SI_welcome"
@@ -35,32 +35,10 @@
 
 
         <TextView
-            android:id="@+id/SI_wifi"
-            style="@style/TextStyleGreenSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:padding="@dimen/mon_padding"
-            android:text="Connect your WIFI"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/SI_header"
-            style="@style/Title3TextStyleBlue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/SI_wifi"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/mon_padding"
-            android:text="@string/subject"
-            android:visibility="gone" />
-
-        <TextView
             android:id="@+id/SI_app"
             style="@style/Title1TextStyleBlack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/SI_header"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/mon_padding"
             android:text="App Name Here" />
@@ -126,7 +104,7 @@
                 android:id="@+id/btnRed"
                 android:text="Sign In"
                 android:padding="@dimen/mon_margin"
-                android:background="@color/red_800"
+                android:background="@color/orange_400"
                 android:textColor="@color/white"
                 android:minWidth="@dimen/mon_hero_height_small"
                 android:layout_width="match_parent"

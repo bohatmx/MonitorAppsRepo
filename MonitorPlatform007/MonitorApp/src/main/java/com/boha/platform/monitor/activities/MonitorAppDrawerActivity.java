@@ -39,6 +39,7 @@ import com.boha.monitor.library.activities.ProjectMapActivity;
 import com.boha.monitor.library.activities.StatusReportActivity;
 import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.activities.UpdateActivity;
+import com.boha.monitor.library.activities.VideoActivity;
 import com.boha.monitor.library.dto.ChatMessageDTO;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
@@ -47,6 +48,8 @@ import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.dto.VideoUploadDTO;
+import com.boha.monitor.library.fragments.MediaDialogFragment;
 import com.boha.monitor.library.fragments.MessagingFragment;
 import com.boha.monitor.library.fragments.MonitorListFragment;
 import com.boha.monitor.library.fragments.MonitorProfileFragment;
@@ -55,6 +58,7 @@ import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.fragments.SimpleMessageFragment;
 import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.services.RequestSyncService;
+import com.boha.monitor.library.services.VideoUploadService;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.DepthPageTransformer;
 import com.boha.monitor.library.util.NetUtil;
@@ -171,6 +175,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     }
 
     private void getCachedData() {
+        Log.d(LOG,"getCachedData .........");
         CacheUtil.getCachedMonitorProjects(ctx, new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO r) {
@@ -484,15 +489,34 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     }
 
 
-    static final int REQUEST_CAMERA = 3329, REQUEST_STATUS_UPDATE = 9687;
+    static final int REQUEST_CAMERA_PHOTO = 3329,
+            REQUEST_CAMERA_VIDEO = 3339,
+            REQUEST_STATUS_UPDATE = 9687;
 
     @Override
-    public void onCameraRequired(ProjectDTO project) {
+    public void onCameraRequired(final ProjectDTO project) {
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
-        Intent w = new Intent(this, PictureActivity.class);
-        w.putExtra("project", project);
-        w.putExtra("type", PhotoUploadDTO.PROJECT_IMAGE);
-        startActivityForResult(w, REQUEST_CAMERA);
+
+        MediaDialogFragment mdf = new MediaDialogFragment();
+        mdf.setListener(new MediaDialogFragment.MediaDialogListener() {
+            @Override
+            public void onVideoSelected() {
+                Intent w = new Intent(getApplicationContext(), VideoActivity.class);
+                w.putExtra("project", project);
+                startActivityForResult(w, REQUEST_CAMERA_VIDEO);
+            }
+
+            @Override
+            public void onPhotoSelected() {
+
+                Intent w = new Intent(getApplicationContext(), PictureActivity.class);
+                w.putExtra("project", project);
+                w.putExtra("type", PhotoUploadDTO.PROJECT_IMAGE);
+                startActivityForResult(w, REQUEST_CAMERA_PHOTO);
+            }
+        });
+        mdf.show(getSupportFragmentManager(), "xxx");
+
     }
 
     @Override
@@ -620,10 +644,9 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
                     + mLocation.getAccuracy());
         }
         mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(5000);
+        mLocationRequest.setInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setFastestInterval(1000);
-//        startLocationUpdates();
+        mLocationRequest.setFastestInterval(500);
 
     }
 
@@ -809,6 +832,10 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
         Intent intentw = new Intent(this, RequestSyncService.class);
         bindService(intentw, rConnection, Context.BIND_AUTO_CREATE);
+
+        Intent intentz = new Intent(this, VideoUploadService.class);
+        bindService(intentz, vConnection, Context.BIND_AUTO_CREATE);
+
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
@@ -817,7 +844,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     @Override
     public void onStop() {
         super.onStop();
-        Log.e(LOG, "## onStop unBind from PhotoUploadService, RequestSyncService");
+        Log.e(LOG, "## onStop unBind from PhotoUploadService, RequestSyncService, VideoUploadService");
         if (mBound) {
             unbindService(mConnection);
             mBound = false;
@@ -826,12 +853,17 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
             unbindService(rConnection);
             rBound = false;
         }
+        if (vBound) {
+            unbindService(vConnection);
+            vBound = false;
+        }
 
     }
 
-    boolean mBound, rBound;
+    boolean mBound, rBound, vBound;
     PhotoUploadService mService;
     RequestSyncService rService;
+    VideoUploadService vService;
 
 
     private ServiceConnection rConnection = new ServiceConnection() {
@@ -903,6 +935,46 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         public void onServiceDisconnected(ComponentName arg0) {
             Log.w(LOG, "## PhotoUploadService onServiceDisconnected");
             mBound = false;
+        }
+    };
+
+    private ServiceConnection vConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            Log.w(LOG, "## VideoUploadService ServiceConnection onServiceConnected");
+            VideoUploadService.LocalBinder binder = (VideoUploadService.LocalBinder) service;
+            vService = binder.getService();
+            vBound = true;
+            vService.uploadCachedVideos(new VideoUploadService.UploadListener() {
+                @Override
+                public void onUploadsComplete(List<VideoUploadDTO> list) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setBusy(false);
+                        }
+                    });
+                }
+
+                @Override
+                public void onUploadStarted() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setBusy(true);
+                        }
+                    });
+                }
+            });
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.w(LOG, "## VideoUploadService onServiceDisconnected");
+            vBound = false;
         }
     };
 

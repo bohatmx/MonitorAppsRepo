@@ -46,11 +46,20 @@ public class ResponseDTO implements Serializable{
     private List<PortfolioDTO> portfolioList;
     private List<SubTaskDTO> subTaskList;
     private List<CompanyDTO> companyList;
+    private List<VideoUploadDTO> videoUploadList;
     //
     private CompanyDTO company;
     private List<MonitorDTO> monitorList;
     private List<StaffDTO> staffList;
     private ProjectTaskStatusDTO lastStatus;
+
+    public List<VideoUploadDTO> getVideoUploadList() {
+        return videoUploadList;
+    }
+
+    public void setVideoUploadList(List<VideoUploadDTO> videoUploadList) {
+        this.videoUploadList = videoUploadList;
+    }
 
     public StaffDTO getStaff() {
         return staff;
