@@ -105,7 +105,6 @@ public class StaffMainActivity extends AppCompatActivity implements
     @Override
     public void onResume() {
         super.onResume();
-
         navImage.setImageDrawable(Util.getRandomBackgroundImage(ctx));
 
 
@@ -134,6 +133,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
+
         navImage = (ImageView) findViewById(R.id.NAVHEADER_image);
         navText = (TextView) findViewById(R.id.NAVHEADER_text);
         navText.setText(SharedUtil.getCompanyStaff(ctx).getFullName());
@@ -227,18 +227,19 @@ public class StaffMainActivity extends AppCompatActivity implements
                 }
 
                 if (menuItem.getItemId() == R.id.nav_projectMaps) {
-                    for (ProjectDTO p: response.getProjectList()) {
-                        if (p.getLatitude() != null) {
-                            Intent w = new Intent(ctx, ProjectMapActivity.class);
-                            w.putExtra("type", ProjectMapActivity.STAFF);
-                            startActivity(w);
-                            return true;
-                        }
+                    List<ProjectDTO> list = getProjectsLocationConfirmed();
+                    if (!list.isEmpty()) {
+                        Intent w = new Intent(ctx, ProjectMapActivity.class);
+                        w.putExtra("type", ProjectMapActivity.STAFF);
+                        ResponseDTO r = new ResponseDTO();
+                        r.setProjectList(list);
+                        w.putExtra("projects",r);
+                        startActivity(w);
+                        return true;
+                    } else {
+                        Util.showToast(getApplicationContext(),"Projects have not been located via GPS");
                     }
 
-                    Util.showToast(getApplicationContext(),"Projects have not been located via GPS");
-
-                    return true;
                 }
 
 
@@ -248,7 +249,15 @@ public class StaffMainActivity extends AppCompatActivity implements
 
     }
 
-
+    private List<ProjectDTO> getProjectsLocationConfirmed() {
+        List<ProjectDTO> list = new ArrayList<>();
+        for (ProjectDTO m: response.getProjectList()) {
+            if (m.getLocationConfirmed() != null) {
+                list.add(m);
+            }
+        }
+        return list;
+    }
     private void getCache() {
         CacheUtil.getCachedStaffData(ctx, new CacheUtil.CacheUtilListener() {
             @Override

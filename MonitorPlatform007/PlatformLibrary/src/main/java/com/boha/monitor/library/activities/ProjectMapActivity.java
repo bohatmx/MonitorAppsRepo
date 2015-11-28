@@ -2,7 +2,6 @@ package com.boha.monitor.library.activities;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.res.Resources;
@@ -12,7 +11,6 @@ import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -29,7 +27,6 @@ import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.TaskStatusTypeDTO;
-import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Statics;
@@ -57,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class ProjectMapActivity extends AppCompatActivity
         implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -77,6 +75,7 @@ public class ProjectMapActivity extends AppCompatActivity
     private static final String DIALOG_ERROR = "dialog_error";
 
     ProjectDTO project;
+    ResponseDTO response;
     int type;
     TextView text, txtCount;
     View topLayout;
@@ -86,9 +85,11 @@ public class ProjectMapActivity extends AppCompatActivity
     public static final int STAFF = 1, MONITOR = 2;
     DisplayMetrics displayMetrics;
     int themeDarkColor, themePrimaryColor;
+    private static final String TAG = "ProjectMapActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        Log.d(TAG, "onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         ctx = getApplicationContext();
 
         ThemeChooser.setTheme(this);
@@ -102,7 +103,8 @@ public class ProjectMapActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_map);
 
-        project = (ProjectDTO) getIntent().getSerializableExtra("project");
+        response = (ResponseDTO) getIntent().getSerializableExtra("projects");
+        projectList = response.getProjectList();
         type = getIntent().getIntExtra("type", 0);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -114,7 +116,13 @@ public class ProjectMapActivity extends AppCompatActivity
         getWindowManager().getDefaultDisplay()
                 .getMetrics(displayMetrics);
 
-
+        txtCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                useSmallIcons = !useSmallIcons;
+                setProjectMarkers();
+            }
+        });
         Statics.setRobotoFontBold(ctx, text);
 
         topLayout = findViewById(R.id.top);
@@ -126,73 +134,19 @@ public class ProjectMapActivity extends AppCompatActivity
             return;
         }
         setGoogleMap();
-        if (project != null) {
-            txtCount.setText("" + 1);
-            Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
-                    project.getProjectName(),project.getCityName(),
-                    ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
-            setOneProjectMarker();
-        } else {
-            Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
-                    SharedUtil.getCompany(ctx).getCompanyName() ,"Project Locations",
-                    ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
-            getCachedData();
-        }
+
+        Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
+                SharedUtil.getCompany(ctx).getCompanyName(), "Project Locations",
+                ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
+        projectList = response.getProjectList();
+        txtCount.setText("" + projectList.size());
+        setProjectMarkers();
 
     }
 
-    private void getCachedData() {
-        switch (type) {
-            case STAFF:
-                text.setVisibility(View.GONE);
-                CacheUtil.getCachedStaffData(ctx, new CacheUtil.CacheUtilListener() {
-                    @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
-                        if (response.getProjectList() != null) {
-                            projectList = response.getProjectList();
-                            txtCount.setText("" + projectList.size());
-                            setProjectMarkers();
-                        }
-                    }
+    boolean useSmallIcons;
 
-                    @Override
-                    public void onDataCached() {
-
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-                break;
-            case MONITOR:
-                text.setVisibility(View.GONE);
-                CacheUtil.getCachedMonitorProjects(ctx, new CacheUtil.CacheUtilListener() {
-                    @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
-                        if (response.getProjectList() != null) {
-                            projectList = response.getProjectList();
-
-                            txtCount.setText("" + projectList.size());
-                            setProjectMarkers();
-                        }
-                    }
-
-                    @Override
-                    public void onDataCached() {
-
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-                break;
-        }
-    }
-
+    //todo remove
     private void temporaryWork(LatLng latLng) {
         location.setLatitude(latLng.latitude);
         location.setLongitude(latLng.longitude);
@@ -229,6 +183,7 @@ public class ProjectMapActivity extends AppCompatActivity
     Activity activity;
     static final SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy HH:mm");
     int index = 0;
+
     private void setGoogleMap() {
         activity = this;
         googleMap.setMyLocationEnabled(true);
@@ -241,33 +196,37 @@ public class ProjectMapActivity extends AppCompatActivity
             }
         });
         //TODO - remove after test
-        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(final LatLng latLng) {
-                project = projectList.get(index);
-                index++;
-                if (index == projectList.size()) {
-                    return;
-                }
-                final AlertDialog.Builder d = new AlertDialog.Builder(activity);
-                d.setTitle("Project Location")
-                        .setMessage("Do you want to set location for " + project.getProjectName())
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                temporaryWork(latLng);
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        }).show();
-            }
-        });
+//        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+//            @Override
+//            public void onMapClick(final LatLng latLng) {
+//                project = projectList.get(index);
+//                index++;
+//                if (index == projectList.size()) {
+//                    return;
+//                }
+//                final AlertDialog.Builder d = new AlertDialog.Builder(activity);
+//                d.setTitle("Project Location")
+//                        .setMessage("Do you want to set location for " + project.getProjectName())
+//                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                temporaryWork(latLng);
+//                            }
+//                        })
+//                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                            }
+//                        }).show();
+//            }
+//        });
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
+                if (location == null) {
+                    Util.showErrorToast(getApplicationContext(), "device location not available");
+                    return true;
+                }
                 LatLng latLng = marker.getPosition();
                 Location loc = new Location(location);
                 loc.setLatitude(latLng.latitude);
@@ -293,8 +252,8 @@ public class ProjectMapActivity extends AppCompatActivity
     private ProjectTaskStatusDTO getLastStatus(ProjectDTO project) {
         ProjectTaskStatusDTO status = null;
         List<ProjectTaskStatusDTO> ptList = new ArrayList<>();
-        for (ProjectTaskDTO task: project.getProjectTaskList()) {
-                ptList.addAll(task.getProjectTaskStatusList());
+        for (ProjectTaskDTO task : project.getProjectTaskList()) {
+            ptList.addAll(task.getProjectTaskStatusList());
         }
         Collections.sort(ptList);
         if (!ptList.isEmpty()) {
@@ -306,7 +265,6 @@ public class ProjectMapActivity extends AppCompatActivity
 
     private void setProjectMarkers() {
         googleMap.clear();
-
         index = 0;
         for (ProjectDTO project : projectList) {
             if (project.getLatitude() == null) continue;
@@ -314,9 +272,13 @@ public class ProjectMapActivity extends AppCompatActivity
             ProjectTaskStatusDTO status = getLastStatus(project);
 
             View view = getLayoutInflater().inflate(R.layout.project_name, null);
-            TextView name = (TextView)view.findViewById(R.id.name);
-            TextView st = (TextView)view.findViewById(R.id.statusColor);
+            TextView name = (TextView) view.findViewById(R.id.name);
+            TextView st = (TextView) view.findViewById(R.id.statusColor);
             name.setText(project.getProjectName());
+            if (useSmallIcons) {
+                name.setVisibility(View.GONE);
+                st.setText(project.getProjectName().substring(0,1));
+            }
             Bitmap bitmap = null;
             BitmapDescriptor desc = null;
             st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xblack_oval_small));
@@ -324,7 +286,7 @@ public class ProjectMapActivity extends AppCompatActivity
                 Short color = status.getTaskStatusType().getStatusColor();
                 switch (color) {
                     case TaskStatusTypeDTO.STATUS_COLOR_RED:
-                        st.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xred_oval_small));
+                        st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xred_oval_small));
                         break;
                     case TaskStatusTypeDTO.STATUS_COLOR_GREEN:
                         st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgreen_oval_small));
@@ -334,7 +296,6 @@ public class ProjectMapActivity extends AppCompatActivity
                         break;
                     default:
                         st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xblack_oval_small));
-
                         break;
                 }
             }
@@ -353,20 +314,32 @@ public class ProjectMapActivity extends AppCompatActivity
             @Override
             public void onMapLoaded() {
                 //ensure that all markers in bounds
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                for (Marker marker : markers) {
-                    builder.include(marker.getPosition());
+                if (useSmallIcons) {
+                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                    for (Marker marker : markers) {
+                        builder.include(marker.getPosition());
+                    }
+
+                    LatLngBounds bounds = builder.build();
+                    int padding = 60; // offset from edges of the map in pixels
+                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+
+                    txtCount.setText("" + markers.size());
+                    googleMap.animateCamera(cu);
+                } else {
+                    LatLng pnt = markers.get(getMarkerIndex()).getPosition();
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pnt, 1.0f));
+                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(11.0f));
                 }
-
-                LatLngBounds bounds = builder.build();
-                int padding = 60; // offset from edges of the map in pixels
-                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-
-                txtCount.setText("" + markers.size());
-                googleMap.animateCamera(cu);
             }
         });
 
+    }
+
+    Random rand = new Random(System.currentTimeMillis());
+
+    private int getMarkerIndex() {
+        return rand.nextInt(markers.size() - 1);
     }
 
     private void setOneProjectMarker() {
@@ -374,28 +347,28 @@ public class ProjectMapActivity extends AppCompatActivity
         LatLng pnt = new LatLng(project.getLatitude(),
                 project.getLongitude());
         View view = getLayoutInflater().inflate(R.layout.project_name, null);
-        TextView name = (TextView)view.findViewById(R.id.name);
-        TextView st = (TextView)view.findViewById(R.id.statusColor);
+        TextView name = (TextView) view.findViewById(R.id.name);
+        TextView st = (TextView) view.findViewById(R.id.statusColor);
         ProjectTaskStatusDTO status = getLastStatus(project);
         name.setText(project.getProjectName());
         st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xblack_oval_small));
         if (status != null) {
             switch (status.getTaskStatusType().getStatusColor()) {
                 case TaskStatusTypeDTO.STATUS_COLOR_AMBER:
-                    st.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xamber_oval_small));
+                    st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xamber_oval_small));
                     break;
                 case TaskStatusTypeDTO.STATUS_COLOR_GREEN:
-                    st.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xgreen_oval_small));
+                    st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgreen_oval_small));
                     break;
                 case TaskStatusTypeDTO.STATUS_COLOR_RED:
-                    st.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xred_oval_small));
+                    st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xred_oval_small));
                     break;
 
             }
         } else {
-            st.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xblack_oval_small));
+            st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xblack_oval_small));
         }
-        Bitmap bmBitmap = Util.createBitmapFromView(ctx,view,displayMetrics);
+        Bitmap bmBitmap = Util.createBitmapFromView(ctx, view, displayMetrics);
         BitmapDescriptor desc = BitmapDescriptorFactory.fromBitmap(bmBitmap);
         Marker m =
                 googleMap.addMarker(new MarkerOptions()
@@ -431,11 +404,15 @@ public class ProjectMapActivity extends AppCompatActivity
                         if (list.get(index).equalsIgnoreCase(getString(R.string.statrpt))) {
                             Integer projectID = Integer.parseInt(id);
                             ProjectDTO g = null;
-                            for (ProjectDTO x : projectList) {
-                                if (x.getProjectID().intValue() == projectID.intValue()) {
-                                    g = x;
-                                    break;
+                            if (projectList != null) {
+                                for (ProjectDTO x : projectList) {
+                                    if (x.getProjectID().intValue() == projectID.intValue()) {
+                                        g = x;
+                                        break;
+                                    }
                                 }
+                            } else {
+                                g = project;
                             }
                             if (g != null) {
                                 getStatusReport(g);

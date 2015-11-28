@@ -63,7 +63,7 @@ public class MonitorGCMListenerService extends GcmListenerService {
         if (message != null) {
             SimpleMessageDTO m = GSON.fromJson(message, SimpleMessageDTO.class);
             m.setDateReceived(new Date().getTime());
-            if (m.isLocationRequest() == null) {
+            if (m.getLocationRequest() == null) {
                 m.setLocationRequest(Boolean.FALSE);
             }
             Log.d(TAG, "** GCM simpleMessage From: " + from);
@@ -74,7 +74,7 @@ public class MonitorGCMListenerService extends GcmListenerService {
 
     }
     private void cacheMessage(final SimpleMessageDTO message) {
-        if (message.isLocationRequest()) {
+        if (message.getLocationRequest() == Boolean.TRUE) {
             Log.d(TAG, "*** is location request received, calling GPSService: " + message.getStaffName());
             Intent w = new Intent(getApplicationContext(), GPSService.class);
             w.putExtra("simpleMessage", message);

@@ -21,7 +21,6 @@ import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.platform.library.R;
-import com.squareup.leakcanary.RefWatcher;
 
 import java.util.List;
 
@@ -196,8 +195,8 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
-        refWatcher.watch(this);
+//        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+//        refWatcher.watch(this);
     }
     @Override
     public void animateHeroHeight() {

@@ -20,6 +20,7 @@ import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
+import com.boha.monitor.library.dto.SimpleMessageDestinationDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
@@ -110,15 +111,15 @@ public class SimpleMessageFragment extends Fragment implements PageFragment {
             @Override
             public void onClick(View view) {
                 if (staffList != null) {
-                    sendToStaff = new ArrayList<Integer>();
                     for (StaffDTO x: staffList) {
-                        sendToStaff.add(x.getStaffID());
+                        SimpleMessageDestinationDTO dest = new SimpleMessageDestinationDTO();
+                        dest.setStaffID(x.getStaffID());
                     }
                 }
                 if (monitorList != null) {
-                    sendToMonitors = new ArrayList<Integer>();
                     for (MonitorDTO m: monitorList) {
-                        sendToMonitors.add(m.getMonitorID());
+                        SimpleMessageDestinationDTO dest = new SimpleMessageDestinationDTO();
+                        dest.setMonitorID(m.getMonitorID());
                     }
                 }
                 sendMessage();
@@ -201,31 +202,26 @@ public class SimpleMessageFragment extends Fragment implements PageFragment {
         txtFromMsg.setVisibility(View.VISIBLE);
         if (message.getStaffName() != null) {
             txtPerson.setText(message.getStaffName());
-            if (sendToStaff == null) {
-                sendToStaff = new ArrayList<>();
-            }
-            sendToStaff.add(message.getStaffID());
+            SimpleMessageDestinationDTO dest = new SimpleMessageDestinationDTO();
+            dest.setStaffID(message.getStaffID());
         }
         if (message.getMonitorName() != null) {
             txtPerson.setText(message.getMonitorName());
-            if (sendToMonitors == null) {
-                sendToMonitors = new ArrayList<>();
-            }
-            sendToMonitors.add(message.getMonitorID());
+            SimpleMessageDestinationDTO dest = new SimpleMessageDestinationDTO();
+            dest.setMonitorID(message.getMonitorID());
         }
         txtFromMsg.setText(message.getMessage());
         editMessage.setText("");
 
     }
 
-    List<Integer> sendToStaff, sendToMonitors;
+    List<SimpleMessageDestinationDTO> messageDestinationList = new ArrayList<>();
     private void sendMessage() {
         if (editMessage.getText().toString().isEmpty()) {
             Util.showToast(getActivity(),"Please enter message");
             return;
         }
         final SimpleMessageDTO msg = new SimpleMessageDTO();
-        msg.setMonitorList(new ArrayList<Integer>());
         MonitorDTO monitor = SharedUtil.getMonitor(getActivity());
         StaffDTO staff = SharedUtil.getCompanyStaff(getActivity());
         if (monitor != null) {
@@ -236,9 +232,7 @@ public class SimpleMessageFragment extends Fragment implements PageFragment {
             msg.setStaffID(staff.getStaffID());
             msg.setStaffName(staff.getFullName());
         }
-        msg.setStaffList(sendToStaff);
-        msg.setMonitorList(sendToMonitors);
-
+        msg.setSimpleMessageDestinationList(messageDestinationList);
         msg.setMessage(editMessage.getText().toString());
         RequestDTO w = new RequestDTO(RequestDTO.SEND_SIMPLE_MESSAGE);
         w.setSimpleMessage(msg);

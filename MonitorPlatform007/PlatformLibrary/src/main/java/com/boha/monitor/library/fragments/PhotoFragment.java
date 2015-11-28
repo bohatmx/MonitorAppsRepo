@@ -14,7 +14,6 @@ import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.TaskStatusTypeDTO;
 import com.boha.platform.library.R;
-import com.squareup.leakcanary.RefWatcher;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -194,8 +193,8 @@ public class PhotoFragment extends Fragment implements PageFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
-        refWatcher.watch(this);
+//        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+//        refWatcher.watch(this);
     }
 
     @Override

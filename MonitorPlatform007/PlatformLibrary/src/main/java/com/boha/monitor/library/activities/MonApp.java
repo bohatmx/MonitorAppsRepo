@@ -22,8 +22,6 @@ import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
-import com.squareup.leakcanary.LeakCanary;
-import com.squareup.leakcanary.RefWatcher;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
@@ -66,13 +64,13 @@ public class MonApp extends Application implements Application.ActivityLifecycle
     static final String LOG = MonApp.class.getSimpleName();
     public static Picasso picasso;
     static final long MAX_CACHE_SIZE = 1024 * 1024 * 1024; // 1 GB cache on device
-
-    public static RefWatcher getRefWatcher(Context context) {
-        MonApp application = (MonApp) context.getApplicationContext();
-        return application.refWatcher;
-    }
-
-    private RefWatcher refWatcher;
+//
+//    public static RefWatcher getRefWatcher(Context context) {
+//        MonApp application = (MonApp) context.getApplicationContext();
+//        return application.refWatcher;
+//    }
+//
+//    private RefWatcher refWatcher;
 
     public enum TrackerName {
         APP_TRACKER, // Tracker used only in this app.
@@ -109,7 +107,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
 
         Log.d(LOG, sb.toString());
         boolean isDebuggable = 0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
-        refWatcher = LeakCanary.install(this);
+        //refWatcher = LeakCanary.install(this);
         registerActivityLifecycleCallbacks(this);
 
         // create Picasso.Builder object

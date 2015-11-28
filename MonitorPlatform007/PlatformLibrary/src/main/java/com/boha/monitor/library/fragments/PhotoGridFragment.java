@@ -16,7 +16,6 @@ import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.SpacesItemDecoration;
 import com.boha.platform.library.R;
-import com.squareup.leakcanary.RefWatcher;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.StatsSnapshot;
 
@@ -100,8 +99,8 @@ public class PhotoGridFragment extends Fragment implements PageFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
-        refWatcher.watch(this);
+//        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+//        refWatcher.watch(this);
         if (getActivity() != null) {
             StatsSnapshot picassoStats = Picasso.with(getActivity()).getSnapshot();
             Log.d("Picasso Stats", picassoStats.toString());

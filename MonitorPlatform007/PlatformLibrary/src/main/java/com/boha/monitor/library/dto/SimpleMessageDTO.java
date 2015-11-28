@@ -7,44 +7,25 @@ import java.util.List;
  * Created by aubreyM on 15/09/13.
  */
 public class SimpleMessageDTO implements Serializable, Comparable<SimpleMessageDTO>{
-    private String staffName, monitorName, message, url;
-    private List<Integer> monitorList, staffList;
-    private Integer staffID, monitorID;
-    private Long dateSent, dateReceived;
+    private Integer simpleMessageID;
+    private String message, monitorName, staffName, url;
+    private Long messageDate, dateReceived;
     private Boolean locationRequest;
+    private Integer monitorID;
+    private Integer companyID;
+    private Integer staffID;
+    private Integer projectID;
     private LocationTrackerDTO locationTracker;
+    private List<SimpleMessageDestinationDTO> simpleMessageDestinationList;
+    private List<SimpleMessageImageDTO> simpleMessageImageList;
 
-    public LocationTrackerDTO getLocationTracker() {
-        return locationTracker;
+
+    public List<SimpleMessageDestinationDTO> getSimpleMessageDestinationList() {
+        return simpleMessageDestinationList;
     }
 
-    public void setLocationTracker(LocationTrackerDTO locationTracker) {
-        this.locationTracker = locationTracker;
-    }
-
-
-    public Boolean isLocationRequest() {
-        return locationRequest;
-    }
-
-    public void setLocationRequest(Boolean locationRequest) {
-        this.locationRequest = locationRequest;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public Long getDateSent() {
-        return dateSent;
-    }
-
-    public void setDateSent(Long dateSent) {
-        this.dateSent = dateSent;
+    public void setSimpleMessageDestinationList(List<SimpleMessageDestinationDTO> simpleMessageDestinationList) {
+        this.simpleMessageDestinationList = simpleMessageDestinationList;
     }
 
     public Long getDateReceived() {
@@ -55,20 +36,28 @@ public class SimpleMessageDTO implements Serializable, Comparable<SimpleMessageD
         this.dateReceived = dateReceived;
     }
 
-    public String getStaffName() {
-        return staffName;
+    public String getUrl() {
+        return url;
     }
 
-    public void setStaffName(String staffName) {
-        this.staffName = staffName;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    public String getMonitorName() {
-        return monitorName;
+    public List<SimpleMessageImageDTO> getSimpleMessageImageList() {
+        return simpleMessageImageList;
     }
 
-    public void setMonitorName(String monitorName) {
-        this.monitorName = monitorName;
+    public void setSimpleMessageImageList(List<SimpleMessageImageDTO> simpleMessageImageList) {
+        this.simpleMessageImageList = simpleMessageImageList;
+    }
+
+    public Integer getSimpleMessageID() {
+        return simpleMessageID;
+    }
+
+    public void setSimpleMessageID(Integer simpleMessageID) {
+        this.simpleMessageID = simpleMessageID;
     }
 
     public String getMessage() {
@@ -79,28 +68,36 @@ public class SimpleMessageDTO implements Serializable, Comparable<SimpleMessageD
         this.message = message;
     }
 
-    public List<Integer> getMonitorList() {
-        return monitorList;
+    public String getMonitorName() {
+        return monitorName;
     }
 
-    public void setMonitorList(List<Integer> monitorList) {
-        this.monitorList = monitorList;
+    public void setMonitorName(String monitorName) {
+        this.monitorName = monitorName;
     }
 
-    public List<Integer> getStaffList() {
-        return staffList;
+    public String getStaffName() {
+        return staffName;
     }
 
-    public void setStaffList(List<Integer> staffList) {
-        this.staffList = staffList;
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
     }
 
-    public Integer getStaffID() {
-        return staffID;
+    public Long getMessageDate() {
+        return messageDate;
     }
 
-    public void setStaffID(Integer staffID) {
-        this.staffID = staffID;
+    public void setMessageDate(Long messageDate) {
+        this.messageDate = messageDate;
+    }
+
+    public Boolean getLocationRequest() {
+        return locationRequest;
+    }
+
+    public void setLocationRequest(Boolean locationRequest) {
+        this.locationRequest = locationRequest;
     }
 
     public Integer getMonitorID() {
@@ -111,16 +108,48 @@ public class SimpleMessageDTO implements Serializable, Comparable<SimpleMessageD
         this.monitorID = monitorID;
     }
 
+    public Integer getCompanyID() {
+        return companyID;
+    }
+
+    public void setCompanyID(Integer companyID) {
+        this.companyID = companyID;
+    }
+
+    public Integer getStaffID() {
+        return staffID;
+    }
+
+    public void setStaffID(Integer staffID) {
+        this.staffID = staffID;
+    }
+
+    public Integer getProjectID() {
+        return projectID;
+    }
+
+    public void setProjectID(Integer projectID) {
+        this.projectID = projectID;
+    }
+
+    public LocationTrackerDTO getLocationTracker() {
+        return locationTracker;
+    }
+
+    public void setLocationTracker(LocationTrackerDTO locationTracker) {
+        this.locationTracker = locationTracker;
+    }
+
     @Override
     public int compareTo(SimpleMessageDTO msg) {
 
-        if (this.dateSent == null || msg.dateSent == null) {
+        if (this.messageDate == null || msg.messageDate == null) {
             return 0;
         }
-        if (this.dateSent.longValue() > msg.dateSent.longValue()) {
+        if (this.messageDate.longValue() > msg.messageDate.longValue()) {
             return - 1;
         }
-        if (this.dateSent.longValue() < msg.dateSent.longValue()) {
+        if (this.messageDate.longValue() < msg.messageDate.longValue()) {
             return 1;
         }
         return 0;

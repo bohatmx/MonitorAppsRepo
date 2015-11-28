@@ -81,7 +81,7 @@ public class SignInActivity extends AppCompatActivity {
         }
         MonitorDTO dto = SharedUtil.getMonitor(ctx);
         if (dto != null) {
-            Log.i(LOG, "++++++++ Not a virgin anymore ...checking GCM registration....");
+            Log.i(LOG, "++++++++ Not a virgin anymore? yes ...checking GCM registration....");
             String id = SharedUtil.getRegistrationId(getApplicationContext());
             if (id == null) {
                 registerGCMDevice();

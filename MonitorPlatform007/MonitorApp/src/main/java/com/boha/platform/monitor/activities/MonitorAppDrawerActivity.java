@@ -119,7 +119,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ctx = getApplicationContext();
-
+        Log.d(LOG,"################## MonitorAppDrawerActivity onCreate");
         ThemeChooser.setTheme(this);
         Resources.Theme theme = getTheme();
         TypedValue typedValue = new TypedValue();

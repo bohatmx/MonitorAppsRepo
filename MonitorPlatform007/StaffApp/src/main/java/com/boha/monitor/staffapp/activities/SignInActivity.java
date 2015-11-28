@@ -75,7 +75,7 @@ public class SignInActivity extends AppCompatActivity {
 
         StaffDTO dto = SharedUtil.getCompanyStaff(ctx);
         if (dto != null) {
-            Log.i(LOG, "++++++++ Not a virgin anymore ...checking GCM registration....");
+            Log.i(LOG, "++++++++ Not a virgin anymore ...checking GCM registration: " + dto.getFullName());
             String id = SharedUtil.getRegistrationId(getApplicationContext());
             if (id == null) {
                 registerGCMDevice();
@@ -87,6 +87,7 @@ public class SignInActivity extends AppCompatActivity {
             finish();
             return;
         }
+
         registerGCMDevice();
     }
 
@@ -272,12 +273,17 @@ public class SignInActivity extends AppCompatActivity {
         int resultCode = GooglePlayServicesUtil
                 .isGooglePlayServicesAvailable(ctx);
         if (resultCode != ConnectionResult.SUCCESS) {
-            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.gms")));
+            try {
+                if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.gms")));
+                    return false;
+                } else {
+                    Log.i(LOG, "This device is not supported.");
+                    throw new UnsupportedOperationException("GooglePlayServicesUtil resultCode: " + resultCode);
+                }
+            } catch (Exception e) {
+                Log.e(LOG,"GooglePlayServices may not be available, maybe on emulator");
                 return false;
-            } else {
-                Log.i(LOG, "This device is not supported.");
-                throw new UnsupportedOperationException("GooglePlayServicesUtil resultCode: " + resultCode);
             }
         }
         return true;
@@ -306,7 +312,7 @@ public class SignInActivity extends AppCompatActivity {
         Account[] accts = am.getAccounts();
         if (accts.length == 0) {
             showErrorToast(ctx, "No email accounts found");
-            finish();
+            //finish();
             return;
         }
         if (accts != null) {

@@ -62,7 +62,7 @@ public class StaffGCMListenerService extends GcmListenerService {
         if (message != null) {
             SimpleMessageDTO m = GSON.fromJson(message, SimpleMessageDTO.class);
             m.setDateReceived(new Date().getTime());
-            if (m.isLocationRequest() == null) {
+            if (m.getLocationRequest() == null) {
                 m.setLocationRequest(Boolean.FALSE);
             }
             Log.d(TAG, "** GCM simpleMessage From: " + from);

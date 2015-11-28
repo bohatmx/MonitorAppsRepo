@@ -28,6 +28,7 @@ import com.boha.monitor.library.adapters.StaffListAdapter;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
+import com.boha.monitor.library.dto.SimpleMessageDestinationDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.PopupItem;
@@ -165,12 +166,13 @@ public class StaffListFragment extends Fragment
             return;
         }
         SimpleMessageDTO z = new SimpleMessageDTO();
+        z.setSimpleMessageDestinationList(new ArrayList<SimpleMessageDestinationDTO>());
         z.setMessage(editMessage.getText().toString());
         z.setStaffID(from.getStaffID());
         z.setStaffName(from.getFullName());
-        z.setStaffList(new ArrayList<Integer>());
-        z.getStaffList().add(staff.getStaffID());
-        z.setMonitorList(new ArrayList<Integer>());
+        SimpleMessageDestinationDTO dest = new SimpleMessageDestinationDTO();
+        dest.setStaffID(staff.getStaffID());
+        z.getSimpleMessageDestinationList().add(dest);
         Collections.sort(from.getPhotoUploadList());
         if (!from.getPhotoUploadList().isEmpty()) {
             z.setUrl(from.getPhotoUploadList().get(0).getUri());

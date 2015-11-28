@@ -54,13 +54,13 @@ public class SimpleMessageAdapter extends RecyclerView.Adapter<SimpleMessageAdap
     public void onBindViewHolder(final MessageViewHolder mh, final int position) {
 
         final SimpleMessageDTO p = simpleMessageList.get(position);
-        if (p.getUrl() != null) {
-            Picasso.with(ctx).load(p.getUrl()).fit().into(mh.image);
-            mh.image.setAlpha(1.0f);
-        } else {
-            mh.image.setImageDrawable(ContextCompat.getDrawable(ctx,R.drawable.boy));
-            mh.image.setAlpha(0.3f);
-        }
+//        if (p.getUrl() != null) {
+//            Picasso.with(ctx).load(p.getUrl()).fit().into(mh.image);
+//            mh.image.setAlpha(1.0f);
+//        } else {
+//            mh.image.setImageDrawable(ContextCompat.getDrawable(ctx,R.drawable.boy));
+//            mh.image.setAlpha(0.3f);
+//        }
         if (p.getStaffName() != null) {
             mh.txtFromName.setText(p.getStaffName());
         }
@@ -68,8 +68,8 @@ public class SimpleMessageAdapter extends RecyclerView.Adapter<SimpleMessageAdap
             mh.txtFromName.setText(p.getMonitorName());
         }
 
-        if (p.getDateSent() != null) {
-            mh.txtDate.setText(sdf.format(new Date(p.getDateSent().longValue())));
+        if (p.getMessageDate() != null) {
+            mh.txtDate.setText(sdf.format(new Date(p.getMessageDate().longValue())));
         }
         mh.txtMessage.setText(p.getMessage());
         mh.iconRespond.setOnClickListener(new View.OnClickListener() {

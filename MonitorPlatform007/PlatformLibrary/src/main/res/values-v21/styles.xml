@@ -75,6 +75,7 @@
     <style name="AmberTheme" parent="MonTheme">
         <item name="colorPrimary">@color/amber_500</item>
         <item name="colorPrimaryDark">@color/amber_900</item>
+        <item name="colorAccent">@color/accent01</item>
     </style>
 
     <style name="GreyTheme" parent="MonTheme">
@@ -82,10 +83,6 @@
         <item name="colorPrimaryDark">@color/grey_800</item>
     </style>
 
-    <style name="BrownTheme" parent="MonTheme">
-        <item name="colorPrimary">@color/brown_600</item>
-        <item name="colorPrimaryDark">@color/brown_900</item>
-    </style>
 
     <style name="PurpleTheme" parent="MonTheme">
         <item name="colorPrimary">@color/purple_500</item>

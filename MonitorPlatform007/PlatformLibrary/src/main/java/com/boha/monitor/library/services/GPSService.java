@@ -8,6 +8,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresPermission;
 import android.util.Log;
 
 import com.boha.monitor.library.dto.GcmDeviceDTO;
@@ -16,6 +17,7 @@ import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
+import com.boha.monitor.library.dto.SimpleMessageDestinationDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
@@ -103,8 +105,9 @@ public class GPSService extends Service implements LocationListener,
 
     GcmDeviceDTO gcmDevice;
 
+    @RequiresPermission
     protected void startLocationUpdates() {
-        Log.w(LOG, "###### startLocationUpdates: " + new Date().toString());
+        Log.w(LOG, "###### GPSService startLocationUpdates: " + new Date().toString());
         gcmDevice = SharedUtil.getGCMDevice(getApplicationContext());
         if (gcmDevice == null) {
             Log.e(LOG, "## gcmDevice is null. Not tracking this device yet");
@@ -146,6 +149,7 @@ public class GPSService extends Service implements LocationListener,
 
     private void sendLocationResponse() {
         final SimpleMessageDTO sm = new SimpleMessageDTO();
+        sm.setSimpleMessageDestinationList(new ArrayList<SimpleMessageDestinationDTO>());
         final LocationTrackerDTO dto = new LocationTrackerDTO();
         StaffDTO s = SharedUtil.getCompanyStaff(
                 getApplicationContext());
@@ -173,12 +177,17 @@ public class GPSService extends Service implements LocationListener,
         }
 
         sm.setLocationTracker(dto);
-        sm.setStaffList(new ArrayList<Integer>());
-        if (simpleMessage.getStaffID() != null)
-            sm.getStaffList().add(simpleMessage.getStaffID());
-        sm.setMonitorList(new ArrayList<Integer>());
-        if (simpleMessage.getMonitorID() != null)
-            sm.getMonitorList().add(simpleMessage.getMonitorID());
+
+        if (simpleMessage.getStaffID() != null) {
+            SimpleMessageDestinationDTO dest = new SimpleMessageDestinationDTO();
+            dest.setStaffID(simpleMessage.getStaffID());
+            sm.getSimpleMessageDestinationList().add(dest);
+        }
+        if (simpleMessage.getMonitorID() != null) {
+            SimpleMessageDestinationDTO dest = new SimpleMessageDestinationDTO();
+            dest.setMonitorID(simpleMessage.getMonitorID());
+            sm.getSimpleMessageDestinationList().add(dest);
+        }
 
         RequestDTO w = new RequestDTO(RequestDTO.SEND_SIMPLE_MESSAGE);
         w.setSimpleMessage(sm);
@@ -240,8 +249,7 @@ public class GPSService extends Service implements LocationListener,
 
                     try {
                         Log.e(LOG, "Sleeping for a few seconds ...");
-                        Thread.sleep(5000);
-                        Log.i(LOG, "waking up... controlSend...");
+                        Thread.sleep(10000);
                         controlSend();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -364,7 +372,7 @@ public class GPSService extends Service implements LocationListener,
 
     }
 
-    static final float ACCURACY_THRESHOLD = 30;
+    static final float ACCURACY_THRESHOLD = 20;
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {

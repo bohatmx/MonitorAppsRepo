@@ -21,7 +21,6 @@ import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.TaskTypeDTO;
 import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.platform.library.R;
-import com.squareup.leakcanary.RefWatcher;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import java.util.ArrayList;
@@ -207,8 +206,8 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
-        refWatcher.watch(this);
+//        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+//        refWatcher.watch(this);
     }
     @Override
     public String getPageTitle() {

@@ -28,6 +28,7 @@ import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
+import com.boha.monitor.library.dto.SimpleMessageDestinationDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.PopupItem;
@@ -36,7 +37,6 @@ import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-import com.squareup.leakcanary.RefWatcher;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -195,7 +195,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
             @Override
             public void onClick(View view) {
                 paneLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-                sendMessageToSelectedMonitors();
+                sendMessageToSelectedPeople();
             }
         });
         iconCloseActions.setOnClickListener(new View.OnClickListener() {
@@ -239,36 +239,36 @@ public class MonitorListFragment extends Fragment implements PageFragment {
                 })
                 .show();
     }
-    private void sendMessageToSelectedMonitors() {
+    private void sendMessageToSelectedPeople() {
         if (SharedUtil.getMonitor(getActivity()) != null) {
             type = MONITOR;
         } else {
             type = STAFF;
         }
-        SimpleMessageDTO z = new SimpleMessageDTO();
-        z.setMonitorList(new ArrayList<Integer>());
+        SimpleMessageDTO simpleMsg = new SimpleMessageDTO();
+        List<SimpleMessageDestinationDTO> destList = new ArrayList<>();
         for (MonitorDTO m: selectedMonitors) {
-            z.getMonitorList().add(m.getMonitorID());
+            SimpleMessageDestinationDTO dest = new SimpleMessageDestinationDTO();
+            dest.setMonitorID(m.getMonitorID());
+            destList.add(dest);
         }
         switch (type) {
             case STAFF:
                 StaffDTO fromx = SharedUtil.getCompanyStaff(getActivity());
-                z.setStaffID(fromx.getStaffID());
-                z.setStaffName(fromx.getFullName());
-                z.setStaffList(new ArrayList<Integer>());
+                simpleMsg.setStaffID(fromx.getStaffID());
+                simpleMsg.setStaffName(fromx.getFullName());
                 Collections.sort(fromx.getPhotoUploadList());
                 if (!fromx.getPhotoUploadList().isEmpty()) {
-                    z.setUrl(fromx.getPhotoUploadList().get(0).getUri());
+                    simpleMsg.setUrl(fromx.getPhotoUploadList().get(0).getUri());
                 }
                 break;
             case MONITOR:
                 MonitorDTO from = SharedUtil.getMonitor(getActivity());
-                z.setMonitorID(from.getMonitorID());
-                z.setMonitorName(from.getFullName());
-                z.setStaffList(new ArrayList<Integer>());
+                simpleMsg.setMonitorID(from.getMonitorID());
+                simpleMsg.setMonitorName(from.getFullName());
                 Collections.sort(from.getPhotoUploadList());
                 if (!from.getPhotoUploadList().isEmpty()) {
-                    z.setUrl(from.getPhotoUploadList().get(0).getUri());
+                    simpleMsg.setUrl(from.getPhotoUploadList().get(0).getUri());
                 }
                 break;
         }
@@ -278,10 +278,10 @@ public class MonitorListFragment extends Fragment implements PageFragment {
             return;
         }
 
-        z.setMessage(editMessage.getText().toString());
+        simpleMsg.setMessage(editMessage.getText().toString());
 
         RequestDTO w = new RequestDTO(RequestDTO.SEND_SIMPLE_MESSAGE);
-        w.setSimpleMessage(z);
+        w.setSimpleMessage(simpleMsg);
 
         mListener.setBusy(true);
         hideKeyboard();
@@ -477,6 +477,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
 
     private void getMonitorLocationTracks(Integer monitorID) {
         SimpleMessageDTO msg = new SimpleMessageDTO();
+        msg.setSimpleMessageDestinationList(new ArrayList<SimpleMessageDestinationDTO>());
         StaffDTO s = SharedUtil.getCompanyStaff(
                 getActivity());
         if (s != null) {
@@ -489,8 +490,9 @@ public class MonitorListFragment extends Fragment implements PageFragment {
             msg.setMonitorID(m.getMonitorID());
             msg.setMonitorName(m.getFullName());
         }
-        msg.setMonitorList(new ArrayList<Integer>());
-        msg.getMonitorList().add(monitorID);
+        SimpleMessageDestinationDTO dest = new SimpleMessageDestinationDTO();
+        dest.setMonitorID(monitorID);
+        msg.getSimpleMessageDestinationList().add(dest);
         msg.setLocationRequest(Boolean.TRUE);
 
         RequestDTO w = new RequestDTO(RequestDTO.SEND_SIMPLE_MESSAGE);
@@ -540,15 +542,17 @@ public class MonitorListFragment extends Fragment implements PageFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
-        refWatcher.watch(this);
+//        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+//        refWatcher.watch(this);
     }
 
     @Override
     public void animateHeroHeight() {
 
-        hero.setImageDrawable(Util.getRandomBackgroundImage(getActivity()));
-        Util.expand(hero, 500, null);
+        if (hero != null) {
+            hero.setImageDrawable(Util.getRandomBackgroundImage(getActivity()));
+            Util.expand(hero, 500, null);
+        }
     }
 
     String pageTitle = "Monitors";

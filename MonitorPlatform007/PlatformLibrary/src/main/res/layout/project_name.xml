@@ -10,8 +10,9 @@
         android:id="@+id/statusColor"
         android:background="@drawable/xamber_oval_small"
         android:layout_centerVertical="true"
-        android:layout_width="20dp"
-        android:layout_height="20dp" />
+        android:layout_width="32dp"
+        android:textColor="@color/white"
+        android:layout_height="32dp" />
 
     <TextView
         android:id="@+id/name"

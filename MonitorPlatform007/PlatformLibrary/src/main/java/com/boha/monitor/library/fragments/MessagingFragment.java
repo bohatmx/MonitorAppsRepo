@@ -21,7 +21,6 @@ import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
-import com.squareup.leakcanary.RefWatcher;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -184,8 +183,8 @@ public class MessagingFragment extends Fragment implements PageFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
-        refWatcher.watch(this);
+//        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
+//        refWatcher.watch(this);
     }
     @Override
     public void animateHeroHeight() {
