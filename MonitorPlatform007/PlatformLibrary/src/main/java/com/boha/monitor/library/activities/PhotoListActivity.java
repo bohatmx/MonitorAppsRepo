@@ -1,6 +1,7 @@
 package com.boha.monitor.library.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,7 +24,6 @@ import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.fragments.PageFragment;
-import com.boha.monitor.library.fragments.PhotoFragment;
 import com.boha.monitor.library.fragments.PhotoGridFragment;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
@@ -35,13 +35,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class PhotoListActivity extends AppCompatActivity implements PhotoAdapter.PictureListener,
-        PhotoFragment.PhotoFragmentListener{
+public class PhotoListActivity extends AppCompatActivity implements
+        PhotoAdapter.PictureListener{
 
     public static final int
             PHOTO_LOCAL = 1,
             PHOTO_REMOTE = 2;
-    PhotoFragment photoFragment;
     ResponseDTO response;
     PagerAdapter adapter;
     ViewPager mPager;
@@ -133,18 +132,18 @@ public class PhotoListActivity extends AppCompatActivity implements PhotoAdapter
             });
         }
         pageFragmentList.add(PhotoGridFragment.newInstance(response));
-
-        int number = 0;
-        int total = response.getPhotoUploadList().size();
-        for (PhotoUploadDTO dto: response.getPhotoUploadList()) {
-            pageFragmentList.add(PhotoFragment.newInstance(dto, total - number));
-            number++;
-        }
+//
+//        int number = 0;
+//        int total = response.getPhotoUploadList().size();
+//        for (PhotoUploadDTO dto: response.getPhotoUploadList()) {
+//            pageFragmentList.add(PhotoFragment.newInstance(dto, total - number));
+//            number++;
+//        }
         adapter = new PagerAdapter(getSupportFragmentManager());
         mPager.setOffscreenPageLimit(2);
         mPager.setAdapter(adapter);
 
-        mPager.setCurrentItem(index,true);
+//        mPager.setCurrentItem(index,true);
     }
 
     @Override
@@ -172,14 +171,14 @@ public class PhotoListActivity extends AppCompatActivity implements PhotoAdapter
     @Override
     public void onPictureClicked(PhotoUploadDTO photo, int position) {
         Log.e("PhotoListActivity", "photoClicked, id: " + photo.getPhotoUploadID() + " position: " + position);
-        mPager.setCurrentItem(position);
 
+        Intent w = new Intent(this, PhotoScrollerActivity.class);
+        w.putExtra("photos", response);
+        w.putExtra("position", position - 1);
+        w.putExtra("project",project);
 
-    }
+        startActivity(w);
 
-    @Override
-    public void onBigPhotoClicked(PhotoUploadDTO photo) {
-        mPager.setCurrentItem(0);
     }
 
     private class PagerAdapter extends FragmentStatePagerAdapter {

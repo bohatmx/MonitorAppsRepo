@@ -1,6 +1,7 @@
 package com.boha.monitor.library.util;
 
 import android.content.Context;
+import android.support.annotation.RequiresPermission;
 import android.util.Log;
 
 import com.android.volley.VolleyError;
@@ -26,12 +27,12 @@ public class NetUtil {
 
     static final String LOG = NetUtil.class.getSimpleName();
     static NetUtilListener listener;
+    @RequiresPermission
     public static void sendRequest( Context ctx,  RequestDTO request,  NetUtilListener utilListener) {
-        Log.d(LOG, "sendRequest() called with: " + "ctx = [" + ctx + "], request = [" + request + "], utilListener = [" + utilListener + "]");
         listener = utilListener;
-        Log.d(LOG,"########### sendRequest ... isRideWebSocket: " + request.isRideWebSocket());
-        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx, true);
-        if (!wcr.isMobileConnected() && !wcr.isWifiConnected()) {
+        Log.d(LOG,"########### sendRequest ... WebSocket request? : " + request.isRideWebSocket());
+        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
+        if (wcr.isNetworkUnavailable()) {
             utilListener.onError(ctx.getString(R.string.net_not_avail));
             return;
         }
@@ -43,11 +44,12 @@ public class NetUtil {
             sendViaHttp(ctx, request);
         }
     }
+    @RequiresPermission
     public static void sendRequest( Context ctx,  RequestList requestList,  NetUtilListener utilListener) {
         listener = utilListener;
         Log.e(LOG, "########### sendRequestList ... isRideWebSocket: " + requestList.isRideWebSocket());
-        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx, true);
-        if (!wcr.isMobileConnected() && !wcr.isWifiConnected()) {
+        WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
+        if (!wcr.isNetworkUnavailable()) {
             utilListener.onError(ctx.getString(R.string.net_not_avail));
             return;
         }
@@ -65,7 +67,7 @@ public class NetUtil {
             public void onMessage(ResponseDTO response) {
                 final long end = System.currentTimeMillis();
                 Log.e(LOG, "HTTP call completed. elapsed server time: " + response.getElapsedRequestTimeInSeconds()
-                        + " roundTrip elapsed: " + getElapsed(start,end));
+                        + "\nroundTrip elapsed: " + getElapsed(start,end) + " size: " + getLength(gson.toJson(response).length()));
                 if (response.getStatusCode() == 0) {
                     listener.onResponse(response);
                 } else {
@@ -85,14 +87,14 @@ public class NetUtil {
     }
     private static void sendViaHttp(Context ctx, RequestDTO request) {
         final long start = System.currentTimeMillis();
-        BaseVolley.getRemoteData(Statics.GATEWAY_SERVLET, request, ctx, new BaseVolley.BohaVolleyListener() {
+        BaseVolley.sendRequest(Statics.GATEWAY_SERVLET, request, ctx, new BaseVolley.BohaVolleyListener() {
 
 
             @Override
             public void onResponseReceived(ResponseDTO response) {
                 final long end = System.currentTimeMillis();
                 Log.e(LOG, "HTTP call completed. elapsed server time: " + response.getElapsedRequestTimeInSeconds()
-                        + " roundTrip elapsed: " + getElapsed(start,end));
+                        + "\nroundTrip elapsed: " + getElapsed(start, end) + " size: " + getLength(gson.toJson(response).length()));
                 if (response.getStatusCode() == 0) {
                     listener.onResponse(response);
                 } else {
@@ -105,10 +107,16 @@ public class NetUtil {
                 Log.e(LOG, "-- Volley Error: " + error.getMessage());
                 final long end = System.currentTimeMillis();
                 Log.e(LOG, "HTTP networking. ERROR occured - "
-                        + " roundTrip elapsed: " + getElapsed(start,end));
+                        + " roundTrip elapsed: " + getElapsed(start, end));
                 listener.onError("Error communicating with server");
             }
         });
+    }
+    private static String getLength(int length) {
+        Double d = Double.parseDouble("" + length)/Double.parseDouble("1024");
+
+        BigDecimal bd = new BigDecimal(d).setScale(2,BigDecimal.ROUND_UP);
+        return bd.toString() + "K";
     }
     private static void sendListViaWebSocket(Context ctx, RequestList requestList) {
         final long start = System.currentTimeMillis();
@@ -137,14 +145,14 @@ public class NetUtil {
     }
     private static void sendListViaHttp(Context ctx, RequestList requestList) {
         final long start = System.currentTimeMillis();
-        BaseVolley.getRemoteData(Statics.CACHED_REQUEST_SERVLET, requestList, ctx, new BaseVolley.BohaVolleyListener() {
+        BaseVolley.sendRequest(Statics.CACHED_REQUEST_SERVLET, requestList, ctx, new BaseVolley.BohaVolleyListener() {
 
 
             @Override
             public void onResponseReceived(ResponseDTO response) {
                 final long end = System.currentTimeMillis();
                 Log.e(LOG, "sendListViaHttp completed. elapsed server time: " + response.getElapsedRequestTimeInSeconds()
-                        + " roundTrip elapsed: " + getElapsed(start,end));
+                        + " roundTrip elapsed: " + getElapsed(start, end));
                 listener.onResponse(response);
             }
 
@@ -152,7 +160,7 @@ public class NetUtil {
             public void onVolleyError(VolleyError error) {
                 final long end = System.currentTimeMillis();
                 Log.e(LOG, "sendListViaWebSocket ERROR encountered. "
-                        + " roundTrip elapsed: " + getElapsed(start,end));
+                        + " roundTrip elapsed: " + getElapsed(start, end));
                 Log.e(LOG, "-- Volley Error: " + error.getMessage());
                 listener.onError("Error communicating with server");
             }

@@ -23,7 +23,7 @@ public class RequestDTO implements Serializable {
     }
 
     private Boolean rideWebSocket = false;
-    private Boolean zipResponse = false;
+    private Boolean zipResponse = true;
 
     private Long requestCacheID = new Date().getTime();
     private Integer requestType, companyID, staffID,

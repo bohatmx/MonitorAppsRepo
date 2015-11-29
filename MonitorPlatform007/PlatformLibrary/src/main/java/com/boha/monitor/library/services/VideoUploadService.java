@@ -41,7 +41,7 @@ public class VideoUploadService extends IntentService {
     public void uploadCachedVideos(UploadListener listener) {
         uploadListener = listener;
         Log.d(LOG, "#### uploadCachedVideos, getting cached videos - will start uploads if wifi is up");
-        if (!WebCheck.checkNetworkAvailability(getApplicationContext(), true).isWifiConnected()) {
+        if (!WebCheck.checkNetworkAvailability(getApplicationContext()).isWifiConnected()) {
             Log.e(LOG, "--- No WIFI Network: no video upload allowed");
             return;
         }

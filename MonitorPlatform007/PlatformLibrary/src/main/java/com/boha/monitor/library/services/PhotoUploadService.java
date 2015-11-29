@@ -45,7 +45,7 @@ public class PhotoUploadService extends IntentService {
     public void uploadCachedPhotos(UploadListener listener) {
         uploadListener = listener;
         Log.d(LOG, "#### uploadCachedPhotos, getting cached photos - will start uploads if wifi is up");
-        if (WebCheck.checkNetworkAvailability(getApplicationContext(), true).isNetworkUnavailable()) {
+        if (WebCheck.checkNetworkAvailability(getApplicationContext()).isNetworkUnavailable()) {
             Log.e(LOG, "--- No Network: boolean = isNetworkUnavailable");
             return;
         }

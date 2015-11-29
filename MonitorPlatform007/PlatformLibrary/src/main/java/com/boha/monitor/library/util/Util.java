@@ -78,6 +78,8 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class Util {
     @SuppressLint("NewApi")
     public static String getRealPathFromURI_API19(Context context, Uri uri){
@@ -477,6 +479,8 @@ public class Util {
         LayoutInflater inf = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inf.inflate(R.layout.hero_image_popup, null);
         TextView txt = (TextView) v.findViewById(R.id.HERO_caption);
+        CircleImageView imgp = (CircleImageView) v.findViewById(R.id.HERO_personImage);
+        imgp.setVisibility(View.GONE);
         if (caption != null) {
             txt.setText(caption);
         } else {

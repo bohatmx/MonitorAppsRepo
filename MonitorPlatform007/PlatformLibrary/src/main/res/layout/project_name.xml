@@ -11,7 +11,9 @@
         android:background="@drawable/xamber_oval_small"
         android:layout_centerVertical="true"
         android:layout_width="32dp"
+        android:gravity="center"
         android:textColor="@color/white"
+        android:textStyle="bold"
         android:layout_height="32dp" />
 
     <TextView

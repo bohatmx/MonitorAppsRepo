@@ -134,8 +134,8 @@ public class StaffMainActivity extends AppCompatActivity implements
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
 
-        navImage = (ImageView) findViewById(R.id.NAVHEADER_image);
-        navText = (TextView) findViewById(R.id.NAVHEADER_text);
+        navImage = (ImageView) navigationView.findViewById(R.id.NAVHEADER_image);
+        navText = (TextView) navigationView.findViewById(R.id.NAVHEADER_text);
         navText.setText(SharedUtil.getCompanyStaff(ctx).getFullName());
         try {
             Statics.setRobotoFontLight(getApplicationContext(), navText);
@@ -289,6 +289,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
         companyDataRefreshed = false;
         setRefreshActionButtonState(true);
+        Snackbar.make(mPager,"Refreshing your data, this may take a minute or two ...", Snackbar.LENGTH_LONG).show();
         NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(final ResponseDTO r) {
@@ -306,7 +307,13 @@ public class StaffMainActivity extends AppCompatActivity implements
 
                             @Override
                             public void onDataCached() {
-                                buildPages();
+                                if (projectListFragment == null) {
+                                    buildPages();
+                                } else {
+                                    projectListFragment.refreshProjectList(response.getProjectList());
+                                    monitorListFragment.refreshMonitorList(response.getMonitorList());
+                                    staffListFragment.refreshStaffList(response.getStaffList());
+                                }
                                 if (r.getProjectList().isEmpty()) {
                                     Util.showErrorToast(ctx, "Projects have not been assigned yet");
                                 }
@@ -565,6 +572,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         this.staffList = staffList;
 
         setBusy(true);
+        Snackbar.make(mPager,"Getting device GPS coordinates, may take a few seconds ...",Snackbar.LENGTH_LONG).show();
         startLocationUpdates();
     }
     private void submitTrack() {

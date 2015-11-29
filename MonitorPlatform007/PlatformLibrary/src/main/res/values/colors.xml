@@ -233,7 +233,7 @@
     <color name="secondary_text_ibg">#727272</color>
     <color name="icons_ibg">#FFFFFF</color>
     <color name="divider_ibg">#B6B6B6</color>
-    <color name="accent_material_light">#b388ff</color>
+    <color name="accent_material_light">#00695C</color>
     <color name="accent01">#82b1ff</color>
     <color name="accent_yellow">#ffff40</color>
     <color name="accent_teal">#007399</color>

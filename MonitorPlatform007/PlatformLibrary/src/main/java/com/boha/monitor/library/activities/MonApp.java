@@ -127,7 +127,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
             Picasso.with(getApplicationContext())
                     .setIndicatorsEnabled(true);
             Picasso.with(getApplicationContext())
-                    .setLoggingEnabled(true);
+                    .setLoggingEnabled(false);
         }
         if (!isDebuggable) {
             StrictMode.enableDefaults();
@@ -177,7 +177,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
     public void initializeVolley(Context context) {
         Log.e(LOG, "initializing Volley Networking ...");
         requestQueue = Volley.newRequestQueue(context);
-        Log.i(LOG, "********** Yebo! Volley Networking has been initialized");
+        //Log.i(LOG, "********** Yebo! Volley Networking has been initialized");
     }
 
     public ChatMessageListActivity getChatMessageListActivity() {

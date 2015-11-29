@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.ListPopupWindow;
 import android.widget.TextView;
 
-import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.MonitorListAdapter;
 import com.boha.monitor.library.adapters.PopupListIconAdapter;
 import com.boha.monitor.library.dto.MonitorDTO;
@@ -37,10 +37,13 @@ import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -216,6 +219,14 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         setList();
         return view;
     }
+
+    public void refreshMonitorList(List<MonitorDTO> monitorList) {
+        this.monitorList = monitorList;
+        if (recyclerView != null) {
+            setList();
+        }
+    }
+
     private void showDialog() {
         final AlertDialog.Builder x = new AlertDialog.Builder(getActivity());
         x.setTitle("Broadcast Your Location")
@@ -410,9 +421,20 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         LayoutInflater inf = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inf.inflate(R.layout.hero_image_popup, null);
         TextView txt = (TextView) v.findViewById(R.id.HERO_caption);
+        CircleImageView photo = (CircleImageView) v.findViewById(R.id.HERO_personImage);
         txt.setText("To: " + monitor.getFullName());
         ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
         img.setImageDrawable(Util.getRandomBackgroundImage(ctx));
+
+        if (monitor.getPhotoUploadList() == null || monitor.getPhotoUploadList().isEmpty()) {
+            photo.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.boy));
+            photo.setAlpha(0.3f);
+        } else {
+            photo.setAlpha(1.0f);
+            Picasso.with(ctx)
+                    .load(monitor.getPhotoUploadList().get(0).getUri())
+                    .into(photo);
+        }
 
         pop.setPromptView(v);
         pop.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);

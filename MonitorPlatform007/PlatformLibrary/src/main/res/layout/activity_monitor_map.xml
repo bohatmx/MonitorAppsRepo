@@ -45,14 +45,14 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/statusColor"
-        android:layout_width="@dimen/mon_widest"
-        android:layout_height="@dimen/mon_widest"
+        android:layout_width="@dimen/mon_hero_height_medium_lite"
+        android:layout_height="@dimen/mon_hero_height_medium_lite"
         android:scaleType="centerCrop"
         android:layout_marginTop="@dimen/mon_margin"
-        android:layout_marginLeft="@dimen/mon_wide"
+        android:layout_marginLeft="@dimen/mon_margin"
         android:src="@drawable/black_woman"
         app:border_color="@color/white"
-        app:border_width="@dimen/mon_divider" />
+        app:border_width="@dimen/mon_divider_small" />
 
     <TextView
         style="@style/RedCountBox"

@@ -56,7 +56,7 @@ public class WebSocketUtil {
                 connect(url, json);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(LOG, "WebSocketUtil sendRequest: ", e);
         }
     }
 
@@ -157,6 +157,9 @@ public class WebSocketUtil {
             Log.e(LOG, "IllegalStateException .", e);
         } catch (WebSocketException e) {
             Log.e(LOG, "WebSocketException failed.", e);
+            webSocketListener.onError(e.getMessage());
+        } catch (Exception e) {
+            Log.e(LOG, "Exception failed.", e);
             webSocketListener.onError(e.getMessage());
         }
     }

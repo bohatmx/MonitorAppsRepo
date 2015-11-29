@@ -211,6 +211,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         setRefreshActionButtonState(true);
         Util.setActionBarIconSpinning(mMenu, R.id.action_refresh, true);
         busyGettingRemoteData = true;
+        Snackbar.make(mPager,"Refreshing your data. May take a minute or two ...",Snackbar.LENGTH_LONG).show();
         NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(final ResponseDTO r) {
@@ -561,7 +562,10 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         activity = this;
         if (project.getLatitude() != null) {
             Intent w = new Intent(this, ProjectMapActivity.class);
-            w.putExtra("project", project);
+            ResponseDTO responseDTO = new ResponseDTO();
+            responseDTO.setProjectList(new ArrayList<ProjectDTO>());
+            responseDTO.getProjectList().add(project);
+            w.putExtra("projects", responseDTO);
             startActivity(w);
             return;
         }

@@ -36,10 +36,15 @@ public class BohaRequest extends Request<ResponseDTO> {
         this.listener = responseListener;
         this.errorListener = errorListener;
         start = System.currentTimeMillis();
-        Log.i(LOG, "...Cloud Server communication started ...");
 
     }
 
+    private String getLength(int length) {
+        Double d = Double.parseDouble("" + length)/Double.parseDouble("1024");
+
+        BigDecimal bd = new BigDecimal(d).setScale(2,BigDecimal.ROUND_UP);
+        return bd.toString() + "K";
+    }
 
     @Override
     protected Response<ResponseDTO> parseNetworkResponse(
@@ -48,7 +53,7 @@ public class BohaRequest extends Request<ResponseDTO> {
         try {
             Gson gson = new Gson();
             String resp = new String(response.data);
-            Log.i(LOG, "response string length returned: " + resp.length());
+            Log.i(LOG, "network response string length: " + getLength(resp.length()));
             try {
                 dto = gson.fromJson(resp, ResponseDTO.class);
                 if (dto != null) {
@@ -81,7 +86,7 @@ public class BohaRequest extends Request<ResponseDTO> {
             return Response.error(new VolleyError(dto.getMessage()));
         }
         end = System.currentTimeMillis();
-        Log.w(LOG,"#### comms elapsed time in seconds: " + getElapsed(start,end));
+        //Log.w(TAG,"#### comms elapsed time in seconds: " + getElapsed(start,end));
         return Response.success(dto,
                 HttpHeaderParser.parseCacheHeaders(response));
     }

@@ -54,10 +54,7 @@ public class GPSService extends Service implements LocationListener,
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-            Log.w(LOG, "###### onStartCommand, intent: " + intent.toString());
             simpleMessage = (SimpleMessageDTO) intent.getSerializableExtra("simpleMessage");
-        } else {
-            Log.w(LOG, "###### onStartCommand null intent: ");
         }
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -79,16 +76,10 @@ public class GPSService extends Service implements LocationListener,
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.i(LOG,
-                "+++  onConnected() -  requestLocationUpdates ...");
+
         mLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
-        if (mLocation != null) {
-            Log.w(LOG, "## GPSService requesting location updates ....lastLocation: "
-                    + mLocation.getLatitude() + " "
-                    + mLocation.getLongitude() + " acc: "
-                    + mLocation.getAccuracy());
-        }
+
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setInterval(3000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -107,10 +98,9 @@ public class GPSService extends Service implements LocationListener,
 
     @RequiresPermission
     protected void startLocationUpdates() {
-        Log.w(LOG, "###### GPSService startLocationUpdates: " + new Date().toString());
+
         gcmDevice = SharedUtil.getGCMDevice(getApplicationContext());
         if (gcmDevice == null) {
-            Log.e(LOG, "## gcmDevice is null. Not tracking this device yet");
             return;
         }
         if (mGoogleApiClient.isConnected()) {
@@ -123,7 +113,6 @@ public class GPSService extends Service implements LocationListener,
     protected void stopLocationUpdates() {
 
         if (mGoogleApiClient.isConnected()) {
-            Log.e(LOG, "###### stopLocationUpdates - " + new Date().toString());
             LocationServices.FusedLocationApi.removeLocationUpdates(
                     mGoogleApiClient, this);
         }
@@ -202,7 +191,7 @@ public class GPSService extends Service implements LocationListener,
             @Override
             public void onError(String message) {
                 Log.e(LOG, "location response sent: " + message);
-                message = null;
+                simpleMessage = null;
             }
 
             @Override
@@ -242,32 +231,26 @@ public class GPSService extends Service implements LocationListener,
         CacheUtil.addLocationTrack(getApplicationContext(), dto, new CacheUtil.AddLocationTrackerListener() {
             @Override
             public void onLocationTrackerAdded(ResponseDTO response) {
-                Log.i(LOG, "onLocationTrackerAdded, tracks: " + response.getLocationTrackerList().size());
+                Log.i(LOG, "onLocationTracker added to cache, tracks: " + response.getLocationTrackerList().size());
                 locationTrackerList = response.getLocationTrackerList();
                 index = 0;
-                if (!WebCheck.checkNetworkAvailability(getApplicationContext()).isNetworkUnavailable()) {
-
-                    try {
-                        Log.e(LOG, "Sleeping for a few seconds ...");
-                        Thread.sleep(10000);
-                        controlSend();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
+                if (!WebCheck.checkNetworkAvailability(getApplicationContext())
+                        .isNetworkUnavailable()) {
+                    controlSend();
                 }
+
             }
         });
-
 
     }
 
     private void controlSend() {
 
         if (index < locationTrackerList.size()) {
-            send(locationTrackerList.get(index));
+            if (locationTrackerList.get(index).getDateUploaded() == null) {
+                send(locationTrackerList.get(index));
+            }
         } else {
-            Log.d(LOG, "## " + locationTrackerList.size() + " Tracks have been sent up, cleaning cache ...");
             locationTrackerList.clear();
             ResponseDTO w = new ResponseDTO();
             w.setLocationTrackerList(new ArrayList<LocationTrackerDTO>());
@@ -312,7 +295,7 @@ public class GPSService extends Service implements LocationListener,
                     sb.append(", ");
                 }
             }
-            Log.w(LOG, "## GPSService Address found: " + sb.toString());
+            //Log.w(LOG, "## GPSService Address found: " + sb.toString());
             return sb.toString();
 
         } catch (IOException e) {
@@ -326,7 +309,7 @@ public class GPSService extends Service implements LocationListener,
 
     private int index;
 
-    private void send(LocationTrackerDTO dto) {
+    private void send(final LocationTrackerDTO dto) {
 
         final RequestDTO w = new RequestDTO(RequestDTO.ADD_LOCATION_TRACK);
         if (SharedUtil.getMonitor(getApplicationContext()) != null) {
@@ -348,9 +331,11 @@ public class GPSService extends Service implements LocationListener,
                 NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {
                     @Override
                     public void onResponse(ResponseDTO response) {
-                        Log.e(LOG, response.getMessage());
+                        Log.i(LOG, "onResponse: " + response.getMessage());
                         if (response.getStatusCode() == 0) {
                             index++;
+                            dto.setDateUploaded(new Date().getTime());
+                            CacheUtil.updateLocationTrack(getApplicationContext(),locationTrackerList, null);
                             controlSend();
 
                         }

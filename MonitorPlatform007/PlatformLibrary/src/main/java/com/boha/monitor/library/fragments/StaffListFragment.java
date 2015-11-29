@@ -243,7 +243,12 @@ public class StaffListFragment extends Fragment
                 })
                 .show();
     }
-
+    public void refreshStaffList(List<StaffDTO> staffList) {
+        this.staffList = staffList;
+        if (mRecycler != null) {
+            setList();
+        }
+    }
     @Override
     public void onSaveInstanceState(Bundle b) {
         Log.i(LOG, "## onSaveInstanceState");

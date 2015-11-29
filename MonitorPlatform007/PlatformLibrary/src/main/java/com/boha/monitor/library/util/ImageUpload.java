@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
-import com.boha.monitor.library.toolbox.BaseVolley;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -41,7 +40,7 @@ public class ImageUpload {
 		photoUpload = dto;
 		mFiles = files;
 		imageUploadListener = listener;
-        if (!BaseVolley.checkNetworkOnDevice(ctx)) {
+        if (WebCheck.checkNetworkAvailability(ctx).isNetworkUnavailable()) {
             return;
         }
 		Log.i(LOGTAG, "....starting image upload");

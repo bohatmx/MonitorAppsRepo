@@ -18,7 +18,7 @@ public class LocationTrackerDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer locationTrackerID;
     private Integer staffID, monitorID;
-    private Long dateTracked;
+    private Long dateTracked, dateUploaded;
     private Double latitude;
     private Double longitude;
     private float accuracy;
@@ -28,6 +28,18 @@ public class LocationTrackerDTO implements Serializable {
     private GcmDeviceDTO gcmDevice;
 
     public LocationTrackerDTO() {
+    }
+
+    public Long getDateUploaded() {
+        return dateUploaded;
+    }
+
+    public void setDateUploaded(Long dateUploaded) {
+        this.dateUploaded = dateUploaded;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 
     public String getMonitorName() {

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by aubreyM on 2014/06/30.
@@ -151,7 +152,50 @@ public class CacheUtil {
                 }
                 response.getLocationTrackerList().add(locationTracker);
                 cacheTrackerData(ctx, response, null);
-                addLocationTrackerListener.onLocationTrackerAdded(response);
+                if (addLocationTrackerListener != null)
+                    addLocationTrackerListener.onLocationTrackerAdded(response);
+            }
+
+            @Override
+            public void onDataCached() {
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+    }
+
+    public static void updateLocationTrack(final Context ctx, final List<LocationTrackerDTO> locationTrackerList, final AddLocationTrackerListener addLocationTrackerListener) {
+
+        getCachedTrackerData(ctx, new CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(final ResponseDTO response) {
+                ResponseDTO f = new ResponseDTO();
+                if (response != null) {
+                    f = response;
+                }
+                f.setLocationTrackerList(locationTrackerList);
+                cacheTrackerData(ctx, f, new CacheUtilListener() {
+                    @Override
+                    public void onFileDataDeserialized(ResponseDTO response) {
+
+                    }
+
+                    @Override
+                    public void onDataCached() {
+                        if (addLocationTrackerListener != null)
+                            addLocationTrackerListener.onLocationTrackerAdded(response);
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+
             }
 
             @Override
@@ -178,10 +222,7 @@ public class CacheUtil {
                     outputStream.write(json.getBytes());
                     outputStream.close();
                     File file = context.getFileStreamPath(JSON_TRACKER);
-                    if (file != null) {
-                        Log.e(LOG, "Tracker cache written, path: " + file.getAbsolutePath() +
-                                " - length: " + file.length());
-                    }
+
                     if (cacheUtilListener != null)
                         cacheUtilListener.onDataCached();
                 } catch (IOException e) {
