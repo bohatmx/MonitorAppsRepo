@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.ProjectTaskAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
@@ -29,6 +28,9 @@ import java.util.List;
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 
+/**
+ * Fragment that manages a list of ProjectTaskDTO
+ */
 public class ProjectTaskListFragment extends Fragment implements PageFragment{
 
     ProjectDTO project;
