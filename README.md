@@ -13,3 +13,7 @@ Monitor Platform | Monitor Platform
 ------------ | -------------
 ![Alt text](/MonitorPlatform007/StaffApp/screenshots/d3.png?raw=true "Monitor App") | ![Alt text](/MonitorPlatform007/StaffApp/screenshots/d4.png?raw=true "Monitor App")
 
+Monitor Platform | Monitor Platform
+------------ | -------------
+![Alt text](/MonitorPlatform007/StaffApp/screenshots/d6.png?raw=true "Monitor App") | ![Alt text](/MonitorPlatform007/StaffApp/screenshots/d8.png?raw=true "Monitor App")
+
