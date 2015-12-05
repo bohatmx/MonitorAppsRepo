@@ -28,7 +28,7 @@ import java.util.List;
 import static android.view.GestureDetector.SimpleOnGestureListener;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment that allows user to swipe through a list of PhotoUploadDTO
  * Activities that contain this fragment must implement the
  * {@link PhotoListener} interface
  * to handle interaction events.

@@ -46,7 +46,7 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment that manages a list of Monitors assigned to a project
  * Activities that contain this fragment must implement the
  * {@link MonitorListListener} interface
  * to handle interaction events.

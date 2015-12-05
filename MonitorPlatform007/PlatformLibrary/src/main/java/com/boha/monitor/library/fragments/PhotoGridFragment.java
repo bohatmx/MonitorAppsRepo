@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.PhotoAdapter;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
@@ -19,6 +18,11 @@ import com.boha.platform.library.R;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.StatsSnapshot;
 
+/**
+ * Fragment that manages a grid of PhotoUploadDTO
+ * List of photos are received from calling Activity which
+ * must implement PhotoAdapter.PictureListener
+ */
 public class PhotoGridFragment extends Fragment implements PageFragment {
 
     ResponseDTO response;
@@ -83,7 +87,7 @@ public class PhotoGridFragment extends Fragment implements PageFragment {
             mListener = (PhotoAdapter.PictureListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement PhotoAdapter.PictureListener");
         }
     }
 

@@ -42,12 +42,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A fragment representing a taskStatusList of Items.
- * <project/>
- * Large screen devices (such as tablets) are supported by replacing the ListView
- * with a GridView.
- * <project/>
- * Activities containing this fragment MUST implement the ProjectSiteListListener
+ * A fragment that manages a list of Staff assigned to a project
+
+ * Activities containing this fragment MUST implement the CompanyStaffListListener
  * interface.
  */
 public class StaffListFragment extends Fragment
