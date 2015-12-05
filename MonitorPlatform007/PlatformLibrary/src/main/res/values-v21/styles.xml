@@ -107,6 +107,13 @@
         <item name="colorAccent">@color/blue_800</item>
     </style>
 
+    <style name="BrownTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/brown_500</item>
+        <item name="colorPrimaryDark">@color/brown_800</item>
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+    </style>
+
+
     <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
@@ -127,6 +134,9 @@
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
+    <style name="MyActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:titleTextStyle">@style/smallWhiteText</item>
+    </style>
     <style name="mgStyle">
         <item name="android:backgroundDimEnabled">true</item>
         <item name="android:cacheColorHint">@android:color/transparent</item>

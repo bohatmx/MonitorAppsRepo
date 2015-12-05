@@ -1706,9 +1706,8 @@ public class Util {
     }
 
     public static void animateSlideRight(View view, long duration) {
-        final ObjectAnimator an = ObjectAnimator.ofFloat(
+        final ObjectAnimator an = ObjectAnimator.ofInt(
                 view, "translate", 0, 100, 0, 100);
-        //an.setRepeatCount(ObjectAnimator.REVERSE);
         an.setDuration(duration);
         an.setInterpolator(new AccelerateDecelerateInterpolator());
         an.start();

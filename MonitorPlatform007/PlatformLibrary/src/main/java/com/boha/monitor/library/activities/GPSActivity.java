@@ -24,6 +24,16 @@ import com.google.android.gms.location.LocationServices;
 
 import java.util.Date;
 
+/**
+ * This activity manages the setting up of a project's
+ * GPS coordinates. This is done via the GPSScanFragment
+ * The activity expects to be handed a ProjectDTO object which is
+ * passed on the fragment.
+ * It controls the GoogleApiClient that is used for location requests
+ *
+ * @see GPSScanFragment
+ * @see ProjectDTO
+ */
 public class GPSActivity extends AppCompatActivity
         implements GPSScanFragment.GPSScanFragmentListener, LocationListener,
         GoogleApiClient.ConnectionCallbacks,
@@ -125,12 +135,15 @@ public class GPSActivity extends AppCompatActivity
         stopLocationUpdates();
     }
 
+    /**
+     * Open a map showing project location
+     * @param project
+     */
     @Override
-    public void onMapRequested( ProjectDTO projectSite) {
-        //todo - start mapActivity
-        if (projectSite.getLatitude() != null) {
+    public void onMapRequested( ProjectDTO project) {
+        if (project.getLatitude() != null) {
             Intent i = new Intent(getApplicationContext(), MonitorMapActivity.class);
-            i.putExtra("projectSite", projectSite);
+            i.putExtra("projectSite", project);
             startActivityForResult(i, MAP_REQUESTED);
         }
     }

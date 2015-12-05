@@ -103,10 +103,14 @@ public class GPSService extends Service implements LocationListener,
         if (gcmDevice == null) {
             return;
         }
-        if (mGoogleApiClient.isConnected()) {
-            mRequestingLocationUpdates = true;
-            LocationServices.FusedLocationApi.requestLocationUpdates(
-                    mGoogleApiClient, mLocationRequest, this);
+        try {
+            if (mGoogleApiClient.isConnected()) {
+                mRequestingLocationUpdates = true;
+                LocationServices.FusedLocationApi.requestLocationUpdates(
+                        mGoogleApiClient, mLocationRequest, this);
+            }
+        } catch (SecurityException e) {
+            Log.e(LOG, "startLocationUpdates: ", e);
         }
     }
 

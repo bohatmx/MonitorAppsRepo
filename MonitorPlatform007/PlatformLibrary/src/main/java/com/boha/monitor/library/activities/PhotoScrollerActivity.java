@@ -12,6 +12,8 @@ import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.fragments.PhotoScrollerFragment;
+import com.boha.monitor.library.util.MenuColorizer;
+import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
@@ -24,6 +26,7 @@ public class PhotoScrollerActivity extends AppCompatActivity implements PhotoScr
     Menu mMenu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeChooser.setTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_scroller);
         response = (ResponseDTO)getIntent().getSerializableExtra("photos");
@@ -45,6 +48,7 @@ public class PhotoScrollerActivity extends AppCompatActivity implements PhotoScr
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_photo_scroller, menu);
         mMenu = menu;
+        MenuColorizer.colorMenu(this,menu, R.color.white);
         return true;
     }
 

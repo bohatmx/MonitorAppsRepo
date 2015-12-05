@@ -329,7 +329,11 @@ public class ProjectMapActivity extends AppCompatActivity
                 } else {
                     LatLng pnt = markers.get(getMarkerIndex()).getPosition();
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pnt, 1.0f));
-                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(11.0f));
+                    if (projectList.size() == 1) {
+                        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15.0f));
+                    } else {
+                        googleMap.animateCamera(CameraUpdateFactory.zoomTo(11.0f));
+                    }
                 }
             }
         });
@@ -339,7 +343,8 @@ public class ProjectMapActivity extends AppCompatActivity
     Random rand = new Random(System.currentTimeMillis());
 
     private int getMarkerIndex() {
-        return rand.nextInt(markers.size() - 1);
+
+        return 0;
     }
 
     private void setOneProjectMarker() {

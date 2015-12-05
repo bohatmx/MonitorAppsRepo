@@ -201,9 +201,9 @@ public class MonApp extends Application implements Application.ActivityLifecycle
 
     @Override
     public void onActivityStarted(Activity activity) {
-        if (activity instanceof UpdateActivity) {
-            Log.d(LOG, "UpdateActivity onActivityStarted");
-        }
+            Log.d(LOG, "$$$$ onActivityStarted: " + activity.getPackageName()
+             + " " + activity.getComponentName());
+
     }
 
     @Override

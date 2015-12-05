@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -84,6 +83,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * This class is the main activity that receives control from
+ * the SignInActivity. It controls the sliding drawer menu and
+ * hosts a ViewPager that contains the UI fragments.
+ * Uses a GoogleApiClient object for location requirements
+ *
+ * @see ProjectListFragment
+ * @see MonitorListFragment
+ * @see StaffListFragment
+ */
 public class StaffMainActivity extends AppCompatActivity implements
         MonitorListFragment.MonitorListListener,
         StaffProfileFragment.StaffFragmentListener,
@@ -136,7 +145,9 @@ public class StaffMainActivity extends AppCompatActivity implements
 
         navImage = (ImageView) navigationView.findViewById(R.id.NAVHEADER_image);
         navText = (TextView) navigationView.findViewById(R.id.NAVHEADER_text);
-        navText.setText(SharedUtil.getCompanyStaff(ctx).getFullName());
+        if (navText != null) {
+            navText.setText(SharedUtil.getCompanyStaff(ctx).getFullName());
+        }
         try {
             Statics.setRobotoFontLight(getApplicationContext(), navText);
             Drawable globe = ContextCompat.getDrawable(ctx, R.drawable.ic_action_globe);
@@ -165,14 +176,14 @@ public class StaffMainActivity extends AppCompatActivity implements
         strip.setVisibility(View.GONE);
         strip.setBackgroundColor(themeDarkColor);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -781,7 +792,10 @@ public class StaffMainActivity extends AppCompatActivity implements
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Intent w = new Intent(activity,ProjectMapActivity.class);
-                            w.putExtra("project", project);
+                            ResponseDTO responseDTO = new ResponseDTO();
+                            responseDTO.setProjectList(new ArrayList<ProjectDTO>());
+                            responseDTO.getProjectList().add(project);
+                            w.putExtra("projects", responseDTO);
                             startActivity(w);
                         }
                     })

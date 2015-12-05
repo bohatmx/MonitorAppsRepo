@@ -27,19 +27,22 @@ import com.google.gson.Gson;
 
 import java.util.Date;
 
+/**
+ * This service listens for incoming Google Cloud Messaging messages.
+ * It creates and sends notifications based on the type of message received.
+ */
 public class StaffGCMListenerService extends GcmListenerService {
 
     private static final Gson GSON = new Gson();
     private static final String TAG = "StaGCMListenerService";
 
     /**
-     * Called when message is received.
+     * Called when a Google Cloud Messaging message is received.
      *
      * @param from SenderID of the sender.
      * @param data Data bundle containing message data as key/value pairs.
      *             For Set of keys use data.keySet().
      */
-    // [START receive_message]
     @Override
     public void onMessageReceived(String from, Bundle data) {
         Log.i(TAG,"######onMessageReceived, data: " + data.toString());
@@ -72,6 +75,11 @@ public class StaffGCMListenerService extends GcmListenerService {
         }
 
     }
+
+    /**
+     * Cache the received SimpleMessageDTO on the device
+     * @param message
+     */
     private void cacheMessage(final SimpleMessageDTO message) {
         if (message.getLocationTracker() != null) {
             sendNotification(message.getLocationTracker());
@@ -110,6 +118,12 @@ public class StaffGCMListenerService extends GcmListenerService {
             }
         });
     }
+
+    /**
+     * Build and send SimpleMessageDTO notification
+     * @see SimpleMessagingActivity
+     * @param simpleMessage
+     */
     private void sendNotification(SimpleMessageDTO simpleMessage) {
         Intent intent = new Intent(this, SimpleMessagingActivity.class);
         intent.putExtra("simpleMessage",simpleMessage);
@@ -141,6 +155,13 @@ public class StaffGCMListenerService extends GcmListenerService {
     }
 
     static final int LOCATION_REQUEST_CODE = 7763;
+
+    /**
+     * Build and send LocationTrackerDTO notification. Tapping
+     * this notification pops up the received location on a map
+     * @see MonitorMapActivity
+     * @param track
+     */
     private void sendNotification(LocationTrackerDTO track) {
         Intent intent = new Intent(this, MonitorMapActivity.class);
         intent.putExtra("track",track);

@@ -2,6 +2,7 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/apk/res-auto"
     tools:cardCornerRadius="0dp"
+    android:background="?attr/colorPrimaryDark"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -64,27 +65,6 @@
                 android:layout_height="wrap_content" />
         </RelativeLayout>
 
-        <RelativeLayout
-            android:layout_alignParentBottom="true"
-            android:padding="@dimen/mon_margin"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/PHOTO_arrowLeft"
-                android:src="@drawable/ic_arrow_down"
-                android:layout_alignParentLeft="true"
-                android:background="@color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <ImageView
-                android:id="@+id/PHOTO_arrowRight"
-                android:src="@drawable/ic_arrow_up"
-                android:layout_alignParentRight="true"
-                android:background="@color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </RelativeLayout>
 
     </RelativeLayout>
 

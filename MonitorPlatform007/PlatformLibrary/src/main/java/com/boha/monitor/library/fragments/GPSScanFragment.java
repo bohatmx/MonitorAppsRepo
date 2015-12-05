@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.RequestList;
@@ -30,7 +29,10 @@ import com.boha.platform.library.R;
 
 import java.text.DecimalFormat;
 
-
+/**
+ * GPSScanFragment manages the process of establishing the
+ * GPS coordinates for a project
+ */
 public class GPSScanFragment extends Fragment implements PageFragment {
 
     @Override
@@ -206,6 +208,11 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         seekBar.setProgress(5);
 
     }
+
+    /**
+     * Confirm the location of the project and send the coordinates
+     * to update the project on the backend
+     */
     private void confirmLocation() {
 
         AlertDialog.Builder d = new AlertDialog.Builder(getActivity());
@@ -227,6 +234,10 @@ public class GPSScanFragment extends Fragment implements PageFragment {
                 .show();
     }
 
+    /**
+     * Update the location coordinates of a project
+     * on the backend server
+     */
     private void sendGPSCoordinates() {
         final RequestDTO w = new RequestDTO(RequestDTO.CONFIRM_LOCATION);
         w.setProjectID(project.getProjectID());
@@ -279,6 +290,11 @@ public class GPSScanFragment extends Fragment implements PageFragment {
 
     int count;
 
+    /**
+     * Receive location from GoogleApiClient and update project
+     * @see com.boha.monitor.library.activities.GPSActivity
+     * @param location
+     */
     public void setLocation( Location location) {
         count++;
         txtCount.setText("" + count);

@@ -28,6 +28,11 @@ import com.google.gson.Gson;
 
 import java.util.Date;
 
+/**
+ * MonitorGCMListenerService listens for Google Cloud Messaging (GCM) messages
+ * and directs the response to the appropriate handler. Messages are cached on the
+ * device and where appropriate, a notification is set up and dispatched.
+ */
 public class MonitorGCMListenerService extends GcmListenerService {
 
     private static final Gson GSON = new Gson();
@@ -73,6 +78,12 @@ public class MonitorGCMListenerService extends GcmListenerService {
         }
 
     }
+
+    /**
+     * Cache incoming SimpleMessageDTO on the device and send
+     * notification when done.
+     * @param message
+     */
     private void cacheMessage(final SimpleMessageDTO message) {
         if (message.getLocationRequest() == Boolean.TRUE) {
             Log.d(TAG, "*** is location request received, calling GPSService: " + message.getStaffName());
@@ -116,6 +127,12 @@ public class MonitorGCMListenerService extends GcmListenerService {
             }
         });
     }
+
+    /**
+     * Build and send SimpleMessageDTO notification
+     * @see SimpleMessagingActivity
+     * @param simpleMessage
+     */
     private void sendNotification(SimpleMessageDTO simpleMessage) {
         Intent intent = new Intent(this, SimpleMessagingActivity.class);
         intent.putExtra("simpleMessage",simpleMessage);
@@ -147,6 +164,13 @@ public class MonitorGCMListenerService extends GcmListenerService {
     }
 
     static final int LOCATION_REQUEST_CODE = 7763;
+
+    /**
+     * Build and send LocationTrackerDTO notification
+     * This notification will display map when clicked
+     * @see MonitorMapActivity
+     * @param track
+     */
     private void sendNotification(LocationTrackerDTO track) {
         Intent intent = new Intent(this, MonitorMapActivity.class);
         intent.putExtra("track",track);

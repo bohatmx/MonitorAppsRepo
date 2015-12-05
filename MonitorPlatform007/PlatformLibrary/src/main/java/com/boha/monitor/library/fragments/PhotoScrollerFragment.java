@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,10 +41,10 @@ public class PhotoScrollerFragment extends Fragment implements View.OnTouchListe
     private static final String PHOTOS = "photos";
     TextView txtCap1, txtDate, txtNumberRed, txtNumberAmber,
             txtNumberGreen, txtNumberNone, txtName;
-    ImageView image, arrowUp, arrowDown;
+    ImageView image;
     int number, position;
     Context ctx;
-    View view;
+    View view, photoAndCaption;
     private List<PhotoUploadDTO> photoList;
     private PhotoUploadDTO photo;
     private PhotoListener mListener;
@@ -89,6 +90,8 @@ public class PhotoScrollerFragment extends Fragment implements View.OnTouchListe
                 position++;
                 if (position < photoList.size()) {
                     setPosition(position);
+                    photoAndCaption.startAnimation(AnimationUtils
+                            .loadAnimation(getActivity(), R.anim.slide_in_right));
                     return;
                 }
 
@@ -103,6 +106,8 @@ public class PhotoScrollerFragment extends Fragment implements View.OnTouchListe
                 position--;
                 if (position > -1) {
                     setPosition(position);
+                    photoAndCaption.startAnimation(AnimationUtils
+                            .loadAnimation(getActivity(), R.anim.slide_in_left));
                     return;
                 }
             }
@@ -115,8 +120,7 @@ public class PhotoScrollerFragment extends Fragment implements View.OnTouchListe
 
     void setFields() {
         image = (ImageView) view.findViewById(R.id.PHOTO_image);
-        arrowDown = (ImageView) view.findViewById(R.id.PHOTO_arrowLeft);
-        arrowUp = (ImageView) view.findViewById(R.id.PHOTO_arrowRight);
+        photoAndCaption = view.findViewById(R.id.PHOTO_top);
         txtCap1 = (TextView) view.findViewById(R.id.PHOTO_caption);
         txtNumberRed = (TextView) view.findViewById(R.id.PHOTO_numberRed);
         txtNumberAmber = (TextView) view.findViewById(R.id.PHOTO_numberAmber);
@@ -134,40 +138,6 @@ public class PhotoScrollerFragment extends Fragment implements View.OnTouchListe
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 gDetect.onTouchEvent(motionEvent);
                 return true;
-            }
-        });
-        //forward
-        arrowUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "onClick: arrowUp");
-                if (position == photoList.size() - 1) {
-                    Snackbar.make(image, "No more photographs this way", Snackbar.LENGTH_SHORT).show();
-                    return;
-                }
-                position++;
-                if (position < photoList.size()) {
-                    setPosition(position);
-                    return;
-                }
-
-            }
-        });
-        //back
-        arrowDown.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "onClick: arrowDown");
-                if (position == 0) {
-                    Snackbar.make(image, "No more photographs this way", Snackbar.LENGTH_SHORT).show();
-                    return;
-                }
-                position--;
-                if (position > -1) {
-                    setPosition(position);
-                    return;
-                }
-
             }
         });
 
@@ -271,28 +241,24 @@ public class PhotoScrollerFragment extends Fragment implements View.OnTouchListe
                 Picasso.with(getActivity())
                         .load(photoList.get(index).getUri())
                         .into(tempImage);
-                Log.d(TAG, "run: previous 1 cached");
             }
             index = position - 2;
             if (index > -1) {
                 Picasso.with(getActivity())
                         .load(photoList.get(index).getUri())
                         .into(tempImage);
-                Log.d(TAG, "run: previous 2 cached");
             }
             index = position + 1;
             if (index < photoList.size()) {
                 Picasso.with(getActivity())
                         .load(photoList.get(index).getUri())
                         .into(tempImage);
-                Log.d(TAG, "run: next 1 cached");
             }
             index = position + 2;
             if (index < photoList.size()) {
                 Picasso.with(getActivity())
                         .load(photoList.get(index).getUri())
                         .into(tempImage);
-                Log.d(TAG, "run: next 2 cached");
             }
         } catch (Exception e) {
             Log.e(TAG, "force cache failed: ", e);
@@ -300,7 +266,7 @@ public class PhotoScrollerFragment extends Fragment implements View.OnTouchListe
 
     }
 
-static final SimpleDateFormat df = new SimpleDateFormat("EEEE dd MMMM yyyy HH:mm");
+    static final SimpleDateFormat df = new SimpleDateFormat("EEEE dd MMMM yyyy HH:mm");
 
     public void setPhotoList(List<PhotoUploadDTO> photoList) {
         this.photoList = photoList;
@@ -329,78 +295,77 @@ static final SimpleDateFormat df = new SimpleDateFormat("EEEE dd MMMM yyyy HH:mm
         return true;
     }
 
-/**
- * This interface must be implemented by activities that contain this
- * fragment to allow an interaction in this fragment to be communicated
- * to the activity and potentially other fragments contained in that
- * activity.
- * <p/>
- * See the Android Training lesson <a href=
- * "http://developer.android.com/training/basics/fragments/communicating.html"
- * >Communicating with Other Fragments</a> for more information.
- */
-public interface PhotoListener {
-    void onPhotoClicked(PhotoUploadDTO photo);
-}
-
-public interface SwipeListener {
-    void onForwardSwipe();
-
-    void onBackwardSwipe();
-}
-private GestureDetectorCompat gDetect;
-
-public class GestureListener extends SimpleOnGestureListener {
-    private float flingMin = 100;
-    private float velocityMin = 100;
-    private SwipeListener listener;
-
-    public GestureListener(SwipeListener listener) {
-        this.listener = listener;
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface PhotoListener {
+        void onPhotoClicked(PhotoUploadDTO photo);
     }
 
-    @Override
-    public boolean onFling(MotionEvent event1, MotionEvent event2,
-                           float velocityX, float velocityY) {
-        boolean forward = false;
-        boolean backward = false;
-        //calculate the change in X position within the fling gesture
-        float horizontalDiff = event2.getX() - event1.getX();
-        float verticalDiff = event2.getY() - event1.getY();
+    public interface SwipeListener {
+        void onForwardSwipe();
 
-        float absHDiff = Math.abs(horizontalDiff);
-        float absVDiff = Math.abs(verticalDiff);
-        float absVelocityX = Math.abs(velocityX);
-        float absVelocityY = Math.abs(velocityY);
+        void onBackwardSwipe();
+    }
 
-        if (absHDiff > absVDiff && absHDiff > flingMin && absVelocityX > velocityMin) {
-            if (horizontalDiff > 0)
-                backward = true;
-            else
-                forward = true;
-        } else if (absVDiff > flingMin && absVelocityY > velocityMin) {
-            if (verticalDiff > 0)
-                backward = true;
-            else
-                forward = true;
-        }
-        if (forward) {
-            Log.d(TAG, "onFling: FORWARD");
-            listener.onForwardSwipe();
-        } else if (backward) {
-            Log.d(TAG, "onFling: BACKWARD");
-            listener.onBackwardSwipe();
+    private GestureDetectorCompat gDetect;
+
+    public class GestureListener extends SimpleOnGestureListener {
+        private float flingMin = 100;
+        private float velocityMin = 100;
+        private SwipeListener listener;
+
+        public GestureListener(SwipeListener listener) {
+            this.listener = listener;
         }
 
-        return true;
+        @Override
+        public boolean onFling(MotionEvent event1, MotionEvent event2,
+                               float velocityX, float velocityY) {
+            boolean forward = false;
+            boolean backward = false;
+            //calculate the change in X position within the fling gesture
+            float horizontalDiff = event2.getX() - event1.getX();
+            float verticalDiff = event2.getY() - event1.getY();
+
+            float absHDiff = Math.abs(horizontalDiff);
+            float absVDiff = Math.abs(verticalDiff);
+            float absVelocityX = Math.abs(velocityX);
+            float absVelocityY = Math.abs(velocityY);
+
+            if (absHDiff > absVDiff && absHDiff > flingMin && absVelocityX > velocityMin) {
+                if (horizontalDiff > 0)
+                    backward = true;
+                else
+                    forward = true;
+            } else if (absVDiff > flingMin && absVelocityY > velocityMin) {
+                if (verticalDiff > 0)
+                    backward = true;
+                else
+                    forward = true;
+            }
+            if (forward) {
+                listener.onForwardSwipe();
+            } else if (backward) {
+                listener.onBackwardSwipe();
+            }
+
+            return true;
+        }
+
+        @Override
+        public boolean onDown(MotionEvent event) {
+            return true;
+        }
+
     }
 
-    @Override
-    public boolean onDown(MotionEvent event) {
-        return true;
-    }
-
-}
-
-private static final String TAG = "PhotoScrollerFragment";
+    private static final String TAG = "PhotoScrollerFragment";
 }

@@ -306,11 +306,11 @@ public class SignInActivity extends AppCompatActivity {
     public void getEmail() {
         AccountManager am = AccountManager.get(getApplicationContext());
         Account[] accts = am.getAccounts();
-        if (accts.length == 0) {
-            showErrorToast(ctx, getString(R.string.no_accounts));
-            finish();
-            return;
-        }
+//        if (accts.length == 0) {
+//            showErrorToast(ctx, getString(R.string.no_accounts));
+//            finish();
+//            return;
+//        }
         if (accts != null) {
             tarList.add(ctx.getResources().getString(R.string.select_email));
             for (int i = 0; i < accts.length; i++) {

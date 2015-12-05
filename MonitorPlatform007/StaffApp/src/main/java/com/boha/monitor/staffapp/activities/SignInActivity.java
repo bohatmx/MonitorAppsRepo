@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,6 +40,12 @@ import java.util.ArrayList;
 import static com.boha.monitor.library.util.Util.showErrorToast;
 import static com.boha.monitor.library.util.Util.showToast;
 
+/**
+ * This class manages the Staff sign-in process. Staff have to be
+ * pre-registered and must exist on the backend database.
+ * The process includes registering the device to Google Cloud Messaging as well
+ * as collecting the user's email address and supplied PIN.
+ */
 public class SignInActivity extends AppCompatActivity {
 
     TextView txtApp, txtEmail, label;
@@ -61,16 +68,22 @@ public class SignInActivity extends AppCompatActivity {
         banner = (ImageView) findViewById(R.id.SI_banner);
         setFields();
         banner.setImageDrawable(Util.getRandomBackgroundImage(ctx));
-        getEmail();
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
         Log.d(LOG, "#################### onResume");
+        getEmail();
         checkVirgin();
     }
 
+    /**
+     * Check whether this user is already signed in. If the user is
+     * signed in, the method passes control to
+     * @see StaffMainActivity
+     */
     private void checkVirgin() {
 
         StaffDTO dto = SharedUtil.getCompanyStaff(ctx);
@@ -87,11 +100,14 @@ public class SignInActivity extends AppCompatActivity {
             finish();
             return;
         }
-
+        Log.i(LOG, "checkVirgin: waiting for sign in ...");
         registerGCMDevice();
     }
 
-    private void registerGCMDevice() {
+    /**
+     * Register device to Google Cloud Messaging
+     */
+    public void registerGCMDevice() {
 
         Snackbar.make(btnSave, "Just a second, checking services ...", Snackbar.LENGTH_LONG)
                 .setAction("CLOSE", null)
@@ -128,7 +144,13 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
 
-    private void sendSignIn() {
+    /**
+     * Send staff email and PIN to the backend.
+     * The device details are sent with the sign in  request
+     * @see GcmDeviceDTO
+     * On successful return, cache the data on the device
+     */
+    public void sendSignIn() {
         if (ePin.getText().toString().isEmpty()) {
             showErrorToast(ctx, "Enter PIN");
             return;
@@ -217,7 +239,7 @@ public class SignInActivity extends AppCompatActivity {
 
     }
 
-    private void setFields() {
+    public void setFields() {
         ePin = (EditText) findViewById(R.id.SI_pin);
         editEmail = (EditText) findViewById(R.id.SI_editEmail);
         txtEmail = (TextView) findViewById(R.id.SI_txtEmail);
@@ -227,6 +249,14 @@ public class SignInActivity extends AppCompatActivity {
         txtApp.setText("Company Staff");
         btnSave.setText("Sign In");
         btnSave.setEnabled(false);
+
+        editEmail.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                btnSave.setEnabled(true);
+                return true;
+            }
+        });
 
         txtEmail.setOnClickListener(new View.OnClickListener() {
             @Override
