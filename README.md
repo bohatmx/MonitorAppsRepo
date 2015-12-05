@@ -5,7 +5,7 @@ This repository contains the source code for Android apps that are the face of t
 
 The Monitor app collects project data: gps location, status data and images; this data is stored in a backend database in the cloud and images are stored on Cloudinary's CDN. The Staff app manages a team of Monitors that are assigned to projects and works with the project status data and images collected by the teams.
 
-## Some random screenshots
+#### Some random screenshots
 
 Monitor Platform | Monitor Platform
 ------------ | -------------
@@ -17,7 +17,7 @@ Monitor Platform | Monitor Platform
 
 Monitor Platform | Monitor Platform
 ------------ | -------------
-![Alt text](/MonitorPlatform007/StaffApp/screenshots/d6.png?raw=true "Monitor App") | ![Alt text](/MonitorPlatform007/StaffApp/screenshots/d8.png?raw=true "Monitor App")
+![Alt text](/MonitorPlatform007/StaffApp/screenshots/d5.png?raw=true "Monitor App") | ![Alt text](/MonitorPlatform007/StaffApp/screenshots/d8.png?raw=true "Monitor App")
 
 Monitor Platform | Monitor Platform
 ------------ | -------------
