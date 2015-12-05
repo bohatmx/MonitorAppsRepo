@@ -80,6 +80,10 @@ import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ * Grab bag of static helper methods for all sorts of things.
+ * Mostly, the method names speak for themselves
+ */
 public class Util {
     @SuppressLint("NewApi")
     public static String getRealPathFromURI_API19(Context context, Uri uri){
@@ -317,6 +321,14 @@ public class Util {
         }, delay);
     }
 
+    /**
+     * Create custom Action Bar
+     * @param ctx
+     * @param actionBar
+     * @param text
+     * @param image
+     * @return ImageView
+     */
     public static ImageView setCustomActionBar(Context ctx,
                                                ActionBar actionBar, String text, Drawable image) {
         actionBar.setDisplayShowCustomEnabled(true);

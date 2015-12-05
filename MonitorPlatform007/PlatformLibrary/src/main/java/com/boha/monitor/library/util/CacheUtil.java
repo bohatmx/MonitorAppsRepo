@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Utility class that hosts helper methods to cache and retrieve on-device data.
+ * Some methods need CacheUtilListener to return asynchronous response to caller.
+ *
  * Created by aubreyM on 2014/06/30.
  */
 public class CacheUtil {

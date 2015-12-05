@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * This class manages the image upload to the Cloudinary CDN.
+ * The upload runs in a Thread and returns its response via CDNUploaderListener
+ *
  * Created by aubreyM on 15/06/08.
  */
 public class CDNUploader {
@@ -37,6 +40,16 @@ public class CDNUploader {
         return sb.toString();
     }
 
+    /**
+     * Upload photo to CDN (Cloudinary at this time). On return of the CDN response, a call is made
+     * to the backend to add the metadata of the photo to the backend database
+     *
+     * @see PhotoUploadDTO
+     * @see com.boha.monitor.library.util.CDNUploader.CDNUploaderListener
+     * @param ctx
+     * @param dto
+     * @param uploaderListener
+     */
     public static void uploadFile(final Context ctx, final PhotoUploadDTO dto, CDNUploaderListener uploaderListener) {
         mListener = uploaderListener;
         Log.d(LOG,"##### starting CDNUploader uploadFile: " + dto.getThumbFilePath());

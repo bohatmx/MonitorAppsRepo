@@ -53,6 +53,13 @@ import java.util.HashMap;
                 ReportField.LOGCAT},
         socketTimeout = 10000
 )
+/**
+ * Main Application for Monitor Apps. Sets up a number of services and capabilities:
+ * Google Analytics
+ * Picasso
+ * ACRA crash reporting //todo replace with something else
+ * Start device location tracker alarm
+ */
 public class MonApp extends Application implements Application.ActivityLifecycleCallbacks {
     RequestQueue requestQueue;
     static final String PROPERTY_ID = "UA-53661372-2";

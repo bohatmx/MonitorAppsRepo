@@ -7,6 +7,9 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 
+/**
+ *  Check status and type of active network on the device
+ */
 public class WebCheck {
     static ConnectivityManager connectivity;
 
@@ -20,6 +23,11 @@ public class WebCheck {
         System.out.println(res);
     }
 
+    /**
+     * Check availability and connectedness of the network
+     * @param ctx
+     * @return
+     */
     public static WebCheckResult checkNetworkAvailability(Context ctx) {
         if (connectivity == null) {
             connectivity = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);

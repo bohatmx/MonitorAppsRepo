@@ -29,7 +29,8 @@ import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 
 /**
- * Fragment that manages a list of ProjectTaskDTO
+ * Fragment that builds and manages a list of ProjectTasks. User selects a task
+ * and notifies the listener via onStatusUpdateRequested(projectTask,position);
  */
 public class ProjectTaskListFragment extends Fragment implements PageFragment{
 
@@ -140,6 +141,10 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
         Log.d(LOG,"#### onResume");
         buildList();
     }
+
+    /**
+     * Create new adapter to manage projectTaskList and set it to the RecyclerView
+     */
     private void setList() {
         Log.i(LOG,"+++ setList");
         txtCount.setText("" + projectTaskList.size());

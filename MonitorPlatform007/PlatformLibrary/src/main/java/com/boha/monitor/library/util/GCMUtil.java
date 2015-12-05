@@ -1,12 +1,5 @@
 package com.boha.monitor.library.util;
 
-/**
- * Created by aubreyM on 2014/10/12.
- * <p/>
- * Created by aubreyM on 2014/05/11.
- * <p/>
- * Created by aubreyM on 2014/05/11.
- */
 
 /**
  * Created by aubreyM on 2014/05/11.
@@ -22,7 +15,9 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import java.io.IOException;
 
-
+/**
+ * Handle registration of device to Google Cloud Messaging
+ */
 public class GCMUtil {
     public interface GCMUtilListener {
         public void onDeviceRegistered(String id);
@@ -37,6 +32,14 @@ public class GCMUtil {
     static GoogleCloudMessaging gcm;
 
 
+    /**
+     * Start device registration to Google Cloud Messaging
+     * Receive GCM registration string and complete GCM registration by calling back-end
+     *
+     * @see com.boha.monitor.library.util.GCMUtil.GCMUtilListener
+     * @param context
+     * @param listener
+     */
     public static void startGCMRegistration(final Context context, final GCMUtilListener listener) {
         ctx = context;
         gcmUtilListener = listener;

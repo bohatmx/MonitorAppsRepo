@@ -242,6 +242,14 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
     }
 
+    /**
+     * The camera app returns control to PictureActivity.
+     * If the result code is OK, AsyncTask to process the image is started
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(final int requestCode, final int resultCode,
                                  final Intent data) {
@@ -521,6 +529,11 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     class PhotoTask extends AsyncTask<Void, Void, Integer> {
 
 
+        /**
+         * Scale the image to required size and delete the larger one
+         * @param voids
+         * @return
+         */
         @Override
         protected Integer doInBackground(Void... voids) {
             Log.w(LOG, "## PhotoTask starting doInBackground, file length: " + photoFile.length());
@@ -600,6 +613,9 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     RecyclerView mRecyclerView;
     List<PhotoUploadDTO> photoList;
 
+    /**
+     * Add processed image to list for display in grid
+     */
     private void addImageToPhotoList() {
         Log.i(LOG, "## addImageToPhotoList");
         if (photoList == null) {

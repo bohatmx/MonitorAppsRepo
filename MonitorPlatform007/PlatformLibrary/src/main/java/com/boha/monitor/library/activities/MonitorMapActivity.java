@@ -52,6 +52,12 @@ import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ * Displays a map showing the location(s) passed to the activity.
+ * Tapping on the location icons on the maps pops up a list of possible actions
+ *
+ * @see LocationTrackerDTO
+ */
 public class MonitorMapActivity extends AppCompatActivity
         implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -159,6 +165,9 @@ public class MonitorMapActivity extends AppCompatActivity
     Activity activity;
     static final SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy HH:mm");
 
+    /**
+     * Prepare the map for display
+     */
     private void setGoogleMap() {
         activity = this;
         googleMap.setMyLocationEnabled(true);
@@ -197,6 +206,9 @@ public class MonitorMapActivity extends AppCompatActivity
     DisplayMetrics displayMetrics;
 
 
+    /**
+     * Set location markers on the Google map
+     */
     private void setLocationMarkers() {
         googleMap.clear();
         int index = 0, count = 0;

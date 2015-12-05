@@ -1,5 +1,8 @@
 package com.boha.monitor.library.util;
 
+/**
+ * Result of WebCheck. Properties hold result of calling WebCheck.checkNetworkAvailability
+ */
 public class WebCheckResult {
 
 	private boolean wifiAvailable, 
