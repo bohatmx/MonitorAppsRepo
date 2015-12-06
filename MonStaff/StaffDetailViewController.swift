@@ -1,15 +1,18 @@
 //
-//  ViewController.swift
+//  StaffDetailViewController.swift
 //  MonStaff
 //
-//  Created by Aubrey Malabie on 2015/11/11.
+//  Created by Aubrey Malabie on 2015/11/15.
 //  Copyright © 2015 Aubrey Malabie. All rights reserved.
 //
 
 import UIKit
 
-class ViewController: UIViewController {
+class StaffDetailViewController: UIViewController {
 
+    // MARK: Properties
+    var staff: StaffDTO?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 

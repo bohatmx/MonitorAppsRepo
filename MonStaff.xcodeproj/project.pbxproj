@@ -45,12 +45,20 @@
 		7D184F571BEDDFFD007E02D5 /* SubTaskDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F371BEDDFFD007E02D5 /* SubTaskDTO.swift */; settings = {ASSET_TAGS = (); }; };
 		7D184F581BEDDFFD007E02D5 /* TaskTypeDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F381BEDDFFD007E02D5 /* TaskTypeDTO.swift */; settings = {ASSET_TAGS = (); }; };
 		7D184F591BEDDFFD007E02D5 /* VideoUploadDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D184F391BEDDFFD007E02D5 /* VideoUploadDTO.swift */; settings = {ASSET_TAGS = (); }; };
-		7D5D0BFC1BF1191D004B8C50 /* libchilkatIos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D5D0BFB1BF1191D004B8C50 /* libchilkatIos.a */; };
-		7D5D0BFE1BF1193B004B8C50 /* libchilkatSimIos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D5D0BFD1BF1193B004B8C50 /* libchilkatSimIos.a */; };
-		7D5D0C001BF11BA1004B8C50 /* MyZip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5D0BFF1BF11BA1004B8C50 /* MyZip.swift */; settings = {ASSET_TAGS = (); }; };
-		7D7314F71BF2CCF600924C4D /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7D7314F51BF2CCF600924C4D /* DataModel.xcdatamodeld */; settings = {ASSET_TAGS = (); }; };
-		7D7315841BF2D2ED00924C4D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7315831BF2D2ED00924C4D /* ViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		7D7315861BF2D39D00924C4D /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7315851BF2D39D00924C4D /* SignInViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		7D73160C1BF6FAFC00924C4D /* MonitorTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D73160B1BF6FAFC00924C4D /* MonitorTableViewCell.swift */; settings = {ASSET_TAGS = (); }; };
+		7D73160E1BF70A2F00924C4D /* MyTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D73160D1BF70A2F00924C4D /* MyTabBarController.swift */; settings = {ASSET_TAGS = (); }; };
+		7D7316101BF7DC4E00924C4D /* MonitorDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D73160F1BF7DC4E00924C4D /* MonitorDetailViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		7D7316121BF7FA8800924C4D /* StaffTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7316111BF7FA8800924C4D /* StaffTableViewCell.swift */; settings = {ASSET_TAGS = (); }; };
+		7D7316141BF7FE0C00924C4D /* StaffDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7316131BF7FE0C00924C4D /* StaffDetailViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		7D7316241BF80E7000924C4D /* RAMBounceAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7316191BF80E7000924C4D /* RAMBounceAnimation.swift */; settings = {ASSET_TAGS = (); }; };
+		7D7316251BF80E7000924C4D /* RAMFrameItemAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D73161B1BF80E7000924C4D /* RAMFrameItemAnimation.swift */; settings = {ASSET_TAGS = (); }; };
+		7D7316261BF80E7000924C4D /* RAMFumeAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D73161D1BF80E7000924C4D /* RAMFumeAnimation.swift */; settings = {ASSET_TAGS = (); }; };
+		7D7316271BF80E7000924C4D /* RAMRotationAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D73161F1BF80E7000924C4D /* RAMRotationAnimation.swift */; settings = {ASSET_TAGS = (); }; };
+		7D7316281BF80E7000924C4D /* RAMTransitionItemAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7316211BF80E7000924C4D /* RAMTransitionItemAnimation.swift */; settings = {ASSET_TAGS = (); }; };
+		7D7316291BF80E7000924C4D /* RAMAnimatedTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7316221BF80E7000924C4D /* RAMAnimatedTabBarController.swift */; settings = {ASSET_TAGS = (); }; };
+		7D73162A1BF80E7000924C4D /* RAMItemAnimationProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7316231BF80E7000924C4D /* RAMItemAnimationProtocol.swift */; settings = {ASSET_TAGS = (); }; };
+		7DC2FCED1BFEEADC00010A42 /* EmergencyDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC2FCEC1BFEEADC00010A42 /* EmergencyDTO.swift */; settings = {ASSET_TAGS = (); }; };
 		7DEA8A291BEDE5F0003D6DCC /* Comms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A231BEDE5F0003D6DCC /* Comms.swift */; settings = {ASSET_TAGS = (); }; };
 		7DEA8A2A1BEDE5F0003D6DCC /* Mappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A241BEDE5F0003D6DCC /* Mappable.swift */; settings = {ASSET_TAGS = (); }; };
 		7DEA8A2B1BEDE5F0003D6DCC /* DataParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA8A251BEDE5F0003D6DCC /* DataParser.swift */; settings = {ASSET_TAGS = (); }; };
@@ -95,7 +103,7 @@
 /* Begin PBXFileReference section */
 		186396D97B8E8D3A0523E322 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		6CB0D2CEF77ECC65754CF582 /* Pods_MonStaffTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MonStaffTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7D0734D91BEDE29200E9EF46 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		7D0734D91BEDE29200E9EF46 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		7D184EF61BEDDE24007E02D5 /* MonStaff.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MonStaff.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D184EF91BEDDE24007E02D5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7D184EFE1BEDDE24007E02D5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -139,11 +147,21 @@
 		7D184F391BEDDFFD007E02D5 /* VideoUploadDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VideoUploadDTO.swift; path = "../../xcode-projects/Tester2/Tester2/VideoUploadDTO.swift"; sourceTree = "<group>"; };
 		7D5D0BFB1BF1191D004B8C50 /* libchilkatIos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libchilkatIos.a; path = "../xcode-projects/chilkat-9.5.0-ios9/lib/libchilkatIos.a"; sourceTree = "<group>"; };
 		7D5D0BFD1BF1193B004B8C50 /* libchilkatSimIos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libchilkatSimIos.a; path = "../xcode-projects/chilkat-9.5.0-ios9/lib/libchilkatSimIos.a"; sourceTree = "<group>"; };
-		7D5D0BFF1BF11BA1004B8C50 /* MyZip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyZip.swift; sourceTree = "<group>"; };
 		7D5D0C011BF127F5004B8C50 /* MonStaff-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MonStaff-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
-		7D7314F61BF2CCF600924C4D /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
-		7D7315831BF2D2ED00924C4D /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		7D7315851BF2D39D00924C4D /* SignInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
+		7D73160B1BF6FAFC00924C4D /* MonitorTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonitorTableViewCell.swift; sourceTree = "<group>"; };
+		7D73160D1BF70A2F00924C4D /* MyTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyTabBarController.swift; sourceTree = "<group>"; };
+		7D73160F1BF7DC4E00924C4D /* MonitorDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonitorDetailViewController.swift; sourceTree = "<group>"; };
+		7D7316111BF7FA8800924C4D /* StaffTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaffTableViewCell.swift; sourceTree = "<group>"; };
+		7D7316131BF7FE0C00924C4D /* StaffDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaffDetailViewController.swift; sourceTree = "<group>"; };
+		7D7316191BF80E7000924C4D /* RAMBounceAnimation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAMBounceAnimation.swift; sourceTree = "<group>"; };
+		7D73161B1BF80E7000924C4D /* RAMFrameItemAnimation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAMFrameItemAnimation.swift; sourceTree = "<group>"; };
+		7D73161D1BF80E7000924C4D /* RAMFumeAnimation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAMFumeAnimation.swift; sourceTree = "<group>"; };
+		7D73161F1BF80E7000924C4D /* RAMRotationAnimation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAMRotationAnimation.swift; sourceTree = "<group>"; };
+		7D7316211BF80E7000924C4D /* RAMTransitionItemAnimation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAMTransitionItemAnimation.swift; sourceTree = "<group>"; };
+		7D7316221BF80E7000924C4D /* RAMAnimatedTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAMAnimatedTabBarController.swift; sourceTree = "<group>"; };
+		7D7316231BF80E7000924C4D /* RAMItemAnimationProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAMItemAnimationProtocol.swift; sourceTree = "<group>"; };
+		7DC2FCEC1BFEEADC00010A42 /* EmergencyDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmergencyDTO.swift; sourceTree = "<group>"; };
 		7DEA8A231BEDE5F0003D6DCC /* Comms.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Comms.swift; path = "../../xcode-projects/Tester2/Tester2/Comms.swift"; sourceTree = "<group>"; };
 		7DEA8A241BEDE5F0003D6DCC /* Mappable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Mappable.swift; path = "../../xcode-projects/Tester2/Tester2/Mappable.swift"; sourceTree = "<group>"; };
 		7DEA8A251BEDE5F0003D6DCC /* DataParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DataParser.swift; path = "../../xcode-projects/Tester2/Tester2/DataParser.swift"; sourceTree = "<group>"; };
@@ -182,8 +200,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7D5D0BFE1BF1193B004B8C50 /* libchilkatSimIos.a in Frameworks */,
-				7D5D0BFC1BF1191D004B8C50 /* libchilkatIos.a in Frameworks */,
 				7DEA8A651BEDF782003D6DCC /* dylib1.o in Frameworks */,
 				7DEA8A331BEDE899003D6DCC /* libz.1.1.3.tbd in Frameworks */,
 				7DEA8A341BEDE899003D6DCC /* libz.1.2.5.tbd in Frameworks */,
@@ -236,6 +252,7 @@
 		7D184EED1BEDDE24007E02D5 = {
 			isa = PBXGroup;
 			children = (
+				7D7316151BF80E0400924C4D /* RAMAnimated */,
 				7D0734D91BEDE29200E9EF46 /* Podfile */,
 				7D184EF81BEDDE24007E02D5 /* MonStaff */,
 				7D184F0D1BEDDE24007E02D5 /* MonStaffTests */,
@@ -257,16 +274,16 @@
 		7D184EF81BEDDE24007E02D5 /* MonStaff */ = {
 			isa = PBXGroup;
 			children = (
+				7D184EF91BEDDE24007E02D5 /* AppDelegate.swift */,
+				7D184F001BEDDE24007E02D5 /* Assets.xcassets */,
+				7D184F191BEDDF6D007E02D5 /* Data */,
+				7D184F051BEDDE24007E02D5 /* Info.plist */,
+				7D184F021BEDDE24007E02D5 /* LaunchScreen.storyboard */,
+				7D184EFD1BEDDE24007E02D5 /* Main.storyboard */,
 				7D5D0C011BF127F5004B8C50 /* MonStaff-Bridging-Header.h */,
 				7DEA8A7B1BEE6119003D6DCC /* TableViewCells */,
-				7DEA8A6A1BEE4346003D6DCC /* ViewControllers */,
 				7DEA8A221BEDE58A003D6DCC /* Utilities */,
-				7D184F191BEDDF6D007E02D5 /* Data */,
-				7D184EF91BEDDE24007E02D5 /* AppDelegate.swift */,
-				7D184EFD1BEDDE24007E02D5 /* Main.storyboard */,
-				7D184F001BEDDE24007E02D5 /* Assets.xcassets */,
-				7D184F021BEDDE24007E02D5 /* LaunchScreen.storyboard */,
-				7D184F051BEDDE24007E02D5 /* Info.plist */,
+				7DEA8A6A1BEE4346003D6DCC /* ViewControllers */,
 			);
 			path = MonStaff;
 			sourceTree = "<group>";
@@ -286,9 +303,6 @@
 				7DEA8A371BEDEC6D003D6DCC /* ChatDTO.swift */,
 				7DEA8A381BEDEC6D003D6DCC /* ChatMemberDTO.swift */,
 				7DEA8A391BEDEC6D003D6DCC /* ChatMessageDTO.swift */,
-				7D184F1A1BEDDFFD007E02D5 /* ProjectTaskStatusDTO.swift */,
-				7D184F1B1BEDDFFD007E02D5 /* TaskDTO.swift */,
-				7D184F1C1BEDDFFD007E02D5 /* TaskStatusTypeDTO.swift */,
 				7D184F1D1BEDDFFD007E02D5 /* CityDTO.swift */,
 				7D184F1E1BEDDFFD007E02D5 /* CompanyDTO.swift */,
 				7D184F1F1BEDDFFD007E02D5 /* CountryDTO.swift */,
@@ -296,6 +310,7 @@
 				7D184F211BEDDFFD007E02D5 /* ErrorStoreDTO.swift */,
 				7D184F221BEDDFFD007E02D5 /* GcmDeviceDTO.swift */,
 				7D184F231BEDDFFD007E02D5 /* LocationTrackerDTO.swift */,
+				7DEA8A821BEF13FC003D6DCC /* MapMarker.swift */,
 				7D184F241BEDDFFD007E02D5 /* MonitorDTO.swift */,
 				7D184F251BEDDFFD007E02D5 /* MonitorProjectDTO.swift */,
 				7D184F261BEDDFFD007E02D5 /* MonitorTradeDTO.swift */,
@@ -307,6 +322,7 @@
 				7D184F2C1BEDDFFD007E02D5 /* ProjectStatusDTO.swift */,
 				7D184F2D1BEDDFFD007E02D5 /* ProjectStatusTypeDTO.swift */,
 				7D184F2E1BEDDFFD007E02D5 /* ProjectTaskDTO.swift */,
+				7D184F1A1BEDDFFD007E02D5 /* ProjectTaskStatusDTO.swift */,
 				7D184F2F1BEDDFFD007E02D5 /* ProvinceDTO.swift */,
 				7D184F301BEDDFFD007E02D5 /* RequestDTO.swift */,
 				7D184F311BEDDFFD007E02D5 /* RequestList.swift */,
@@ -316,12 +332,84 @@
 				7D184F351BEDDFFD007E02D5 /* StaffProjectDTO.swift */,
 				7D184F361BEDDFFD007E02D5 /* StaffTypeDTO.swift */,
 				7D184F371BEDDFFD007E02D5 /* SubTaskDTO.swift */,
+				7D184F1B1BEDDFFD007E02D5 /* TaskDTO.swift */,
+				7D184F1C1BEDDFFD007E02D5 /* TaskStatusTypeDTO.swift */,
 				7D184F381BEDDFFD007E02D5 /* TaskTypeDTO.swift */,
 				7D184F391BEDDFFD007E02D5 /* VideoUploadDTO.swift */,
-				7DEA8A821BEF13FC003D6DCC /* MapMarker.swift */,
-				7D7314F51BF2CCF600924C4D /* DataModel.xcdatamodeld */,
+				7DC2FCEC1BFEEADC00010A42 /* EmergencyDTO.swift */,
 			);
 			name = Data;
+			sourceTree = "<group>";
+		};
+		7D7316151BF80E0400924C4D /* RAMAnimated */ = {
+			isa = PBXGroup;
+			children = (
+				7D7316161BF80E7000924C4D /* RAMAnimatedTabBarController */,
+			);
+			name = RAMAnimated;
+			sourceTree = "<group>";
+		};
+		7D7316161BF80E7000924C4D /* RAMAnimatedTabBarController */ = {
+			isa = PBXGroup;
+			children = (
+				7D7316171BF80E7000924C4D /* Animations */,
+				7D7316221BF80E7000924C4D /* RAMAnimatedTabBarController.swift */,
+				7D7316231BF80E7000924C4D /* RAMItemAnimationProtocol.swift */,
+			);
+			name = RAMAnimatedTabBarController;
+			path = "../xcode-projects/animated-tab-bar-master/RAMAnimatedTabBarController";
+			sourceTree = "<group>";
+		};
+		7D7316171BF80E7000924C4D /* Animations */ = {
+			isa = PBXGroup;
+			children = (
+				7D7316181BF80E7000924C4D /* BounceAnimation */,
+				7D73161A1BF80E7000924C4D /* FrameAnimation */,
+				7D73161C1BF80E7000924C4D /* FumeAnimation */,
+				7D73161E1BF80E7000924C4D /* RotationAnimation */,
+				7D7316201BF80E7000924C4D /* TransitionAniamtions */,
+			);
+			path = Animations;
+			sourceTree = "<group>";
+		};
+		7D7316181BF80E7000924C4D /* BounceAnimation */ = {
+			isa = PBXGroup;
+			children = (
+				7D7316191BF80E7000924C4D /* RAMBounceAnimation.swift */,
+			);
+			path = BounceAnimation;
+			sourceTree = "<group>";
+		};
+		7D73161A1BF80E7000924C4D /* FrameAnimation */ = {
+			isa = PBXGroup;
+			children = (
+				7D73161B1BF80E7000924C4D /* RAMFrameItemAnimation.swift */,
+			);
+			path = FrameAnimation;
+			sourceTree = "<group>";
+		};
+		7D73161C1BF80E7000924C4D /* FumeAnimation */ = {
+			isa = PBXGroup;
+			children = (
+				7D73161D1BF80E7000924C4D /* RAMFumeAnimation.swift */,
+			);
+			path = FumeAnimation;
+			sourceTree = "<group>";
+		};
+		7D73161E1BF80E7000924C4D /* RotationAnimation */ = {
+			isa = PBXGroup;
+			children = (
+				7D73161F1BF80E7000924C4D /* RAMRotationAnimation.swift */,
+			);
+			path = RotationAnimation;
+			sourceTree = "<group>";
+		};
+		7D7316201BF80E7000924C4D /* TransitionAniamtions */ = {
+			isa = PBXGroup;
+			children = (
+				7D7316211BF80E7000924C4D /* RAMTransitionItemAnimation.swift */,
+			);
+			path = TransitionAniamtions;
 			sourceTree = "<group>";
 		};
 		7DEA8A221BEDE58A003D6DCC /* Utilities */ = {
@@ -334,7 +422,6 @@
 				7DEA8A271BEDE5F0003D6DCC /* Util.swift */,
 				7DEA8A281BEDE5F0003D6DCC /* StringBuilder.swift */,
 				7DEA8A841BEF19FE003D6DCC /* VCMapView.swift */,
-				7D5D0BFF1BF11BA1004B8C50 /* MyZip.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -342,17 +429,21 @@
 		7DEA8A6A1BEE4346003D6DCC /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				7DEA8A6F1BEE4EEB003D6DCC /* ProfileViewController.swift */,
-				7DEA8A711BEE53BA003D6DCC /* DashboardViewController.swift */,
-				7DEA8A731BEE53D6003D6DCC /* MonitorSummaryViewController.swift */,
-				7DEA8A751BEE5608003D6DCC /* ProjectTableTableViewController.swift */,
-				7DEA8A771BEE563C003D6DCC /* MonitorTableViewController.swift */,
-				7DEA8A791BEE5654003D6DCC /* StaffTableViewController.swift */,
-				7DEA8A801BEF0A5B003D6DCC /* ProjectMapViewController.swift */,
-				7DEA8A921BEFA6CA003D6DCC /* PicturesViewController.swift */,
 				7DEA8A941BEFA93C003D6DCC /* CollectionViewCell.swift */,
-				7D7315831BF2D2ED00924C4D /* ViewController.swift */,
+				7DEA8A711BEE53BA003D6DCC /* DashboardViewController.swift */,
+				7D73160F1BF7DC4E00924C4D /* MonitorDetailViewController.swift */,
+				7DEA8A731BEE53D6003D6DCC /* MonitorSummaryViewController.swift */,
+				7D73160B1BF6FAFC00924C4D /* MonitorTableViewCell.swift */,
+				7DEA8A771BEE563C003D6DCC /* MonitorTableViewController.swift */,
+				7D73160D1BF70A2F00924C4D /* MyTabBarController.swift */,
+				7DEA8A921BEFA6CA003D6DCC /* PicturesViewController.swift */,
+				7DEA8A6F1BEE4EEB003D6DCC /* ProfileViewController.swift */,
+				7DEA8A801BEF0A5B003D6DCC /* ProjectMapViewController.swift */,
+				7DEA8A751BEE5608003D6DCC /* ProjectTableTableViewController.swift */,
 				7D7315851BF2D39D00924C4D /* SignInViewController.swift */,
+				7D7316131BF7FE0C00924C4D /* StaffDetailViewController.swift */,
+				7D7316111BF7FA8800924C4D /* StaffTableViewCell.swift */,
+				7DEA8A791BEE5654003D6DCC /* StaffTableViewController.swift */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -572,6 +663,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7DEA8A781BEE563C003D6DCC /* MonitorTableViewController.swift in Sources */,
+				7D7316291BF80E7000924C4D /* RAMAnimatedTabBarController.swift in Sources */,
 				7D184F451BEDDFFD007E02D5 /* MonitorProjectDTO.swift in Sources */,
 				7D184F3A1BEDDFFD007E02D5 /* ProjectTaskStatusDTO.swift in Sources */,
 				7DEA8A3C1BEDEC6D003D6DCC /* ChatMessageDTO.swift in Sources */,
@@ -581,26 +673,33 @@
 				7D184F431BEDDFFD007E02D5 /* LocationTrackerDTO.swift in Sources */,
 				7DEA8A3A1BEDEC6D003D6DCC /* ChatDTO.swift in Sources */,
 				7DEA8A2B1BEDE5F0003D6DCC /* DataParser.swift in Sources */,
+				7D7316101BF7DC4E00924C4D /* MonitorDetailViewController.swift in Sources */,
 				7D7315861BF2D39D00924C4D /* SignInViewController.swift in Sources */,
 				7D184F461BEDDFFD007E02D5 /* MonitorTradeDTO.swift in Sources */,
 				7DEA8A831BEF13FC003D6DCC /* MapMarker.swift in Sources */,
 				7DEA8A2D1BEDE5F0003D6DCC /* Util.swift in Sources */,
+				7D7316241BF80E7000924C4D /* RAMBounceAnimation.swift in Sources */,
 				7DEA8A2A1BEDE5F0003D6DCC /* Mappable.swift in Sources */,
 				7D184F3D1BEDDFFD007E02D5 /* CityDTO.swift in Sources */,
+				7D7316251BF80E7000924C4D /* RAMFrameItemAnimation.swift in Sources */,
 				7D184F501BEDDFFD007E02D5 /* RequestDTO.swift in Sources */,
 				7D184F3B1BEDDFFD007E02D5 /* TaskDTO.swift in Sources */,
-				7D7314F71BF2CCF600924C4D /* DataModel.xcdatamodeld in Sources */,
+				7D7316121BF7FA8800924C4D /* StaffTableViewCell.swift in Sources */,
 				7D184F591BEDDFFD007E02D5 /* VideoUploadDTO.swift in Sources */,
 				7D184F561BEDDFFD007E02D5 /* StaffTypeDTO.swift in Sources */,
 				7D184F4F1BEDDFFD007E02D5 /* ProvinceDTO.swift in Sources */,
+				7D7316281BF80E7000924C4D /* RAMTransitionItemAnimation.swift in Sources */,
 				7DEA8A951BEFA93C003D6DCC /* CollectionViewCell.swift in Sources */,
 				7D184F541BEDDFFD007E02D5 /* StaffDTO.swift in Sources */,
 				7D184F4D1BEDDFFD007E02D5 /* ProjectStatusTypeDTO.swift in Sources */,
+				7D7316141BF7FE0C00924C4D /* StaffDetailViewController.swift in Sources */,
+				7DC2FCED1BFEEADC00010A42 /* EmergencyDTO.swift in Sources */,
 				7D184F4C1BEDDFFD007E02D5 /* ProjectStatusDTO.swift in Sources */,
 				7D184F571BEDDFFD007E02D5 /* SubTaskDTO.swift in Sources */,
 				7DEA8A2E1BEDE5F0003D6DCC /* StringBuilder.swift in Sources */,
 				7D184F511BEDDFFD007E02D5 /* RequestList.swift in Sources */,
-				7D5D0C001BF11BA1004B8C50 /* MyZip.swift in Sources */,
+				7D73160E1BF70A2F00924C4D /* MyTabBarController.swift in Sources */,
+				7D7316271BF80E7000924C4D /* RAMRotationAnimation.swift in Sources */,
 				7DEA8A811BEF0A5B003D6DCC /* ProjectMapViewController.swift in Sources */,
 				7D184F581BEDDFFD007E02D5 /* TaskTypeDTO.swift in Sources */,
 				7DEA8A851BEF19FE003D6DCC /* VCMapView.swift in Sources */,
@@ -611,7 +710,6 @@
 				7DEA8A291BEDE5F0003D6DCC /* Comms.swift in Sources */,
 				7D184F481BEDDFFD007E02D5 /* PhotoUploadDTO.swift in Sources */,
 				7D184EFA1BEDDE24007E02D5 /* AppDelegate.swift in Sources */,
-				7D7315841BF2D2ED00924C4D /* ViewController.swift in Sources */,
 				7D184F421BEDDFFD007E02D5 /* GcmDeviceDTO.swift in Sources */,
 				7DEA8A7A1BEE5654003D6DCC /* StaffTableViewController.swift in Sources */,
 				7DEA8A7F1BEE7A66003D6DCC /* ProjTableViewCell.swift in Sources */,
@@ -625,9 +723,12 @@
 				7DEA8A741BEE53D6003D6DCC /* MonitorSummaryViewController.swift in Sources */,
 				7D184F4A1BEDDFFD007E02D5 /* ProgrammeDTO.swift in Sources */,
 				7D184F4B1BEDDFFD007E02D5 /* ProjectDTO.swift in Sources */,
+				7D73160C1BF6FAFC00924C4D /* MonitorTableViewCell.swift in Sources */,
+				7D73162A1BF80E7000924C4D /* RAMItemAnimationProtocol.swift in Sources */,
 				7DEA8A931BEFA6CA003D6DCC /* PicturesViewController.swift in Sources */,
 				7DEA8A3B1BEDEC6D003D6DCC /* ChatMemberDTO.swift in Sources */,
 				7D184F491BEDDFFD007E02D5 /* PortfolioDTO.swift in Sources */,
+				7D7316261BF80E7000924C4D /* RAMFumeAnimation.swift in Sources */,
 				7D184F471BEDDFFD007E02D5 /* MunicipalityDTO.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -889,19 +990,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		7D7314F51BF2CCF600924C4D /* DataModel.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				7D7314F61BF2CCF600924C4D /* DataModel.xcdatamodel */,
-			);
-			currentVersion = 7D7314F61BF2CCF600924C4D /* DataModel.xcdatamodel */;
-			path = DataModel.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = 7D184EEE1BEDDE24007E02D5 /* Project object */;
 }

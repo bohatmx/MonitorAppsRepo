@@ -9,6 +9,7 @@
 import MapKit
 import UIKit
 import GoogleMaps
+import Toast_Swift
 
 class ProjectMapViewController: UIViewController, CLLocationManagerDelegate {
     
@@ -107,9 +108,109 @@ class ProjectMapViewController: UIViewController, CLLocationManagerDelegate {
     
     @IBAction func navigateToPhotos(sender: UIBarButtonItem) {
         print("startPhotos .....")
+        
+        if !findPhotos() {
+            print("project has no photos, start alert message")
+            let alert = UIAlertController(title: "Project Photos", message: "No Photos have been found. Please hit refresh to find any possible new photos", preferredStyle: UIAlertControllerStyle.Alert)
+            alert.addAction(UIAlertAction(title: "Take Project Photo", style: UIAlertActionStyle.Default, handler: { action in
+                switch action.style{
+                case .Default:
+                    print("Take Photo tapped - start camera!")
+                    
+                case .Cancel:
+                    print("cancel")
+                    
+                case .Destructive:
+                    print("destructive")
+                }
+            }))
+//            alert.addAction(UIAlertAction(title: "Done", style: UIAlertActionStyle.Default, handler: { action in
+//                switch action.style{
+//                case .Default:
+//                    print("DONE - default")
+//                    
+//                case .Cancel:
+//                    print("DONE cancel")
+//                    
+//                case .Destructive:
+//                    print("DONE destructive")
+//                }
+//            }))
+            alert.addAction(UIAlertAction(title: "Refresh", style: UIAlertActionStyle.Default, handler: { action in
+                switch action.style{
+                case .Default:
+                    print("Refresh - default")
+                    self.getRemoteData()
+                    
+                case .Cancel:
+                    print("Refresh cancel")
+                    
+                case .Destructive:
+                    print("Refresh destructive")
+                }
+            }))
+
+            self.presentViewController(alert, animated: true, completion: nil)
+            return
+        }
         let photoController = self.storyboard?.instantiateViewControllerWithIdentifier("PicturesViewController") as! PicturesViewController
         photoController.project = project
         self.navigationController?.pushViewController(photoController, animated: true)
+    }
+    var response:ResponseDTO = ResponseDTO()
+    let fileManager = NSFileManager.defaultManager()
+    let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] as String
+    let req = RequestDTO()
+    
+    func getRemoteData() {
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+        
+        let staffID = defaults.integerForKey("staffID")
+        req.requestType = RequestDTO.GET_STAFF_DATA
+        req.staffID = staffID
+        req.zipResponse = false
+        let coms = Comms.sharedInstance
+        coms.sendRequest(req) { (response) -> Void in
+            print("\nProjectMapViewController: Yeeeeeebo! status code: \(response.statusCode)")
+            self.response = response
+            if response.statusCode == 0 {
+               self.cacheData()
+            } else {
+                print("refresh failed, message: \(response.message)")
+                
+            }
+            
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+        }
+        
+    }
+    func cacheData() {
+        
+        let filePathToWrite = "\(paths)/data.json"
+        let data = response.json.dataUsingEncoding(NSUTF8StringEncoding)
+        fileManager.createFileAtPath(filePathToWrite, contents: data, attributes: nil)
+        print("cache data saved")
+        //replace project with refreshed
+        
+        for p in response.projectList {
+            if (p.projectID == project.projectID) {
+                project = p
+                print("Project refreshed: \(project.projectName)")
+                //let toast = ToastManager.sh
+                
+                //self.view.makeToast("This is a piece of toast")
+                return
+            }
+        }
+        
+    }
+
+    func findPhotos() -> Bool {
+        if (!project.photoUploadList.isEmpty) {
+            return true
+        }
+        
+        return false;
     }
     
     func centerMapOnLocation(location: CLLocation, mapView:MKMapView) {

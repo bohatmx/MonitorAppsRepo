@@ -7,10 +7,13 @@
 //
 
 import UIKit
+import XCGLogger
+let logger = XCGLogger.defaultInstance()
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    
     var window: UIWindow?
 
     //API KEY: AIzaSyAFDHGIapADYuVUdbVgi0na7u8htFTZrP4
@@ -19,8 +22,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, didFinishLaunchingWithOptions
         launchOptions: [NSObject: AnyObject]?) -> Bool {
-            // 2
+            //set up Google Map SDK key
             GMSServices.provideAPIKey(googleMapsApiKey)
+            
+            //set up the logger
+            logger.setup(.Debug,
+                showThreadName: true,
+                showLogLevel: true,
+                showFileNames: true,
+                showLineNumbers: true,
+                writeToFile: "/Volumes/HardDrive/xcode-projects/applog.txt",
+                fileLogLevel: .Debug)
             return true
     }
     

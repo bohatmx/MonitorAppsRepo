@@ -8,6 +8,7 @@
 
 import UIKit
 import SwiftyJSON
+import XCGLogger
 
 class ProjectTableTableViewController: UITableViewController {
 
@@ -22,26 +23,27 @@ class ProjectTableTableViewController: UITableViewController {
     let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] as String
     
     @IBOutlet var mTableView: UITableView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("ProjectTableTableViewController: viewDidLoad")
         req.zipResponse = true
         
         
     }
     override func viewWillAppear(animated: Bool) {
-        print("ProjectTableTableViewController: viewWillAppear")
         super.viewWillAppear(animated)
+        
+        Util.setTabIndex(0)
         let staffID = defaults.integerForKey("staffID")
         
         if staffID > 0 {
-            print("User's staffID: \(staffID)")
+            logger.debug("User's staffID: \(staffID)")
             mTableView.rowHeight = 80
             req.requestType = RequestDTO.GET_STAFF_DATA
             req.staffID = staffID
             getCachedData()
         } else {
-            print("User not logged in: start signIn screen")
+            logger.debug("User not logged in: start signIn screen")
             
             let sc = self.storyboard?.instantiateViewControllerWithIdentifier("SignInViewController") as! SignInViewController
             self.navigationController?.pushViewController(sc, animated: true)
@@ -62,15 +64,17 @@ class ProjectTableTableViewController: UITableViewController {
     }
     @IBAction func getRemoteData() {
         showBusy()
-        req.zipResponse = true
+        req.zipResponse = false
+        req.cacheResponse = true
         let coms = Comms.sharedInstance
-        coms.sendRequest(req) { (response) -> Void in
-            print("\nProjectTableTableViewController: Yeeeeeebo! status code: \(response.statusCode)")
+        coms.sendRequest(req)
+            { (response) -> Void in
+            logger.info("Yeeeeeebo! Status Code: \(response.statusCode)")
             self.showBusyOff()
             self.response = response
             self.projectList = response.projectList
             self.mTableView.reloadData()
-            self.cacheData()
+            //self.cacheData()
             self.title = "\(self.projectList.count) Projects"
         }
     
@@ -80,21 +84,19 @@ class ProjectTableTableViewController: UITableViewController {
         let filePathToWrite = "\(paths)/data.json"
         let data = response.json.dataUsingEncoding(NSUTF8StringEncoding)
         fileManager.createFileAtPath(filePathToWrite, contents: data, attributes: nil)
-        print("cache data saved")
+        logger.debug("cache data saved")
     }
     func getCachedData() {
-        let filePathToWrite = "\(paths)/data.json"
-        let contents: NSString?
-        do {
-            contents = try NSString(contentsOfFile: filePathToWrite, encoding: NSUTF8StringEncoding)
-            response = DataParser.parseString(JSON(contents!))
+        
+        response = Util.getCachedData()
+        if (response.statusCode == 0) {
             projectList = response.projectList
             mTableView.reloadData()
+            let rowToSelect:NSIndexPath = NSIndexPath(forRow: Util.getProjectIndex(), inSection: 0);
+            mTableView.scrollToRowAtIndexPath(rowToSelect, atScrollPosition: .Top, animated: true)
             self.title = "\(projectList.count) Projects"
-            
-            print("cached data retrieved, projects: \(response.projectList.count)" )
-        } catch _ {
-            print("Unable to get cached data")
+        } else {
+            logger.error("Unable to get cached data")
             getRemoteData()
         }
  
@@ -140,7 +142,7 @@ class ProjectTableTableViewController: UITableViewController {
         return cell
     }
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        print("Project clicked \(indexPath.row)")
+        Util.setProjectIndex(indexPath.row)
         selectedProject = projectList[indexPath.row]
         
         let mapController = self.storyboard?.instantiateViewControllerWithIdentifier("ProjectMapViewController") as! ProjectMapViewController

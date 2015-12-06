@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '6A877B9F25884BE2CD344FD7'
+               BlueprintIdentifier = '3CDD948E9A56E1093FC7BE16'
                BlueprintName = 'FLKAutoLayout'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'FLKAutoLayout.framework'>

@@ -45,8 +45,16 @@ class SignInViewController: UIViewController {
         let coms = Comms()
         coms.sendRequest(req) { (response) -> Void in
             print("\nSignInViewController: Yeeeeeebo! status code: \(response.statusCode)")
+            if (response.statusCode > 0) {
+                let alertView = UIAlertController(title: "Server Message", message: response.message, preferredStyle: .Alert)
+                alertView.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+                self.presentViewController(alertView, animated: true, completion: nil)
+                return
+ 
+            }
             self.defaults.setValue(response.staff.staffID, forKey: "staffID")
             self.response = response
+            self.navigationController?.setNavigationBarHidden(false, animated: true)
             self.navigationController?.popViewControllerAnimated(true)
         }
 
