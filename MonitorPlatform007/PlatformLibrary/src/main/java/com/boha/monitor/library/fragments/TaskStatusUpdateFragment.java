@@ -23,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.TaskStatusTypeAdapter;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
@@ -78,8 +77,6 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
     private LinearLayout photoContainer;
     private HorizontalScrollView scrollView;
     List<TaskStatusTypeDTO> taskStatusTypeList;
-    public static final int STAFF = 1, MONITOR = 2;
-    int type;
     LayoutInflater inflater;
 
 
@@ -111,7 +108,6 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         super.onCreate(savedInstanceState);
         Log.i(LOG, "++ onCreate ......");
         if (getArguments() != null) {
-            type = getArguments().getInt("type");
             projectTask = (ProjectTaskDTO) getArguments().getSerializable("projectTask");
         }
     }
@@ -140,9 +136,6 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
     }
 
-    public void setType(int type) {
-        this.type = type;
-    }
 
     private void getStatusTypes() {
         Log.d(LOG, "----- getStatusTypes");
@@ -205,7 +198,6 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
                 switch (taskStatusType.getStatusColor()) {
                     case TaskStatusTypeDTO.STATUS_COLOR_RED:
                         btnSubmit.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.red_800));
-
                         break;
                     case TaskStatusTypeDTO.STATUS_COLOR_AMBER:
                         btnSubmit.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.amber_800));

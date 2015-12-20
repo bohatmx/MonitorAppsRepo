@@ -17,12 +17,10 @@ import android.widget.TextView;
 import com.boha.monitor.library.adapters.ProjectTaskAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
-import com.boha.monitor.library.dto.TaskTypeDTO;
 import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.platform.library.R;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
@@ -35,7 +33,6 @@ import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 public class ProjectTaskListFragment extends Fragment implements PageFragment{
 
     ProjectDTO project;
-    TaskTypeDTO taskType;
     private View view;
     private TextView txtTaskType, txtCount;
     private RecyclerView mRecyclerView;
@@ -47,31 +44,13 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
 
     private void buildList() {
         projectTaskList = project.getProjectTaskList();
-        if (taskType != null) {
-            List<ProjectTaskDTO> list = new ArrayList<>();
-            for (ProjectTaskDTO pt : projectTaskList) {
-                if (pt.getTask().getTaskTypeID().intValue() == taskType.getTaskTypeID().intValue()) {
-                    list.add(pt);
-                }
-            }
-
-            projectTaskList = list;
-        }
-        Log.i(LOG,"++ project has been set");
         if (view != null) {
             setList();
         } else {
             Log.e(LOG, "$%#$## WTF?");
         }
     }
-    public void setTaskType(TaskTypeDTO taskType) {
-        this.taskType = taskType;
 
-        if (txtTaskType != null) {
-            txtTaskType.setText(taskType.getTaskTypeName());
-            buildList();
-        }
-    }
 
     public static ProjectTaskListFragment newInstance(ProjectDTO project) {
         ProjectTaskListFragment fragment = new ProjectTaskListFragment();
@@ -114,11 +93,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
         mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
         mRecyclerView.setLayoutManager(llm);
         mRecyclerView.setHasFixedSize(true);
-        if (taskType != null) {
-            txtTaskType.setText(taskType.getTaskTypeName());
-        } else {
-            txtTaskType.setText("");
-        }
+        txtTaskType.setVisibility(View.GONE);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

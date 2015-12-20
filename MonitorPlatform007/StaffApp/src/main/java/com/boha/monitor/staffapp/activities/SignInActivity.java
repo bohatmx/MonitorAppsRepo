@@ -137,7 +137,13 @@ public class SignInActivity extends AppCompatActivity {
                 @Override
                 public void onGCMError() {
                     Log.e(LOG, "############# onGCMError --- we got GCM problems");
-                    setRefreshActionButtonState(false);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setRefreshActionButtonState(false);
+                        }
+                    });
+
 
                 }
             });

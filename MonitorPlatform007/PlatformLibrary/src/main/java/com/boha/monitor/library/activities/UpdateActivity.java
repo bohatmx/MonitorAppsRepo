@@ -107,7 +107,6 @@ public class UpdateActivity extends AppCompatActivity
         ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
         taskStatusUpdateFragment = new TaskStatusUpdateFragment();
         taskStatusUpdateFragment.setProjectTask(projectTask);
-        taskStatusUpdateFragment.setType(type);
         taskStatusUpdateFragment.setThemeColors(primaryColor, darkColor);
         taskStatusUpdateFragment.setListener(this);
         ft.replace(R.id.frameLayout, taskStatusUpdateFragment);

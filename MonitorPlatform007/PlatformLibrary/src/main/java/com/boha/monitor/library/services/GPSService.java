@@ -103,6 +103,7 @@ public class GPSService extends Service implements LocationListener,
         if (gcmDevice == null) {
             return;
         }
+
         try {
             if (mGoogleApiClient.isConnected()) {
                 mRequestingLocationUpdates = true;
@@ -299,7 +300,6 @@ public class GPSService extends Service implements LocationListener,
                     sb.append(", ");
                 }
             }
-            //Log.w(LOG, "## GPSService Address found: " + sb.toString());
             return sb.toString();
 
         } catch (IOException e) {

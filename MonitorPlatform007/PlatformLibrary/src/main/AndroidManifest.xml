@@ -48,10 +48,14 @@
 
         <activity
             android:name="com.boha.monitor.library.activities.SimpleMessagingActivity"
-            android:label="@string/title_activity_messaging"></activity>
+            android:label="@string/title_activity_messaging" />
         <activity
             android:name="com.boha.monitor.library.activities.PhotoScrollerActivity"
-            android:label="@string/title_activity_photo_scroller"></activity>
+            android:label="@string/title_activity_photo_scroller" />
+
+        <service
+            android:name="com.boha.monitor.library.services.FetchAddressIntentService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

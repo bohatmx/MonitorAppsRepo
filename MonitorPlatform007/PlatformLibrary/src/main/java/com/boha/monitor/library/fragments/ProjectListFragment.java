@@ -1,6 +1,7 @@
 package com.boha.monitor.library.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,6 +45,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     private View view;
     private ImageView image;
     private RecyclerView mRecyclerView;
+    private AutoCompleteTextView auto;
     private TextView txtProgramme, txtProjectCount;
 
     private static final String LOG = ProjectListFragment.class.getSimpleName();
@@ -77,6 +83,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_project_list, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
+        auto = (AutoCompleteTextView) view.findViewById(R.id.autocomplete_project);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(),
                 LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(llm);
@@ -88,7 +95,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     }
 
     ProjectAdapter projectAdapter;
-    int index;
+    List<String> projectNameList;
     public void refreshProjectList(List<ProjectDTO> projectList) {
         this.projectList = projectList;
         if (mRecyclerView != null) {
@@ -101,7 +108,34 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             Log.e(LOG,"--- projectList is NULL");
             return;
         }
+        projectNameList = new ArrayList<>(projectList.size());
+        for (ProjectDTO p: projectList) {
+            projectNameList.add(p.getProjectName());
+        }
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, projectNameList);
+        auto.setAdapter(adapter);
+        auto.setHint("Search Projects");
+        auto.setThreshold(2);
 
+        auto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                hideKeyboard();
+                int index = 0;
+                String name = adapter.getItem(i);
+                for (ProjectDTO p: projectList) {
+                    if (p.getProjectName().equalsIgnoreCase(name)) {
+                        mRecyclerView.scrollToPosition(index);
+                        auto.setText("");
+                        break;
+                    }
+                    index++;
+                }
+                Log.i(LOG,"scrolled to " + index + " for " + name);
+            }
+        });
         projectAdapter = new ProjectAdapter(projectList, getActivity(),
                 darkColor, new ProjectListFragmentListener() {
             @Override
@@ -181,7 +215,11 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         }
 
     }
-
+    void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(auto.getWindowToken(), 0);
+    }
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

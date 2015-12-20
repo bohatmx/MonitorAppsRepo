@@ -8,7 +8,7 @@
     <ImageView
         android:id="@+id/GPS_hero"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/mon_wider"
+        android:layout_height="@dimen/mon_hero_height_medium"
         android:scaleType="centerCrop"
         android:src="@drawable/banner_gps3" />
 

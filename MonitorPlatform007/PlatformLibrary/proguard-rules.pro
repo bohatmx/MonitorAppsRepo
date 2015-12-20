@@ -15,6 +15,11 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+-keepattributes *Annotation*'
+-keepattributes Signature
+-keepattributes InnerClasses
+-keepclassmembers
+
 -dontwarn com.squareup.okhttp.**
 # LeakCanary
 -keep class org.eclipse.mat.** { *; }
