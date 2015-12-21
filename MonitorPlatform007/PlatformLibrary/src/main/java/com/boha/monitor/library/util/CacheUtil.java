@@ -36,12 +36,25 @@ public class CacheUtil {
 
         public void onError();
     }
+    public interface CacheRetrievedListener {
+        public void onFileDataDeserialized(ResponseDTO response);
+
+        public void onError();
+    }
+    public interface CacheSavedListener {
+        public void onDataCached();
+
+        public void onError();
+    }
 
     public interface AddLocationTrackerListener {
         void onLocationTrackerAdded(ResponseDTO response);
     }
 
     static CacheUtilListener utilListener;
+    static  CacheRetrievedListener cacheRetrievedListener;
+    static CacheSavedListener cacheSavedListener;
+
     public static final int CACHE_DATA = 1, CACHE_COUNTRIES = 3, CACHE_SITE = 7,
             CACHE_PROJECT = 5, CACHE_REQUEST = 6, CACHE_PROJECT_STATUS = 4,
             CACHE_TRACKER = 8, CACHE_CHAT = 9, CACHE_MONITOR_PROJECTS = 10,

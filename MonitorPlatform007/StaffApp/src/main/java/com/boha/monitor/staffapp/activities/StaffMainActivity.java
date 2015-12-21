@@ -761,7 +761,6 @@ public class StaffMainActivity extends AppCompatActivity implements
     @Override
     public void onStatusUpdateRequired(ProjectDTO project) {
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
-//        Intent w = new Intent(this, TaskTypeListActivity.class);
         Intent w = new Intent(this, UpdateActivity.class);
         w.putExtra("project", project);
         w.putExtra("darkColor", themeDarkColor);

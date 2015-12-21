@@ -124,7 +124,7 @@ public class PhotoUploadService extends IntentService {
             return;
         }
         uploadedList = new ArrayList<>();
-        controlThumbUploads();
+        controlUploads();
 
 
     }
@@ -132,13 +132,13 @@ public class PhotoUploadService extends IntentService {
     static List<PhotoUploadDTO> list;
     int index;
 
-    private void controlThumbUploads() {
+    private void controlUploads() {
         if (index < list.size()) {
             if (list.get(index).getDateUploaded() == null) {
-                executePhotoUpload(list.get(index));
+                executeUpload(list.get(index));
             } else {
                 index++;
-                controlThumbUploads();
+                controlUploads();
             }
 
         } else {
@@ -150,8 +150,8 @@ public class PhotoUploadService extends IntentService {
     }
 
 
-    private void executePhotoUpload(final PhotoUploadDTO dto) {
-        Log.d(LOG, "** executePhotoUpload, projectID: " + dto.getProjectID());
+    private void executeUpload(final PhotoUploadDTO dto) {
+        Log.d(LOG, "** executeUpload, projectID: " + dto.getProjectID());
 
         CDNUploader.uploadFile(getApplicationContext(), dto, new CDNUploader.CDNUploaderListener() {
             @Override
@@ -159,7 +159,7 @@ public class PhotoUploadService extends IntentService {
                 uploadedList.add(dto);
                 PhotoCacheUtil.updateUploadedPhoto(getApplicationContext(), dto);
                 index++;
-                controlThumbUploads();
+                controlUploads();
             }
 
             @Override
@@ -167,7 +167,7 @@ public class PhotoUploadService extends IntentService {
                 Log.e(LOG, message);
                 failedUploads.add(dto);
                 index++;
-                controlThumbUploads();
+                controlUploads();
             }
         });
 
