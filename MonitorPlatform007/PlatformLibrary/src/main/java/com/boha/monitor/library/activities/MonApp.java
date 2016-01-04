@@ -10,6 +10,7 @@ import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.os.SystemClock;
+import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.android.volley.RequestQueue;
@@ -103,6 +104,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
 
     @Override
     public void onCreate() {
+        MultiDex.install(getApplicationContext());
         super.onCreate();
         StringBuilder sb = new StringBuilder();
         sb.append("\n\n\n#######################################\n");
@@ -166,7 +168,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
                 SystemClock.elapsedRealtime(), HOUR, alarmIntent);
 
-        Log.e(LOG, "###### AlarmManager: alarm set to pull the trigger every: HOUR");
+        Log.d(LOG, "###### AlarmManager: alarm set to pull the device tracker trigger every: HOUR");
     }
 
     static final int

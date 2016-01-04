@@ -113,9 +113,10 @@ public class StaffMainActivity extends AppCompatActivity implements
 
     @Override
     public void onResume() {
+        Log.w(LOG,"++++++++ ############## onResume - will get cache data");
         super.onResume();
         navImage.setImageDrawable(Util.getRandomBackgroundImage(ctx));
-
+        getCache();
 
     }
 
@@ -201,7 +202,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
         setMenuDestinations();
         mDrawerLayout.openDrawer(GravityCompat.START);
-        getCache();
+
         Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
                 SharedUtil.getCompany(ctx).getCompanyName(), "Project Monitoring",
                 ContextCompat.getDrawable(getApplicationContext(), com.boha.platform.library.R.drawable.glasses48));
@@ -277,7 +278,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                 if (!response.getProjectList().isEmpty()) {
                     buildPages();
                 } else {
-                    getRemoteStaffData();
+                    getRemoteStaffData(false);
                 }
 
             }
@@ -289,18 +290,20 @@ public class StaffMainActivity extends AppCompatActivity implements
 
             @Override
             public void onError() {
-                getRemoteStaffData();
+                getRemoteStaffData(true);
             }
         });
     }
 
-    private void getRemoteStaffData() {
+    private void getRemoteStaffData(boolean showBusy) {
         RequestDTO w = new RequestDTO(RequestDTO.GET_STAFF_DATA);
         w.setStaffID(SharedUtil.getCompanyStaff(ctx).getStaffID());
 
         companyDataRefreshed = false;
-        setRefreshActionButtonState(true);
-        Snackbar.make(mPager,"Refreshing your data, this may take a minute or two ...", Snackbar.LENGTH_LONG).show();
+        setRefreshActionButtonState(showBusy);
+        if (showBusy) {
+            Snackbar.make(mPager, "Refreshing your data, this may take a minute or two ...", Snackbar.LENGTH_LONG).show();
+        }
         NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(final ResponseDTO r) {
@@ -320,14 +323,15 @@ public class StaffMainActivity extends AppCompatActivity implements
                             public void onDataCached() {
                                 if (projectListFragment == null) {
                                     buildPages();
+                                    return;
                                 } else {
                                     projectListFragment.refreshProjectList(response.getProjectList());
                                     monitorListFragment.refreshMonitorList(response.getMonitorList());
                                     staffListFragment.refreshStaffList(response.getStaffList());
                                 }
-                                if (r.getProjectList().isEmpty()) {
-                                    Util.showErrorToast(ctx, "Projects have not been assigned yet");
-                                }
+//                                if (response.getProjectList().isEmpty()) {
+//                                    Util.showErrorToast(ctx, "Projects have not been assigned yet");
+//                                }
                             }
 
                             @Override
@@ -441,7 +445,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            getRemoteStaffData();
+            getRemoteStaffData(true);
             return true;
         }
         if (id == R.id.action_theme) {
@@ -655,7 +659,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                 break;
             case LOCATION_REQUESTED:
                 if (resCode == RESULT_OK) {
-                    getRemoteStaffData();
+                    getRemoteStaffData(true);
                 }
                 break;
             case THEME_REQUESTED:

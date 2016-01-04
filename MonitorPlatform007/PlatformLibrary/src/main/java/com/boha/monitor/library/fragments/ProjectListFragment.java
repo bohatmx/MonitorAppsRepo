@@ -42,7 +42,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
     private ProjectListFragmentListener mListener;
     private ResponseDTO mResponse;
-    private View view;
+    private View view, top;
     private ImageView image;
     private RecyclerView mRecyclerView;
     private AutoCompleteTextView auto;
@@ -84,6 +84,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         view = inflater.inflate(R.layout.fragment_project_list, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         auto = (AutoCompleteTextView) view.findViewById(R.id.autocomplete_project);
+        top = view.findViewById(R.id.top);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(),
                 LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(llm);
@@ -108,34 +109,36 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             Log.e(LOG,"--- projectList is NULL");
             return;
         }
-        projectNameList = new ArrayList<>(projectList.size());
-        for (ProjectDTO p: projectList) {
-            projectNameList.add(p.getProjectName());
-        }
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
-                android.R.layout.simple_spinner_item, projectNameList);
-        auto.setAdapter(adapter);
-        auto.setHint("Search Projects");
-        auto.setThreshold(2);
-
-        auto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                hideKeyboard();
-                int index = 0;
-                String name = adapter.getItem(i);
-                for (ProjectDTO p: projectList) {
-                    if (p.getProjectName().equalsIgnoreCase(name)) {
-                        mRecyclerView.scrollToPosition(index);
-                        auto.setText("");
-                        break;
-                    }
-                    index++;
-                }
-                Log.i(LOG,"scrolled to " + index + " for " + name);
+        if (projectList.size() > 19) {
+            projectNameList = new ArrayList<>(projectList.size());
+            for (ProjectDTO p : projectList) {
+                projectNameList.add(p.getProjectName());
             }
-        });
+            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                    android.R.layout.simple_spinner_item, projectNameList);
+            auto.setAdapter(adapter);
+            auto.setHint("Search Projects");
+            auto.setThreshold(2);
+
+            auto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                    hideKeyboard();
+                    int index = 0;
+                    String name = adapter.getItem(i);
+                    for (ProjectDTO p : projectList) {
+                        if (p.getProjectName().equalsIgnoreCase(name)) {
+                            mRecyclerView.scrollToPosition(index + 1);
+                            auto.setText("");
+                            break;
+                        }
+                        index++;
+                    }
+                    Log.i(LOG, "i = " + i + ", scrolled to " + index + " for " + name);
+                }
+            });
+        }
         projectAdapter = new ProjectAdapter(projectList, getActivity(),
                 darkColor, new ProjectListFragmentListener() {
             @Override

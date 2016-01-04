@@ -355,6 +355,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         }
 
         mListener.setBusy(true);
+        request.setZipResponse(false);
         NetUtil.sendRequest(getActivity(), request, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(final ResponseDTO response) {
@@ -363,7 +364,8 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
                     public void run() {
                         mListener.setBusy(false);
                         btnSubmit.setEnabled(true);
-                        if (response.getProjectTaskStatusList() != null && !response.getProjectTaskStatusList().isEmpty()) {
+                        if (response.getProjectTaskStatusList() != null
+                                && !response.getProjectTaskStatusList().isEmpty()) {
                             returnedStatus = response.getProjectTaskStatusList().get(0);
                             Snackbar.make(mRecyclerView, "The status update has been sent", Snackbar.LENGTH_LONG).show();
                             txtTime.setText(sdf.format(new Date()));

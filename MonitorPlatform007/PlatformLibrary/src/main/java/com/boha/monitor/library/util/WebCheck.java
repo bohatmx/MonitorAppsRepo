@@ -15,9 +15,9 @@ public class WebCheck {
 
     private static void logInfo(NetworkInfo networkInfo) {
         StringBuilder sb = new StringBuilder();
-        sb.append("\n########## Network Info ############").append("\n");
-        sb.append("Network Type: ").append(networkInfo.getTypeName()).append("\n");
-        sb.append("State: ").append(networkInfo.getState().name()).append("\n");
+        sb.append("\n### Network Info ").append(" - ");
+        sb.append("Network Type: ").append(networkInfo.getTypeName()).append(", ");
+        sb.append("State: ").append(networkInfo.getState().name()).append(", ");
         sb.append("Network Name: ").append(networkInfo.getExtraInfo()).append("\n");
         String res = sb.toString();
         System.out.println(res);

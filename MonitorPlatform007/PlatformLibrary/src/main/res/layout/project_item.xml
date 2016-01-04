@@ -45,7 +45,7 @@
 
                 <TextView
                     android:id="@+id/PI_projectName"
-                    style="@style/Title1TextStyleBlue"
+                    style="@style/Title2TextStyleBlue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"

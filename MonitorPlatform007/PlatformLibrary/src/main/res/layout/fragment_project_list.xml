@@ -2,19 +2,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/mon_padding"
+    android:background="@color/grey"
     tools:context="com.boha.monitor.library.fragments.ProjectListFragment">
 
-    <AutoCompleteTextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/autocomplete_project"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+    <RelativeLayout
+        android:id="@+id/top"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:src="@android:drawable/ic_menu_search"
+            android:tint="?attr/colorPrimaryDark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <AutoCompleteTextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/autocomplete_project"
+            android:layout_toRightOf="@id/icon"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler"
-        android:scrollbars="vertical"
-        android:layout_below="@id/autocomplete_project"
+        android:background="@color/white"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_below="@id/top"
+        android:scrollbars="vertical" />
 
 </RelativeLayout>
 

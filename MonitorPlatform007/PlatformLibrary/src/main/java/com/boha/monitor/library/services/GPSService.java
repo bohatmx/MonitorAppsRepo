@@ -316,6 +316,7 @@ public class GPSService extends Service implements LocationListener,
     private void send(final LocationTrackerDTO dto) {
 
         final RequestDTO w = new RequestDTO(RequestDTO.ADD_LOCATION_TRACK);
+        w.setZipResponse(false);
         if (SharedUtil.getMonitor(getApplicationContext()) != null) {
             dto.setMonitorID(SharedUtil.getMonitor(getApplicationContext()).getMonitorID());
         }

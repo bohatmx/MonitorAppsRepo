@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,7 +16,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.graphics.Palette;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -229,24 +227,6 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerLayout.closeDrawers();
     }
 
-    private void usePalette() {
-        Drawable drw = Util.getRandomBackgroundImage(ctx);
-
-        drawerImage.setImageDrawable(drw);
-        Bitmap image = ((BitmapDrawable) drw).getBitmap();
-        Palette.from(image).generate(new Palette.PaletteAsyncListener() {
-            public void onGenerated(Palette palette) {
-                Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
-                Palette.Swatch vibrantSwatch2 = palette.getLightVibrantSwatch();
-                if (vibrantSwatch != null) {
-                    //outerLayout.setBackgroundColor(vibrantSwatch.getRgb());
-                    Log.i(LOG, "Palette textColor: " + vibrantSwatch.getTitleTextColor());
-                    txtSubTitle.setTextColor(vibrantSwatch2.getBodyTextColor());
-                    //bodyText.setTextColor(vibrantSwatch.getBodyTextColor());
-                }
-            }
-        });
-    }
 
     private void setFields() {
         mDrawerListView = (ListView) view.findViewById(R.id.NAV_list);

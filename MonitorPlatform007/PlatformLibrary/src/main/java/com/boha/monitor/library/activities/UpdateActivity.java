@@ -197,7 +197,8 @@ public class UpdateActivity extends AppCompatActivity
     }
 
     @Override
-    public void onStatusComplete(ProjectTaskDTO projectTask, ProjectTaskStatusDTO projectTaskStatus) {
+    public void onStatusComplete(ProjectTaskDTO projectTask,
+                                 ProjectTaskStatusDTO projectTaskStatus) {
         for (ProjectTaskDTO m: project.getProjectTaskList()) {
             if (m.getProjectTaskID().intValue() == projectTask.getProjectTaskID().intValue()) {
                 if (m.getProjectTaskStatusList() == null) {
