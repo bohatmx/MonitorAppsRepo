@@ -7,7 +7,6 @@ package com.boha.monitor.library.dto;
 
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,10 +21,9 @@ public class RequestDTO implements Serializable {
         this.requestType = requestType;
     }
 
-    private Boolean rideWebSocket = false;
-    private Boolean zipResponse = true;
+    private boolean rideWebSocket = false;
+    private boolean zipResponse = false;
 
-    private Long requestCacheID = new Date().getTime();
     private Integer requestType, companyID, staffID,
             projectID, projectTaskID, loginType, monitorID, taskTypeID;
     private Boolean responseRequested;
@@ -166,7 +164,9 @@ public class RequestDTO implements Serializable {
             UPDATE_COMPANY_STAFF = 407,
             RESET_STAFF_PIN = 408,
             UPDATE_STAFF_PROJECTS = 409,
-            UPDATE_MONITOR = 410;
+            UPDATE_MONITOR = 410,
+            UPDATE_STAFF_DEVICE = 411,
+            UPDATE_MONITOR_DEVICE = 412;
 
     //reports
     public static final int REPORT_PROJECT = 601,
@@ -200,21 +200,19 @@ public class RequestDTO implements Serializable {
         this.simpleMessage = simpleMessage;
     }
 
-    public Boolean getZipResponse() {
+    public boolean isZipResponse() {
         return zipResponse;
     }
 
-    public void setZipResponse(Boolean zipResponse) {
+    public void setZipResponse(boolean zipResponse) {
         this.zipResponse = zipResponse;
     }
 
-    public Boolean getRideWebSocket() {
+    public boolean getRideWebSocket() {
         return rideWebSocket;
     }
 
-    public void setRideWebSocket(Boolean rideWebSocket) {
-        this.rideWebSocket = rideWebSocket;
-    }
+
 
     public Integer getNumberOfDays() {
         return numberOfDays;
@@ -246,14 +244,6 @@ public class RequestDTO implements Serializable {
 
     public void setRideWebSocket(boolean rideWebSocket) {
         this.rideWebSocket = rideWebSocket;
-    }
-
-    public Long getRequestCacheID() {
-        return requestCacheID;
-    }
-
-    public void setRequestCacheID(Long requestCacheID) {
-        this.requestCacheID = requestCacheID;
     }
 
     public Integer getRequestType() {

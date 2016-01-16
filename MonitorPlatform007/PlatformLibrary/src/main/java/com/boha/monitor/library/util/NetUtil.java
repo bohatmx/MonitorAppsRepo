@@ -4,11 +4,9 @@ import android.content.Context;
 import android.support.annotation.RequiresPermission;
 import android.util.Log;
 
-import com.android.volley.VolleyError;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.RequestList;
 import com.boha.monitor.library.dto.ResponseDTO;
-import com.boha.monitor.library.toolbox.BaseVolley;
 import com.boha.platform.library.R;
 import com.google.gson.Gson;
 
@@ -30,14 +28,12 @@ public class NetUtil {
     @RequiresPermission
     public static void sendRequest( Context ctx,  RequestDTO request,  NetUtilListener utilListener) {
         listener = utilListener;
-        Log.d(LOG,"########### sendRequest ... WebSocket request? : " + request.isRideWebSocket());
         WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
         if (wcr.isNetworkUnavailable()) {
             utilListener.onError(ctx.getString(R.string.net_not_avail));
             return;
         }
 
-        request.setRequestCacheID(null);
         if (request.isRideWebSocket()) {
             sendViaWebSocket(ctx, request);
         } else {
@@ -85,32 +81,47 @@ public class NetUtil {
         });
 
     }
-    private static void sendViaHttp(Context ctx, RequestDTO request) {
-        final long start = System.currentTimeMillis();
-        BaseVolley.sendRequest(Statics.GATEWAY_SERVLET, request, ctx, new BaseVolley.BohaVolleyListener() {
-
-
-            @Override
-            public void onResponseReceived(ResponseDTO response) {
-                final long end = System.currentTimeMillis();
-                Log.e(LOG, "HTTP call completed. elapsed server time: " + response.getElapsedRequestTimeInSeconds()
-                        + "\nroundTrip elapsed: " + getElapsed(start, end) + " size: " + getLength(gson.toJson(response).length()));
-                if (response.getStatusCode() == 0) {
+    private static void sendViaHttp(Context ctx, RequestDTO request)  {
+        try {
+            OKUtil.doGet(request, new OKUtil.OKListener() {
+                @Override
+                public void onResponse(ResponseDTO response) {
                     listener.onResponse(response);
-                } else {
-                    listener.onError(response.getMessage());
                 }
-            }
 
-            @Override
-            public void onVolleyError(VolleyError error) {
-                Log.e(LOG, "-- Volley Error: " + error.getMessage());
-                final long end = System.currentTimeMillis();
-                Log.e(LOG, "HTTP networking. ERROR occured - "
-                        + " roundTrip elapsed: " + getElapsed(start, end));
-                listener.onError("Error communicating with server");
-            }
-        });
+                @Override
+                public void onError(String message) {
+                    listener.onError(message);
+                }
+            });
+        } catch (OKHttpException e) {
+            listener.onError("Communications Error: " + e.msg);
+        }
+//        final long start = System.currentTimeMillis();
+//        BaseVolley.sendRequest(Statics.GATEWAY_SERVLET, request, ctx, new BaseVolley.BohaVolleyListener() {
+//
+//
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                final long end = System.currentTimeMillis();
+//                Log.e(LOG, "HTTP call completed. elapsed server time: " + response.getElapsedRequestTimeInSeconds()
+//                        + "\nroundTrip elapsed: " + getElapsed(start, end) + " size: " + getLength(gson.toJson(response).length()));
+//                if (response.getStatusCode() == 0) {
+//                    listener.onResponse(response);
+//                } else {
+//                    listener.onError(response.getMessage());
+//                }
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                Log.e(LOG, "-- Volley Error: " + error.getMessage());
+//                final long end = System.currentTimeMillis();
+//                Log.e(LOG, "HTTP networking. ERROR occured - "
+//                        + " roundTrip elapsed: " + getElapsed(start, end));
+//                listener.onError("Error communicating with server");
+//            }
+//        });
     }
     private static String getLength(int length) {
         Double d = Double.parseDouble("" + length)/Double.parseDouble("1024");
@@ -145,26 +156,21 @@ public class NetUtil {
     }
     private static void sendListViaHttp(Context ctx, RequestList requestList) {
         final long start = System.currentTimeMillis();
-        BaseVolley.sendRequest(Statics.CACHED_REQUEST_SERVLET, requestList, ctx, new BaseVolley.BohaVolleyListener() {
+        try {
+            OKUtil.doPost(requestList, new OKUtil.OKListener() {
+                @Override
+                public void onResponse(ResponseDTO response) {
+                    listener.onResponse(response);
+                }
 
-
-            @Override
-            public void onResponseReceived(ResponseDTO response) {
-                final long end = System.currentTimeMillis();
-                Log.e(LOG, "sendListViaHttp completed. elapsed server time: " + response.getElapsedRequestTimeInSeconds()
-                        + " roundTrip elapsed: " + getElapsed(start, end));
-                listener.onResponse(response);
-            }
-
-            @Override
-            public void onVolleyError(VolleyError error) {
-                final long end = System.currentTimeMillis();
-                Log.e(LOG, "sendListViaWebSocket ERROR encountered. "
-                        + " roundTrip elapsed: " + getElapsed(start, end));
-                Log.e(LOG, "-- Volley Error: " + error.getMessage());
-                listener.onError("Error communicating with server");
-            }
-        });
+                @Override
+                public void onError(String message) {
+                    listener.onError(message);
+                }
+            });
+        } catch (OKHttpException e) {
+            listener.onError("Communications Error: " + e.msg);
+        }
     }
 
     public static double getElapsed(long start, long end) {

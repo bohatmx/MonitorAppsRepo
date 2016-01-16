@@ -1,14 +1,18 @@
 package com.boha.platform.monitor.activities;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -54,6 +58,7 @@ public class SignInActivity extends AppCompatActivity {
     GcmDeviceDTO gcmDevice;
     static final String LOG = SignInActivity.class.getSimpleName();
     Activity activity;
+    boolean gcmOnly;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +75,86 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(LOG,"#################### onResume");
+        Log.d(LOG, "#################### onResume");
+        checkPermission();
         checkVirgin();
+    }
+    private void checkPermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_ACCESS_FINE_LOCATION);
+
+            }
+        }
+        if (ContextCompat.checkSelfPermission(this,Manifest.permission.GET_ACCOUNTS)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.GET_ACCOUNTS)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.GET_ACCOUNTS},
+                        MY_PERMISSIONS_GET_ACCOUNTS);
+
+            }
+        }
+    }
+    static final int MY_PERMISSIONS_ACCESS_FINE_LOCATION = 77;
+    static final int MY_PERMISSIONS_GET_ACCOUNTS = 75;
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_ACCESS_FINE_LOCATION: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.w(LOG,"ACCESS_FINE_LOCATION permission granted");
+
+                } else {
+                    Log.e(LOG,"ACCESS_FINE_LOCATION permission denied");
+
+                }
+                return;
+            }
+            case MY_PERMISSIONS_GET_ACCOUNTS: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.w(LOG,"GET_ACCOUNTS permission granted");
+                    getEmail();
+
+                } else {
+                    Log.e(LOG,"GET_ACCOUNTS permission denied");
+
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
     private void checkVirgin() {
         boolean force = getIntent().getBooleanExtra("force",false);
@@ -84,6 +167,7 @@ public class SignInActivity extends AppCompatActivity {
             Log.i(LOG, "++++++++ Not a virgin anymore? yes ...checking GCM registration....");
             String id = SharedUtil.getRegistrationId(getApplicationContext());
             if (id == null) {
+                gcmOnly = true;
                 registerGCMDevice();
             }
 
@@ -98,28 +182,56 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void registerGCMDevice() {
+        gcmDevice = new GcmDeviceDTO();
+        gcmDevice.setManufacturer(Build.MANUFACTURER);
+        gcmDevice.setModel(Build.MODEL);
+        gcmDevice.setSerialNumber(Build.SERIAL);
+        gcmDevice.setAndroidVersion(Build.VERSION.RELEASE);
+        gcmDevice.setProduct(Build.PRODUCT);
+        gcmDevice.setApp(ctx.getPackageName());
 
         Snackbar.make(btnSave, "Just a second, checking services ...",Snackbar.LENGTH_LONG)
                 .setAction("CLOSE", null)
                 .show();
         boolean ok = checkPlayServices();
-        setRefreshActionButtonState(true);
+        setBusyIndicator(true);
         if (ok) {
             Log.e(LOG, "############# Starting Google Cloud Messaging registration");
             GCMUtil.startGCMRegistration(getApplicationContext(), new GCMUtil.GCMUtilListener() {
                 @Override
                 public void onDeviceRegistered(String id) {
                     Log.i(LOG, "############# GCM - we cool, GcmDeviceDTO waiting to be sent with signin .....: " + id);
-                    setRefreshActionButtonState(false);
-                    gcmDevice = new GcmDeviceDTO();
-                    gcmDevice.setManufacturer(Build.MANUFACTURER);
-                    gcmDevice.setModel(Build.MODEL);
-                    gcmDevice.setSerialNumber(Build.SERIAL);
-                    gcmDevice.setAndroidVersion(Build.VERSION.RELEASE);
+                    setBusyIndicator(false);
                     gcmDevice.setRegistrationID(id);
-                    gcmDevice.setProduct(Build.PRODUCT);
-                    gcmDevice.setApp(ctx.getPackageName());
                     btnSave.setEnabled(true);
+                    if (gcmOnly) {
+                        RequestDTO w = new RequestDTO(RequestDTO.UPDATE_MONITOR_DEVICE);
+                        MonitorDTO staff = SharedUtil.getMonitor(ctx);
+                        gcmDevice.setMonitorID(staff.getMonitorID());
+                        w.setGcmDevice(gcmDevice);
+                        //update monitor device on server
+                        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
+                            @Override
+                            public void onResponse(ResponseDTO response) {
+                                gcmOnly = false;
+                                if (response.getGcmDeviceList() != null) {
+                                    if (!response.getGcmDeviceList().isEmpty()) {
+                                        SharedUtil.saveGCMDevice(ctx,response.getGcmDeviceList().get(0));
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onError(String message) {
+
+                            }
+
+                            @Override
+                            public void onWebSocketClose() {
+
+                            }
+                        });
+                    }
 
 
                 }
@@ -127,7 +239,8 @@ public class SignInActivity extends AppCompatActivity {
                 @Override
                 public void onGCMError() {
                     Log.e(LOG, "############# onGCMError --- we got GCM problems");
-                    setRefreshActionButtonState(false);
+                    setBusyIndicator(false);
+                    btnSave.setEnabled(true);
 
                 }
             });
@@ -153,14 +266,14 @@ public class SignInActivity extends AppCompatActivity {
         r.setPin(ePin.getText().toString());
         r.setGcmDevice(gcmDevice);
 
-       setRefreshActionButtonState(true);
+       setBusyIndicator(true);
         NetUtil.sendRequest(ctx,r,new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(final ResponseDTO response) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        setRefreshActionButtonState(false);
+                        setBusyIndicator(false);
                         if (response.getStatusCode() > 0) {
                             showErrorToast(ctx, response.getMessage());
                             return;
@@ -199,7 +312,7 @@ public class SignInActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        setRefreshActionButtonState(false);
+                        setBusyIndicator(false);
                         showErrorToast(ctx, message);
                         btnSave.setEnabled(true);
                     }
@@ -304,6 +417,12 @@ public class SignInActivity extends AppCompatActivity {
 
 
     public void getEmail() {
+        Log.d(LOG,"getEmail accounts");
+        if (ContextCompat.checkSelfPermission(this,Manifest.permission.GET_ACCOUNTS)
+                != PackageManager.PERMISSION_GRANTED) {
+            checkPermission();
+            return;
+        }
         AccountManager am = AccountManager.get(getApplicationContext());
         Account[] accts = am.getAccounts();
 //        if (accts.length == 0) {
@@ -322,7 +441,7 @@ public class SignInActivity extends AppCompatActivity {
     }
     ArrayList<String> tarList = new ArrayList<String>();
     Menu mMenu;
-    public void setRefreshActionButtonState(final boolean refreshing) {
+    public void setBusyIndicator(final boolean refreshing) {
         if (mMenu != null) {
             final MenuItem refreshItem = mMenu.findItem(R.id.action_help);
             if (refreshItem != null) {
@@ -336,7 +455,6 @@ public class SignInActivity extends AppCompatActivity {
     }
     @Override
     public void onPause() {
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         super.onPause();
     }
 

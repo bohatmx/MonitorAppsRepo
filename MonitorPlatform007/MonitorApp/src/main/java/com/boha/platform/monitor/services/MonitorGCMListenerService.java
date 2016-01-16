@@ -19,7 +19,7 @@ import com.boha.monitor.library.activities.SimpleMessagingActivity;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
-import com.boha.monitor.library.services.GPSService;
+import com.boha.monitor.library.services.GPSLocationService;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.platform.library.MainActivity;
 import com.boha.platform.library.R;
@@ -87,7 +87,7 @@ public class MonitorGCMListenerService extends GcmListenerService {
     private void cacheMessage(final SimpleMessageDTO message) {
         if (message.getLocationRequest() == Boolean.TRUE) {
             Log.d(TAG, "*** is location request received, calling GPSService: " + message.getStaffName());
-            Intent w = new Intent(getApplicationContext(), GPSService.class);
+            Intent w = new Intent(getApplicationContext(), GPSLocationService.class);
             w.putExtra("simpleMessage", message);
             getApplicationContext().startService(w);
             return;

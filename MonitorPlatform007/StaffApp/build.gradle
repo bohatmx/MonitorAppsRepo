@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId "com.boha.monitor.staffapp"
         minSdkVersion 18
-        targetSdkVersion 21
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
         multiDexEnabled true

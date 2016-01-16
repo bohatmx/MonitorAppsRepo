@@ -21,6 +21,10 @@
             android:id="@+id/nav_projectMaps"
             android:icon="@drawable/ic_action_map"
             android:title="Projects Map" />
+        <item
+            android:id="@+id/nav_devices"
+            android:icon="@drawable/ic_action_check_circle"
+            android:title="Company Devices" />
 
     </group>
 

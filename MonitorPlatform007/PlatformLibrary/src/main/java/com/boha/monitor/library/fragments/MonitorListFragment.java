@@ -83,7 +83,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         Bundle args = new Bundle();
         ResponseDTO w = new ResponseDTO();
         w.setMonitorList(list);
-        args.putSerializable("monitorList", w);
+        args.putSerializable("trackerDTOList", w);
         args.putInt("type", type);
         fragment.setArguments(args);
         return fragment;
@@ -98,7 +98,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         super.onCreate(b);
         Log.d(LOG, "MonitorListFragment onCreate");
         if (b != null) {
-            ResponseDTO w = (ResponseDTO) b.getSerializable("monitorList");
+            ResponseDTO w = (ResponseDTO) b.getSerializable("trackerDTOList");
             type = b.getInt("type", 0);
             if (w != null) {
                 monitorList = w.getMonitorList();
@@ -107,7 +107,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         }
         Bundle bundle = getArguments();
         if (bundle != null) {
-            ResponseDTO w = (ResponseDTO) bundle.getSerializable("monitorList");
+            ResponseDTO w = (ResponseDTO) bundle.getSerializable("trackerDTOList");
             type = bundle.getInt("type", 0);
             if (w != null) {
                 monitorList = w.getMonitorList();
@@ -348,7 +348,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         Log.i(LOG, "## onSaveInstanceState");
         ResponseDTO w = new ResponseDTO();
         w.setMonitorList(monitorList);
-        b.putSerializable("monitorList", w);
+        b.putSerializable("trackerDTOList", w);
         super.onSaveInstanceState(b);
     }
 

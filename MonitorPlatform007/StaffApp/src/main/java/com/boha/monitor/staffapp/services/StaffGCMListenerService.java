@@ -45,7 +45,7 @@ public class StaffGCMListenerService extends GcmListenerService {
      */
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        Log.i(TAG,"######onMessageReceived, data: " + data.toString());
+        Log.i(TAG,"###### onMessageReceived, data: " + data.toString());
         String message = data.getString("message");
         if (message != null) {
             Log.d(TAG, "** GCM message From: " + from);

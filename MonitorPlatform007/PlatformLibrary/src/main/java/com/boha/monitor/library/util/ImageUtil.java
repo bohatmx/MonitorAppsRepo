@@ -18,8 +18,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.widget.ImageView;
 
-import com.android.volley.toolbox.NetworkImageView;
 import com.boha.platform.library.R;
 
 import java.io.File;
@@ -292,7 +292,7 @@ public class ImageUtil {
     }
 
 
-    public static File getFileFromDrawable(Context ctx,  NetworkImageView a,
+    public static File getFileFromDrawable(Context ctx,  ImageView a,
                                             String fileName) throws Exception {
         Bitmap bm = ((BitmapDrawable) a.getDrawable()).getBitmap();
         File f = getFileFromBitmap(bm, fileName);

@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
@@ -187,7 +186,7 @@ public class StaffProfileFragment extends Fragment implements PageFragment {
     }
 
     private void getRemotePhotos() {
-
+        Log.d(LOG,".............getRemotePhotos starting");
         RequestDTO w = new RequestDTO(RequestDTO.GET_STAFF_PHOTOS);
         w.setStaffID(SharedUtil.getCompanyStaff(getActivity()).getStaffID());
 

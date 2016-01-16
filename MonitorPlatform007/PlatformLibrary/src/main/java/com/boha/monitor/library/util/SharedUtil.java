@@ -269,7 +269,7 @@ public class SharedUtil {
         SharedPreferences.Editor ed = sp.edit();
         ed.putString(GCMDEVICE, x);
         ed.commit();
-        Log.e("SharedUtil", "%%%%% Device saved in SharedPreferences");
+        System.out.println("%%%%% Device saved in SharedPreferences");
     }
 
 
@@ -283,6 +283,7 @@ public class SharedUtil {
             co = gson.fromJson(adm, GcmDeviceDTO.class);
 
         }
+        Log.e("SharedUtil", "%%%%% Device found in SharedPreferences: " + co.getModel());
         return co;
     }
 

@@ -8,8 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Resources;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -39,6 +37,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.boha.monitor.library.activities.GPSActivity;
+import com.boha.monitor.library.activities.LocationTrackerActivity;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.activities.PictureActivity;
 import com.boha.monitor.library.activities.ProfilePhotoActivity;
@@ -151,23 +150,24 @@ public class StaffMainActivity extends AppCompatActivity implements
         }
         try {
             Statics.setRobotoFontLight(getApplicationContext(), navText);
-            Drawable globe = ContextCompat.getDrawable(ctx, R.drawable.ic_action_globe);
-            globe.setColorFilter(themeDarkColor, PorterDuff.Mode.SRC_IN);
-            navigationView.getMenu().getItem(0).setIcon(globe);
-
-            Drawable face = ContextCompat.getDrawable(ctx, R.drawable.ic_action_face);
-            face.setColorFilter(themeDarkColor, PorterDuff.Mode.SRC_IN);
-            navigationView.getMenu().getItem(1).setIcon(face);
-
-            Drawable map = ContextCompat.getDrawable(ctx, R.drawable.ic_action_map);
-            map.setColorFilter(themeDarkColor, PorterDuff.Mode.SRC_IN);
-            navigationView.getMenu().getItem(2).setIcon(map);
-
-            navigationView.getMenu().getItem(3).getSubMenu().getItem(0).setIcon(face);
-            navigationView.getMenu().getItem(3).getSubMenu().getItem(1).setIcon(face);
+//            Drawable globe = ContextCompat.getDrawable(ctx, R.drawable.ic_action_globe);
+//            globe.setColorFilter(themeDarkColor, PorterDuff.Mode.SRC_IN);
+//            navigationView.getMenu().getItem(0).setIcon(globe);
+//
+//            Drawable face = ContextCompat.getDrawable(ctx, R.drawable.ic_action_face);
+//            face.setColorFilter(themeDarkColor, PorterDuff.Mode.SRC_IN);
+//            navigationView.getMenu().getItem(1).setIcon(face);
+//
+//            Drawable map = ContextCompat.getDrawable(ctx, R.drawable.ic_action_map);
+//            map.setColorFilter(themeDarkColor, PorterDuff.Mode.SRC_IN);
+//            navigationView.getMenu().getItem(2).setIcon(map);
+//
+//
+//            navigationView.getMenu().getItem(3).getSubMenu().getItem(0).setIcon(face);
+//            navigationView.getMenu().getItem(3).getSubMenu().getItem(1).setIcon(face);
 
         } catch (Exception e) {
-            Log.e(LOG, "Problem colorizing menu items");
+            Log.e(LOG, "Problem colorizing menu items", e);
         }
 
 
@@ -252,6 +252,10 @@ public class StaffMainActivity extends AppCompatActivity implements
                         Util.showToast(getApplicationContext(),"Projects have not been located via GPS");
                     }
 
+                }
+                if (menuItem.getItemId() == R.id.nav_devices) {
+                    Intent m = new Intent(ctx, LocationTrackerActivity.class);
+                    startActivity(m);
                 }
 
 

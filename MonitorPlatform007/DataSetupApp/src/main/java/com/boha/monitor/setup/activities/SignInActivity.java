@@ -26,7 +26,6 @@ import com.boha.monitor.library.dto.GcmDeviceDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
-import com.boha.monitor.library.services.GPSService;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.GCMUtil;
 import com.boha.monitor.library.util.NetUtil;
@@ -159,8 +158,6 @@ public class SignInActivity extends AppCompatActivity {
                         SharedUtil.saveCompanyStaff(ctx, staff);
                         SharedUtil.saveGCMDevice(ctx, response.getGcmDeviceList().get(0));
 
-                        Intent w = new Intent(ctx, GPSService.class);
-                        startService(w);
 
                         Intent intent = new Intent(ctx, CompanyDrawerActivity.class);
                         intent.putExtra("companyID",staff.getCompanyID());

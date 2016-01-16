@@ -29,7 +29,7 @@ import java.util.zip.ZipInputStream;
 public class ZipUtil {
     static final int BUFFER = 2048;
 
-    public static boolean unzip( File zippedFile,  File unpackedFile) {
+    public static boolean unzip(File zippedFile, File unpackedFile) {
         Log.d("ZipU", "staring unzip");
         try {
             BufferedOutputStream dest = null;
@@ -62,39 +62,35 @@ public class ZipUtil {
         return true;
     }
 
-    public static String unpack( File zippedFile,  File unpackedFile) {
+    public static String unpack(File zippedFile, File unpackedFile) throws IOException {
         long start = System.currentTimeMillis();
         FileInputStream is;
         ZipInputStream zis;
         String content = null;
-        try {
-            is = new FileInputStream(zippedFile);
-            zis = new ZipInputStream(new BufferedInputStream(is));
-            ZipEntry ze;
-            byte[] buffer = new byte[1024];
-            int count;
+        is = new FileInputStream(zippedFile);
+        zis = new ZipInputStream(new BufferedInputStream(is));
+        ZipEntry ze;
+        byte[] buffer = new byte[1024];
+        int count;
 
-            while ((ze = zis.getNextEntry()) != null) {
-                FileOutputStream fout = new FileOutputStream(unpackedFile);
-                while ((count = zis.read(buffer)) != -1) {
-                    fout.write(buffer, 0, count);
-                }
-
-                fout.close();
-                zis.closeEntry();
+        while ((ze = zis.getNextEntry()) != null) {
+            FileOutputStream fout = new FileOutputStream(unpackedFile);
+            while ((count = zis.read(buffer)) != -1) {
+                fout.write(buffer, 0, count);
             }
-            zis.close();
-            content = new Scanner(unpackedFile).useDelimiter("\\A").next();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+
+            fout.close();
+            zis.closeEntry();
         }
+        zis.close();
+        content = new Scanner(unpackedFile).useDelimiter("\\A").next();
+
         long end = System.currentTimeMillis();
-        System.out.println("###----> Unpack zip zippedFile, elapsed ms: " + (end - start));
+        System.out.println("### Unpacked zippedFile, elapsed: " + getElapsed(start,end));
         return content;
     }
 
-    public static String uncompressGZip( ByteBuffer bytes) throws Exception {
+    public static String uncompressGZip(ByteBuffer bytes) throws Exception {
         GZIPInputStream gzipInputStream = new GZIPInputStream(new ByteArrayInputStream(bytes.array()));
         OutputStream out = new ByteArrayOutputStream();
         byte[] buf = new byte[1024];
@@ -116,16 +112,54 @@ public class ZipUtil {
         BigDecimal m = new BigDecimal(bytes).divide(new BigDecimal(1024));
         return df.format(m.doubleValue()) + " KB";
     }
+
     static final DecimalFormat df = new DecimalFormat("###,###,###,###,###,###,###,##0.00");
-    public static void unpack( ByteBuffer bb,  WebSocketUtil.WebSocketListener listener) throws ZipException {
+
+    public static void unpack(ByteBuffer bb, WebSocketUtil.WebSocketListener listener) throws ZipException {
         //notify photoCacheListener
         ResponseDTO response = unpackBytes(bb);
         Log.e(LOG, "##### unpack - telling photoCacheListener that response object is ready after unpack");
         listener.onMessage(response);
     }
 
+    public static ResponseDTO unpackStream(InputStream is) throws ZipException {
+        //InputStream is = new ByteArrayInputStream(bb);
+        ZipInputStream zis = new ZipInputStream(new BufferedInputStream(is));
+        ResponseDTO response = null;
+        Log.d(LOG, "##### before the try .....");
+        try {
+            ZipEntry ze;
+            while ((ze = zis.getNextEntry()) != null) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                byte[] buffer = new byte[BUFFER];
+                int count;
+                while ((count = zis.read(buffer)) != -1) {
+                    baos.write(buffer, 0, count);
+                }
+                String filename = ze.getName();
+                byte[] bytes = baos.toByteArray();
+                String json = new String(bytes);
+                Log.e(LOG, "#### Downloaded file: " + filename + ", length: " + json.length()
+                        + "\n" + json);
 
-    public static ResponseDTO unpackBytes( ByteBuffer bb) throws ZipException {
+                response = gson.fromJson(json, ResponseDTO.class);
+            }
+        } catch (Exception e) {
+            Log.e(LOG, "Failed to unpack byteBuffer", e);
+            throw new ZipException();
+        } finally {
+            try {
+                zis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new ZipException();
+            }
+        }
+        if (response == null) throw new ZipException();
+        return response;
+    }
+
+    public static ResponseDTO unpackBytes(ByteBuffer bb) throws ZipException {
         Log.d(LOG, "##### unpack - starting to unpack byte buffer: " + bb.capacity());
         InputStream is = new ByteArrayInputStream(bb.array());
         ZipInputStream zis = new ZipInputStream(new BufferedInputStream(is));
@@ -162,8 +196,16 @@ public class ZipUtil {
         if (response == null) throw new ZipException();
         return response;
     }
+
     static final String LOG = ZipUtil.class.getSimpleName();
     static final Gson gson = new Gson();
+    static String getElapsed(long start, long end) {
+        BigDecimal bs = new BigDecimal(start);
+        BigDecimal be = new BigDecimal(end);
+        BigDecimal a = be.subtract(bs).divide(new BigDecimal(1000), 2, BigDecimal.ROUND_HALF_UP);
+
+        return a.doubleValue() + " seconds";
+    }
 
     public static class ZipException extends Exception {
 

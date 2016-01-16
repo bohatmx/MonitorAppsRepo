@@ -53,7 +53,7 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
     public static MonitorProfileFragment newInstance(MonitorDTO monitor) {
         MonitorProfileFragment fragment = new MonitorProfileFragment();
         Bundle args = new Bundle();
-        args.putSerializable("monitor", monitor);
+        args.putSerializable("locationTrackerDTO", monitor);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,7 +65,7 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            monitor = (MonitorDTO) getArguments().getSerializable("monitor");
+            monitor = (MonitorDTO) getArguments().getSerializable("locationTrackerDTO");
         }
     }
 

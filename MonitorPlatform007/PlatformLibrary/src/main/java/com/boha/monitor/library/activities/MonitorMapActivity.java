@@ -492,10 +492,12 @@ public class MonitorMapActivity extends AppCompatActivity
         if (track.getMonitorID() != null) {
             w.setRequestType(RequestDTO.GET_MONITOR_PHOTOS);
             w.setMonitorID(track.getMonitorID());
+            Log.d(LOG, ".............getPersonPhotos for Monitor");
         }
         if (track.getStaffID() != null) {
             w.setRequestType(RequestDTO.GET_STAFF_PHOTOS);
             w.setStaffID(track.getStaffID());
+            Log.d(LOG, ".............getPersonPhotos for Staff");
         }
 
 

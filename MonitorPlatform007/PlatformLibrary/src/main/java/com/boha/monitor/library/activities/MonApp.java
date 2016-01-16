@@ -13,8 +13,6 @@ import android.os.SystemClock;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.services.LocationTrackerReceiver;
@@ -62,7 +60,6 @@ import java.util.HashMap;
  * Start device location tracker alarm
  */
 public class MonApp extends Application implements Application.ActivityLifecycleCallbacks {
-    RequestQueue requestQueue;
     static final String PROPERTY_ID = "UA-53661372-2";
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
     private AlarmManager alarmMgr;
@@ -155,7 +152,6 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         } else {
             Log.d(LOG, "###### ACRA Crash Reporting has NOT been initiated, in DEBUG mode");
         }
-        initializeVolley(getApplicationContext());
         startLocationAlarm();
 
     }
@@ -166,7 +162,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intentx, 0);
 
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), HOUR, alarmIntent);
+                SystemClock.elapsedRealtime(), ONE_MINUTE * 30, alarmIntent);
 
         Log.d(LOG, "###### AlarmManager: alarm set to pull the device tracker trigger every: HOUR");
     }
@@ -178,16 +174,6 @@ public class MonApp extends Application implements Application.ActivityLifecycle
             HALF_HOUR = FIFTEEN_MINUTES * 2,
             HOUR = HALF_HOUR * 2;
 
-    /**
-     * Set up Volley Networking; create RequestQueue and ImageLoader
-     *
-     * @param context
-     */
-    public void initializeVolley(Context context) {
-        Log.e(LOG, "initializing Volley Networking ...");
-        requestQueue = Volley.newRequestQueue(context);
-        //Log.i(LOG, "********** Yebo! Volley Networking has been initialized");
-    }
 
     public ChatMessageListActivity getChatMessageListActivity() {
         return chatMessageListActivity;
