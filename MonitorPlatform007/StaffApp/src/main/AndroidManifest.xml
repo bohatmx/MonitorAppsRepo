@@ -18,6 +18,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <uses-feature android:name="android.hardware.camera"
+        android:required="true" />
     <application
         android:name="com.boha.monitor.library.activities.MonApp"
         android:allowBackup="true"
@@ -87,6 +89,7 @@
             android:parentActivityName=".activities.StaffMainActivity" />
         <activity
             android:name="com.boha.monitor.library.activities.PictureActivity"
+            android:screenOrientation="portrait"
             android:parentActivityName=".activities.StaffMainActivity" />
         <activity android:name="com.boha.monitor.library.activities.PhotoListActivity" />
         <activity

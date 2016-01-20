@@ -124,13 +124,13 @@ public class PhotoCacheUtil {
         });
     }
 
-    static final int CACHE_LIMIT = 3000;
+    static final int CACHE_LIMIT = 100;
     public static void updateUploadedPhoto(Context context, final PhotoUploadDTO photo) {
         ctx = context;
         getCachedPhotos(context, new PhotoCacheListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO r) {
-                List<PhotoUploadDTO> pending = new ArrayList<>();
+                List<PhotoUploadDTO> pending = new ArrayList<>(r.getPhotoUploadList().size());
 
                 for (PhotoUploadDTO p : r.getPhotoUploadList()) {
                     if (photo.getThumbFilePath().equalsIgnoreCase(p.getThumbFilePath())) {
@@ -141,6 +141,10 @@ public class PhotoCacheUtil {
                 Collections.sort(pending);
                 if (pending.size() > CACHE_LIMIT) {
                     if (pending.get(pending.size() - 1).getDateUploaded() != null) {
+                        File file = new File(pending.get(pending.size() - 1).getThumbFilePath());
+                        if (file.exists()) {
+                            file.delete();
+                        }
                         pending.remove(pending.size() - 1);
                     }
                 }
@@ -179,23 +183,14 @@ public class PhotoCacheUtil {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            String json;
-            File file;
+
             FileOutputStream outputStream;
             try {
-                json = gson.toJson(response);
+                String json = gson.toJson(response);
                 outputStream = ctx.openFileOutput(JSON_PHOTO, Context.MODE_PRIVATE);
                 write(outputStream, json);
-                file = ctx.getFileStreamPath(JSON_PHOTO);
-                if (file != null) {
-                    Log.e(LOG, "Photo cache written, path: " + file.getAbsolutePath() +
-                            " - length: " + file.length() + " photos: " + response.getPhotoUploadList().size());
-                }
                 if (!response.getPhotoUploadList().isEmpty()) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("### Photos in cache ###: " + response.getPhotoUploadList().size());
-
-                    Log.w(LOG, sb.toString());
+                    Log.w(LOG, "### Photos in cache ###: " + response.getPhotoUploadList().size());
                 } else {
                     Log.w(LOG, "### no photos in cache");
                 }
@@ -240,7 +235,6 @@ public class PhotoCacheUtil {
             try {
                 stream = ctx.openFileInput(JSON_PHOTO);
                 response = getData(stream);
-                Log.i(LOG, "++ photo cache retrieved, photos: " + response.getPhotoUploadList().size());
             } catch (FileNotFoundException e) {
                 Log.w(LOG, "############# cache file not found. not initialised yet. no problem, type = PHOTOS");
                 return response;
@@ -257,7 +251,6 @@ public class PhotoCacheUtil {
             if (photoCacheListener == null)
                 return;
             else {
-                Log.d(LOG, "############# cool, calling onFileDataDeserialized, photos: " + v.getPhotoUploadList().size());
                 photoCacheListener.onFileDataDeserialized(v);
             }
 

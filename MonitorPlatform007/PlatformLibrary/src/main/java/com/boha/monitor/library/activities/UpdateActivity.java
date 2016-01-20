@@ -239,20 +239,19 @@ public class UpdateActivity extends AppCompatActivity
 
             case GET_PROJECT_PHOTO:
                 if (resCode == RESULT_OK) {
-                    ResponseDTO resp = (ResponseDTO) data.getSerializableExtra("response");
-                    if (project.getPhotoUploadList() == null) {
-                        project.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
+                    if (resCode == RESULT_OK) {
+                        boolean isTaken =  data.getBooleanExtra("pictureTakenOK", false);
+                    } else {
                     }
-                    project.getPhotoUploadList().addAll(resp.getPhotoUploadList());
                 }
 
                 break;
             case GET_PROJECT_TASK_PHOTO:
                 if (resCode == RESULT_OK) {
-                    ResponseDTO resp = (ResponseDTO) data.getSerializableExtra("response");
-                    taskStatusUpdateFragment.displayPhotos(resp.getPhotoUploadList());
+                    boolean isTaken =  data.getBooleanExtra("pictureTakenOK", false);
+                    taskStatusUpdateFragment.onPictureTaken(isTaken);
                 } else {
-                    taskStatusUpdateFragment.onNoPhotoTaken();
+                    taskStatusUpdateFragment.onPictureTaken(false);
                 }
                 break;
             case GET_PROJECT_VIDEO:

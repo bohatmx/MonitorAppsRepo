@@ -321,11 +321,11 @@ public class ImageUtil {
                 file = new File(imgDir, filename);
             }
             outStream = new FileOutputStream(file);
-            bm.compress(Bitmap.CompressFormat.JPEG, 90, outStream);
+            bm.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
             outStream.flush();
             outStream.close();
 
-            Log.e(LOGTAG, "File saved from bitmap: " + file.getAbsolutePath());
+//            Log.e(LOGTAG, "File saved from bitmap: " + file.getAbsolutePath() + " size: " + file.length());
         } catch (Exception e) {
             Log.e(LOGTAG, "Failed to get file from bitmap", e);
         }
@@ -333,10 +333,17 @@ public class ImageUtil {
 
     }
 
-    public static Bitmap getScaledImage(Bitmap bitmap, int maxWidth,
-                                        int maxHeight, boolean filter) {
-        bitmap = Bitmap.createScaledBitmap(bitmap, maxWidth, maxHeight, filter);
-        return bitmap;
+    public static Bitmap getScaledImage(Context ctx,
+            File file, int maxWidth,int maxHeight, boolean filter) throws Exception {
+
+        Bitmap bitmap = ImageUtil.getBitmapFromUri(ctx,Uri.fromFile(file));
+        float scale = Math.min(((float)maxHeight / bitmap.getWidth()),
+                ((float)maxWidth / bitmap.getHeight()));
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scale,scale);
+        Bitmap bm = Bitmap.createScaledBitmap(bitmap, maxWidth, maxHeight, filter);
+        return bm;
     }
 
     public static Bitmap getResizedBitmap( Bitmap bitmap, int maxWidth,

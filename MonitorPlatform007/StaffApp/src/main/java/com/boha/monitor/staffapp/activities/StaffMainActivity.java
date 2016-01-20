@@ -646,10 +646,66 @@ public class StaffMainActivity extends AppCompatActivity implements
     static final int CHECK_FOR_REFRESH = 3121, STAFF_PICTURE_REQUESTED = 3472;
     boolean companyDataRefreshed;
 
+    private void refreshProjectStatus() {
+        RequestDTO w = new RequestDTO(RequestDTO.GET_PROJECT_STATUS_PHOTOS);
+        w.setProjectID(selectedProject.getProjectID());
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(ResponseDTO response) {
+                selectedProject.setPhotoUploadList(response.getPhotoUploadList());
+                selectedProject.setProjectTaskList(response.getProjectTaskList());
+                projectListFragment.refreshProject(selectedProject);
+
+                //update cache
+                CacheUtil.getCachedStaffData(ctx, new CacheUtil.CacheUtilListener() {
+                    @Override
+                    public void onFileDataDeserialized(ResponseDTO response) {
+                        List<ProjectDTO> list = new ArrayList<ProjectDTO>(response.getProjectList().size());
+                        for (ProjectDTO p: response.getProjectList()) {
+                            if (p.getProjectID().intValue() == selectedProject.getProjectID().intValue()) {
+                                list.add(selectedProject);
+                            } else {
+                                list.add(p);
+                            }
+
+                        }
+                        response.setProjectList(list);
+                        CacheUtil.cacheStaffData(ctx,response, null);
+                    }
+
+                    @Override
+                    public void onDataCached() {
+
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String message) {
+
+            }
+
+            @Override
+            public void onWebSocketClose() {
+
+            }
+        });
+
+    }
     @Override
-    public void onActivityResult(int reqCode, int resCode, Intent data) {
+    public void onActivityResult(int reqCode, final int resCode, Intent data) {
         Log.d(LOG, "onActivityResult reqCode " + reqCode + " resCode " + resCode);
         switch (reqCode) {
+            case REQUEST_CAMERA:
+                if (resCode == RESULT_OK) {
+                    refreshProjectStatus();
+                    }
+                break;
             case REQUEST_STATUS_UPDATE:
                 getCache();
                 break;
@@ -740,8 +796,10 @@ public class StaffMainActivity extends AppCompatActivity implements
     REQUEST_VIDEO = 3488,
     LOCATION_REQUESTED = 9031, REQUEST_STATUS_UPDATE = 3291;
 
+    ProjectDTO selectedProject;
     @Override
     public void onCameraRequired(final ProjectDTO project) {
+        selectedProject = project;
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
         MediaDialogFragment mdf = new MediaDialogFragment();
         mdf.setCancelable(false);

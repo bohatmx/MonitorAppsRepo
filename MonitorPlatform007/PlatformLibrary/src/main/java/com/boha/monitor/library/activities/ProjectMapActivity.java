@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.net.Uri;
@@ -266,42 +269,41 @@ public class ProjectMapActivity extends AppCompatActivity
     private void setProjectMarkers() {
         googleMap.clear();
         index = 0;
+        Resources resources = getResources();
+
         for (ProjectDTO project : projectList) {
             if (project.getLatitude() == null) continue;
             LatLng pnt = new LatLng(project.getLatitude(), project.getLongitude());
             ProjectTaskStatusDTO status = getLastStatus(project);
 
-            View view = getLayoutInflater().inflate(R.layout.project_name, null);
-            TextView name = (TextView) view.findViewById(R.id.name);
-            TextView st = (TextView) view.findViewById(R.id.statusColor);
-            name.setText(project.getProjectName());
-            if (useSmallIcons) {
-                name.setVisibility(View.GONE);
-                st.setText(project.getProjectName().substring(0,1));
-            }
-            Bitmap bitmap = null;
+            Drawable icon = getIcon(index);
             BitmapDescriptor desc = null;
-            st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xblack_oval_small));
+
             if (status != null) {
                 Short color = status.getTaskStatusType().getStatusColor();
                 switch (color) {
                     case TaskStatusTypeDTO.STATUS_COLOR_RED:
-                        st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xred_oval_small));
+
+                        icon.setColorFilter(new
+                                PorterDuffColorFilter(resources.getColor(R.color.red_800), PorterDuff.Mode.MULTIPLY));
                         break;
                     case TaskStatusTypeDTO.STATUS_COLOR_GREEN:
-                        st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgreen_oval_small));
+                        icon.setColorFilter(new
+                                PorterDuffColorFilter(resources.getColor(R.color.green_800), PorterDuff.Mode.MULTIPLY));
                         break;
                     case TaskStatusTypeDTO.STATUS_COLOR_AMBER:
-                        st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xamber_oval_small));
+                        icon.setColorFilter(new
+                                PorterDuffColorFilter(resources.getColor(R.color.amber_800), PorterDuff.Mode.MULTIPLY));
                         break;
                     default:
-                        st.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xblack_oval_small));
+                        icon.setColorFilter(new
+                                PorterDuffColorFilter(resources.getColor(R.color.black), PorterDuff.Mode.MULTIPLY));
+
                         break;
                 }
             }
 
-            bitmap = Util.createBitmapFromView(ctx, view, displayMetrics);
-            desc = BitmapDescriptorFactory.fromBitmap(bitmap);
+            desc = BitmapDescriptorFactory.fromBitmap(Util.drawableToBitmap(icon));
             Marker m = googleMap.addMarker(new MarkerOptions()
                     .title(project.getProjectID().toString())
                     .icon(desc)
@@ -584,113 +586,317 @@ public class ProjectMapActivity extends AppCompatActivity
 
     List<BitmapDescriptor> bmdList = new ArrayList<BitmapDescriptor>();
 
-    private void loadIcons() {
+    private Drawable getIcon(int index) {
+
+
         try {
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_1));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_2));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_3));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_4));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_5));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_6));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_7));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_8));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_9));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_10));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_11));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_12));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_13));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_14));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_15));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_16));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_17));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_18));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_19));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_20));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_21));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_22));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_23));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_24));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_25));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_26));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_27));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_28));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_29));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_30));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_31));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_32));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_33));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_34));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_35));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_36));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_37));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_38));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_39));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_40));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_41));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_42));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_43));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_44));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_45));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_46));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_47));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_48));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_49));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_50));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_51));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_52));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_53));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_54));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_55));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_56));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_57));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_58));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_59));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_60));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_61));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_62));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_63));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_64));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_65));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_66));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_67));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_68));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_69));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_70));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_71));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_72));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_73));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_74));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_75));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_76));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_77));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_78));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_79));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_80));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_81));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_82));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_83));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_84));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_85));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_86));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_87));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_88));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_89));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_90));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_91));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_92));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_93));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_94));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_95));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_96));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_97));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_98));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_99));
-            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_100));
+            switch (index) {
+                case 0:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_1);
+
+                case 1:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_2);
+
+                case 2:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_3);
+
+                case 3:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_4);
+
+                case 4:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_5);
+
+                case 5:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_6);
+
+                case 6:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_7);
+
+                case 7:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_8);
+
+                case 8:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_9);
+
+                case 9:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_10);
+
+                case 10:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_11);
+
+                case 11:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_12);
+
+                case 12:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_13);
+
+                case 13:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_14);
+
+                case 14:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_15);
+
+                case 15:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_16);
+
+                case 16:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_17);
+
+                case 17:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_18);
+
+                case 18:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_19);
+
+                case 19:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_20);
+
+                case 20:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_21);
+
+                case 21:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_22);
+
+                case 22:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_23);
+
+                case 23:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_24);
+
+                case 24:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_25);
+
+                case 25:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_26);
+
+                case 26:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_27);
+
+                case 27:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_28);
+
+                case 28:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_29);
+
+                case 29:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_30);
+
+                case 30:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_31);
+
+                case 31:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_32);
+
+                case 32:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_33);
+
+                case 33:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_34);
+
+                case 34:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_35);
+
+                case 35:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_36);
+
+                case 36:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_37);
+
+                case 37:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_38);
+
+                case 38:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_39);
+
+                case 39:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_40);
+
+                case 40:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_41);
+
+                case 41:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_42);
+
+                case 42:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_43);
+
+                case 43:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_44);
+
+                case 44:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_45);
+
+                case 45:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_46);
+
+                case 46:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_47);
+
+                case 47:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_48);
+
+                case 48:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_49);
+
+                case 49:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_50);
+
+                case 50:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_51);
+
+                case 51:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_52);
+
+                case 52:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_53);
+
+                case 53:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_54);
+
+                case 54:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_55);
+
+                case 55:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_56);
+
+                case 56:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_57);
+
+                case 57:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_58);
+
+                case 58:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_59);
+
+                case 59:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_60);
+
+                case 60:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_61);
+
+                case 61:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_62);
+
+                case 62:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_63);
+
+                case 63:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_64);
+
+                case 64:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_65);
+
+                case 65:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_66);
+
+                case 66:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_67);
+
+                case 67:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_68);
+
+                case 68:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_69);
+
+                case 69:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_70);
+
+                case 70:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_71);
+
+                case 71:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_72);
+
+                case 72:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_73);
+
+                case 73:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_74);
+
+                case 74:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_75);
+
+                case 75:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_76);
+
+                case 76:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_77);
+
+                case 77:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_78);
+
+                case 78:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_79);
+
+                case 79:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_80);
+
+                case 80:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_81);
+
+                case 81:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_82);
+
+                case 82:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_83);
+
+                case 83:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_84);
+
+                case 84:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_85);
+
+                case 85:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_86);
+
+                case 86:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_87);
+
+                case 87:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_88);
+
+                case 88:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_89);
+
+                case 89:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_90);
+
+                case 90:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_91);
+
+                case 91:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_92);
+
+                case 92:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_93);
+
+                case 93:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_94);
+
+                case 94:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_95);
+
+                case 95:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_96);
+
+                case 96:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_97);
+
+                case 97:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_98);
+
+                case 98:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_99);
+
+                case 99:
+                    return ContextCompat.getDrawable(ctx, R.drawable.number_100);
+
+            }
         } catch (Exception e) {
             Log.e(LOG, "Load icons failed", e);
         }
 
-
+        return ContextCompat.getDrawable(ctx, R.drawable.number_1);
     }
 
     boolean coordsConfirmed;

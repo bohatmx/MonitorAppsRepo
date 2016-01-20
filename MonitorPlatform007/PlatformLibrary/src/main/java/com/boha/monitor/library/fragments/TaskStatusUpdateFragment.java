@@ -429,6 +429,13 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
     private List<PhotoUploadDTO> photoUploadList;
 
+    public void onPictureTaken(boolean isTaken) {
+        if (isTaken) {
+            Snackbar.make(scrollView,"Photo has been taken and saved",Snackbar.LENGTH_LONG).show();
+        } else {
+            Util.showErrorToast(getActivity(),"Photo has not been taken. Please try again");
+        }
+    }
     public void displayPhotos(List<PhotoUploadDTO> list) {
         Log.i(LOG, "## photos Taken: " + list.size());
         if (photoUploadList == null) {

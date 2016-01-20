@@ -84,7 +84,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
             hvh.txtCount.setText("" + projectList.size());
             hvh.image.setImageDrawable(Util.getRandomBackgroundImage(ctx));
-            Statics.setRobotoFontLight(ctx,hvh.txtProgramme);
+            Statics.setRobotoFontLight(ctx, hvh.txtProgramme);
         }
 
         if (holder instanceof ProjectViewHolder) {
@@ -205,6 +205,21 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 pvh.iconLocation.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
                 pvh.txtProjectName.setTextColor(darkColor);
             }
+            if (project.getLatitude() == null) {
+                pvh.iconCamera.setEnabled(false);
+                pvh.iconDirections.setEnabled(false);
+                pvh.iconDoStatus.setEnabled(false);
+                pvh.iconCamera.setAlpha(0.2f);
+                pvh.iconDirections.setAlpha(0.2f);
+                pvh.iconDoStatus.setAlpha(0.2f);
+            } else {
+                pvh.iconCamera.setEnabled(true);
+                pvh.iconDirections.setEnabled(true);
+                pvh.iconDoStatus.setEnabled(true);
+                pvh.iconCamera.setAlpha(1.0f);
+                pvh.iconDirections.setAlpha(1.0f);
+                pvh.iconDoStatus.setAlpha(1.0f);
+            }
 
         }
 
@@ -222,7 +237,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (project.getMunicipalityName() != null) {
             pvh.txtMuni.setVisibility(View.VISIBLE);
             pvh.txtMuni.setText(project.getMunicipalityName());
-            Statics.setRobotoFontLight(ctx,pvh.txtMuni);
+            Statics.setRobotoFontLight(ctx, pvh.txtMuni);
         }
 
     }
@@ -244,7 +259,6 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 iconCamera, iconDirections, iconDoStatus,
                 iconLocation;
         protected View imageLayout;
-
 
 
         public ProjectViewHolder(View itemView) {

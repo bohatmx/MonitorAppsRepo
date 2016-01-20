@@ -86,20 +86,20 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class Util {
     @SuppressLint("NewApi")
-    public static String getRealPathFromURI_API19(Context context, Uri uri){
+    public static String getRealPathFromURI_API19(Context context, Uri uri) {
         String filePath = "";
         String wholeID = DocumentsContract.getDocumentId(uri);
 
         // Split at colon, use second item in the array
         String id = wholeID.split(":")[1];
 
-        String[] column = { MediaStore.Images.Media.DATA };
+        String[] column = {MediaStore.Images.Media.DATA};
 
         // where id is equal to
         String sel = MediaStore.Images.Media._ID + "=?";
 
         Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                column, sel, new String[]{ id }, null);
+                column, sel, new String[]{id}, null);
 
         int columnIndex = cursor.getColumnIndex(column[0]);
 
@@ -113,7 +113,7 @@ public class Util {
 
     @SuppressLint("NewApi")
     public static String getRealPathFromURI_API11to18(Context context, Uri contentUri) {
-        String[] proj = { MediaStore.Images.Media.DATA };
+        String[] proj = {MediaStore.Images.Media.DATA};
         String result = null;
 
         CursorLoader cursorLoader = new CursorLoader(
@@ -121,7 +121,7 @@ public class Util {
                 contentUri, proj, null, null, null);
         Cursor cursor = cursorLoader.loadInBackground();
 
-        if(cursor != null){
+        if (cursor != null) {
             int column_index =
                     cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();
@@ -130,15 +130,16 @@ public class Util {
         return result;
     }
 
-    public static String getRealPathFromURI_BelowAPI11(Context context, Uri contentUri){
-        String[] proj = { MediaStore.Images.Media.DATA };
+    public static String getRealPathFromURI_BelowAPI11(Context context, Uri contentUri) {
+        String[] proj = {MediaStore.Images.Media.DATA};
         Cursor cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
         int column_index
                 = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
-    public static String getAnotherHash(String hashMe) throws NoSuchAlgorithmException{
+
+    public static String getAnotherHash(String hashMe) throws NoSuchAlgorithmException {
         MessageDigest md = null;
         md = MessageDigest.getInstance("SHA-512");
         md.update(hashMe.getBytes());
@@ -206,6 +207,19 @@ public class Util {
         public void onItemSelected(int index);
     }
 
+    public static boolean locationIsWithin(Location projectLocation,
+                                           Location currentLocation,
+                                           int radiusMetres) {
+
+        float distance = projectLocation.distanceTo(currentLocation);
+        if (distance > radiusMetres) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+
     public static Bitmap createBitmapFromView(Context context, View view, DisplayMetrics displayMetrics) {
         view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
         view.layout(0, 0, displayMetrics.widthPixels,
@@ -218,18 +232,92 @@ public class Util {
         return bitmap;
     }
 
+    public static Bitmap rotateBitmapOrientation(String photoFilePath,
+                  int maxWidth, int maxHeight, int scale) throws IOException {
+
+        // Create and configure BitmapFactory
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(photoFilePath, options);
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        Bitmap bm = BitmapFactory.decodeFile(photoFilePath, opts);
+        bm = Bitmap.createScaledBitmap(bm,maxWidth,maxHeight,false);
+        // Read EXIF Data
+        ExifInterface exif = new ExifInterface(photoFilePath);
+        String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+        int orientation = orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
+        int rotationAngle = 0;
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
+            rotationAngle = 90;
+        }
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
+            rotationAngle = 180;
+        }
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+            rotationAngle = 270;
+        }
+        // Rotate Bitmap
+        Matrix matrix = new Matrix();
+        //options.inSampleSize = scale;
+        Log.d(LOG, "rotationAngle: " + rotationAngle);
+        matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, options.outWidth, options.outHeight, matrix, true);
+
+        // Return result
+        return rotatedBitmap;
+    }
+    public static Bitmap rotateBitmap(Bitmap bm) throws IOException {
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        // Rotate Bitmap
+        Matrix matrix = new Matrix();
+        Log.d(LOG, "rotationAngle: 90");
+        matrix.setRotate(90, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
+
+        // Return result
+        return rotatedBitmap;
+    }
     public static Bitmap decodeSampledBitmap(File file,
                                              int reqWidth, int reqHeight) {
 
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-        // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
         Bitmap out = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
 
+
+        return out;
+    }
+    public static Bitmap decodeSampledBitmapFromFile(File file,
+                                                     int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+
+        // Calculate inSampleSize
+        int sampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        if (sampleSize == 1) {
+            sampleSize = 8;
+        }
+        options.inSampleSize = sampleSize;
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+    }
+
+    public static Bitmap decodeSampledBitmap(File file,
+                                             int scale) {
+
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = scale;
+
+        Bitmap out = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
 
         return out;
     }
@@ -269,10 +357,25 @@ public class Util {
                 inSampleSize *= 2;
             }
         }
-
+        Log.d(LOG,"calculated sample size: " + inSampleSize);
         return inSampleSize;
     }
+    public static Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+        Matrix matrix = new Matrix();
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight);
 
+        // "RECREATE" THE NEW BITMAP
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        bm.recycle();
+        return resizedBitmap;
+    }
     public static void rotateViewWithDelay(
             final Activity activity, final View view,
             final int duration, int delay, final UtilAnimationListener listener) {
@@ -323,6 +426,7 @@ public class Util {
 
     /**
      * Create custom Action Bar
+     *
      * @param ctx
      * @param actionBar
      * @param text
@@ -1477,7 +1581,7 @@ public class Util {
             else
                 ef.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, "W");
             ef.saveAttributes();
-            Log.e(LOG, "### Exif attributes written to " + filePath);
+//            Log.e(LOG, "### Exif attributes written to " + filePath);
         } catch (IOException e) {
         }
     }

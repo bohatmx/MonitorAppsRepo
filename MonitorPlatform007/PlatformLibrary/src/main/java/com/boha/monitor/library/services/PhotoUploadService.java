@@ -81,8 +81,8 @@ public class PhotoUploadService extends IntentService {
                     } else {
                         Log.e(LOG,"### ...pending photo uploads: " + pending);
                     }
-
-                    onHandleIntent(null);
+                    index = 0;
+                    controlUploads();
                 } catch (FileNotFoundException e) {
                     Log.w(LOG, "############# photo cache file not found. possibly virgin trip");
 
@@ -118,13 +118,31 @@ public class PhotoUploadService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.w(LOG, "## onHandleIntent .... starting service");
-        if (list == null) {
-            uploadCachedPhotos(uploadListener);
-            return;
+        Log.w(LOG, "## PhotoUploadService onHandleIntent .... starting service");
+
+        if (intent != null) {
+            PhotoCacheUtil.getCachedPhotos(getApplicationContext(), new PhotoCacheUtil.PhotoCacheListener() {
+                @Override
+                public void onFileDataDeserialized(ResponseDTO response) {
+                    uploadedList = new ArrayList<>();
+                    list = response.getPhotoUploadList();
+                    index = 0;
+                    controlUploads();
+
+                }
+
+                @Override
+                public void onDataCached(PhotoUploadDTO photo) {
+
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
         }
-        uploadedList = new ArrayList<>();
-        controlUploads();
+
 
 
     }
@@ -151,7 +169,7 @@ public class PhotoUploadService extends IntentService {
 
 
     private void executeUpload(final PhotoUploadDTO dto) {
-        Log.d(LOG, "** executeUpload, projectID: " + dto.getProjectID());
+//        Log.d(LOG, "** executeUpload, projectID: " + dto.getProjectID());
 
         CDNUploader.uploadFile(getApplicationContext(), dto, new CDNUploader.CDNUploaderListener() {
             @Override

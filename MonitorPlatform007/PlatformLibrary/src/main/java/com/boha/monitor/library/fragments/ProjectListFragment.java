@@ -97,11 +97,28 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
     ProjectAdapter projectAdapter;
     List<String> projectNameList;
+    ProjectDTO selectedProject;
     public void refreshProjectList(List<ProjectDTO> projectList) {
         this.projectList = projectList;
         if (mRecyclerView != null) {
             setList();
         }
+    }
+
+    public void refreshProject(ProjectDTO p) {
+        selectedProject = p;
+        List<ProjectDTO> list = new ArrayList<>(projectList.size());
+        for (ProjectDTO proj: projectList) {
+            if (proj.getProjectID().intValue() == p.getProjectID().intValue()) {
+                list.add(p);
+            } else {
+                list.add(proj);
+            }
+        }
+        projectList = list;
+        setList();
+
+
     }
     private void setList() {
 
@@ -144,48 +161,56 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             @Override
             public void onCameraRequired(ProjectDTO project) {
                 Log.d(LOG, "### onCameraRequired");
+                selectedProject = project;
                 mListener.onCameraRequired(project);
             }
 
             @Override
             public void onStatusUpdateRequired(ProjectDTO project) {
                 Log.d(LOG, "### onStatusUpdateRequired");
+                selectedProject = project;
                 mListener.onStatusUpdateRequired(project);
             }
 
             @Override
             public void onLocationRequired(ProjectDTO project) {
                 Log.d(LOG, "### onLocationRequired");
+                selectedProject = project;
                 mListener.onLocationRequired(project);
             }
 
             @Override
             public void onDirectionsRequired(ProjectDTO project) {
                 Log.d(LOG, "### onDirectionsRequired");
+                selectedProject = project;
                 mListener.onDirectionsRequired(project);
             }
 
             @Override
             public void onMessagingRequired(ProjectDTO project) {
                 Log.d(LOG, "### onMessagingRequired");
+                selectedProject = project;
                 mListener.onMessagingRequired(project);
             }
 
             @Override
             public void onGalleryRequired(ProjectDTO project) {
                 Log.d(LOG, "### onGalleryRequired");
+                selectedProject = project;
                 mListener.onGalleryRequired(project);
             }
 
             @Override
             public void onStatusReportRequired(ProjectDTO project) {
                 Log.d(LOG, "### onStatusReportRequired");
+                selectedProject = project;
                 mListener.onStatusReportRequired(project);
             }
 
             @Override
             public void onMapRequired(ProjectDTO project) {
                 Log.i(LOG, "### onMapRequired");
+                selectedProject = project;
                 Intent w = new Intent(getActivity(), ProjectMapActivity.class);
                 ResponseDTO responseDTO = new ResponseDTO();
                 responseDTO.setProjectList(new ArrayList<ProjectDTO>());
