@@ -69,9 +69,9 @@ public class UpdateActivity extends AppCompatActivity
         setContentView(R.layout.activity_update);
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
         type = getIntent().getIntExtra("type", 0);
+
         monitor = SharedUtil.getMonitor(getApplicationContext());
         staff = SharedUtil.getCompanyStaff(getApplicationContext());
-        //getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Util.setCustomActionBar(
@@ -196,9 +196,16 @@ public class UpdateActivity extends AppCompatActivity
 
     }
 
+    /**
+     * A project task has had its status updated. Insert new status
+     * into the projectTask status list and let fragment resfresh its ui
+     * @param projectTask
+     * @param projectTaskStatus
+     */
     @Override
     public void onStatusComplete(ProjectTaskDTO projectTask,
                                  ProjectTaskStatusDTO projectTaskStatus) {
+        statusCompleted = true;
         for (ProjectTaskDTO m: project.getProjectTaskList()) {
             if (m.getProjectTaskID().intValue() == projectTask.getProjectTaskID().intValue()) {
                 if (m.getProjectTaskStatusList() == null) {
@@ -212,10 +219,9 @@ public class UpdateActivity extends AppCompatActivity
         projectTaskListFragment.setProject(project);
         cacheProject();
         isStatusUpdate = false;
-        //todo - do i need this refresh?
-        //refreshData(projectTask.getProjectID());
     }
 
+    boolean statusCompleted;
     private void replaceWithTaskList() {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
@@ -265,6 +271,7 @@ public class UpdateActivity extends AppCompatActivity
 
     StaffDTO staff;
     MonitorDTO monitor;
+    boolean cachingBusy;
 
     private void refreshData(final Integer projectID) {
         Log.w(LOG, "###### refreshData projectID: " + projectID.intValue());
@@ -327,17 +334,38 @@ public class UpdateActivity extends AppCompatActivity
     }
 
     private void cacheProject() {
+        Log.e(LOG,"cacheProject ....");
+        cachingBusy = true;
         if (staff != null) {
             CacheUtil.getCachedStaffData(getApplicationContext(), new CacheUtil.CacheUtilListener() {
                 @Override
                 public void onFileDataDeserialized(ResponseDTO response) {
+                    List<ProjectDTO> list = new ArrayList<>(response.getProjectList());
                     for (ProjectDTO m : response.getProjectList()) {
                         if (m.getProjectID().intValue() == project.getProjectID().intValue()) {
-                            m = project;
-                            break;
+                            list.add(project);
+                            continue;
                         }
+                        list.add(m);
                     }
-                    CacheUtil.cacheStaffData(getApplicationContext(), response, null);
+                    response.setProjectList(list);
+                    CacheUtil.cacheStaffData(getApplicationContext(), response, new CacheUtil.CacheUtilListener() {
+                        @Override
+                        public void onFileDataDeserialized(ResponseDTO response) {
+
+                        }
+
+                        @Override
+                        public void onDataCached() {
+                            cachingBusy = false;
+                            Log.w(LOG,"project has been cached");
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+                    });
                 }
 
                 @Override
@@ -355,21 +383,32 @@ public class UpdateActivity extends AppCompatActivity
             CacheUtil.getCachedMonitorProjects(getApplicationContext(), new CacheUtil.CacheUtilListener() {
                 @Override
                 public void onFileDataDeserialized(ResponseDTO response) {
-                    for (ProjectDTO m: response.getProjectList()) {
+                    List<ProjectDTO> list = new ArrayList<>(response.getProjectList());
+                    for (ProjectDTO m : response.getProjectList()) {
                         if (m.getProjectID().intValue() == project.getProjectID().intValue()) {
-                            m = project;
-                            break;
+                            list.add(project);
+                            continue;
                         }
+                        list.add(m);
                     }
-                    //todo -remove after debug
-                    for (ProjectDTO m: response.getProjectList()) {
-                        for (ProjectTaskDTO c: m.getProjectTaskList()) {
-//                            Log.d(LOG, c.getTask().getTaskName() + " " + c.getProjectTaskStatusList().size());;
+                    response.setProjectList(list);
+
+                    CacheUtil.cacheMonitorProjects(getApplicationContext(), response, new CacheUtil.CacheUtilListener() {
+                        @Override
+                        public void onFileDataDeserialized(ResponseDTO response) {
 
                         }
-                    }
 
-                    CacheUtil.cacheMonitorProjects(getApplicationContext(),response,null);
+                        @Override
+                        public void onDataCached() {
+                            cachingBusy = false;
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+                    });
                 }
 
                 @Override
@@ -386,10 +425,17 @@ public class UpdateActivity extends AppCompatActivity
     }
     @Override
     public void onBackPressed() {
+        if (cachingBusy) {
+            onBackPressed();
+            return;
+        }
         if (isStatusUpdate) {
             isStatusUpdate = false;
             replaceWithTaskList();
         } else {
+            Intent w = new Intent();
+            w.putExtra("statusCompleted",statusCompleted);
+            setResult(RESULT_OK,w);
             finish();
         }
     }

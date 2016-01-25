@@ -82,6 +82,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import hugo.weaving.DebugLog;
+
 /**
  * This class is the main activity that receives control from
  * the SignInActivity. It controls the sliding drawer menu and
@@ -112,7 +114,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
     @Override
     public void onResume() {
-        Log.w(LOG,"++++++++ ############## onResume - will get cache data");
+        Log.w(LOG, "++++++++ ############## onResume - will get cache data");
         super.onResume();
         navImage.setImageDrawable(Util.getRandomBackgroundImage(ctx));
         getCache();
@@ -245,11 +247,11 @@ public class StaffMainActivity extends AppCompatActivity implements
                         w.putExtra("type", ProjectMapActivity.STAFF);
                         ResponseDTO r = new ResponseDTO();
                         r.setProjectList(list);
-                        w.putExtra("projects",r);
+                        w.putExtra("projects", r);
                         startActivity(w);
                         return true;
                     } else {
-                        Util.showToast(getApplicationContext(),"Projects have not been located via GPS");
+                        Util.showToast(getApplicationContext(), "Projects have not been located via GPS");
                     }
 
                 }
@@ -267,13 +269,15 @@ public class StaffMainActivity extends AppCompatActivity implements
 
     private List<ProjectDTO> getProjectsLocationConfirmed() {
         List<ProjectDTO> list = new ArrayList<>();
-        for (ProjectDTO m: response.getProjectList()) {
+        for (ProjectDTO m : response.getProjectList()) {
             if (m.getLocationConfirmed() != null) {
                 list.add(m);
             }
         }
         return list;
     }
+
+    @DebugLog
     private void getCache() {
         CacheUtil.getCachedStaffData(ctx, new CacheUtil.CacheUtilListener() {
             @Override
@@ -282,7 +286,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                 if (!response.getProjectList().isEmpty()) {
                     buildPages();
                 } else {
-                    getRemoteStaffData(false);
+                    getRemoteStaffData(true);
                 }
 
             }
@@ -299,6 +303,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         });
     }
 
+    @DebugLog
     private void getRemoteStaffData(boolean showBusy) {
         RequestDTO w = new RequestDTO(RequestDTO.GET_STAFF_DATA);
         w.setStaffID(SharedUtil.getCompanyStaff(ctx).getStaffID());
@@ -317,6 +322,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                         setRefreshActionButtonState(false);
                         companyDataRefreshed = true;
                         response = r;
+                        buildPages();
                         CacheUtil.cacheStaffData(getApplicationContext(), r, new CacheUtil.CacheUtilListener() {
                             @Override
                             public void onFileDataDeserialized(ResponseDTO response) {
@@ -325,17 +331,6 @@ public class StaffMainActivity extends AppCompatActivity implements
 
                             @Override
                             public void onDataCached() {
-                                if (projectListFragment == null) {
-                                    buildPages();
-                                    return;
-                                } else {
-                                    projectListFragment.refreshProjectList(response.getProjectList());
-                                    monitorListFragment.refreshMonitorList(response.getMonitorList());
-                                    staffListFragment.refreshStaffList(response.getStaffList());
-                                }
-//                                if (response.getProjectList().isEmpty()) {
-//                                    Util.showErrorToast(ctx, "Projects have not been assigned yet");
-//                                }
                             }
 
                             @Override
@@ -366,6 +361,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         });
     }
 
+    @DebugLog
     private void buildPages() {
         pageFragmentList = new ArrayList<>();
 
@@ -376,11 +372,11 @@ public class StaffMainActivity extends AppCompatActivity implements
         simpleMessageFragment = new SimpleMessageFragment();
 
 
-        staffProfileFragment.setThemeColors(themePrimaryColor,themeDarkColor);
-        monitorListFragment.setThemeColors(themePrimaryColor,themeDarkColor);
-        staffListFragment.setThemeColors(themePrimaryColor,themeDarkColor);
-        projectListFragment.setThemeColors(themePrimaryColor,themeDarkColor);
-        simpleMessageFragment.setThemeColors(themePrimaryColor,themeDarkColor);
+        staffProfileFragment.setThemeColors(themePrimaryColor, themeDarkColor);
+        monitorListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
+        staffListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
+        projectListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
+        simpleMessageFragment.setThemeColors(themePrimaryColor, themeDarkColor);
 
         pageFragmentList.add(projectListFragment);
         pageFragmentList.add(staffListFragment);
@@ -413,6 +409,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
     }
 
+    @DebugLog
     protected void startLocationUpdates() {
         Log.d(LOG, "### startLocationUpdates ....");
         if (googleApiClient.isConnected()) {
@@ -427,6 +424,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         }
     }
 
+    @DebugLog
     protected void stopLocationUpdates() {
         Log.e(LOG, "### stopLocationUpdates ...");
         if (googleApiClient.isConnected()) {
@@ -473,8 +471,21 @@ public class StaffMainActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle b) {
+        Log.w(LOG,"onSaveInstanceState");
+        b.putSerializable("selectedProject",selectedProject);
+        super.onSaveInstanceState(b);
+    }
+    @Override
+    public void onRestoreInstanceState(Bundle b) {
+        Log.w(LOG,"onRestoreInstanceState");
+        selectedProject = (ProjectDTO)b.getSerializable("selectedProject");
+        super.onRestoreInstanceState(b);
+    }
 
     @Override
+    @DebugLog
     public void onStart() {
         Log.d(LOG,
                 "## onStart - GoogleApiClient connecting ... ");
@@ -491,6 +502,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     }
 
     @Override
+    @DebugLog
     public void onStop() {
         super.onStop();
         if (googleApiClient != null) {
@@ -510,6 +522,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     }
 
     @Override
+    @DebugLog
     public void onConnected(Bundle bundle) {
         Log.i(LOG,
                 "+++  GoogleApiClient onConnected() ...");
@@ -542,7 +555,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                 Log.i(LOG, "startDirectionsMap ..........");
                 String url = "http://maps.google.com/maps?saddr="
                         + mLocation.getLatitude() + "," + mLocation.getLongitude()
-                        + "&daddr=" + project.getLatitude() + "," + project.getLongitude() + "&mode=driving";
+                        + "&daddr=" + selectedProject.getLatitude() + "," + selectedProject.getLongitude() + "&mode=driving";
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 intent.setClassName("com.google.android.apps.maps",
                         "com.google.android.maps.MapsActivity");
@@ -584,6 +597,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
     boolean sendLocation;
     List<Integer> monitorList, staffList;
+
     @Override
     public void onLocationSendRequired(List<Integer> monitorList, List<Integer> staffList) {
         sendLocation = true;
@@ -591,9 +605,10 @@ public class StaffMainActivity extends AppCompatActivity implements
         this.staffList = staffList;
 
         setBusy(true);
-        Snackbar.make(mPager,"Getting device GPS coordinates, may take a few seconds ...",Snackbar.LENGTH_LONG).show();
+        Snackbar.make(mPager, "Getting device GPS coordinates, may take a few seconds ...", Snackbar.LENGTH_LONG).show();
         startLocationUpdates();
     }
+
     private void submitTrack() {
         RequestDTO w = new RequestDTO(RequestDTO.SEND_LOCATION);
         LocationTrackerDTO dto = new LocationTrackerDTO();
@@ -646,12 +661,15 @@ public class StaffMainActivity extends AppCompatActivity implements
     static final int CHECK_FOR_REFRESH = 3121, STAFF_PICTURE_REQUESTED = 3472;
     boolean companyDataRefreshed;
 
+
     private void refreshProjectStatus() {
         RequestDTO w = new RequestDTO(RequestDTO.GET_PROJECT_STATUS_PHOTOS);
         w.setProjectID(selectedProject.getProjectID());
+        Log.w(LOG,"refreshProjectStatus sending request ...");
         NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(ResponseDTO response) {
+                Log.i(LOG,"refreshProjectStatus onResponse");
                 selectedProject.setPhotoUploadList(response.getPhotoUploadList());
                 selectedProject.setProjectTaskList(response.getProjectTaskList());
                 projectListFragment.refreshProject(selectedProject);
@@ -660,8 +678,8 @@ public class StaffMainActivity extends AppCompatActivity implements
                 CacheUtil.getCachedStaffData(ctx, new CacheUtil.CacheUtilListener() {
                     @Override
                     public void onFileDataDeserialized(ResponseDTO response) {
-                        List<ProjectDTO> list = new ArrayList<ProjectDTO>(response.getProjectList().size());
-                        for (ProjectDTO p: response.getProjectList()) {
+                        List<ProjectDTO> list = new ArrayList<>();
+                        for (ProjectDTO p : response.getProjectList()) {
                             if (p.getProjectID().intValue() == selectedProject.getProjectID().intValue()) {
                                 list.add(selectedProject);
                             } else {
@@ -670,7 +688,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
                         }
                         response.setProjectList(list);
-                        CacheUtil.cacheStaffData(ctx,response, null);
+                        CacheUtil.cacheStaffData(ctx, response, null);
                     }
 
                     @Override
@@ -697,23 +715,34 @@ public class StaffMainActivity extends AppCompatActivity implements
         });
 
     }
+
     @Override
+    @DebugLog
     public void onActivityResult(int reqCode, final int resCode, Intent data) {
         Log.d(LOG, "onActivityResult reqCode " + reqCode + " resCode " + resCode);
         switch (reqCode) {
             case REQUEST_CAMERA:
                 if (resCode == RESULT_OK) {
-                    refreshProjectStatus();
-                    }
+                    getRemoteStaffData(true);
+//                    refreshProjectStatus();
+                }
                 break;
             case REQUEST_STATUS_UPDATE:
-                getCache();
+                if (resCode == RESULT_OK) {
+                    boolean statusCompleted =
+                            data.getBooleanExtra("statusCompleted",false);
+                    if (statusCompleted) {
+                        Log.e(LOG, "StaffMainActivity statusCompleted, getting refreshed");
+//                        getRemoteStaffData(true);
+                        refreshProjectStatus();
+                    }
+                }
                 break;
             case STAFF_PICTURE_REQUESTED:
                 if (resCode == RESULT_OK) {
                     PhotoUploadDTO x = (PhotoUploadDTO) data.getSerializableExtra("photo");
-                    SharedUtil.savePhoto(getApplicationContext(),x);
-                    Log.e(LOG,"photo returned uri: " + x.getUri());
+                    SharedUtil.savePhoto(getApplicationContext(), x);
+                    Log.e(LOG, "photo returned uri: " + x.getUri());
                     staffProfileFragment.setPicture(x);
                 }
                 break;
@@ -776,7 +805,6 @@ public class StaffMainActivity extends AppCompatActivity implements
     }
 
 
-
     @Override
     public void onCompanyStaffInvitationRequested(List<StaffDTO> companyStaffList, int index) {
 
@@ -793,11 +821,13 @@ public class StaffMainActivity extends AppCompatActivity implements
     }
 
     static final int REQUEST_CAMERA = 3329,
-    REQUEST_VIDEO = 3488,
-    LOCATION_REQUESTED = 9031, REQUEST_STATUS_UPDATE = 3291;
+            REQUEST_VIDEO = 3488,
+            LOCATION_REQUESTED = 9031, REQUEST_STATUS_UPDATE = 3291;
 
     ProjectDTO selectedProject;
+
     @Override
+    @DebugLog
     public void onCameraRequired(final ProjectDTO project) {
         selectedProject = project;
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
@@ -825,8 +855,10 @@ public class StaffMainActivity extends AppCompatActivity implements
     }
 
     @Override
+    @DebugLog
     public void onStatusUpdateRequired(ProjectDTO project) {
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
+        selectedProject = project;
         Intent w = new Intent(this, UpdateActivity.class);
         w.putExtra("project", project);
         w.putExtra("darkColor", themeDarkColor);
@@ -837,8 +869,10 @@ public class StaffMainActivity extends AppCompatActivity implements
     Activity activity;
 
     @Override
+    @DebugLog
     public void onLocationRequired(final ProjectDTO project) {
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
+        selectedProject = project;
         activity = this;
         if (project.getLatitude() != null) {
             AlertDialog.Builder c = new AlertDialog.Builder(this);
@@ -856,7 +890,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                     .setNegativeButton("View Map", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent w = new Intent(activity,ProjectMapActivity.class);
+                            Intent w = new Intent(activity, ProjectMapActivity.class);
                             ResponseDTO responseDTO = new ResponseDTO();
                             responseDTO.setProjectList(new ArrayList<ProjectDTO>());
                             responseDTO.getProjectList().add(project);
@@ -892,17 +926,18 @@ public class StaffMainActivity extends AppCompatActivity implements
     }
 
     boolean directionRequired;
-    ProjectDTO project;
+    //ProjectDTO project;
 
     @Override
     public void onDirectionsRequired(ProjectDTO project) {
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
+        selectedProject = project;
         if (project.getLatitude() == null) {
             Util.showErrorToast(ctx, "Project has not been located yet!");
             return;
         }
         directionRequired = true;
-        this.project = project;
+        //this.project = project;
         startLocationUpdates();
 
     }

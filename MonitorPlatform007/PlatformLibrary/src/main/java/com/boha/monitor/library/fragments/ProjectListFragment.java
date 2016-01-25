@@ -107,7 +107,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
     public void refreshProject(ProjectDTO p) {
         selectedProject = p;
-        List<ProjectDTO> list = new ArrayList<>(projectList.size());
+        List<ProjectDTO> list = new ArrayList<>();
         for (ProjectDTO proj: projectList) {
             if (proj.getProjectID().intValue() == p.getProjectID().intValue()) {
                 list.add(p);
@@ -118,6 +118,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         projectList = list;
         setList();
 
+        Log.i(LOG,"refreshProject done, " + p.getProjectName());
 
     }
     private void setList() {

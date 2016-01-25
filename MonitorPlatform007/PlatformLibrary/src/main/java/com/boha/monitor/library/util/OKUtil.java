@@ -131,7 +131,7 @@ public class OKUtil {
                         sink.close();
 
                         String aa = ZipUtil.unpack(file, uFile);
-                        Log.e(LOG, "### Data received size: " + getLength(file.length())
+                        Log.i(LOG, "### Data received size: " + getLength(file.length())
                                 + " unpacked: " + getLength(uFile.length()));
                         serverResponse = gson.fromJson(aa, ResponseDTO.class);
                         try {
@@ -155,7 +155,7 @@ public class OKUtil {
                     try {
                         String json = response.body().string();
                         serverResponse = gson.fromJson(json, ResponseDTO.class);
-                        Log.e(LOG, "### Data received: " + getLength(json.length()));
+                        Log.i(LOG, "### Data received: " + getLength(json.length()));
                         if (serverResponse.getStatusCode() == 0) {
                             listener.onResponse(serverResponse);
                         } else {

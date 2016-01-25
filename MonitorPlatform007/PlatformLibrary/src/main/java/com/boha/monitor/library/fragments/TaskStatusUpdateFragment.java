@@ -401,6 +401,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
     }
 
+
     private void showCameraDialog() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -418,7 +419,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
                         .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mListener.onStatusComplete(projectTask,projectTaskStatus);
+                                mListener.onStatusComplete(projectTask,returnedStatus);
                             }
                         })
                         .show();
