@@ -38,9 +38,7 @@
             android:src="@drawable/black_woman"
             android:layout_alignParentRight="true"
             android:layout_margin="@dimen/mon_wide"
-            android:scaleType="centerCrop"
-            app:border_width="2dp"
-            app:border_color="@color/white" />
+            android:scaleType="centerCrop" />
 
     </RelativeLayout>
 

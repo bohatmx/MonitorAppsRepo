@@ -14,7 +14,6 @@
         sothree:umanoDragView="@+id/dragView"
         sothree:umanoOverlay="true"
         sothree:umanoPanelHeight="68dp"
-        sothree:umanoParalaxOffset="100dp"
         sothree:umanoScrollableView="@+id/list"
         sothree:umanoShadowHeight="4dp">
 

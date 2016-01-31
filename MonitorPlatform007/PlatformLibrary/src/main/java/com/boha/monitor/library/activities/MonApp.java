@@ -38,7 +38,7 @@ import java.util.HashMap;
 
 
 @ReportsCrashes(
-        formKey = "",
+//        formKey = "",
         formUri = Statics.CRASH_REPORTS_URL,
         customReportContent = {
                 ReportField.APP_VERSION_NAME,

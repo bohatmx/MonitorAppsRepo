@@ -44,9 +44,7 @@
                     android:layout_marginRight="@dimen/mon_margin"
                     android:layout_marginTop="@dimen/mon_wide"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/black_woman"
-                    app:border_color="@color/white"
-                    app:border_width="2dp" />
+                    android:src="@drawable/black_woman" />
                 <TextView
                     android:id="@+id/FMP_name"
                     style="@style/TextStyleWhite"

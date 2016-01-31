@@ -25,9 +25,7 @@
                 android:layout_height="64dp"
                 android:layout_centerVertical="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/black_woman"
-                app:border_color="@color/grey"
-                app:border_width="2dp" />
+                android:src="@drawable/black_woman" />
 
 
             <TextView

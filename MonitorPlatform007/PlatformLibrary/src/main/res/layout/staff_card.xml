@@ -21,8 +21,7 @@
             android:layout_centerVertical="true"
             android:scaleType="centerCrop"
             android:src="@drawable/black_woman"
-            app:border_color="@color/white"
-            app:border_width="2dp" />
+ />
 
         <RelativeLayout
             android:id="@+id/PSN_top"

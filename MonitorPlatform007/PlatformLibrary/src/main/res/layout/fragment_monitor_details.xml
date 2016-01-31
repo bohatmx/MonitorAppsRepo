@@ -232,9 +232,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="@dimen/mon_margin"
             android:scaleType="centerCrop"
-            android:src="@drawable/black_woman"
-            app:border_color="@color/white"
-            app:border_width="1dp" />
+            android:src="@drawable/black_woman" />
 
     </RelativeLayout>
 </ScrollView>

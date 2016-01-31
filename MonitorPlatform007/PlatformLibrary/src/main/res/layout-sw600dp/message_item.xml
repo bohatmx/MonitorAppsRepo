@@ -54,9 +54,7 @@
                     android:id="@+id/CHATMSG_iconTo"
                     android:layout_width="@dimen/mon_widest"
                     android:layout_height="@dimen/mon_widest"
-                    android:src="@drawable/boy"
-                    app:border_width="2dp"
-                    app:border_color="@color/white" />
+                    android:src="@drawable/boy" />
 
 
                 <TextView
@@ -153,9 +151,7 @@
                 android:id="@+id/CHATMSG_iconFrom"
                 android:layout_width="@dimen/mon_widest"
                 android:layout_height="@dimen/mon_widest"
-                android:src="@drawable/boy"
-                app:border_width="2dp"
-                app:border_color="@color/yellow" />
+                android:src="@drawable/boy" />
 
 
             <TextView

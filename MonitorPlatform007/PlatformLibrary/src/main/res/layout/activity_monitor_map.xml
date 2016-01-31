@@ -50,9 +50,7 @@
         android:scaleType="centerCrop"
         android:layout_marginTop="@dimen/mon_margin"
         android:layout_marginLeft="@dimen/mon_margin"
-        android:src="@drawable/black_woman"
-        app:border_color="@color/white"
-        app:border_width="@dimen/mon_divider_small" />
+        android:src="@drawable/black_woman" />
 
     <TextView
         style="@style/RedCountBox"
