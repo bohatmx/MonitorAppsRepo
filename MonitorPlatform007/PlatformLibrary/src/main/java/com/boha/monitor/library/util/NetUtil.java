@@ -18,37 +18,40 @@ import java.math.BigDecimal;
 public class NetUtil {
     public interface NetUtilListener {
         public void onResponse(ResponseDTO response);
+
         public void onError(String message);
+
         public void onWebSocketClose();
     }
 
     static final String LOG = NetUtil.class.getSimpleName();
     static NetUtilListener listener;
+
     @RequiresPermission
-    public static void sendRequest( Context ctx,  RequestDTO request,  NetUtilListener utilListener) {
+    public static void sendRequest(Context ctx, RequestDTO request, NetUtilListener utilListener) {
         listener = utilListener;
         WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
         if (wcr.isNetworkUnavailable()) {
             utilListener.onError(ctx.getString(R.string.net_not_avail));
             return;
         }
-
-
-            sendViaHttp(ctx, request);
+        sendViaHttp(ctx, request);
 
     }
+
     @RequiresPermission
-    public static void sendRequest( Context ctx,  RequestList requestList,  NetUtilListener utilListener) {
+    public static void sendRequest(Context ctx, RequestList requestList, NetUtilListener utilListener) {
         listener = utilListener;
         WebCheckResult wcr = WebCheck.checkNetworkAvailability(ctx);
         if (!wcr.isNetworkUnavailable()) {
             utilListener.onError(ctx.getString(R.string.net_not_avail));
             return;
         }
-            sendListViaHttp(ctx, requestList);
+        sendListViaHttp(ctx, requestList);
 
     }
-    private static void sendViaHttp(Context ctx, RequestDTO request)  {
+
+    private static void sendViaHttp(Context ctx, RequestDTO request) {
         try {
             OKUtil.doGet(request, new OKUtil.OKListener() {
                 @Override
@@ -65,6 +68,7 @@ public class NetUtil {
             listener.onError("Communications Error: " + e.msg);
         }
     }
+
     private static void sendListViaHttp(Context ctx, RequestList requestList) {
         final long start = System.currentTimeMillis();
         try {
@@ -88,5 +92,6 @@ public class NetUtil {
         BigDecimal m = new BigDecimal(end - start).divide(new BigDecimal(1000));
         return m.doubleValue();
     }
+
     static Gson gson = new Gson();
 }

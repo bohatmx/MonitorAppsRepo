@@ -218,7 +218,7 @@ public class SignInActivity extends AppCompatActivity {
                     if (gcmOnly) {
                         RequestDTO w = new RequestDTO(RequestDTO.UPDATE_STAFF_DEVICE);
                         StaffDTO staff = SharedUtil.getCompanyStaff(ctx);
-                        gcmDevice.setStaffID(staff.getStaffID());
+                        gcmDevice.setStaff(staff);
                         w.setGcmDevice(gcmDevice);
                         //update staff device on server
                         NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {

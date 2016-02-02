@@ -161,7 +161,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
         try {
             setList();
         } catch (Exception e) {
-
+            Log.e(LOG,"List failed",e);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.boha.monitor.library.services;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.IntentService;
 import android.app.Service;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -49,7 +51,9 @@ public class GPSLocationService extends Service implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    public GPSLocationService() {}
+    public GPSLocationService() {
+    }
+
     Location mLocation;
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
@@ -58,6 +62,7 @@ public class GPSLocationService extends Service implements
     SimpleMessageDTO simpleMessage;
     static final float ACCURACY_THRESHOLD = 20;
     static final String LOG = GPSLocationService.class.getSimpleName();
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(LOG, "onStartCommand - connect mGoogleApiClient");
@@ -102,16 +107,47 @@ public class GPSLocationService extends Service implements
         }
         startLocationScan();
     }
-
+    static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 5;
     private void startLocationScan() {
         Log.w(LOG, "startLocationScan");
 
         if (mGoogleApiClient.isConnected()) {
             mRequestingLocationUpdates = true;
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,mLocationRequest,this);
+            int permissionCheck = ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION);
+            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions((Activity) getApplicationContext(),
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+                return;
+            }
+
+            Log.w(LOG, "###### startLocationUpdates: " + new Date().toString());
+            if (mGoogleApiClient.isConnected()) {
+                mRequestingLocationUpdates = true;
+                LocationServices.FusedLocationApi.requestLocationUpdates(
+                        mGoogleApiClient, mLocationRequest, this);
+            }
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
             Log.i(LOG,"startLocationScan, FusedLocationApi.requestLocationUpdates fired");
         }
     }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode,
+//                                           String permissions[], int[] grantResults) {
+//        switch (requestCode) {
+//            case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+//                if (grantResults.length > 0
+//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    startLocationScan();
+//
+//                } else {
+//                    throw new UnsupportedOperationException();
+//                }
+//                return;
+//            }
+//        }
+//    }
     @Override
     public void onConnectionSuspended(int i) {
 
@@ -208,7 +244,7 @@ public class GPSLocationService extends Service implements
         try {
             dto.setGeocodedAddress(getAddress());
         } catch (Exception e) {
-
+            Log.w(LOG,"Geocoding not available");
         }
 
         sm.setLocationTracker(dto);

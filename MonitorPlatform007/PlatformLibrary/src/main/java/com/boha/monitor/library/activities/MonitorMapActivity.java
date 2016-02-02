@@ -412,7 +412,7 @@ public class MonitorMapActivity extends AppCompatActivity
     protected void onStop() {
         Log.w(LOG, "############## onStop stopping google service clients");
         try {
-            //mGoogleApiClient.disconnect();
+            mGoogleApiClient.disconnect();
         } catch (Exception e) {
             Log.e(LOG, "Failed to Stop something", e);
         }

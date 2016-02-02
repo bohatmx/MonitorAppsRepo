@@ -206,8 +206,8 @@ public class SignInActivity extends AppCompatActivity {
                     btnSave.setEnabled(true);
                     if (gcmOnly) {
                         RequestDTO w = new RequestDTO(RequestDTO.UPDATE_MONITOR_DEVICE);
-                        MonitorDTO staff = SharedUtil.getMonitor(ctx);
-                        gcmDevice.setMonitorID(staff.getMonitorID());
+                        MonitorDTO mon = SharedUtil.getMonitor(ctx);
+                        gcmDevice.setMonitor(mon);
                         w.setGcmDevice(gcmDevice);
                         //update monitor device on server
                         NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {

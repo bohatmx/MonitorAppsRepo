@@ -8,6 +8,7 @@ package com.boha.monitor.library.dto;
 
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  *
@@ -23,7 +24,18 @@ public class GcmDeviceDTO implements Serializable{
     private Integer messageCount;
     private long dateRegistered;
     private String serialNumber, androidVersion;
-    private Integer staffID, companyID, monitorID;
+    private Integer companyID;
+    private StaffDTO staff;
+    private MonitorDTO monitor;
+    private List<LocationTrackerDTO> trackerList;
+
+    public List<LocationTrackerDTO> getTrackerList() {
+        return trackerList;
+    }
+
+    public void setTrackerList(List<LocationTrackerDTO> trackerList) {
+        this.trackerList = trackerList;
+    }
 
     public String getApp() {
         return app;
@@ -105,14 +117,6 @@ public class GcmDeviceDTO implements Serializable{
         this.androidVersion = androidVersion;
     }
 
-    public Integer getStaffID() {
-        return staffID;
-    }
-
-    public void setStaffID(Integer staffID) {
-        this.staffID = staffID;
-    }
-
     public Integer getCompanyID() {
         return companyID;
     }
@@ -121,12 +125,19 @@ public class GcmDeviceDTO implements Serializable{
         this.companyID = companyID;
     }
 
-    public Integer getMonitorID() {
-        return monitorID;
+    public StaffDTO getStaff() {
+        return staff;
     }
 
-    public void setMonitorID(Integer monitorID) {
-        this.monitorID = monitorID;
+    public void setStaff(StaffDTO staff) {
+        this.staff = staff;
     }
 
+    public MonitorDTO getMonitor() {
+        return monitor;
+    }
+
+    public void setMonitor(MonitorDTO monitor) {
+        this.monitor = monitor;
+    }
 }

@@ -53,7 +53,7 @@
 
 
         <activity
-            android:name="com.boha.monitor.library.activities.LocationTrackerActivity"
+            android:name="com.boha.monitor.library.activities.DeviceListActivity"
             android:label="@string/title_activity_location_tracker" />
 
     </application>

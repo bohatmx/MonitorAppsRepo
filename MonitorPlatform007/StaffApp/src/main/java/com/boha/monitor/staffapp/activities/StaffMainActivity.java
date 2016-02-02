@@ -1,5 +1,6 @@
 package com.boha.monitor.staffapp.activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -7,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.location.Location;
 import android.net.Uri;
@@ -15,6 +17,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -37,7 +40,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.boha.monitor.library.activities.GPSActivity;
-import com.boha.monitor.library.activities.LocationTrackerActivity;
+import com.boha.monitor.library.activities.DeviceListActivity;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.activities.PictureActivity;
 import com.boha.monitor.library.activities.ProfilePhotoActivity;
@@ -116,7 +119,11 @@ public class StaffMainActivity extends AppCompatActivity implements
     public void onResume() {
         Log.w(LOG, "++++++++ ############## onResume - will get cache data");
         super.onResume();
-        navImage.setImageDrawable(Util.getRandomBackgroundImage(ctx));
+        if (navImage != null) {
+            navImage.setImageDrawable(Util.getRandomBackgroundImage(ctx));
+        } else {
+            Log.e(LOG, "navImage is null");
+        }
         getCache();
 
     }
@@ -256,7 +263,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
                 }
                 if (menuItem.getItemId() == R.id.nav_devices) {
-                    Intent m = new Intent(ctx, LocationTrackerActivity.class);
+                    Intent m = new Intent(ctx, DeviceListActivity.class);
                     startActivity(m);
                 }
 
@@ -473,14 +480,15 @@ public class StaffMainActivity extends AppCompatActivity implements
 
     @Override
     public void onSaveInstanceState(Bundle b) {
-        Log.w(LOG,"onSaveInstanceState");
-        b.putSerializable("selectedProject",selectedProject);
+        Log.w(LOG, "onSaveInstanceState");
+        b.putSerializable("selectedProject", selectedProject);
         super.onSaveInstanceState(b);
     }
+
     @Override
     public void onRestoreInstanceState(Bundle b) {
-        Log.w(LOG,"onRestoreInstanceState");
-        selectedProject = (ProjectDTO)b.getSerializable("selectedProject");
+        Log.w(LOG, "onRestoreInstanceState");
+        selectedProject = (ProjectDTO) b.getSerializable("selectedProject");
         super.onRestoreInstanceState(b);
     }
 
@@ -526,6 +534,16 @@ public class StaffMainActivity extends AppCompatActivity implements
     public void onConnected(Bundle bundle) {
         Log.i(LOG,
                 "+++  GoogleApiClient onConnected() ...");
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
                 googleApiClient);
 

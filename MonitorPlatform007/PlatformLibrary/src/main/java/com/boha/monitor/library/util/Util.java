@@ -1583,6 +1583,7 @@ public class Util {
             ef.saveAttributes();
 //            Log.e(LOG, "### Exif attributes written to " + filePath);
         } catch (IOException e) {
+            Log.e(LOG,"could not write exif data in image",e);
         }
     }
 

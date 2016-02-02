@@ -152,7 +152,7 @@ public class ZipUtil {
                 zis.close();
             } catch (IOException e) {
                 e.printStackTrace();
-                throw new ZipException();
+//                throw new ZipException();
             }
         }
         if (response == null) throw new ZipException();
@@ -190,7 +190,7 @@ public class ZipUtil {
                 zis.close();
             } catch (IOException e) {
                 e.printStackTrace();
-                throw new ZipException();
+//                throw new ZipException();
             }
         }
         if (response == null) throw new ZipException();
