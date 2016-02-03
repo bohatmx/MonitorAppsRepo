@@ -96,10 +96,7 @@ public class NoProjectsAssignedFragment extends Fragment implements PageFragment
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
     @Override

@@ -172,15 +172,7 @@ public class StaffProfileFragment extends Fragment implements PageFragment {
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.setBusy(false);
-                    }
-                });
-            }
+
         });
 
     }
@@ -219,10 +211,7 @@ public class StaffProfileFragment extends Fragment implements PageFragment {
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
 

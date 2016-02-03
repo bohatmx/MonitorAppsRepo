@@ -135,10 +135,7 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
 
@@ -219,10 +216,6 @@ public class MonitorProfileFragment extends Fragment implements PageFragment {
 
             }
 
-            @Override
-            public void onWebSocketClose() {
-
-            }
         });
     }
 

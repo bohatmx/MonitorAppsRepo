@@ -16,7 +16,7 @@ import java.util.Date;
 public class MonitorProjectDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer monitorProjectID;
-    private Date dateAssigned;
+    private Long dateAssigned;
     private Boolean activeFlag;
     private Integer monitorID, projectID;
 
@@ -32,11 +32,11 @@ public class MonitorProjectDTO implements Serializable {
         this.monitorProjectID = monitorProjectID;
     }
 
-    public Date getDateAssigned() {
+    public Long getDateAssigned() {
         return dateAssigned;
     }
 
-    public void setDateAssigned(Date dateAssigned) {
+    public void setDateAssigned(Long dateAssigned) {
         this.dateAssigned = dateAssigned;
     }
 

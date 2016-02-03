@@ -244,10 +244,6 @@ public class CompanyDrawerActivity extends AppCompatActivity implements
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
-
-            }
         });
     }
 

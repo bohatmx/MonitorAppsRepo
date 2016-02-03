@@ -175,10 +175,7 @@ public class ProjectMapActivity extends AppCompatActivity
                 Log.e(LOG, message);
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
 
     }

@@ -226,10 +226,7 @@ public class SignInActivity extends AppCompatActivity {
 
                             }
 
-                            @Override
-                            public void onWebSocketClose() {
 
-                            }
                         });
                     }
 
@@ -288,7 +285,8 @@ public class SignInActivity extends AppCompatActivity {
                         try {
                             ACRA.getErrorReporter().putCustomData("monitorID", ""
                                     + response.getMonitorList().get(0).getMonitorID());
-                        } catch (Exception e) {//ignore}
+                        } catch (Exception e) {
+                            Log.e(LOG,"failed to save custome data for ACRA");
                         }
                         CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
                             @Override
@@ -319,14 +317,7 @@ public class SignInActivity extends AppCompatActivity {
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                    }
-                });
-            }
+
         });
 
 

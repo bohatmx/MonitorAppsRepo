@@ -85,7 +85,7 @@ public class MonitorGCMListenerService extends GcmListenerService {
      * @param message
      */
     private void cacheMessage(final SimpleMessageDTO message) {
-        if (message.getLocationRequest() == Boolean.TRUE) {
+        if (message.getLocationRequest().equals(Boolean.TRUE)) {
             Log.d(TAG, "*** is location request received, calling GPSService: " + message.getStaffName());
             Intent w = new Intent(getApplicationContext(), GPSLocationService.class);
             w.putExtra("simpleMessage", message);

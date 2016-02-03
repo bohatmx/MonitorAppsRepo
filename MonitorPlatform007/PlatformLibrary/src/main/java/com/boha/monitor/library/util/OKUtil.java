@@ -46,6 +46,7 @@ public class OKUtil {
             = MediaType.parse("application/json; charset=utf-8");
 
     static final String LOG = OKUtil.class.getSimpleName();
+
     public interface OKListener {
         void onResponse(ResponseDTO response);
 
@@ -59,11 +60,13 @@ public class OKUtil {
         client.setWriteTimeout(20, TimeUnit.SECONDS);
 
     }
+
     static long start;
     static File directory;
 
     /**
      * Async GET call with OKListener to return data to caller
+     *
      * @param req
      * @param listener
      * @throws OKHttpException
@@ -135,9 +138,11 @@ public class OKUtil {
                                 + " unpacked: " + getLength(uFile.length()));
                         serverResponse = gson.fromJson(aa, ResponseDTO.class);
                         try {
-                            file.delete();
-                            uFile.delete();
-//                            Log.e(LOG,"Temporary unpacking files deleted OK");
+                            boolean OK1 = file.delete();
+                            boolean OK2 = uFile.delete();
+                            if (OK1) {
+                                Log.e(LOG, "Temporary unpacking files deleted OK");
+                            }
                         } catch (Exception e) {
                             Log.e(LOG, "Temporary unpacking files NOT deleted. " + e.getMessage());
                         }
@@ -192,6 +197,7 @@ public class OKUtil {
 
         return a.doubleValue() + " seconds";
     }
+
     static String getLength(long length) {
         BigDecimal bs = new BigDecimal(length);
         BigDecimal a = bs.divide(new BigDecimal(1024), 2, BigDecimal.ROUND_HALF_UP);

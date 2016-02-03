@@ -143,7 +143,10 @@ public class PhotoCacheUtil {
                     if (pending.get(pending.size() - 1).getDateUploaded() != null) {
                         File file = new File(pending.get(pending.size() - 1).getThumbFilePath());
                         if (file.exists()) {
-                            file.delete();
+                            boolean ok = file.delete();
+                            if (!ok) {
+                                Log.e(LOG,"File delete failed");
+                            }
                         }
                         pending.remove(pending.size() - 1);
                     }

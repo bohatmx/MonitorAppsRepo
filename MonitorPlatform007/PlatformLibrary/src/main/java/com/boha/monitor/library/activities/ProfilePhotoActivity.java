@@ -252,7 +252,11 @@ public class ProfilePhotoActivity extends AppCompatActivity {
         }
         File pics = new File(root, "monitor_app");
         if (!pics.exists()) {
-            pics.mkdir();
+            boolean isOK = pics.mkdir();
+            if (!isOK) {
+                Util.showErrorToast(this,"Unable to get file storage for picture");
+                return null;
+            }
         }
 
         File image = File.createTempFile(

@@ -332,10 +332,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
     void hideKeyboard() {
@@ -537,10 +534,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
 
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
 
     }

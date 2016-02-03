@@ -21,7 +21,6 @@ public class NetUtil {
 
         public void onError(String message);
 
-        public void onWebSocketClose();
     }
 
     static final String LOG = NetUtil.class.getSimpleName();

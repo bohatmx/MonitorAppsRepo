@@ -240,14 +240,7 @@ public class StatusReportFragment extends Fragment implements PageFragment {
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                    }
-                });
-            }
+
         });
 
     }

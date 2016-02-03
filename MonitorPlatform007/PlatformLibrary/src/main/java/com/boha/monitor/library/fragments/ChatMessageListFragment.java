@@ -175,10 +175,7 @@ public class ChatMessageListFragment extends Fragment implements PageFragment {
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
 
@@ -269,10 +266,7 @@ public class ChatMessageListFragment extends Fragment implements PageFragment {
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
 

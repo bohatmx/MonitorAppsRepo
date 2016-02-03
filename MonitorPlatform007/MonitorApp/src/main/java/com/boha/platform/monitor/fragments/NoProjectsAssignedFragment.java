@@ -49,8 +49,8 @@ public class NoProjectsAssignedFragment extends Fragment implements PageFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
+//        if (getArguments() != null) {
+//        }
     }
 
     ImageView imageView;
@@ -111,10 +111,7 @@ public class NoProjectsAssignedFragment extends Fragment implements PageFragment
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
     @Override
@@ -152,7 +149,7 @@ public class NoProjectsAssignedFragment extends Fragment implements PageFragment
     int primaryColor, darkColor;
     @Override
     public void setThemeColors(int primaryColor, int darkColor) {
-        this.primaryColor = primaryColor;
-        this.darkColor = darkColor;
+//        this.primaryColor = primaryColor;
+//        this.darkColor = darkColor;
     }
 }

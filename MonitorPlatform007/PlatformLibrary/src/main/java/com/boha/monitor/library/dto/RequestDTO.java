@@ -13,7 +13,7 @@ import java.util.List;
  * @author aubreyM
  */
 public class RequestDTO implements Serializable {
-
+    private static final long serialVersionUID = 1L;
     public RequestDTO() {
     }
 

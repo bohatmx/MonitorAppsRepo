@@ -154,10 +154,7 @@ public class CompanyListFragment extends Fragment {
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
     private void setFields() {

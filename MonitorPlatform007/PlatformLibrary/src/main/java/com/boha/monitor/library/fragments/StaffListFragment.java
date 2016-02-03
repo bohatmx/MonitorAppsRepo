@@ -206,10 +206,7 @@ public class StaffListFragment extends Fragment
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
     void hideKeyboard() {
@@ -395,10 +392,7 @@ public class StaffListFragment extends Fragment
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
 

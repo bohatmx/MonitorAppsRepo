@@ -90,10 +90,7 @@ public class GCMUtil {
 //                            listener.onGCMError();
                         }
 
-                        @Override
-                        public void onWebSocketClose() {
-                            Log.d(LOG, "############## GCMUtil onWebSocketClose");
-                        }
+
                     });
 
                     Log.i(LOG, msg);

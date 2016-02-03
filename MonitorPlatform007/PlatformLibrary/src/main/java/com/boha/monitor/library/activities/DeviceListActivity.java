@@ -74,10 +74,7 @@ public class DeviceListActivity extends AppCompatActivity
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
 
@@ -151,10 +148,7 @@ public class DeviceListActivity extends AppCompatActivity
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
 }

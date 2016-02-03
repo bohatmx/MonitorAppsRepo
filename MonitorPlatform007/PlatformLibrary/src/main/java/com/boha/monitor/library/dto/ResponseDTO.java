@@ -14,6 +14,7 @@ import java.util.List;
  * @author aubreyM
  */
 public class ResponseDTO implements Serializable{
+    private static final long serialVersionUID = 1L;
 
     private Integer statusCode = 0, statusCount,
             goodCount, badCount, gcmSuccess, gcmFailure;

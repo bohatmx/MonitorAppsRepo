@@ -211,9 +211,7 @@ public class GPSLocationService extends Service implements
                 Log.e(LOG, message);
             }
 
-            @Override
-            public void onWebSocketClose() {
-            }
+
         });
 
 
@@ -276,10 +274,7 @@ public class GPSLocationService extends Service implements
                 simpleMessage = null;
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
 
 

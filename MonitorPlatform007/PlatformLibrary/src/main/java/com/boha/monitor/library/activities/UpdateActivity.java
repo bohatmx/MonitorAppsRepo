@@ -325,10 +325,7 @@ public class UpdateActivity extends AppCompatActivity
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
 
     }

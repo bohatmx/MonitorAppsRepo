@@ -312,12 +312,19 @@ public class ImageUtil {
             }
             File imgDir = new File(rootDir, "monitor_app");
             if (!imgDir.exists()) {
-                imgDir.mkdir();
+                boolean isOK = imgDir.mkdir();
+                if (!isOK) {
+                    Log.e("ImageUtil","Unable to get file storage for photo");
+                    throw new Exception();
+                }
             }
             OutputStream outStream = null;
             file = new File(imgDir, filename);
             if (file.exists()) {
-                file.delete();
+                boolean deleted = file.delete();
+                if (!deleted) {
+                    Log.e("ImageUtil","File not deleted");
+                }
                 file = new File(imgDir, filename);
             }
             outStream = new FileOutputStream(file);

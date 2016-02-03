@@ -361,10 +361,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
 
@@ -667,10 +664,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
 
     }
@@ -726,10 +720,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
 
     }

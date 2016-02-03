@@ -192,10 +192,7 @@ public class ProgrammeListFragment extends Fragment {
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
 

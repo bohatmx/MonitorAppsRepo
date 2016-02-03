@@ -758,10 +758,7 @@ public class Util {
 
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
 
 
@@ -1706,10 +1703,7 @@ public class Util {
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
 
     }
@@ -1979,7 +1973,10 @@ public class Util {
         File sd = Environment.getExternalStorageDirectory();
         File appDir = new File(sd, dir);
         if (!appDir.exists()) {
-            appDir.mkdir();
+            boolean ok = appDir.mkdir();
+            if (!ok) {
+                Log.e(LOG,"Unable to make file directory");
+            }
         }
 
         return appDir;

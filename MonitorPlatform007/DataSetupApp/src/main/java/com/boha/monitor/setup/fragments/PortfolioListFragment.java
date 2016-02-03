@@ -186,10 +186,7 @@ public class PortfolioListFragment extends Fragment implements PageFragment {
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
     private void setList() {

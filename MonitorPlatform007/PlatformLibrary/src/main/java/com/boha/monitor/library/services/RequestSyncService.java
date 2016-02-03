@@ -80,10 +80,7 @@ public class RequestSyncService extends IntentService {
                                 requestSyncListener.onError(message);
                         }
 
-                        @Override
-                        public void onWebSocketClose() {
 
-                        }
                     });
                 } else {
                     controlRequestUpload();
@@ -170,10 +167,7 @@ public class RequestSyncService extends IntentService {
                     requestSyncListener.onError(message);
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
 
     }

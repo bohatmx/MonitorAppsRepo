@@ -550,10 +550,6 @@ public class FileImportFragment extends Fragment implements PageFragment {
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
-
-            }
         });
 
 
@@ -599,10 +595,7 @@ public class FileImportFragment extends Fragment implements PageFragment {
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
-
-            }
+          
         });
 
 

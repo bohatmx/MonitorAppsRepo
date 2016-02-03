@@ -167,10 +167,7 @@ public class ProjectDataListFragment extends Fragment {
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
 

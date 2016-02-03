@@ -488,7 +488,11 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         }
         File pics = new File(root, "monitor_app");
         if (!pics.exists()) {
-            pics.mkdir();
+            boolean isOK = pics.mkdir();
+            if (!isOK) {
+                Util.showErrorToast(this,"Unable to get file storage for picture");
+                return;
+            }
         }
 
         photoFile = new File(pics, "photoFile.jpg");

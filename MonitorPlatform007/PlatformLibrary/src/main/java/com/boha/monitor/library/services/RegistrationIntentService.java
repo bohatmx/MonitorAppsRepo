@@ -92,10 +92,7 @@ public class RegistrationIntentService extends IntentService {
                 Log.e(LOG, "############ Device failed to register on server GCM regime\n" + message);
             }
 
-            @Override
-            public void onWebSocketClose() {
-                Log.d(LOG, "############## GCMUtil onWebSocketClose");
-            }
+
         });
 
     }

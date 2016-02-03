@@ -193,14 +193,7 @@ public class SignInActivity extends AppCompatActivity {
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                    }
-                });
-            }
+
         });
 
 

@@ -83,10 +83,7 @@ public class CDNVideoUploader {
                             mListener.onError(message);
                         }
 
-                        @Override
-                        public void onWebSocketClose() {
 
-                        }
                     });
                 } catch (Exception e) {
                     Log.e(LOG, "CDN upload Failed", e);

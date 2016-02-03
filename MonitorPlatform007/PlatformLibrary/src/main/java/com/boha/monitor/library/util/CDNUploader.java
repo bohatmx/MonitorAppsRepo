@@ -102,10 +102,7 @@ public class CDNUploader {
                                 mListener.onError(message);
                             }
 
-                            @Override
-                            public void onWebSocketClose() {
 
-                            }
                         });
                     } else {
                         mListener.onError("Error uploading image to CDN");

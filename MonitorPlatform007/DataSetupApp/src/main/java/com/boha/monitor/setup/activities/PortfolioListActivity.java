@@ -65,10 +65,7 @@ public class PortfolioListActivity extends AppCompatActivity implements Portfoli
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
     boolean companyDataRefreshed;

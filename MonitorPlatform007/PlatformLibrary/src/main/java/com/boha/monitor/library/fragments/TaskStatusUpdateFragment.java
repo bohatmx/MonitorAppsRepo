@@ -392,10 +392,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
 
 

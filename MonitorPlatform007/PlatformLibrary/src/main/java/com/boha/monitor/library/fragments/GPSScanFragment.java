@@ -256,10 +256,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
                 addRequestToCache(w);
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
 
     }

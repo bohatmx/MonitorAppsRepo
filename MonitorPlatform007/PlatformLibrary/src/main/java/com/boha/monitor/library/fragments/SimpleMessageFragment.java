@@ -270,10 +270,7 @@ public class SimpleMessageFragment extends Fragment implements PageFragment {
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
     static final String LOG = SimpleMessageFragment.class.getSimpleName();

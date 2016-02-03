@@ -69,6 +69,8 @@ import com.boha.monitor.library.util.WebCheck;
 import com.boha.platform.monitor.R;
 import com.boha.platform.monitor.fragments.NavigationDrawerFragment;
 import com.boha.platform.monitor.fragments.NoProjectsAssignedFragment;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -81,6 +83,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * The Monitor App main activity. Started by SignInActivity
+ */
 public class MonitorAppDrawerActivity extends AppCompatActivity
         implements
         LocationListener,
@@ -119,7 +124,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ctx = getApplicationContext();
-        Log.d(LOG,"################## MonitorAppDrawerActivity onCreate");
+        Log.d(LOG, "################## MonitorAppDrawerActivity onCreate");
         ThemeChooser.setTheme(this);
         Resources.Theme theme = getTheme();
         TypedValue typedValue = new TypedValue();
@@ -137,11 +142,13 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         ab.setDisplayHomeAsUpEnabled(true);
 
 
+        // ATTENTION: This "addApi(AppIndex.API)"was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
-                .build();
+                .addApi(AppIndex.API).build();
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -159,7 +166,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         mPager.setOffscreenPageLimit(4);
 
         getCachedData();
-        android.support.v7.app.ActionBar bar = getSupportActionBar();
+        ActionBar bar = getSupportActionBar();
 
         Util.setCustomActionBar(ctx, bar,
                 SharedUtil.getCompany(ctx).getCompanyName(),
@@ -250,10 +257,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
 
 
@@ -290,7 +294,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         HashMap<Integer, MonitorDTO> map = new HashMap<>();
         for (ProjectDTO dto : response.getProjectList()) {
             for (MonitorDTO x : dto.getMonitorList()) {
-                map.put(x.getMonitorID().intValue(), x);
+                map.put(x.getMonitorID(), x);
             }
         }
         List<MonitorDTO> list = new ArrayList<>();
@@ -428,6 +432,9 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
                     mNavigationDrawerFragment.setPicture(x);
                     SharedUtil.savePhoto(ctx, x);
                 }
+                break;
+            default:
+                Log.e(LOG,"Switch statement is falling thru");
                 break;
         }
     }
@@ -732,10 +739,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
                 });
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
 
     }
@@ -843,11 +847,37 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "MonitorAppDrawer Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.boha.platform.monitor.activities/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(mGoogleApiClient, viewAction);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "MonitorAppDrawer Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.boha.platform.monitor.activities/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(mGoogleApiClient, viewAction);
         Log.e(LOG, "## onStop unBind from PhotoUploadService, RequestSyncService, VideoUploadService");
         if (mBound) {
             unbindService(mConnection);
@@ -862,6 +892,9 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
             vBound = false;
         }
 
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        mGoogleApiClient.disconnect();
     }
 
     boolean mBound, rBound, vBound;

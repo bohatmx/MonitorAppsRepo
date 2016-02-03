@@ -517,10 +517,7 @@ public class MonitorMapActivity extends AppCompatActivity
                 Log.e("MonitorMapActivity", message);
             }
 
-            @Override
-            public void onWebSocketClose() {
 
-            }
         });
     }
 
