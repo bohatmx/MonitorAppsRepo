@@ -13,7 +13,7 @@ android {
         exclude 'META-INF/LICENSE'
     }
     defaultConfig {
-        applicationId "com.boha.platform.monitor"
+        applicationId "com.boha.platform.worker"
         minSdkVersion 18
         targetSdkVersion 23
         versionCode 5

@@ -1,4 +1,4 @@
-package com.boha.monitor.staffapp.activities;
+package com.boha.platform.worker.activities;
 
 import android.Manifest;
 import android.accounts.Account;
@@ -15,25 +15,26 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.dto.GcmDeviceDTO;
+import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
-import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.GCMUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Util;
-import com.boha.monitor.staffapp.R;
+import com.boha.platform.worker.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
@@ -44,14 +45,9 @@ import java.util.ArrayList;
 import static com.boha.monitor.library.util.Util.showErrorToast;
 import static com.boha.monitor.library.util.Util.showToast;
 
-/**
- * This class manages the Staff sign-in process. Staff have to be
- * pre-registered and must exist on the backend database.
- * The process includes registering the device to Google Cloud Messaging as well
- * as collecting the user's email address and supplied PIN.
- */
 public class SignInActivity extends AppCompatActivity {
 
+    Spinner spinnerEmail;
     TextView txtApp, txtEmail, label;
     EditText ePin, editEmail;
     Button btnSave;
@@ -70,21 +66,20 @@ public class SignInActivity extends AppCompatActivity {
         setContentView(R.layout.sign_in);
         ctx = getApplicationContext();
         activity = this;
-        banner = (ImageView) findViewById(R.id.SI_banner);
+        banner = (ImageView)findViewById(R.id.SI_banner);
+
         setFields();
         banner.setImageDrawable(Util.getRandomBackgroundImage(ctx));
-
+        getEmail();
     }
-
     @Override
     public void onResume() {
         super.onResume();
         Log.d(LOG, "#################### onResume");
-        checkPermissions();
-        getEmail();
+        checkPermission();
         checkVirgin();
     }
-    private void checkPermissions() {
+    private void checkPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -106,7 +101,6 @@ public class SignInActivity extends AppCompatActivity {
                         MY_PERMISSIONS_ACCESS_FINE_LOCATION);
 
             }
-
         }
         if (ContextCompat.checkSelfPermission(this,Manifest.permission.GET_ACCOUNTS)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -128,8 +122,8 @@ public class SignInActivity extends AppCompatActivity {
             }
         }
     }
-    static final int MY_PERMISSIONS_ACCESS_FINE_LOCATION = 83;
-    static final int MY_PERMISSIONS_GET_ACCOUNTS = 85;
+    static final int MY_PERMISSIONS_ACCESS_FINE_LOCATION = 77;
+    static final int MY_PERMISSIONS_GET_ACCOUNTS = 75;
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -162,37 +156,32 @@ public class SignInActivity extends AppCompatActivity {
             // permissions this app might request
         }
     }
-
-    /**
-     * Check whether this user is already signed in. If the user is
-     * signed in, the method passes control to
-     * @see StaffMainActivity
-     */
     private void checkVirgin() {
-
-        StaffDTO dto = SharedUtil.getCompanyStaff(ctx);
+        boolean force = getIntent().getBooleanExtra("force",false);
+        if (force) {
+            registerGCMDevice();
+            return;
+        }
+        MonitorDTO dto = SharedUtil.getMonitor(ctx);
         if (dto != null) {
-            Log.i(LOG, "++++++++ Not a virgin anymore ...checking GCM registration: " + dto.getFullName());
+            Log.i(LOG, "++++++++ Not a virgin anymore? yes ...checking GCM registration....");
             String id = SharedUtil.getRegistrationId(getApplicationContext());
             if (id == null) {
                 gcmOnly = true;
                 registerGCMDevice();
             }
 
-            Intent intent = new Intent(ctx, StaffMainActivity.class);
+            Intent intent = new Intent(ctx, MonitorAppDrawerActivity.class);
             startActivity(intent);
             //
             finish();
             return;
         }
-        Log.i(LOG, "checkVirgin: waiting for sign in ...");
+
         registerGCMDevice();
     }
 
-    /**
-     * Register device to Google Cloud Messaging
-     */
-    public void registerGCMDevice() {
+    private void registerGCMDevice() {
         gcmDevice = new GcmDeviceDTO();
         gcmDevice.setManufacturer(Build.MANUFACTURER);
         gcmDevice.setModel(Build.MODEL);
@@ -201,7 +190,7 @@ public class SignInActivity extends AppCompatActivity {
         gcmDevice.setProduct(Build.PRODUCT);
         gcmDevice.setApp(ctx.getPackageName());
 
-        Snackbar.make(btnSave, "Just a second, checking services ...", Snackbar.LENGTH_LONG)
+        Snackbar.make(btnSave, "Just a second, checking services ...",Snackbar.LENGTH_LONG)
                 .setAction("CLOSE", null)
                 .show();
         boolean ok = checkPlayServices();
@@ -214,13 +203,13 @@ public class SignInActivity extends AppCompatActivity {
                     Log.i(LOG, "############# GCM - we cool, GcmDeviceDTO waiting to be sent with signin .....: " + id);
                     setBusyIndicator(false);
                     gcmDevice.setRegistrationID(id);
-                    SharedUtil.saveGCMDevice(ctx, gcmDevice);
+                    btnSave.setEnabled(true);
                     if (gcmOnly) {
-                        RequestDTO w = new RequestDTO(RequestDTO.UPDATE_STAFF_DEVICE);
-                        StaffDTO staff = SharedUtil.getCompanyStaff(ctx);
-                        gcmDevice.setStaff(staff);
+                        RequestDTO w = new RequestDTO(RequestDTO.UPDATE_MONITOR_DEVICE);
+                        MonitorDTO mon = SharedUtil.getMonitor(ctx);
+                        gcmDevice.setMonitor(mon);
                         w.setGcmDevice(gcmDevice);
-                        //update staff device on server
+                        //update monitor device on server
                         NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
                             @Override
                             public void onResponse(ResponseDTO response) {
@@ -237,8 +226,8 @@ public class SignInActivity extends AppCompatActivity {
 
                             }
 
-                        });
 
+                        });
                     }
 
 
@@ -247,26 +236,14 @@ public class SignInActivity extends AppCompatActivity {
                 @Override
                 public void onGCMError() {
                     Log.e(LOG, "############# onGCMError --- we got GCM problems");
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            setBusyIndicator(false);
-                        }
-                    });
-
+                    setBusyIndicator(false);
+                    btnSave.setEnabled(true);
 
                 }
             });
         }
     }
-
-    /**
-     * Send staff email and PIN to the backend.
-     * The device details are sent with the sign in  request
-     * @see GcmDeviceDTO
-     * On successful return, cache the data on the device
-     */
-    public void sendSignIn() {
+    private void sendSignIn() {
         if (ePin.getText().toString().isEmpty()) {
             showErrorToast(ctx, "Enter PIN");
             return;
@@ -279,17 +256,15 @@ public class SignInActivity extends AppCompatActivity {
                 email = editEmail.getText().toString();
             }
         }
+
         RequestDTO r = new RequestDTO();
-        r.setRequestType(RequestDTO.LOGIN_STAFF);
+        r.setRequestType(RequestDTO.LOGIN_MONITOR);
         r.setEmail(email);
         r.setPin(ePin.getText().toString());
-        gcmDevice = SharedUtil.getGCMDevice(ctx);
-        if (gcmDevice.getRegistrationID() != null) {
-            r.setGcmDevice(gcmDevice);
-        }
+        r.setGcmDevice(gcmDevice);
 
-        setBusyIndicator(true);
-        NetUtil.sendRequest(ctx, r, new NetUtil.NetUtilListener() {
+       setBusyIndicator(true);
+        NetUtil.sendRequest(ctx,r,new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(final ResponseDTO response) {
                 runOnUiThread(new Runnable() {
@@ -297,42 +272,34 @@ public class SignInActivity extends AppCompatActivity {
                     public void run() {
                         setBusyIndicator(false);
                         if (response.getStatusCode() > 0) {
-                            btnSave.setEnabled(true);
                             showErrorToast(ctx, response.getMessage());
                             return;
                         }
 
                         SharedUtil.saveCompany(ctx, response.getCompany());
-                        SharedUtil.saveCompanyStaff(ctx, response.getStaff());
-                        if (response.getGcmDeviceList() != null) {
-                            if (!response.getGcmDeviceList().isEmpty()) {
-                                Log.d(LOG, "... about to save GcmDeviceDTO to SharedUtil, id: " + response.getGcmDeviceList().get(0).getGcmDeviceID());
-                                SharedUtil.saveGCMDevice(ctx, response.getGcmDeviceList().get(0));
-                            }
-                        }
+                        SharedUtil.saveMonitor(ctx, response.getMonitor());
+                        SharedUtil.saveGCMDevice(ctx, response.getGcmDeviceList().get(0));
                         if (!response.getPhotoUploadList().isEmpty()) {
                             SharedUtil.savePhoto(ctx, response.getPhotoUploadList().get(0));
                         }
                         try {
-                            ACRA.getErrorReporter().putCustomData("staffID", ""
-                                    + response.getStaff().getStaffID());
-                        } catch (Exception e) {//ignore}
+                            ACRA.getErrorReporter().putCustomData("monitorID", ""
+                                    + response.getMonitorList().get(0).getMonitorID());
+                        } catch (Exception e) {
+                            Log.e(LOG,"failed to save custome data for ACRA");
                         }
-                        CacheUtil.cacheStaffData(ctx, response, new CacheUtil.CacheUtilListener() {
+                        CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
                             @Override
-                            public void onFileDataDeserialized(ResponseDTO response) {
-                            }
+                            public void onFileDataDeserialized(ResponseDTO response) {}
 
                             @Override
                             public void onDataCached() {
-                                Intent intent = new Intent(ctx, StaffMainActivity.class);
-                                intent.putExtra("justSignedIn", true);
+                                Intent intent = new Intent(ctx, ThemeSelectorActivity.class);
                                 startActivity(intent);
                             }
 
                             @Override
-                            public void onError() {
-                            }
+                            public void onError() {}
                         });
                     }
                 });
@@ -354,47 +321,39 @@ public class SignInActivity extends AppCompatActivity {
         });
 
 
-    }
 
-    public void setFields() {
+    }
+    private void setFields() {
         ePin = (EditText) findViewById(R.id.SI_pin);
         editEmail = (EditText) findViewById(R.id.SI_editEmail);
         txtEmail = (TextView) findViewById(R.id.SI_txtEmail);
         label = (TextView) findViewById(R.id.SI_welcome);
-        txtApp = (TextView) findViewById(R.id.SI_app);
-        btnSave = (Button) findViewById(R.id.btnRed);
-        txtApp.setText("Company Staff");
+        txtApp = (TextView)findViewById(R.id.SI_app);
+        btnSave = (Button)findViewById(R.id.btnRed);
+        txtApp.setText(R.string.monitor);
         btnSave.setText("Sign In");
-        btnSave.setEnabled(true);
-
-        editEmail.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                btnSave.setEnabled(true);
-                return true;
-            }
-        });
+        btnSave.setEnabled(false);
 
         txtEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.flashOnce(txtEmail, 300, new Util.UtilAnimationListener() {
+                Util.flashOnce(txtEmail,300, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
                         Util.showPopupBasicWithHeroImage(ctx, activity, tarList,
                                 label, getString(R.string.select_email),
                                 new Util.UtilPopupListener() {
-                                    @Override
-                                    public void onItemSelected(int index) {
-                                        if (index == 0) {
-                                            email = null;
-                                        } else {
-                                            email = tarList.get(index);
-                                            txtEmail.setText(email);
-                                            btnSave.setEnabled(true);
-                                        }
-                                    }
-                                });
+                            @Override
+                            public void onItemSelected(int index) {
+                                if (index == 0) {
+                                    email = null;
+                                } else {
+                                    email = tarList.get(index);
+                                    txtEmail.setText(email);
+                                    btnSave.setEnabled(true);
+                                }
+                            }
+                        });
                     }
                 });
             }
@@ -407,6 +366,7 @@ public class SignInActivity extends AppCompatActivity {
                     @Override
                     public void onAnimationEnded() {
                         sendSignIn();
+                        btnSave.setEnabled(false);
                     }
                 });
             }
@@ -419,22 +379,16 @@ public class SignInActivity extends AppCompatActivity {
         int resultCode = GooglePlayServicesUtil
                 .isGooglePlayServicesAvailable(ctx);
         if (resultCode != ConnectionResult.SUCCESS) {
-            try {
-                if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.gms")));
-                    return false;
-                } else {
-                    Log.i(LOG, "This device is not supported.");
-                    throw new UnsupportedOperationException("GooglePlayServicesUtil resultCode: " + resultCode);
-                }
-            } catch (Exception e) {
-                Log.e(LOG,"GooglePlayServices may not be available, maybe on emulator");
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.gms")));
                 return false;
+            } else {
+                Log.i(LOG, "This device is not supported.");
+                throw new UnsupportedOperationException("GooglePlayServicesUtil resultCode: " + resultCode);
             }
         }
         return true;
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.signin, menu);
@@ -457,13 +411,16 @@ public class SignInActivity extends AppCompatActivity {
         Log.d(LOG,"getEmail accounts");
         if (ContextCompat.checkSelfPermission(this,Manifest.permission.GET_ACCOUNTS)
                 != PackageManager.PERMISSION_GRANTED) {
-            checkPermissions();
+            checkPermission();
             return;
         }
-        Log.d(LOG,"... getting AccountManager");
         AccountManager am = AccountManager.get(getApplicationContext());
         Account[] accts = am.getAccounts();
-
+//        if (accts.length == 0) {
+//            showErrorToast(ctx, getString(R.string.no_accounts));
+//            finish();
+//            return;
+//        }
         if (accts != null) {
             tarList.add(ctx.getResources().getString(R.string.select_email));
             for (int i = 0; i < accts.length; i++) {
@@ -473,13 +430,11 @@ public class SignInActivity extends AppCompatActivity {
         }
 
     }
-
     ArrayList<String> tarList = new ArrayList<String>();
     Menu mMenu;
-
     public void setBusyIndicator(final boolean refreshing) {
         if (mMenu != null) {
-            final MenuItem refreshItem = mMenu.findItem(R.id.signin_action_help);
+            final MenuItem refreshItem = mMenu.findItem(R.id.action_help);
             if (refreshItem != null) {
                 if (refreshing) {
                     refreshItem.setActionView(R.layout.action_bar_progess);
@@ -489,7 +444,6 @@ public class SignInActivity extends AppCompatActivity {
             }
         }
     }
-
     @Override
     public void onPause() {
         super.onPause();

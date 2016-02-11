@@ -36,7 +36,8 @@ public class OKUtil {
 
     static OkHttpClient client = new OkHttpClient();
     static Gson gson = new Gson();
-    public static final String URL = "http://192.168.1.111:8080/mp/gatex";
+    public static final String URL = "http://192.168.1.254:40405/mp/gatex";
+//    public static final String URL = "http://bohamaker:3030/mp/gatex";
     static String GATEWAY_SERVLET = "gatex?";
 
     static final String FAILED_UNKOWN_ERROR = "Request failed. Unknown error";
@@ -182,13 +183,6 @@ public class OKUtil {
         client.newCall(req).enqueue(callback);
     }
 
-
-    static String buildPostUrl(RequestDTO req) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(URL)
-                .append(GATEWAY_SERVLET);
-        return sb.toString();
-    }
 
     static String getElapsed(long start, long end) {
         BigDecimal bs = new BigDecimal(start);

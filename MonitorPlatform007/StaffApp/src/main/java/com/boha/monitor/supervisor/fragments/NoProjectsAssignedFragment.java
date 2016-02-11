@@ -1,4 +1,4 @@
-package com.boha.monitor.staffapp.fragments;
+package com.boha.monitor.supervisor.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -17,7 +17,7 @@ import com.boha.monitor.library.fragments.PageFragment;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Util;
-import com.boha.monitor.staffapp.R;
+import com.boha.monitor.supervisor.R;
 
 import java.util.List;
 

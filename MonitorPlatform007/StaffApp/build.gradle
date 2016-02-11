@@ -13,7 +13,7 @@ android {
         exclude 'META-INF/LICENSE'
     }
     defaultConfig {
-        applicationId "com.boha.monitor.staffapp"
+        applicationId "com.boha.monitor.supervisor"
         minSdkVersion 18
         targetSdkVersion 23
         versionCode 1

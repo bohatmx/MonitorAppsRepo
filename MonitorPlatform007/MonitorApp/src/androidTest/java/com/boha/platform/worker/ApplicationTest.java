@@ -1,4 +1,4 @@
-package com.boha.monitor.staffapp;
+package com.boha.platform.worker;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

@@ -1,4 +1,4 @@
-package com.boha.monitor.staffapp.adapters;
+package com.boha.platform.worker.adapters;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
 
 import java.text.DecimalFormat;
@@ -68,8 +67,6 @@ public class DrawerMonitorAdapter extends ArrayAdapter<String> {
         String p = mList.get(position);
         item.txtName.setText(p);
 
-
-        Statics.setRobotoFontLight(ctx, item.txtName);
         item.txtCount.setVisibility(View.GONE);
 
         if (p.equalsIgnoreCase(ctx.getString(R.string.projects))) {

@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.boha.platform.monitor" >
+    package="com.boha.platform.worker" >
     <!-- PERMISSIONS -->
     <permission
-        android:name="com.boha.platform.monitor.app.gcm.permission.C2D_MESSAGE"
+        android:name="com.boha.platform.worker.gcm.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="com.boha.platform.monitor.app.gcm.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.boha.platform.worker.gcm.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 
-    <!-- DEV API KEY
-        AIzaSyCvqpSPbAdN4b-jPvn9RNn1G-iHGe674DQ
-        88:04:DF:2B:68:40:60:A3:31:81:2F:71:1F:2D:71:FB:F7:71:F9:57;com.boha.platform.monitor
+    <!-- DEBUG API KEY
+        AIzaSyCZ6MSdEkJLRcUpz1KnGU6hM1Fd1Gl9GXA
+
     -->
     <!-- RELEASE API KEY
-            AIzaSyDUJzuwSOkUzbx9X1_pJQspwXsDF6KoF-w
-            4F:72:A0:21:0F:AD:8D:6B:EC:B5:83:49:13:CB:64:75:74:62:1A:A7;com.boha.platform.monitor
+            AIzaSyCzkBfMREH3my1bgrXw5TcDew7sZpbLKFI
 
-     GCM Server API Key: AIzaSyCz_2aFIPJj7kGW8xdj2cXkasjCVOGa3u8
+     GCM Server API Key: AIzaSyC_UYg-pQqmEcRURzp0HlmXnZg-nbhver4
      SenderID: 635788281460
      -->
     <uses-feature android:name="android.hardware.camera"
@@ -33,7 +32,7 @@
         <!-- Keys and metadata -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyCvqpSPbAdN4b-jPvn9RNn1G-iHGe674DQ" />
+            android:value="AIzaSyCZ6MSdEkJLRcUpz1KnGU6hM1Fd1Gl9GXA" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -52,7 +51,7 @@
             </intent-filter>
         </receiver>
         <service
-            android:name=".services.MonitorGCMListenerService"
+            android:name="com.boha.platform.worker.services.MonitorGCMListenerService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -68,7 +67,7 @@
 
         <!-- ACTIVITIES -->
         <activity
-            android:name=".activities.SignInActivity"
+            android:name="com.boha.platform.worker.activities.SignInActivity"
             android:label="@string/monitor" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -77,41 +76,40 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.MonitorAppDrawerActivity"
+            android:name="com.boha.platform.worker.activities.MonitorAppDrawerActivity"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_main_drawer" >
         </activity>
         <activity android:name="com.boha.monitor.library.activities.ProjectMapActivity"
-            android:parentActivityName=".activities.MonitorAppDrawerActivity"/>
+            android:parentActivityName="com.boha.platform.worker.activities.MonitorAppDrawerActivity"/>
         <activity android:name="com.boha.monitor.library.activities.StatusReportActivity"
-            android:parentActivityName=".activities.MonitorAppDrawerActivity"/>
+            android:parentActivityName="com.boha.platform.worker.activities.MonitorAppDrawerActivity"/>
 
-        <activity android:name="com.boha.monitor.library.activities.CameraActivity"/>
         <activity android:name="com.boha.monitor.library.activities.ThemeSelectorActivity"
             android:screenOrientation="portrait"/>
 
         <activity
             android:name="com.boha.monitor.library.activities.TaskTypeListActivity"
             android:screenOrientation="portrait"
-            android:parentActivityName=".activities.MonitorAppDrawerActivity" >
+            android:parentActivityName="com.boha.platform.worker.activities.MonitorAppDrawerActivity" >
         </activity>
         <activity android:name="com.boha.monitor.library.activities.PictureActivity"/>
         <activity android:name="com.boha.monitor.library.activities.VideoActivity"/>
 
         <activity android:name="com.boha.monitor.library.activities.GPSActivity"
             android:screenOrientation="portrait"
-            android:parentActivityName=".activities.MonitorAppDrawerActivity"/>
+            android:parentActivityName="com.boha.platform.worker.activities.MonitorAppDrawerActivity"/>
         <activity
             android:name="com.boha.monitor.library.activities.PhotoListActivity"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_photo" >
         </activity>
         <activity android:name="com.boha.monitor.library.activities.MonitorMapActivity"
-            android:parentActivityName=".activities.MonitorAppDrawerActivity"/>
+            android:parentActivityName="com.boha.platform.worker.activities.MonitorAppDrawerActivity"/>
         <activity android:name="com.boha.monitor.library.activities.ProfilePhotoActivity"
-            android:parentActivityName=".activities.MonitorAppDrawerActivity"/>
+            android:parentActivityName="com.boha.platform.worker.activities.MonitorAppDrawerActivity"/>
         <activity android:name="com.boha.monitor.library.activities.UpdateActivity"
-            android:parentActivityName=".activities.MonitorAppDrawerActivity"/>
+            android:parentActivityName="com.boha.platform.worker.activities.MonitorAppDrawerActivity"/>
 
     </application>
 

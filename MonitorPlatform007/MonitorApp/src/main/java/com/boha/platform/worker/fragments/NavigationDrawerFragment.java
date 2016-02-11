@@ -1,4 +1,4 @@
-package com.boha.platform.monitor.fragments;
+package com.boha.platform.worker.fragments;
 
 import android.app.Activity;
 import android.content.Context;
@@ -35,8 +35,8 @@ import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.util.ImageUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Util;
-import com.boha.platform.monitor.R;
-import com.boha.platform.monitor.adapters.DrawerMonitorAdapter;
+import com.boha.platform.worker.R;
+import com.boha.platform.worker.adapters.DrawerMonitorAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;

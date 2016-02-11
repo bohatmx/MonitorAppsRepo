@@ -1,4 +1,4 @@
-package com.boha.platform.monitor.activities;
+package com.boha.platform.worker.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -66,9 +66,9 @@ import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.library.util.WebCheck;
-import com.boha.platform.monitor.R;
-import com.boha.platform.monitor.fragments.NavigationDrawerFragment;
-import com.boha.platform.monitor.fragments.NoProjectsAssignedFragment;
+import com.boha.platform.worker.R;
+import com.boha.platform.worker.fragments.NavigationDrawerFragment;
+import com.boha.platform.worker.fragments.NoProjectsAssignedFragment;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
@@ -834,7 +834,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
-        Log.i(LOG, "## onStart Bind to PhotoUploadService, RequestSyncService");
+        Log.i(LOG, "## onStart Binding to PhotoUploadService, RequestSyncService");
         Intent intent = new Intent(this, PhotoUploadService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
@@ -847,19 +847,19 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "MonitorAppDrawer Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://com.boha.platform.monitor.activities/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(mGoogleApiClient, viewAction);
+//        // ATTENTION: This was auto-generated to implement the App Indexing API.
+//        // See https://g.co/AppIndexing/AndroidStudio for more information.
+//        Action viewAction = Action.newAction(
+//                Action.TYPE_VIEW, // TODO: choose an action type.
+//                "MonitorAppDrawer Page", // TODO: Define a title for the content shown.
+//                // TODO: If you have web page content that matches this app activity's content,
+//                // make sure this auto-generated web page URL is correct.
+//                // Otherwise, set the URL to null.
+//                Uri.parse("http://host/path"),
+//                // TODO: Make sure this auto-generated app deep link URI is correct.
+//                Uri.parse("android-app://com.boha.platform.monitor.activities/http/host/path")
+//        );
+//        AppIndex.AppIndexApi.start(mGoogleApiClient, viewAction);
     }
 
     @Override
@@ -867,17 +867,17 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         super.onStop();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "MonitorAppDrawer Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://com.boha.platform.monitor.activities/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(mGoogleApiClient, viewAction);
+//        Action viewAction = Action.newAction(
+//                Action.TYPE_VIEW, // TODO: choose an action type.
+//                "MonitorAppDrawer Page", // TODO: Define a title for the content shown.
+//                // TODO: If you have web page content that matches this app activity's content,
+//                // make sure this auto-generated web page URL is correct.
+//                // Otherwise, set the URL to null.
+//                Uri.parse("http://host/path"),
+//                // TODO: Make sure this auto-generated app deep link URI is correct.
+//                Uri.parse("android-app://com.boha.platform.monitor.activities/http/host/path")
+//        );
+//        AppIndex.AppIndexApi.end(mGoogleApiClient, viewAction);
         Log.e(LOG, "## onStop unBind from PhotoUploadService, RequestSyncService, VideoUploadService");
         if (mBound) {
             unbindService(mConnection);

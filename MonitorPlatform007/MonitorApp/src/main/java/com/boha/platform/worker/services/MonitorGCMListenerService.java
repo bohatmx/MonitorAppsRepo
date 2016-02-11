@@ -1,4 +1,4 @@
-package com.boha.platform.monitor.services;
+package com.boha.platform.worker.services;
 
 /**
  * Created by aubreyM on 15/08/16.

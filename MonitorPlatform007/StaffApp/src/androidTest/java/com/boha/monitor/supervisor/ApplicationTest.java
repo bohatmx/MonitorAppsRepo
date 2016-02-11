@@ -1,4 +1,4 @@
-package com.boha.platform.monitor;
+package com.boha.monitor.supervisor;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

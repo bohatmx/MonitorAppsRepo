@@ -9,5 +9,5 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context="com.boha.monitor.staffapp.fragments.FindProjectFragment"
+    tools:context="com.boha.monitor.supervisor.fragments.FindProjectFragment"
     tools:listitem="@layout/fragment_find_projects" />

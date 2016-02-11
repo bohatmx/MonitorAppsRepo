@@ -5,7 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.boha.platform.monitor.activities.MonitorAppDrawerActivity">
+    tools:context="com.boha.platform.worker.activities.MonitorAppDrawerActivity">
 
 
     <android.support.v4.view.ViewPager

@@ -401,7 +401,7 @@ public class StaffListFragment extends Fragment
 
     @Override
     public void animateHeroHeight() {
-        Util.expand(hero, 500, null);
+//        Util.expand(hero, 500, null);
 
     }
 

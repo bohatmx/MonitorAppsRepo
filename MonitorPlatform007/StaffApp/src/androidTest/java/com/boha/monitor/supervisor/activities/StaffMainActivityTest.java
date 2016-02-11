@@ -1,4 +1,4 @@
-package com.boha.monitor.staffapp.activities;
+package com.boha.monitor.supervisor.activities;
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;

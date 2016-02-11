@@ -595,7 +595,7 @@ public class FileImportFragment extends Fragment implements PageFragment {
                 });
             }
 
-          
+
         });
 
 

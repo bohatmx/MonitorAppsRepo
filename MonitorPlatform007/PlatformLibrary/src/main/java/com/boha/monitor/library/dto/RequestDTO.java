@@ -21,7 +21,6 @@ public class RequestDTO implements Serializable {
         this.requestType = requestType;
     }
 
-    private boolean rideWebSocket = false;
     private boolean zipResponse = false;
 
     private Integer requestType, companyID, staffID,
@@ -213,11 +212,6 @@ public class RequestDTO implements Serializable {
         this.zipResponse = zipResponse;
     }
 
-    public boolean getRideWebSocket() {
-        return rideWebSocket;
-    }
-
-
 
     public Integer getNumberOfDays() {
         return numberOfDays;
@@ -241,14 +235,6 @@ public class RequestDTO implements Serializable {
 
     public void setVideoUpload(VideoUploadDTO videoUpload) {
         this.videoUpload = videoUpload;
-    }
-
-    public boolean isRideWebSocket() {
-        return rideWebSocket;
-    }
-
-    public void setRideWebSocket(boolean rideWebSocket) {
-        this.rideWebSocket = rideWebSocket;
     }
 
     public Integer getRequestType() {

@@ -61,7 +61,7 @@
         android:choiceMode="singleChoice"
         android:divider="@android:color/transparent"
         android:dividerHeight="4dp"
-        tools:context="com.boha.platform.monitor.fragments.NavigationDrawerFragment" />
+        tools:context="com.boha.platform.worker.fragments.NavigationDrawerFragment" />
 
 
 

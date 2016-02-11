@@ -7,7 +7,7 @@
     <!-- PROD API KEY: AIzaSyA1ePn3jrM-aU61Cz4kTk-ehE0cfLnfzVk -->
 
     <permission
-        android:name="com.boha.platform.monitor.setup.gcm.permission.C2D_MESSAGE"
+        android:name="com.boha.platform.worker.setup.gcm.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
     <uses-permission android:name="com.boha.platform.monitor.setup.gcm.permission.C2D_MESSAGE" />

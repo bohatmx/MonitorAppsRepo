@@ -5,7 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.boha.platform.monitor.activities.MonitorAppDrawerActivity">
+    tools:context="com.boha.platform.worker.activities.MonitorAppDrawerActivity">
 
     <!-- As the main content view, the view below consumes the entire
          space available using match_parent in both dimensions. -->
@@ -46,7 +46,7 @@
         android:layout_width="@dimen/mon_hero_height_large"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:name="com.boha.platform.monitor.fragments.NavigationDrawerFragment"
+        android:name="com.boha.platform.worker.fragments.NavigationDrawerFragment"
         tools:layout="@layout/fragment_navigation_drawer" />
 
 

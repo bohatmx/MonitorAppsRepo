@@ -1,4 +1,4 @@
-package com.boha.monitor.staffapp.activities;
+package com.boha.monitor.supervisor.activities;
 
 import android.Manifest;
 import android.app.Activity;
@@ -74,7 +74,7 @@ import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
-import com.boha.monitor.staffapp.R;
+import com.boha.monitor.supervisor.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -157,8 +157,8 @@ public class StaffMainActivity extends AppCompatActivity implements
         if (navText != null) {
             navText.setText(SharedUtil.getCompanyStaff(ctx).getFullName());
         }
-        try {
-            Statics.setRobotoFontLight(getApplicationContext(), navText);
+//        try {
+//            Statics.setRobotoFontLight(getApplicationContext(), navText);
 //            Drawable globe = ContextCompat.getDrawable(ctx, R.drawable.ic_action_globe);
 //            globe.setColorFilter(themeDarkColor, PorterDuff.Mode.SRC_IN);
 //            navigationView.getMenu().getItem(0).setIcon(globe);
@@ -174,10 +174,10 @@ public class StaffMainActivity extends AppCompatActivity implements
 //
 //            navigationView.getMenu().getItem(3).getSubMenu().getItem(0).setIcon(face);
 //            navigationView.getMenu().getItem(3).getSubMenu().getItem(1).setIcon(face);
-
-        } catch (Exception e) {
-            Log.e(LOG, "Problem colorizing menu items", e);
-        }
+//
+//        } catch (Exception e) {
+//            Log.e(LOG, "Problem colorizing menu items", e);
+//        }
 
 
         mPager = (ViewPager) findViewById(R.id.viewpager);
@@ -185,15 +185,6 @@ public class StaffMainActivity extends AppCompatActivity implements
         PagerTitleStrip strip = (PagerTitleStrip) mPager.findViewById(R.id.pager_title_strip);
         strip.setVisibility(View.GONE);
         strip.setBackgroundColor(themeDarkColor);
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
 
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
