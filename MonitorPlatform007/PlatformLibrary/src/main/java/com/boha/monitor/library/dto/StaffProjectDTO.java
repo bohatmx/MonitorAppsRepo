@@ -12,7 +12,7 @@ import java.io.Serializable;
  *
  * @author aubreyM
  */
-public class StaffProjectDTO implements Serializable {
+public class StaffProjectDTO implements Serializable, PersonProject {
     private static final long serialVersionUID = 1L;
     private Integer staffProjectID;
     private Long dateAssigned;

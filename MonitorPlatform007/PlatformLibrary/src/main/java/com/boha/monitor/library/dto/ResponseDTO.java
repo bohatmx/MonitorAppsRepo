@@ -16,7 +16,7 @@ import java.util.List;
 public class ResponseDTO implements Serializable{
     private static final long serialVersionUID = 1L;
 
-    private Integer statusCode = 0, statusCount,
+    private int statusCode = 0, statusCount,
             goodCount, badCount, gcmSuccess, gcmFailure;
     private String message = "Request is KOOL!",
             sessionID, GCMRegistrationID, fileString;
@@ -36,6 +36,7 @@ public class ResponseDTO implements Serializable{
     private List<String> siteImageFileNameList;
     private List<ProjectStatusTypeDTO> projectStatusTypeList;
     private List<ProjectDTO> projectList;
+    private List<MonitorProjectDTO> monitorProjectList;
     private List<ErrorStoreDTO> errorStoreList;
     private List<ErrorStoreAndroidDTO> errorStoreAndroidList;
     private List<TaskDTO> taskList;
@@ -60,6 +61,14 @@ public class ResponseDTO implements Serializable{
 
     public void setVideoUploadList(List<VideoUploadDTO> videoUploadList) {
         this.videoUploadList = videoUploadList;
+    }
+
+    public List<MonitorProjectDTO> getMonitorProjectList() {
+        return monitorProjectList;
+    }
+
+    public void setMonitorProjectList(List<MonitorProjectDTO> monitorProjectList) {
+        this.monitorProjectList = monitorProjectList;
     }
 
     public StaffDTO getStaff() {
@@ -221,19 +230,19 @@ public class ResponseDTO implements Serializable{
         this.staffList = staffList;
     }
 
-    public Integer getStatusCode() {
+    public int getStatusCode() {
         return statusCode;
     }
 
-    public void setStatusCode(Integer statusCode) {
+    public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
     }
 
-    public Integer getStatusCount() {
+    public int getStatusCount() {
         return statusCount;
     }
 
-    public void setStatusCount(Integer statusCount) {
+    public void setStatusCount(int statusCount) {
         this.statusCount = statusCount;
     }
 
@@ -245,35 +254,35 @@ public class ResponseDTO implements Serializable{
         this.lastStatus = lastStatus;
     }
 
-    public Integer getGoodCount() {
+    public int getGoodCount() {
         return goodCount;
     }
 
-    public void setGoodCount(Integer goodCount) {
+    public void setGoodCount(int goodCount) {
         this.goodCount = goodCount;
     }
 
-    public Integer getBadCount() {
+    public int getBadCount() {
         return badCount;
     }
 
-    public void setBadCount(Integer badCount) {
+    public void setBadCount(int badCount) {
         this.badCount = badCount;
     }
 
-    public Integer getGcmSuccess() {
+    public int getGcmSuccess() {
         return gcmSuccess;
     }
 
-    public void setGcmSuccess(Integer gcmSuccess) {
+    public void setGcmSuccess(int gcmSuccess) {
         this.gcmSuccess = gcmSuccess;
     }
 
-    public Integer getGcmFailure() {
+    public int getGcmFailure() {
         return gcmFailure;
     }
 
-    public void setGcmFailure(Integer gcmFailure) {
+    public void setGcmFailure(int gcmFailure) {
         this.gcmFailure = gcmFailure;
     }
 

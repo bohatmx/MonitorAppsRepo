@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -24,12 +23,10 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.dto.GcmDeviceDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
-import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.GCMUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
@@ -171,7 +168,7 @@ public class SignInActivity extends AppCompatActivity {
                 registerGCMDevice();
             }
 
-            Intent intent = new Intent(ctx, MonitorAppDrawerActivity.class);
+            Intent intent = new Intent(ctx, MonitorMainActivity.class);
             startActivity(intent);
             //
             finish();
@@ -180,15 +177,8 @@ public class SignInActivity extends AppCompatActivity {
 
         registerGCMDevice();
     }
-
+    String registrationID;
     private void registerGCMDevice() {
-        gcmDevice = new GcmDeviceDTO();
-        gcmDevice.setManufacturer(Build.MANUFACTURER);
-        gcmDevice.setModel(Build.MODEL);
-        gcmDevice.setSerialNumber(Build.SERIAL);
-        gcmDevice.setAndroidVersion(Build.VERSION.RELEASE);
-        gcmDevice.setProduct(Build.PRODUCT);
-        gcmDevice.setApp(ctx.getPackageName());
 
         Snackbar.make(btnSave, "Just a second, checking services ...",Snackbar.LENGTH_LONG)
                 .setAction("CLOSE", null)
@@ -202,12 +192,10 @@ public class SignInActivity extends AppCompatActivity {
                 public void onDeviceRegistered(String id) {
                     Log.i(LOG, "############# GCM - we cool, GcmDeviceDTO waiting to be sent with signin .....: " + id);
                     setBusyIndicator(false);
-                    gcmDevice.setRegistrationID(id);
-                    btnSave.setEnabled(true);
                     if (gcmOnly) {
                         RequestDTO w = new RequestDTO(RequestDTO.UPDATE_MONITOR_DEVICE);
                         MonitorDTO mon = SharedUtil.getMonitor(ctx);
-                        gcmDevice.setMonitor(mon);
+                        gcmDevice.setMonitorID(mon.getMonitorID());
                         w.setGcmDevice(gcmDevice);
                         //update monitor device on server
                         NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
@@ -257,11 +245,14 @@ public class SignInActivity extends AppCompatActivity {
             }
         }
 
-        RequestDTO r = new RequestDTO();
+        final RequestDTO r = new RequestDTO();
         r.setRequestType(RequestDTO.LOGIN_MONITOR);
         r.setEmail(email);
         r.setPin(ePin.getText().toString());
-        r.setGcmDevice(gcmDevice);
+        gcmDevice = SharedUtil.getGCMDevice(ctx);
+        if (gcmDevice != null) {
+            r.setGcmDevice(gcmDevice);
+        }
 
        setBusyIndicator(true);
         NetUtil.sendRequest(ctx,r,new NetUtil.NetUtilListener() {
@@ -288,19 +279,19 @@ public class SignInActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             Log.e(LOG,"failed to save custome data for ACRA");
                         }
-                        CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_DATA, new CacheUtil.CacheUtilListener() {
+                        Util.cacheOnSnappy(ctx, response, new Util.SnappyListener() {
                             @Override
-                            public void onFileDataDeserialized(ResponseDTO response) {}
-
-                            @Override
-                            public void onDataCached() {
-                                Intent intent = new Intent(ctx, ThemeSelectorActivity.class);
-                                startActivity(intent);
+                            public void onCachingComplete() {
+                                Intent w = new Intent(ctx,MonitorMainActivity.class);
+                                startActivity(w);
                             }
 
                             @Override
-                            public void onError() {}
+                            public void onError(String message) {
+
+                            }
                         });
+
                     }
                 });
             }
@@ -332,7 +323,7 @@ public class SignInActivity extends AppCompatActivity {
         btnSave = (Button)findViewById(R.id.btnRed);
         txtApp.setText(R.string.monitor);
         btnSave.setText("Sign In");
-        btnSave.setEnabled(false);
+//        btnSave.setEnabled(false);
 
         txtEmail.setOnClickListener(new View.OnClickListener() {
             @Override

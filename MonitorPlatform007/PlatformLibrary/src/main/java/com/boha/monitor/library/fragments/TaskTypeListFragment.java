@@ -45,7 +45,7 @@ public class TaskTypeListFragment extends Fragment implements PageFragment {
         TaskTypeListFragment fragment = new TaskTypeListFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("project",project);
-        bundle.putInt("type", type);
+        bundle.putInt("editType", type);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -58,7 +58,7 @@ public class TaskTypeListFragment extends Fragment implements PageFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            type = getArguments().getInt("type",0);
+            type = getArguments().getInt("editType",0);
             project = (ProjectDTO)getArguments().getSerializable("project");
         }
     }

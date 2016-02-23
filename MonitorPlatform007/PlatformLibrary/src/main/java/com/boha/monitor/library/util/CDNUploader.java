@@ -78,8 +78,6 @@ public class CDNUploader {
 
                         dto.setUri((String) map.get("url"));
                         dto.setSecureUrl((String) map.get("secure_url"));
-                        dto.setSignature((String) map.get("signature"));
-                        dto.seteTag((String) map.get("etag"));
                         dto.setHeight((int) map.get("height"));
                         dto.setWidth((int) map.get("width"));
                         dto.setBytes((int) map.get("bytes"));
@@ -92,7 +90,11 @@ public class CDNUploader {
                             @Override
                             public void onResponse(ResponseDTO response) {
                                 Log.i(LOG, "#### photo metadata sent to server");
-                                mListener.onFileUploaded(dto);
+                                if (response.getStatusCode() == 0) {
+                                    PhotoUploadDTO x = response.getPhotoUploadList().get(0);
+                                    x.setThumbFilePath(dto.getThumbFilePath());
+                                    mListener.onFileUploaded(x);
+                                }
                             }
 
                             @Override

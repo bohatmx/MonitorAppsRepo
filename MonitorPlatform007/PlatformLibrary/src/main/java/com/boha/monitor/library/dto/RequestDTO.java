@@ -72,6 +72,8 @@ public class RequestDTO implements Serializable {
             REGISTER_COMPANY = 1,
             IMPORT_TASK_INFO = 2,
             IMPORT_PROJECT_INFO = 3,
+            GENERATE_STAFF_PIN = 4,
+            GENERATE_MONITOR_PIN = 5,
             NOTIFY_SUPERVISOR_NO_PROJECTS = 30;
     //add stuff
     public static final int
@@ -119,7 +121,10 @@ public class RequestDTO implements Serializable {
             GET_MONITOR_SUMMARY = 134,
             GET_PROJECT_STATUS_PHOTOS = 135,
             GET_COMPANY_DEVICES = 136,
-            GET_LOCATION_TRACK_BY_DEVICE = 137;
+            GET_LOCATION_TRACK_BY_DEVICE = 137,
+            GET_PROJECT_TASKS = 138,
+            GET_PROJECTS_FOR_MONITOR_ASSIGNMENTS = 139,
+            GET_PROJECTS_FOR_STAFF_ASSIGNMENTS = 140;
 
     //
     public static final int
@@ -170,7 +175,8 @@ public class RequestDTO implements Serializable {
             UPDATE_STAFF_PROJECTS = 409,
             UPDATE_MONITOR = 410,
             UPDATE_STAFF_DEVICE = 411,
-            UPDATE_MONITOR_DEVICE = 412;
+            UPDATE_MONITOR_DEVICE = 412,
+            UPDATE_STAFF = 413;
 
     //reports
     public static final int REPORT_PROJECT = 601,

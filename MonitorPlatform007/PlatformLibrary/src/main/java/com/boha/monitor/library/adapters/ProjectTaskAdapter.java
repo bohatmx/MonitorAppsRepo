@@ -91,7 +91,9 @@ public class ProjectTaskAdapter extends RecyclerView.Adapter<ProjectTaskAdapter.
             holder.txtStatusName.setText("No Status");
             holder.txtStatusCount.setText("0");
         }
-        holder.txtTaskName.setText(p.getTask().getTaskName());
+        if (p.getTask() != null) {
+            holder.txtTaskName.setText(p.getTask().getTaskName());
+        }
         if (p.getPhotoUploadList() != null && !p.getPhotoUploadList().isEmpty()) {
             holder.txtPhotos.setText(df.format(p.getPhotoUploadList().size()));
         } else {

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
@@ -28,6 +29,7 @@ public class StaffListAdapter extends RecyclerView.Adapter<StaffListAdapter.Moni
 
     public interface StaffListListener {
         void onStaffNameClicked(StaffDTO staff);
+        void onHighDefPhoto(PhotoUploadDTO photo);
     }
 
     private StaffListListener mListener;
@@ -46,7 +48,8 @@ public class StaffListAdapter extends RecyclerView.Adapter<StaffListAdapter.Moni
 
     @Override
     public MonitorViewHolder onCreateViewHolder( ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.monitor_card, parent, false);
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.monitor_card, parent, false);
         return new MonitorViewHolder(v);
     }
 
@@ -63,6 +66,14 @@ public class StaffListAdapter extends RecyclerView.Adapter<StaffListAdapter.Moni
             @Override
             public void onClick(View v) {
                 mListener.onStaffNameClicked(p);
+            }
+        });
+        holder.photo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (p.getPhotoUploadList() != null && !p.getPhotoUploadList().isEmpty()) {
+                    mListener.onHighDefPhoto(p.getPhotoUploadList().get(0));
+                }
             }
         });
         Statics.setRobotoFontLight(ctx, holder.txtName);

@@ -10,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.boha.monitor.library.dto.MonitorDTO;
+import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
 import com.squareup.picasso.Picasso;
@@ -27,10 +28,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MonitorListAdapter extends RecyclerView.Adapter<MonitorListAdapter.MonitorViewHolder> {
 
     public interface MonitorListener {
-        void onPictureRequested(MonitorDTO monitor);
-        void onStatusUpdatesRequested(MonitorDTO monitor);
-        void onCheckBoxClicked(MonitorDTO monitor);
         void onMonitorNameClicked(MonitorDTO monitor);
+        void onHighDefPhoto(PhotoUploadDTO photo);
     }
 
     private MonitorListener mListener;
@@ -65,7 +64,9 @@ public class MonitorListAdapter extends RecyclerView.Adapter<MonitorListAdapter.
         holder.photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onPictureRequested(p);
+                if (p.getPhotoUploadList() != null && !p.getPhotoUploadList().isEmpty()) {
+                    mListener.onHighDefPhoto(p.getPhotoUploadList().get(0));
+                }
             }
         });
         holder.txtName.setOnClickListener(new View.OnClickListener() {

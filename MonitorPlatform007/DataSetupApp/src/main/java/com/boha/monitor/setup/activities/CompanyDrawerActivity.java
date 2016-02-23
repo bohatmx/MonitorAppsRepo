@@ -250,8 +250,8 @@ public class CompanyDrawerActivity extends AppCompatActivity implements
     private void buildPages() {
         pageFragmentList = new ArrayList<>();
         portfolioListFragment = PortfolioListFragment.newInstance(response.getPortfolioList());
-        monitorListFragment = MonitorListFragment.newInstance(response.getMonitorList(),MonitorListFragment.STAFF);
-        staffListFragment = StaffListFragment.newInstance(response.getStaffList());
+        monitorListFragment = new MonitorListFragment();
+        staffListFragment = new StaffListFragment();
 
 
         pageFragmentList.add(portfolioListFragment);
@@ -411,6 +411,11 @@ public class CompanyDrawerActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onProjectAssignmentRequested(MonitorDTO monitor) {
+
+    }
+
+    @Override
     public void onMonitorPhotoRequired(MonitorDTO monitor) {
 
     }
@@ -436,6 +441,12 @@ public class CompanyDrawerActivity extends AppCompatActivity implements
     public void setBusy(boolean busy) {
         setRefreshActionButtonState(busy);
     }
+
+    @Override
+    public void onProjectAssigmentWanted(StaffDTO staff) {
+
+    }
+
     static final int STAFF_PICTURE_REQUESTED = 3472;
     @Override
     public void onStaffPictureRequired(StaffDTO staff) {
@@ -514,12 +525,12 @@ public class CompanyDrawerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onCompanyStaffPictureRequested(StaffDTO companyStaff) {
+    public void onStaffPictureRequested(StaffDTO companyStaff) {
 
     }
 
     @Override
-    public void onCompanyStaffEditRequested(StaffDTO companyStaff) {
+    public void onStaffEditRequested(StaffDTO companyStaff) {
 
     }
 

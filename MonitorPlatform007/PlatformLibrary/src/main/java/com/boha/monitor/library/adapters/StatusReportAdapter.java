@@ -73,11 +73,8 @@ public class StatusReportAdapter extends ArrayAdapter<ProjectTaskStatusDTO> {
         }
 
         final ProjectTaskStatusDTO p = mList.get(position);
-        if (isProjectSite) {
-            item.txtTaskName.setText(p.getProjectTask().getTask().getTaskName());
-        } else {
-            item.txtTaskName.setText(p.getProjectTask().getTask().getTaskName());
-        }
+        item.txtTaskName.setText(p.getTaskName());
+
         item.txtDate.setText(sdf.format(p.getStatusDate()));
         item.txtStatus.setText(p.getTaskStatusType().getTaskStatusTypeName());
         if (p.getStaffName() != null) {

@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.boha.monitor.library.dto.GcmDeviceDTO;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.RequestDTO;
@@ -95,9 +96,9 @@ public class GPSLocationService extends Service implements
                 mGoogleApiClient);
 
         mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(10000);
+        mLocationRequest.setInterval(2000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setFastestInterval(2000);
+        mLocationRequest.setFastestInterval(1000);
 
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -159,6 +160,7 @@ public class GPSLocationService extends Service implements
         if (location.getAccuracy() > ACCURACY_THRESHOLD) {
             return;
         }
+
         mLocation = location;
         if (simpleMessage == null) {
             saveLocation();
@@ -170,6 +172,7 @@ public class GPSLocationService extends Service implements
     }
     private void saveLocation() {
         Log.d(LOG, "saveLocation, accuracy: " + mLocation.getAccuracy());
+
         final LocationTrackerDTO dto = new LocationTrackerDTO();
         StaffDTO s = SharedUtil.getCompanyStaff(
                 getApplicationContext());
@@ -183,12 +186,17 @@ public class GPSLocationService extends Service implements
         dto.setDateTracked(new Date().getTime());
         dto.setLatitude(mLocation.getLatitude());
         dto.setLongitude(mLocation.getLongitude());
-        dto.setGcmDevice(SharedUtil.getGCMDevice(getApplicationContext()));
+        GcmDeviceDTO dev = SharedUtil.getGCMDevice(getApplicationContext());
+        if (dev == null) {
+            return;
+        }
+        dto.setGcmDevice(dev);
         if (dto.getGcmDevice().getGcmDeviceID() == null) {
             Log.d(LOG,"GCMDeviceID is NULL, quitting saveLocation");
             return;
         }
         try {
+            dto.getGcmDevice().setRegistrationID(null);
             dto.setGeocodedAddress(getAddress());
             if (dto.getGeocodedAddress() == null) {
                 dto.setGeocodedAddress(getString(R.string.no_address));
@@ -203,7 +211,6 @@ public class GPSLocationService extends Service implements
         NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(ResponseDTO response) {
-
             }
 
             @Override
@@ -259,6 +266,7 @@ public class GPSLocationService extends Service implements
         }
 
         RequestDTO w = new RequestDTO(RequestDTO.SEND_SIMPLE_MESSAGE);
+        w.setZipResponse(false);
         w.setSimpleMessage(sm);
         Log.d(LOG, "Sending location request response...");
         NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {

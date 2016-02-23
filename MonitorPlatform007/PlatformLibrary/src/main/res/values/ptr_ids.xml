@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <item type="id" name="gridview" />
-    <item type="id" name="webview" />
-    <item type="id" name="scrollview" />
-    <item type="id" name="stgv" />
+    <!--<item editType="id" name="gridview" />-->
+    <!--<item editType="id" name="webview" />-->
+    <!--<item editType="id" name="scrollview" />-->
+    <!--<item editType="id" name="stgv" />-->
 
 </resources>

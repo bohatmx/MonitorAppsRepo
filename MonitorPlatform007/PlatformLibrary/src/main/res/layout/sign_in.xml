@@ -40,6 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+
             android:layout_marginTop="@dimen/mon_padding"
             android:text="App Name Here" />
 
@@ -49,6 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/SI_app"
+            android:visibility="gone"
             android:layout_marginLeft="@dimen/mon_padding"
             android:layout_marginTop="@dimen/mon_wide"
             android:text="@string/select_email" />
@@ -67,7 +69,7 @@
 
                 android:layout_marginLeft="@dimen/mon_padding"
                 android:layout_marginTop="@dimen/mon_margin"
-                android:hint="OR Enter Email address"
+                android:hint="Enter Email address"
                 android:inputType="textEmailAddress" />
         </android.support.design.widget.TextInputLayout>
 

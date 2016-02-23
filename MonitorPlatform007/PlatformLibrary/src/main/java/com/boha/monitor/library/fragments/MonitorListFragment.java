@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -22,18 +23,22 @@ import android.widget.ImageView;
 import android.widget.ListPopupWindow;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.HighDefActivity;
 import com.boha.monitor.library.adapters.MonitorListAdapter;
 import com.boha.monitor.library.adapters.PopupListIconAdapter;
 import com.boha.monitor.library.dto.MonitorDTO;
+import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
 import com.boha.monitor.library.dto.SimpleMessageDestinationDTO;
 import com.boha.monitor.library.dto.StaffDTO;
+import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.PopupItem;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.SimpleDividerItemDecoration;
+import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -50,8 +55,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Activities that contain this fragment must implement the
  * {@link MonitorListListener} interface
  * to handle interaction events.
- * Use the {@link MonitorListFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class MonitorListFragment extends Fragment implements PageFragment {
 
@@ -66,11 +69,11 @@ public class MonitorListFragment extends Fragment implements PageFragment {
     View view, topView;
     FloatingActionButton fab, fab2;
     ImageView hero;
-    View actionsView;
+    View actionsView, handle;
     int type;
 
     ImageView iconClose, iconCloseActions;
-    TextView txtPerson, txtFromMsg;
+    TextView txtPerson, txtFromMsg, txtTotal;
     EditText editMessage;
     Button btnSend, btnLoc, btnMsg;
     SlidingUpPanelLayout paneLayout;
@@ -78,45 +81,10 @@ public class MonitorListFragment extends Fragment implements PageFragment {
     public static final int STAFF = 1, MONITOR = 2;
     static final String LOG = MonitorListFragment.class.getSimpleName();
 
-    public static MonitorListFragment newInstance(List<MonitorDTO> list, int type) {
-        MonitorListFragment fragment = new MonitorListFragment();
-        Bundle args = new Bundle();
-        ResponseDTO w = new ResponseDTO();
-        w.setMonitorList(list);
-        args.putSerializable("trackerDTOList", w);
-        args.putInt("type", type);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     public MonitorListFragment() {
     }
 
-
-    @Override
-    public void onCreate(Bundle b) {
-        super.onCreate(b);
-        Log.d(LOG, "MonitorListFragment onCreate");
-        if (b != null) {
-            ResponseDTO w = (ResponseDTO) b.getSerializable("trackerDTOList");
-            type = b.getInt("type", 0);
-            if (w != null) {
-                monitorList = w.getMonitorList();
-                return;
-            }
-        }
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            ResponseDTO w = (ResponseDTO) bundle.getSerializable("trackerDTOList");
-            type = bundle.getInt("type", 0);
-            if (w != null) {
-                monitorList = w.getMonitorList();
-                return;
-            }
-        }
-
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -125,10 +93,12 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         ctx = getActivity();
         view = inflater.inflate(R.layout.fragment_monitor_list, container, false);
 
-        paneLayout = (SlidingUpPanelLayout)view.findViewById(R.id.sliding_layout);
+        paneLayout = (SlidingUpPanelLayout) view.findViewById(R.id.sliding_layout);
         editMessage = (EditText) view.findViewById(R.id.FSL_message);
+        handle = view.findViewById(R.id.handle);
         btnSend = (Button) view.findViewById(R.id.FSL_btnSend);
         txtPerson = (TextView) view.findViewById(R.id.FSL_name);
+
         txtFromMsg = (TextView) view.findViewById(R.id.FSL_fromMessage);
         iconClose = (ImageView) view.findViewById(R.id.FSL_iconClose);
         iconCloseActions = (ImageView) view.findViewById(R.id.MONITOR_LIST_iconClear);
@@ -140,6 +110,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
 
         txtCount = (TextView) view.findViewById(R.id.FAB_text);
         txtName = (TextView) view.findViewById(R.id.MONITOR_LIST_label);
+        txtTotal = (TextView) view.findViewById(R.id.MONITOR_LIST_total);
         txtSelected = (TextView) view.findViewById(R.id.MONITOR_LIST_selected);
         hero = (ImageView) view.findViewById(R.id.MONITOR_LIST_backDrop);
         topView = view.findViewById(R.id.MONITOR_LIST_top);
@@ -150,7 +121,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         fab2 = (FloatingActionButton) view.findViewById(R.id.fab2);
         recyclerView = (RecyclerView) view.findViewById(R.id.MONITOR_LIST_list);
 
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL,false);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
@@ -187,7 +158,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
             public void onClick(View view) {
                 paneLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
                 StringBuilder sb = new StringBuilder();
-                for (MonitorDTO m: monitorList) {
+                for (MonitorDTO m : monitorList) {
                     selectedMonitors.add(m);
                     sb.append(m.getFullName()).append(", ");
                 }
@@ -216,15 +187,47 @@ public class MonitorListFragment extends Fragment implements PageFragment {
                 });
             }
         });
-        setList();
+
+        getMonitorList();
         return view;
     }
 
-    public void refreshMonitorList(List<MonitorDTO> monitorList) {
-        this.monitorList = monitorList;
-        if (recyclerView != null) {
-            setList();
+    public void updateMonitorList(List<MonitorDTO> list) {
+        monitorList = list;
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setList();
+                }
+            });
         }
+    }
+
+    public void getMonitorList() {
+        Snappy.getMonitorList(getActivity(), new Snappy.SnappyReadListener() {
+            @Override
+            public void onDataRead(final ResponseDTO response) {
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (response.getMonitorList() != null) {
+                                monitorList = response.getMonitorList();
+                                setList();
+                            }
+                        }
+                    });
+
+                }
+            }
+
+            @Override
+            public void onError(String message) {
+
+            }
+        });
+
     }
 
     private void showDialog() {
@@ -250,6 +253,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
                 })
                 .show();
     }
+
     private void sendMessageToSelectedPeople() {
         if (SharedUtil.getMonitor(getActivity()) != null) {
             type = MONITOR;
@@ -258,7 +262,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         }
         SimpleMessageDTO simpleMsg = new SimpleMessageDTO();
         List<SimpleMessageDestinationDTO> destList = new ArrayList<>();
-        for (MonitorDTO m: selectedMonitors) {
+        for (MonitorDTO m : selectedMonitors) {
             SimpleMessageDestinationDTO dest = new SimpleMessageDestinationDTO();
             dest.setMonitorID(m.getMonitorID());
             destList.add(dest);
@@ -335,11 +339,13 @@ public class MonitorListFragment extends Fragment implements PageFragment {
 
         });
     }
+
     void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) ctx
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(editMessage.getWindowToken(), 0);
     }
+
     @Override
     public void onSaveInstanceState(Bundle b) {
         Log.i(LOG, "## onSaveInstanceState");
@@ -351,59 +357,19 @@ public class MonitorListFragment extends Fragment implements PageFragment {
 
     List<MonitorDTO> selectedMonitors = new ArrayList<>();
     MonitorListAdapter monitorListAdapter;
+
     private void setList() {
         Log.d(LOG, "MonitorListFragment setList: " + monitorList.size());
         Collections.sort(monitorList);
 
+        txtTotal.setText("" + monitorList.size());
         monitorListAdapter = new MonitorListAdapter(monitorList, darkColor, getActivity(), new MonitorListAdapter.MonitorListener() {
             @Override
-            public void onPictureRequested(MonitorDTO monitor) {
-
+            public void onHighDefPhoto(PhotoUploadDTO photo) {
+                Intent w = new Intent(getContext(), HighDefActivity.class);
+                w.putExtra("photo",photo);
+                startActivity(w);
             }
-
-            @Override
-            public void onStatusUpdatesRequested(MonitorDTO monitor) {
-
-            }
-
-            @Override
-            public void onCheckBoxClicked(MonitorDTO monitor) {
-                selectedMonitors.clear();
-                StringBuilder sb = new StringBuilder();
-
-                for (MonitorDTO dto: monitorList) {
-                    if (dto.isSelected()) {
-                        selectedMonitors.add(dto);
-                        sb.append(dto.getFullName()).append(", ");
-                    }
-                }
-                if (selectedMonitors.isEmpty()) {
-                    txtSelected.setText("");
-                    txtPerson.setText("");
-                    Util.collapse(actionsView, 1000, new Util.UtilAnimationListener() {
-                        @Override
-                        public void onAnimationEnded() {
-                            Util.expand(topView, 1000, null);
-                            fab.setVisibility(View.VISIBLE);
-                            fab2.setVisibility(View.VISIBLE);
-                        }
-                    });
-
-                    return;
-                }
-                txtSelected.setText(sb.toString().trim());
-                txtPerson.setText("" + selectedMonitors.size() + " recipients");
-                Util.collapse(topView, 1000, new Util.UtilAnimationListener() {
-                    @Override
-                    public void onAnimationEnded() {
-                        Util.expand(actionsView, 500, null);
-                        fab.setVisibility(View.GONE);
-                        fab2.setVisibility(View.GONE);
-                    }
-                });
-
-            }
-
             @Override
             public void onMonitorNameClicked(MonitorDTO monitor) {
                 showPopup(monitor);
@@ -436,7 +402,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         pop.setPromptView(v);
         pop.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
 
-        pop.setAnchorView(txtName);
+        pop.setAnchorView(handle);
         pop.setHorizontalOffset(Util.getPopupHorizontalOffset(getActivity()));
         pop.setModal(true);
         pop.setWidth(Util.getPopupWidth(getActivity()));
@@ -444,16 +410,22 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         final List<PopupItem> pList = new ArrayList<>();
         pList.add(new PopupItem(R.drawable.ic_action_email, ctx.getString(R.string.send_message)));
 
-        switch (type) {
-            case MONITOR:
-                pList.add(new PopupItem(R.drawable.ic_action_location_on, ctx.getString(R.string.send_my_location)));
-                break;
-            case STAFF:
-                pList.add(new PopupItem(R.drawable.ic_action_location_on, ctx.getString(R.string.send_my_location)));
-                pList.add(new PopupItem(R.drawable.ic_action_location_on, ctx.getString(R.string.get_location)));
-                pList.add(new PopupItem(R.drawable.ic_action_view_as_list, ctx.getString(R.string.get_updates)));
-                break;
+
+        if (SharedUtil.getMonitor(getActivity()) != null) {
+            pList.add(new PopupItem(R.drawable.ic_action_location_on, ctx.getString(R.string.send_my_location)));
+//            pList.add(new PopupItem(R.drawable.ic_action_location_on, ctx.getString(R.string.req_deviceloc)));
+//            pList.add(new PopupItem(R.drawable.ic_action_edit, ctx.getString(R.string.upd_profile)));
         }
+        if (SharedUtil.getCompanyStaff(getActivity()) != null) {
+            pList.add(new PopupItem(R.drawable.ic_action_location_on, ctx.getString(R.string.send_my_location)));
+            pList.add(new PopupItem(R.drawable.ic_action_location_on, ctx.getString(R.string.get_location)));
+            pList.add(new PopupItem(R.drawable.ic_action_view_as_list, ctx.getString(R.string.get_updates)));
+            pList.add(new PopupItem(R.drawable.ic_action_edit, ctx.getString(R.string.upd_profile)));
+            pList.add(new PopupItem(R.drawable.ic_action_add_circle, ctx.getString(R.string.proj_assgn)));
+            pList.add(new PopupItem(R.drawable.ic_action_add_person, ctx.getString(R.string.generate_pin)));
+        }
+
+
         pop.setAdapter(new PopupListIconAdapter(ctx, R.layout.xxsimple_spinner_item,
                 pList, darkColor));
         pop.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -477,6 +449,15 @@ public class MonitorListFragment extends Fragment implements PageFragment {
                 if (item.getText().equalsIgnoreCase(ctx.getString(R.string.get_updates))) {
 
                 }
+                if (item.getText().equalsIgnoreCase(ctx.getString(R.string.proj_assgn))) {
+                    mListener.onProjectAssignmentRequested(monitor);
+                }
+                if (item.getText().equalsIgnoreCase(ctx.getString(R.string.upd_profile))) {
+                    mListener.onMonitorEditRequested(monitor);
+                }
+                if (item.getText().equalsIgnoreCase(ctx.getString(R.string.generate_pin))) {
+                    generatePIN(monitor);
+                }
                 switch (position) {
                     case 0:
                         mListener.onMessagingRequested(monitor);
@@ -493,7 +474,39 @@ public class MonitorListFragment extends Fragment implements PageFragment {
             Log.e(LOG, "-- popup failed, probably nullpointer", e);
         }
     }
+    private void generatePIN(MonitorDTO monitor) {
+        RequestDTO w = new RequestDTO(RequestDTO.GENERATE_MONITOR_PIN);
+        w.setMonitorID(monitor.getMonitorID());
 
+        mListener.setBusy(true);
+        NetUtil.sendRequest(getActivity(), w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mListener.setBusy(false);
+                        if (response.getStatusCode() == 0) {
+                            MonitorDTO x = response.getMonitor();
+                            Util.sendNewPIN(getActivity(), x.getFullName(), x.getEmail(),
+                                    x.getPin(), Util.MONITOR);
+                        }
+                    }
+                });
+
+            }
+
+            @Override
+            public void onError(final String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Util.showErrorToast(getActivity(), message);
+                    }
+                });
+            }
+        });
+    }
     private void getMonitorLocationTracks(Integer monitorID) {
         SimpleMessageDTO msg = new SimpleMessageDTO();
         msg.setSimpleMessageDestinationList(new ArrayList<SimpleMessageDestinationDTO>());
@@ -520,7 +533,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         NetUtil.sendRequest(getActivity(), w, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(ResponseDTO response) {
-                Log.i(LOG,"request for location sent");
+                Log.i(LOG, "request for location sent");
             }
 
             @Override
@@ -528,7 +541,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Util.showErrorToast(getActivity(),message);
+                        Util.showErrorToast(getActivity(), message);
                     }
                 });
 
@@ -538,6 +551,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         });
 
     }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -595,7 +609,10 @@ public class MonitorListFragment extends Fragment implements PageFragment {
      */
     public interface MonitorListListener {
         void setBusy(boolean busy);
+
         void onMonitorSelected(MonitorDTO monitor);
+
+        void onProjectAssignmentRequested(MonitorDTO monitor);
 
         void onMonitorPhotoRequired(MonitorDTO monitor);
 

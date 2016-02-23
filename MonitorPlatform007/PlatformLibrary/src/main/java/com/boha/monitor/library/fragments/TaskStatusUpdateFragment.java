@@ -37,6 +37,7 @@ import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.RequestCacheUtil;
 import com.boha.monitor.library.util.SharedUtil;
+import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.SpacesItemDecoration;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.library.util.WebCheck;
@@ -95,7 +96,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         TaskStatusUpdateFragment fragment = new TaskStatusUpdateFragment();
         Bundle args = new Bundle();
         args.putSerializable("projectTask", projectTask);
-        args.putInt("type", type);
+        args.putInt("editType", type);
         fragment.setArguments(args);
         return fragment;
     }
@@ -124,7 +125,6 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         setFields();
         getStatusTypes();
 
-
         return view;
     }
 
@@ -139,48 +139,27 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
     private void getStatusTypes() {
         Log.d(LOG, "----- getStatusTypes");
-        if (SharedUtil.getMonitor(getActivity()) != null) {
-            CacheUtil.getCachedMonitorProjects(getActivity(), new CacheUtil.CacheUtilListener() {
-                @Override
-                public void onFileDataDeserialized(ResponseDTO response) {
-                    if (response.getTaskStatusTypeList() != null && !response.getTaskStatusTypeList().isEmpty()) {
-                        taskStatusTypeList = response.getTaskStatusTypeList();
-                        setList();
-                    }
+
+        Snappy.getTaskStatusTypeList(getActivity(), new Snappy.SnappyReadListener() {
+            @Override
+            public void onDataRead(final ResponseDTO response) {
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            taskStatusTypeList = response.getTaskStatusTypeList();
+                            setList();
+                        }
+                    });
                 }
+            }
 
-                @Override
-                public void onDataCached() {
+            @Override
+            public void onError(String message) {
 
-                }
+            }
+        });
 
-                @Override
-                public void onError() {
-
-                }
-            });
-        }
-        if (SharedUtil.getCompanyStaff(getActivity()) != null) {
-            CacheUtil.getCachedStaffData(getActivity(), new CacheUtil.CacheUtilListener() {
-                @Override
-                public void onFileDataDeserialized(ResponseDTO response) {
-                    if (response.getTaskStatusTypeList() != null) {
-                        taskStatusTypeList = response.getTaskStatusTypeList();
-                        setList();
-                    }
-                }
-
-                @Override
-                public void onDataCached() {
-
-                }
-
-                @Override
-                public void onError() {
-
-                }
-            });
-        }
     }
 
     TaskStatusTypeAdapter adapter;
@@ -343,7 +322,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         projectTaskStatus.setTaskStatusType(taskStatusType);
         projectTaskStatus.setStatusDate(new Date().getTime());
         projectTaskStatus.setDateUpdated(new Date().getTime());
-        projectTaskStatus.setProjectTask(pt);
+        projectTaskStatus.setProjectTaskID(pt.getProjectTaskID());
         //
         final RequestDTO request = new RequestDTO(RequestDTO.ADD_PROJECT_TASK_STATUS);
         request.setProjectTaskStatus(projectTaskStatus);

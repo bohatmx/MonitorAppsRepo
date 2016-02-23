@@ -5,10 +5,16 @@
     <permission
         android:name="com.boha.platform.worker.gcm.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="com.boha.platform.worker.gcm.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
 
     <!-- DEBUG API KEY
@@ -76,14 +82,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.boha.platform.worker.activities.MonitorAppDrawerActivity"
+            android:name=".activities.MonitorMainActivity"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:label="@string/title_activity_main_drawer" >
         </activity>
         <activity android:name="com.boha.monitor.library.activities.ProjectMapActivity"
-            android:parentActivityName="com.boha.platform.worker.activities.MonitorAppDrawerActivity"/>
+            android:parentActivityName=".activities.MonitorMainActivity"/>
         <activity android:name="com.boha.monitor.library.activities.StatusReportActivity"
-            android:parentActivityName="com.boha.platform.worker.activities.MonitorAppDrawerActivity"/>
+            android:parentActivityName=".activities.MonitorMainActivity"/>
 
         <activity android:name="com.boha.monitor.library.activities.ThemeSelectorActivity"
             android:screenOrientation="portrait"/>
@@ -91,25 +98,25 @@
         <activity
             android:name="com.boha.monitor.library.activities.TaskTypeListActivity"
             android:screenOrientation="portrait"
-            android:parentActivityName="com.boha.platform.worker.activities.MonitorAppDrawerActivity" >
+            android:parentActivityName=".activities.MonitorMainActivity" >
         </activity>
         <activity android:name="com.boha.monitor.library.activities.PictureActivity"/>
         <activity android:name="com.boha.monitor.library.activities.VideoActivity"/>
 
         <activity android:name="com.boha.monitor.library.activities.GPSActivity"
             android:screenOrientation="portrait"
-            android:parentActivityName="com.boha.platform.worker.activities.MonitorAppDrawerActivity"/>
+            android:parentActivityName=".activities.MonitorMainActivity"/>
         <activity
             android:name="com.boha.monitor.library.activities.PhotoListActivity"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_photo" >
         </activity>
         <activity android:name="com.boha.monitor.library.activities.MonitorMapActivity"
-            android:parentActivityName="com.boha.platform.worker.activities.MonitorAppDrawerActivity"/>
+            android:parentActivityName=".activities.MonitorMainActivity"/>
         <activity android:name="com.boha.monitor.library.activities.ProfilePhotoActivity"
-            android:parentActivityName="com.boha.platform.worker.activities.MonitorAppDrawerActivity"/>
+            android:parentActivityName=".activities.MonitorMainActivity"/>
         <activity android:name="com.boha.monitor.library.activities.UpdateActivity"
-            android:parentActivityName="com.boha.platform.worker.activities.MonitorAppDrawerActivity"/>
+            android:parentActivityName=".activities.MonitorMainActivity"/>
 
     </application>
 

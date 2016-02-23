@@ -59,6 +59,7 @@ public class UpdateActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ThemeChooser.setTheme(this);
+        Log.d(LOG, "UpdateActivity onCreate .....");
         Resources.Theme theme = getTheme();
         TypedValue typedValue = new TypedValue();
         theme.resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
@@ -84,18 +85,55 @@ public class UpdateActivity extends AppCompatActivity
             if (savedInstanceState != null) {
                 return;
             }
+//            getProjectTasks();
             addTaskFragment();
         }
+    }
+
+    private void getProjectTasks() {
+        RequestDTO w = new RequestDTO(RequestDTO.GET_PROJECT_TASKS);
+        w.setProjectID(project.getProjectID());
+
+        NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(final ResponseDTO response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (response.getStatusCode() == 0) {
+                            project.setProjectTaskList(response.getProjectTaskList());
+                            if (projectTaskListFragment != null) {
+                                projectTaskListFragment.setProject(project);
+                            }
+                        } else {
+                            Util.showErrorToast(getApplicationContext(), response.getMessage());
+                        }
+                    }
+                });
+
+            }
+
+            @Override
+            public void onError(final String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Util.showErrorToast(getApplicationContext(), message);
+                    }
+                });
+            }
+        });
     }
 
     private void addTaskFragment() {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
 
-        ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
-        projectTaskListFragment = ProjectTaskListFragment.newInstance(project);
+        //ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
+        projectTaskListFragment = new ProjectTaskListFragment();
         projectTaskListFragment.setThemeColors(primaryColor, darkColor);
         projectTaskListFragment.setListener(this);
+        projectTaskListFragment.setProject(project);
         ft.add(R.id.frameLayout, projectTaskListFragment);
         ft.commit();
     }
@@ -104,7 +142,7 @@ public class UpdateActivity extends AppCompatActivity
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
 
-        ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+        //ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
         taskStatusUpdateFragment = new TaskStatusUpdateFragment();
         taskStatusUpdateFragment.setProjectTask(projectTask);
         taskStatusUpdateFragment.setThemeColors(primaryColor, darkColor);
@@ -121,7 +159,8 @@ public class UpdateActivity extends AppCompatActivity
         replaceWithStatusFragment();
     }
 
-    static final int GET_PROJECT_PHOTO = 1385,GET_PROJECT_VIDEO = 1389;
+    static final int GET_PROJECT_PHOTO = 1385, GET_PROJECT_VIDEO = 1389;
+
     @Override
     public void onCameraRequested(final ProjectDTO project) {
 
@@ -199,19 +238,21 @@ public class UpdateActivity extends AppCompatActivity
     /**
      * A project task has had its status updated. Insert new status
      * into the projectTask status list and let fragment resfresh its ui
+     *
      * @param projectTask
      * @param projectTaskStatus
      */
     @Override
     public void onStatusComplete(ProjectTaskDTO projectTask,
                                  ProjectTaskStatusDTO projectTaskStatus) {
+        Log.i(LOG, "onStatusComplete ... add new status to project..and cache");
         statusCompleted = true;
-        for (ProjectTaskDTO m: project.getProjectTaskList()) {
+        for (ProjectTaskDTO m : project.getProjectTaskList()) {
             if (m.getProjectTaskID().intValue() == projectTask.getProjectTaskID().intValue()) {
                 if (m.getProjectTaskStatusList() == null) {
                     m.setProjectTaskStatusList(new ArrayList<ProjectTaskStatusDTO>());
                 }
-                m.getProjectTaskStatusList().add(0,projectTaskStatus);
+                m.getProjectTaskStatusList().add(0, projectTaskStatus);
                 break;
             }
         }
@@ -222,17 +263,20 @@ public class UpdateActivity extends AppCompatActivity
     }
 
     boolean statusCompleted;
+
     private void replaceWithTaskList() {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
-        projectTaskListFragment = ProjectTaskListFragment.newInstance(project);
+        projectTaskListFragment = new ProjectTaskListFragment();
         projectTaskListFragment.setListener(this);
         projectTaskListFragment.setThemeColors(primaryColor, darkColor);
         projectTaskListFragment.setSelectedIndex(position);
+
         ft.replace(R.id.frameLayout, projectTaskListFragment);
         ft.commit();
     }
+
     @Override
     public void onCancelStatusUpdate(ProjectTaskDTO projectTask) {
         replaceWithTaskList();
@@ -245,16 +289,16 @@ public class UpdateActivity extends AppCompatActivity
 
             case GET_PROJECT_PHOTO:
                 if (resCode == RESULT_OK) {
-                    if (resCode == RESULT_OK) {
-                        boolean isTaken =  data.getBooleanExtra("pictureTakenOK", false);
-                    } else {
-                    }
+//                    if (resCode == RESULT_OK) {
+//                        boolean isTaken =  data.getBooleanExtra("pictureTakenOK", false);
+//                    } else {
+//                    }
                 }
 
                 break;
             case GET_PROJECT_TASK_PHOTO:
                 if (resCode == RESULT_OK) {
-                    boolean isTaken =  data.getBooleanExtra("pictureTakenOK", false);
+                    boolean isTaken = data.getBooleanExtra("pictureTakenOK", false);
                     taskStatusUpdateFragment.onPictureTaken(isTaken);
                 } else {
                     taskStatusUpdateFragment.onPictureTaken(false);
@@ -278,13 +322,9 @@ public class UpdateActivity extends AppCompatActivity
 
 
         RequestDTO w = new RequestDTO();
-        if (staff != null) {
-            w.setRequestType(RequestDTO.GET_STAFF_DATA);
-            w.setStaffID(staff.getStaffID());
-        } else {
-            w.setRequestType(RequestDTO.GET_MONITOR_PROJECTS);
-            w.setMonitorID(monitor.getMonitorID());
-        }
+        w.setRequestType(RequestDTO.GET_PROJECT_TASKS);
+        w.setStaffID(staff.getStaffID());
+
 
         if (WebCheck.checkNetworkAvailability(getApplicationContext()).isNetworkUnavailable()) {
             return;
@@ -297,17 +337,10 @@ public class UpdateActivity extends AppCompatActivity
                     @Override
                     public void run() {
                         setBusy(false);
-                        for (ProjectDTO x : response.getProjectList()) {
-                            if (x.getProjectID().intValue() == projectID.intValue()) {
-                                project = x;
-                                break;
-                            }
-                        }
-                        projectTaskListFragment.setProject(project);
-                        if (staff != null) {
-                            CacheUtil.cacheStaffData(getApplicationContext(), response, null);
-                        } else {
-                            CacheUtil.cacheMonitorProjects(getApplicationContext(), response, null);
+                        if (response.getStatusCode() == 0) {
+                            project.setProjectTaskList(response.getProjectTaskList());
+                            projectTaskListFragment.setProject(project);
+                            CacheUtil.cacheProject(project, null);
                         }
 
                     }
@@ -331,95 +364,27 @@ public class UpdateActivity extends AppCompatActivity
     }
 
     private void cacheProject() {
-        Log.e(LOG,"cacheProject ....");
+        Log.e(LOG, "cacheProject ....");
         cachingBusy = true;
-        if (staff != null) {
-            CacheUtil.getCachedStaffData(getApplicationContext(), new CacheUtil.CacheUtilListener() {
-                @Override
-                public void onFileDataDeserialized(ResponseDTO response) {
-                    List<ProjectDTO> list = new ArrayList<>(response.getProjectList());
-                    for (ProjectDTO m : response.getProjectList()) {
-                        if (m.getProjectID().intValue() == project.getProjectID().intValue()) {
-                            list.add(project);
-                            continue;
-                        }
-                        list.add(m);
-                    }
-                    response.setProjectList(list);
-                    CacheUtil.cacheStaffData(getApplicationContext(), response, new CacheUtil.CacheUtilListener() {
-                        @Override
-                        public void onFileDataDeserialized(ResponseDTO response) {
+        CacheUtil.cacheProject(project, new CacheUtil.CacheUtilListener() {
+            @Override
+            public void onFileDataDeserialized(ResponseDTO response) {
 
-                        }
+            }
 
-                        @Override
-                        public void onDataCached() {
-                            cachingBusy = false;
-                            Log.w(LOG,"project has been cached");
-                        }
+            @Override
+            public void onDataCached() {
+                cachingBusy = false;
+            }
 
-                        @Override
-                        public void onError() {
+            @Override
+            public void onError() {
 
-                        }
-                    });
-                }
+            }
+        });
 
-                @Override
-                public void onDataCached() {
-
-                }
-
-                @Override
-                public void onError() {
-
-                }
-            });
-        }
-        if (monitor != null) {
-            CacheUtil.getCachedMonitorProjects(getApplicationContext(), new CacheUtil.CacheUtilListener() {
-                @Override
-                public void onFileDataDeserialized(ResponseDTO response) {
-                    List<ProjectDTO> list = new ArrayList<>(response.getProjectList());
-                    for (ProjectDTO m : response.getProjectList()) {
-                        if (m.getProjectID().intValue() == project.getProjectID().intValue()) {
-                            list.add(project);
-                            continue;
-                        }
-                        list.add(m);
-                    }
-                    response.setProjectList(list);
-
-                    CacheUtil.cacheMonitorProjects(getApplicationContext(), response, new CacheUtil.CacheUtilListener() {
-                        @Override
-                        public void onFileDataDeserialized(ResponseDTO response) {
-
-                        }
-
-                        @Override
-                        public void onDataCached() {
-                            cachingBusy = false;
-                        }
-
-                        @Override
-                        public void onError() {
-
-                        }
-                    });
-                }
-
-                @Override
-                public void onDataCached() {
-
-                }
-
-                @Override
-                public void onError() {
-
-                }
-            });
-        }
     }
+
     @Override
     public void onBackPressed() {
         if (cachingBusy) {
@@ -431,8 +396,8 @@ public class UpdateActivity extends AppCompatActivity
             replaceWithTaskList();
         } else {
             Intent w = new Intent();
-            w.putExtra("statusCompleted",statusCompleted);
-            setResult(RESULT_OK,w);
+            w.putExtra("statusCompleted", statusCompleted);
+            setResult(RESULT_OK, w);
             finish();
         }
     }
@@ -478,6 +443,7 @@ public class UpdateActivity extends AppCompatActivity
             }
         }
     }
+
     @Override
     public void onStart() {
         super.onStart();

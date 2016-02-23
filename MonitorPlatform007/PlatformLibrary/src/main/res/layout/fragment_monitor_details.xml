@@ -21,12 +21,20 @@
                 android:src="@drawable/black_woman" />
 
             <TextView
-                android:id="@+id/FMP_name"
+                android:id="@+id/FMP_title"
                 style="@style/Title1TextStyleWhite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_margin="@dimen/mon_margin"
+                android:text="@string/monitor" />
+            <TextView
+                android:id="@+id/FMP_person"
+                style="@style/Title2TextStyleWhite"
+                android:layout_below="@id/FMP_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/mon_wide"
                 android:text="@string/monitor" />
 
 
@@ -142,7 +150,7 @@
                     android:layout_width="18dp"
                     android:layout_height="18dp"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/ic_action_view_as_list" />
+                    android:src="@drawable/tick_32" />
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
@@ -151,12 +159,40 @@
 
                     <EditText
                         android:id="@+id/FMP_editCell"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/mon_margin"
                         android:layout_toRightOf="@id/icon4"
                         android:hint="Cellphone Number"
-                        android:inputType="phone" />
+                        android:inputType="number" />
+                </android.support.design.widget.TextInputLayout>
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/box4a"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/box4">
+
+                <ImageView
+                    android:id="@+id/icon4a"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_action_message" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/icon4a">
+
+                    <EditText
+                        android:id="@+id/FMP_editEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/icon4a"
+                        android:hint="Email Address"
+                        android:inputType="textEmailAddress" />
                 </android.support.design.widget.TextInputLayout>
             </RelativeLayout>
 
@@ -164,7 +200,7 @@
                 android:id="@+id/box5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/box4">
+                android:layout_below="@id/box4a">
 
                 <ImageView
                     android:id="@+id/icon5"
@@ -195,6 +231,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/box5"
                 android:layout_marginTop="@dimen/mon_margin"
+                android:layout_marginLeft="@dimen/mon_wider"
                 android:orientation="horizontal">
 
                 <RadioButton
@@ -213,13 +250,39 @@
                     android:layout_height="wrap_content"
                     android:text="Female" />
             </RadioGroup>
+            <RadioGroup
+                android:id="@+id/FMP_radioGroup2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/FMP_radioGroup"
+                android:layout_marginLeft="@dimen/mon_wider"
+                android:layout_marginTop="@dimen/mon_margin"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/FMP_radioActive"
+                    android:checked="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Active" />
+
+                <Space
+                    android:layout_width="@dimen/mon_wide"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/FMP_radioInactive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Not Active" />
+            </RadioGroup>
 
             <Button
                 android:id="@+id/FMP_btnSave"
                 style="@style/ButtonRed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/FMP_radioGroup"
+                android:layout_below="@id/FMP_radioGroup2"
                 android:layout_marginTop="@dimen/mon_wider"
                 android:text="Save Data" />
         </RelativeLayout>
@@ -228,7 +291,7 @@
             android:id="@+id/FMP_personImage"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="140dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="@dimen/mon_margin"
             android:scaleType="centerCrop"

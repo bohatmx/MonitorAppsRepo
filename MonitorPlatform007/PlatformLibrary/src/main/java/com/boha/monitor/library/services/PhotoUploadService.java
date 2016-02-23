@@ -2,6 +2,7 @@ package com.boha.monitor.library.services;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -10,6 +11,7 @@ import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.CDNUploader;
 import com.boha.monitor.library.util.PhotoCacheUtil;
+import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.library.util.WebCheck;
 
@@ -50,9 +52,10 @@ public class PhotoUploadService extends IntentService {
             return;
         }
 
-        Thread thread = new Thread(new Runnable() {
+        AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
+
                 ResponseDTO response = new ResponseDTO();
                 response.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
                 FileInputStream stream;
@@ -69,7 +72,7 @@ public class PhotoUploadService extends IntentService {
                     }
                     getLog(response);
                     int pending = 0;
-                    for (PhotoUploadDTO x: list) {
+                    for (PhotoUploadDTO x : list) {
                         if (x.getDateUploaded() == null) {
                             pending++;
                         }
@@ -79,7 +82,7 @@ public class PhotoUploadService extends IntentService {
                             uploadListener.onUploadsComplete(new ArrayList<PhotoUploadDTO>());
                         return;
                     } else {
-                        Log.e(LOG,"### ...pending photo uploads: " + pending);
+                        Log.e(LOG, "### ...pending photo uploads: " + pending);
                     }
                     index = 0;
                     controlUploads();
@@ -90,11 +93,11 @@ public class PhotoUploadService extends IntentService {
                     Log.e(LOG, "Failed", e);
                 }
             }
-        });
-        thread.start();
+        }
+    );
 
 
-    }
+}
 
     private static void getLog(ResponseDTO cache) {
         StringBuilder sb = new StringBuilder();
@@ -144,7 +147,6 @@ public class PhotoUploadService extends IntentService {
         }
 
 
-
     }
 
     static List<PhotoUploadDTO> list;
@@ -176,6 +178,24 @@ public class PhotoUploadService extends IntentService {
             public void onFileUploaded(PhotoUploadDTO photo) {
                 uploadedList.add(dto);
                 PhotoCacheUtil.updateUploadedPhoto(getApplicationContext(), dto);
+                List<PhotoUploadDTO> list = new ArrayList<PhotoUploadDTO>();
+                list.add(photo);
+                Snappy.writePhotoList(getApplicationContext(), list, new Snappy.PhotoListener() {
+                    @Override
+                    public void onPhotoAdded() {
+
+                    }
+
+                    @Override
+                    public void onPhotosFound(List<PhotoUploadDTO> list) {
+
+                    }
+
+                    @Override
+                    public void onError(String message) {
+
+                    }
+                });
                 index++;
                 controlUploads();
             }
@@ -194,13 +214,14 @@ public class PhotoUploadService extends IntentService {
 
     List<PhotoUploadDTO> failedUploads = new ArrayList<>();
     static final String LOG = PhotoUploadService.class.getSimpleName();
-    public class LocalBinder extends Binder {
 
-        public PhotoUploadService getService() {
-            return PhotoUploadService.this;
-        }
+public class LocalBinder extends Binder {
 
+    public PhotoUploadService getService() {
+        return PhotoUploadService.this;
     }
+
+}
 
 
     @Override

@@ -14,9 +14,9 @@ import java.util.List;
  *
  * @author aubreyM
  */
-public class MonitorDTO implements Serializable, Comparable<MonitorDTO> {
+public class MonitorDTO implements Serializable, Person, Comparable<MonitorDTO> {
     private static final long serialVersionUID = 1L;
-    private Integer monitorID, activeFlag, statusCount, photoCount,projectCount;
+    private Integer monitorID, activeFlag, statusCount, profilePhotoCount,photoCount,projectCount;
     private String firstName;
     private String lastName;
     private String email, companyName, IDNumber, address;
@@ -27,7 +27,7 @@ public class MonitorDTO implements Serializable, Comparable<MonitorDTO> {
     private GcmDeviceDTO gcmDevice;
     private List<PhotoUploadDTO> photoUploadList;
     private List<LocationTrackerDTO> locationTrackerList;
-    private List<StaffProjectDTO> staffProjectList;
+    private List<MonitorProjectDTO> monitorProjectList;
     private Boolean selected = Boolean.FALSE;
 
     public MonitorDTO() {
@@ -38,6 +38,14 @@ public class MonitorDTO implements Serializable, Comparable<MonitorDTO> {
             projectCount = 0;
         }
         return projectCount;
+    }
+
+    public Integer getProfilePhotoCount() {
+        return profilePhotoCount;
+    }
+
+    public void setProfilePhotoCount(Integer profilePhotoCount) {
+        this.profilePhotoCount = profilePhotoCount;
     }
 
     public void setProjectCount(Integer projectCount) {
@@ -216,15 +224,12 @@ public class MonitorDTO implements Serializable, Comparable<MonitorDTO> {
         this.locationTrackerList = locationTrackerList;
     }
 
-    public List<StaffProjectDTO> getStaffProjectList() {
-        if (staffProjectList == null) {
-            staffProjectList = new ArrayList<>();
-        }
-        return staffProjectList;
+    public List<MonitorProjectDTO> getMonitorProjectList() {
+        return monitorProjectList;
     }
 
-    public void setStaffProjectList(List<StaffProjectDTO> staffProjectList) {
-        this.staffProjectList = staffProjectList;
+    public void setMonitorProjectList(List<MonitorProjectDTO> monitorProjectList) {
+        this.monitorProjectList = monitorProjectList;
     }
 
     @Override

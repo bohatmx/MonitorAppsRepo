@@ -34,7 +34,7 @@ public class ProjectDTO implements Serializable {
     private List<MonitorDTO> monitorList;
     private List<StaffDTO> staffList;
     private ProjectTaskStatusDTO lastStatus;
-    private Boolean selected;
+    private Boolean selected = Boolean.FALSE;
 
     public ProjectDTO() {
     }

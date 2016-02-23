@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/projectSelectionView"
+    android:name="com.boha.monitor.library.fragments.ProjectSelectionFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="@dimen/mon_padding"
+    android:layout_marginRight="@dimen/mon_padding"
+
+    tools:context="com.boha.monitor.library.fragments.ProjectSelectionFragment"
+    tools:listitem="@layout/fragment_projectdto">
+
+
+    <RelativeLayout
+        android:id="@+id/top"
+        android:background="@color/beige_pale"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/mon_margin">
+
+        <TextView
+            android:id="@+id/name"
+            style="@style/Title2TextStyleBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name of Person" />
+
+        <RelativeLayout
+            android:id="@+id/data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/name">
+
+            <TextView
+                android:id="@+id/count"
+                style="@style/Title1TextStyleGreen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="000"
+                android:textSize="32dp" />
+            <TextView
+                style="@style/Title3TextStyleBlue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/count"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:text="Projects Selected" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/data"
+            android:layout_marginTop="@dimen/mon_margin">
+
+
+            <Button
+                android:id="@+id/btnDone"
+                android:text="Done"
+                style="@style/ButtonRed"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <AutoCompleteTextView
+                android:id="@+id/auto"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/btnDone"
+                android:layout_marginRight="@dimen/mon_padding"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Find Projects" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_below="@id/top"
+        android:layout_marginLeft="@dimen/mon_margin">
+
+        <TextView
+            android:id="@+id/label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SORT:"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/sortBySelected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_toRightOf="@id/label"
+            android:text="BY SELECTED"
+            android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/sortByName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_toRightOf="@id/sortBySelected"
+            android:text="BY NAME"
+            android:textSize="18dp" />
+
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_marginTop="@dimen/mon_margin"
+        android:layout_below="@id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>

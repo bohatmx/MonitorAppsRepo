@@ -51,10 +51,15 @@ public class NetUtil {
     }
 
     private static void sendViaHttp(Context ctx, RequestDTO request) {
+        OKUtil util = new OKUtil();
         try {
-            OKUtil.doGet(request, new OKUtil.OKListener() {
+            util.sendGETRequest(ctx,request, new OKUtil.OKListener() {
                 @Override
                 public void onResponse(ResponseDTO response) {
+                    if (response.getStatusCode() > 0) {
+                        listener.onError(response.getMessage());
+                        return;
+                    }
                     listener.onResponse(response);
                 }
 
@@ -69,9 +74,9 @@ public class NetUtil {
     }
 
     private static void sendListViaHttp(Context ctx, RequestList requestList) {
-        final long start = System.currentTimeMillis();
+        OKUtil util = new OKUtil();
         try {
-            OKUtil.doPost(requestList, new OKUtil.OKListener() {
+            util.sendPOSTRequest(ctx,requestList, new OKUtil.OKListener() {
                 @Override
                 public void onResponse(ResponseDTO response) {
                     listener.onResponse(response);

@@ -119,9 +119,7 @@ public class ImageUpload {
 				imageUploadListener.onUploadError();
 				return;
 			}
-			if (response.getStatusCode() == null) {
-                response.setStatusCode(0);
-            }
+
 			imageUploadListener.onImageUploaded(response);
 		}
 

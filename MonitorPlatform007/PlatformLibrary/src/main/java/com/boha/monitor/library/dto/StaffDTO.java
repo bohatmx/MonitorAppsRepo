@@ -14,9 +14,9 @@ import java.util.List;
  *
  * @author aubreyM
  */
-public class StaffDTO implements Serializable {
+public class StaffDTO implements Serializable, Person {
     private static final long serialVersionUID = 1L;
-    private Integer staffID, activeFlag,statusCount, photoCount,projectCount;
+    private Integer staffID, activeFlag,statusCount, profilePhotoCount, photoCount,projectCount;
     private String firstName;
     private String lastName;
     private String email, companyName;
@@ -27,8 +27,25 @@ public class StaffDTO implements Serializable {
     private List<PhotoUploadDTO> photoUploadList;
     private List<LocationTrackerDTO> locationTrackerList;
     private List<StaffProjectDTO> staffProjectList;
+    private Boolean selected = Boolean.FALSE;
 
     public StaffDTO() {
+    }
+
+    public Boolean getSelected() {
+        return selected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
+    }
+
+    public Integer getProfilePhotoCount() {
+        return profilePhotoCount;
+    }
+
+    public void setProfilePhotoCount(Integer profilePhotoCount) {
+        this.profilePhotoCount = profilePhotoCount;
     }
 
     public Integer getStatusCount() {

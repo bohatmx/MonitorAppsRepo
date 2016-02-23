@@ -2,13 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.boha.platform.library">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-     />
 
     <application
         android:allowBackup="true"
@@ -49,13 +43,28 @@
         <activity
             android:name="com.boha.monitor.library.activities.PhotoScrollerActivity"
             android:label="@string/title_activity_photo_scroller" />
-
-
-
         <activity
             android:name="com.boha.monitor.library.activities.DeviceListActivity"
             android:label="@string/title_activity_location_tracker" />
 
+        <service
+            android:name="com.boha.monitor.library.services.CachingService"
+            android:exported="false" />
+
+        <activity
+            android:name="com.boha.monitor.library.activities.ProfileActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name="com.boha.monitor.library.activities.ProjectAssignmentActivity"
+            android:label="@string/title_activity_project_assignment" />
+        <activity
+            android:name="com.boha.monitor.library.activities.HighDefActivity"
+            android:label="@string/title_activity_high_def" />
+        <activity
+            android:name="com.boha.monitor.library.activities.ProjectSelectionActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_project_selection"></activity>
     </application>
 
 </manifest>

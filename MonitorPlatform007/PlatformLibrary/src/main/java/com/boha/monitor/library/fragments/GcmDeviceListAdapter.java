@@ -33,11 +33,11 @@ public class GcmDeviceListAdapter extends RecyclerView.Adapter<GcmDeviceListAdap
         final GcmDeviceDTO dev = mDeviceList.get(position);
         holder.mModel.setText(dev.getModel());
         holder.mManufacturer.setText(dev.getManufacturer());
-        if (dev.getStaff() != null) {
-            holder.mPerson.setText(dev.getStaff().getFullName());
+        if (dev.getStaffID() != null) {
+            holder.mPerson.setText(dev.getName());
         }
-        if (dev.getMonitor() != null) {
-            holder.mPerson.setText(dev.getMonitor().getFullName());
+        if (dev.getMonitorID() != null) {
+            holder.mPerson.setText(dev.getName());
         }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {

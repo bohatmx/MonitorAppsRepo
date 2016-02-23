@@ -31,6 +31,7 @@ import org.acra.annotation.ReportsCrashes;
 import java.io.File;
 import java.util.HashMap;
 
+
 /**
  * Created by aubreyM on 2014/05/17.
  * Copyright (c) 2014 Aubrey Malabie. All rights reserved.
@@ -128,6 +129,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
             // Picasso instance was already set
             // cannot set it after Picasso.with(Context) was already in use
         }
+        //SnappyDB
 
         if (isDebuggable) {
             Picasso.with(getApplicationContext())

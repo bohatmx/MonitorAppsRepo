@@ -43,8 +43,10 @@ import com.boha.monitor.library.activities.GPSActivity;
 import com.boha.monitor.library.activities.DeviceListActivity;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.activities.PictureActivity;
-import com.boha.monitor.library.activities.ProfilePhotoActivity;
+import com.boha.monitor.library.activities.ProfileActivity;
+import com.boha.monitor.library.activities.ProjectAssignmentActivity;
 import com.boha.monitor.library.activities.ProjectMapActivity;
+import com.boha.monitor.library.activities.ProjectSelectionActivity;
 import com.boha.monitor.library.activities.StatusReportActivity;
 import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.activities.UpdateActivity;
@@ -52,26 +54,29 @@ import com.boha.monitor.library.activities.VideoActivity;
 import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
+import com.boha.monitor.library.dto.MonitorProjectDTO;
+import com.boha.monitor.library.dto.Person;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
+import com.boha.monitor.library.dto.StaffProjectDTO;
 import com.boha.monitor.library.fragments.MediaDialogFragment;
 import com.boha.monitor.library.fragments.MonitorListFragment;
+import com.boha.monitor.library.fragments.ProfileFragment;
 import com.boha.monitor.library.fragments.PageFragment;
 import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.fragments.SimpleMessageFragment;
 import com.boha.monitor.library.fragments.StaffListFragment;
-import com.boha.monitor.library.fragments.StaffProfileFragment;
 import com.boha.monitor.library.fragments.TaskTypeListFragment;
+import com.boha.monitor.library.services.CachingService;
 import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.services.RequestSyncService;
-import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.DepthPageTransformer;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
-import com.boha.monitor.library.util.Statics;
+import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.supervisor.R;
@@ -99,15 +104,15 @@ import hugo.weaving.DebugLog;
  */
 public class StaffMainActivity extends AppCompatActivity implements
         MonitorListFragment.MonitorListListener,
-        StaffProfileFragment.StaffFragmentListener,
         StaffListFragment.CompanyStaffListListener,
         ProjectListFragment.ProjectListFragmentListener,
+        ProfileFragment.ProfileListener,
         SimpleMessageFragment.SimpleMessageFragmentListener,
         LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    StaffProfileFragment staffProfileFragment;
+    ProfileFragment profileFragment;
     MonitorListFragment monitorListFragment;
     StaffListFragment staffListFragment;
     ProjectListFragment projectListFragment;
@@ -124,7 +129,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         } else {
             Log.e(LOG, "navImage is null");
         }
-        getCache();
+        buildPages();
 
     }
 
@@ -150,10 +155,10 @@ public class StaffMainActivity extends AppCompatActivity implements
 
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) mDrawerLayout.findViewById(R.id.nav_view);
 
-        navImage = (ImageView) navigationView.findViewById(R.id.NAVHEADER_image);
-        navText = (TextView) navigationView.findViewById(R.id.NAVHEADER_text);
+        navImage = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.NAVHEADER_image);
+        navText = (TextView) navigationView.getHeaderView(0).findViewById(R.id.NAVHEADER_text);
         if (navText != null) {
             navText.setText(SharedUtil.getCompanyStaff(ctx).getFullName());
         }
@@ -239,18 +244,40 @@ public class StaffMainActivity extends AppCompatActivity implements
                 }
 
                 if (menuItem.getItemId() == R.id.nav_projectMaps) {
-                    List<ProjectDTO> list = getProjectsLocationConfirmed();
-                    if (!list.isEmpty()) {
-                        Intent w = new Intent(ctx, ProjectMapActivity.class);
-                        w.putExtra("type", ProjectMapActivity.STAFF);
-                        ResponseDTO r = new ResponseDTO();
-                        r.setProjectList(list);
-                        w.putExtra("projects", r);
-                        startActivity(w);
-                        return true;
-                    } else {
-                        Util.showToast(getApplicationContext(), "Projects have not been located via GPS");
-                    }
+                    Snappy.getProjectList(ctx, new Snappy.SnappyReadListener() {
+                        @Override
+                        public void onDataRead(ResponseDTO response) {
+                            List<ProjectDTO> list = new ArrayList<>();
+                            for (ProjectDTO p : response.getProjectList()) {
+                                if (p.getLatitude() != null) {
+                                    list.add(p);
+                                }
+                            }
+                            if (!list.isEmpty()) {
+                                Intent w = new Intent(ctx, ProjectMapActivity.class);
+                                w.putExtra("type", ProjectMapActivity.STAFF);
+                                ResponseDTO r = new ResponseDTO();
+                                r.setProjectList(list);
+                                w.putExtra("projects", r);
+                                startActivity(w);
+                            } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Util.showToast(getApplicationContext(), "Projects have not been located via GPS");
+                                    }
+                                });
+
+                            }
+
+                        }
+
+                        @Override
+                        public void onError(String message) {
+
+                        }
+                    });
+                    return true;
 
                 }
                 if (menuItem.getItemId() == R.id.nav_devices) {
@@ -274,32 +301,54 @@ public class StaffMainActivity extends AppCompatActivity implements
         }
         return list;
     }
-
-    @DebugLog
-    private void getCache() {
-        CacheUtil.getCachedStaffData(ctx, new CacheUtil.CacheUtilListener() {
-            @Override
-            public void onFileDataDeserialized(ResponseDTO r) {
-                response = r;
-                if (!response.getProjectList().isEmpty()) {
-                    buildPages();
-                } else {
-                    getRemoteStaffData(true);
-                }
-
-            }
-
-            @Override
-            public void onDataCached() {
-
-            }
-
-            @Override
-            public void onError() {
-                getRemoteStaffData(true);
-            }
-        });
-    }
+//
+//    @DebugLog
+//    private void getCache() {
+//        Snackbar.make(mPager, "Refreshing your data, this may take a minute or two ...", Snackbar.LENGTH_LONG).show();
+//        setBusy(true);
+//
+//        if (response == null) {
+//            response = new ResponseDTO();
+//        }
+//        Snappy.getProjectList(ctx, new Snappy.SnappyReadListener() {
+//            @Override
+//            public void onDataRead(ResponseDTO r) {
+//                response.setProjectList(r.getProjectList());
+//                Snappy.getStaffList(ctx, new Snappy.SnappyReadListener() {
+//                    @Override
+//                    public void onDataRead(ResponseDTO r) {
+//                        response.setStaffList(r.getStaffList());
+//                        Snappy.getMonitorList(ctx, new Snappy.SnappyReadListener() {
+//                            @Override
+//                            public void onDataRead(ResponseDTO r) {
+//                                response.setTaskStatusTypeList(r.getTaskStatusTypeList());
+//                                Log.i(LOG, "Yebo!! we got da data");
+//                                buildPages();
+//                            }
+//
+//                            @Override
+//                            public void onError(String message) {
+//
+//                            }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void onError(String message) {
+//
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onError(String message) {
+//
+//            }
+//        });
+//
+//
+//
+//    }
 
     @DebugLog
     private void getRemoteStaffData(boolean showBusy) {
@@ -321,21 +370,18 @@ public class StaffMainActivity extends AppCompatActivity implements
                         companyDataRefreshed = true;
                         response = r;
                         buildPages();
-                        CacheUtil.cacheStaffData(getApplicationContext(), r, new CacheUtil.CacheUtilListener() {
+                        Util.cacheOnSnappy(ctx, r, new Util.SnappyListener() {
                             @Override
-                            public void onFileDataDeserialized(ResponseDTO response) {
+                            public void onCachingComplete() {
 
                             }
 
                             @Override
-                            public void onDataCached() {
-                            }
-
-                            @Override
-                            public void onError() {
+                            public void onError(String message) {
 
                             }
                         });
+
                     }
                 });
 
@@ -352,55 +398,116 @@ public class StaffMainActivity extends AppCompatActivity implements
                 });
             }
 
-
         });
+    }
+
+    private void startSnappy(final ResponseDTO response) {
+
+        Log.e(LOG, "################### START cachingService for: status types, projects, staff and monitors......");
+
+        Snappy.writeProjectList(ctx, response.getProjectList(), new Snappy.SnappyWriteListener() {
+            @Override
+            public void onDataWritten() {
+                Snappy.writeStaffList(ctx, response.getStaffList(), new Snappy.SnappyWriteListener() {
+                    @Override
+                    public void onDataWritten() {
+                        Snappy.writeMonitorList(ctx, response.getMonitorList(), new Snappy.SnappyWriteListener() {
+                            @Override
+                            public void onDataWritten() {
+                                Snappy.writeTaskStatusTypeList(ctx, response.getTaskStatusTypeList(), new Snappy.SnappyWriteListener() {
+                                    @Override
+                                    public void onDataWritten() {
+                                        Log.e(LOG, "Yeaaaah!! Data written to SnappyDB");
+                                    }
+
+                                    @Override
+                                    public void onError(String message) {
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onError(String message) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String message) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String message) {
+
+            }
+        });
+
     }
 
     @DebugLog
     private void buildPages() {
-        pageFragmentList = new ArrayList<>();
-
-        staffProfileFragment = StaffProfileFragment.newInstance(SharedUtil.getCompanyStaff(ctx));
-        monitorListFragment = MonitorListFragment.newInstance(response.getMonitorList(), MonitorListFragment.STAFF);
-        staffListFragment = StaffListFragment.newInstance(response.getStaffList());
-        projectListFragment = ProjectListFragment.newInstance(response);
-        simpleMessageFragment = new SimpleMessageFragment();
-
-
-        staffProfileFragment.setThemeColors(themePrimaryColor, themeDarkColor);
-        monitorListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
-        staffListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
-        projectListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
-        simpleMessageFragment.setThemeColors(themePrimaryColor, themeDarkColor);
-
-        pageFragmentList.add(projectListFragment);
-        pageFragmentList.add(staffListFragment);
-        pageFragmentList.add(monitorListFragment);
-        pageFragmentList.add(simpleMessageFragment);
-        pageFragmentList.add(staffProfileFragment);
-
-        adapter = new StaffPagerAdapter(getSupportFragmentManager());
-        mPager.setAdapter(adapter);
-        mPager.setPageTransformer(true, new DepthPageTransformer());
-
-        mPager.setCurrentItem(currentPageIndex, true);
-        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        runOnUiThread(new Runnable() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            public void run() {
+                pageFragmentList = new ArrayList<>();
+                StaffDTO staff = SharedUtil.getCompanyStaff(ctx);
+                profileFragment = new ProfileFragment();
+                profileFragment.setStaff(staff);
+                profileFragment.setPersonType(ProfileFragment.STAFF);
+                if (staff != null) {
+                    profileFragment.setEditType(ProfileFragment.UPDATE_PERSON);
+                } else {
+                    profileFragment.setEditType(ProfileFragment.ADD_PERSON);
+                }
 
-            }
+                monitorListFragment = new MonitorListFragment();
+                staffListFragment = new StaffListFragment();
+                projectListFragment = new ProjectListFragment();
+//                simpleMessageFragment = new SimpleMessageFragment();
 
-            @Override
-            public void onPageSelected(int position) {
-                currentPageIndex = position;
-                pageFragmentList.get(position).animateHeroHeight();
-            }
 
-            @Override
-            public void onPageScrollStateChanged(int state) {
+                profileFragment.setThemeColors(themePrimaryColor, themeDarkColor);
+                monitorListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
+                staffListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
+                projectListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
+//                simpleMessageFragment.setThemeColors(themePrimaryColor, themeDarkColor);
 
+                pageFragmentList.add(projectListFragment);
+                pageFragmentList.add(staffListFragment);
+                pageFragmentList.add(monitorListFragment);
+//        pageFragmentList.add(simpleMessageFragment);
+                pageFragmentList.add(profileFragment);
+
+                adapter = new StaffPagerAdapter(getSupportFragmentManager());
+                mPager.setAdapter(adapter);
+                mPager.setPageTransformer(true, new DepthPageTransformer());
+
+                mPager.setCurrentItem(currentPageIndex, true);
+                mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+                        currentPageIndex = position;
+                        pageFragmentList.get(position).animateHeroHeight();
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+
+                    }
+                });
             }
         });
+
 
     }
 
@@ -436,7 +543,8 @@ public class StaffMainActivity extends AppCompatActivity implements
         return true;
     }
 
-    static final int THEME_REQUESTED = 1762;
+    static final int THEME_REQUESTED = 1762, MONITOR_PROFILE_EDITED = 1766,
+            STAFF_PROFILE_EDITED = 1777;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -452,6 +560,25 @@ public class StaffMainActivity extends AppCompatActivity implements
             return true;
         }
         if (id == R.id.action_help) {
+            return true;
+        }
+        if (id == R.id.action_add_monitor) {
+            Intent m = new Intent(ctx, ProfileActivity.class);
+            m.putExtra("personType", ProfileFragment.MONITOR);
+            m.putExtra("editType", ProfileFragment.ADD_PERSON);
+
+            startActivityForResult(m, MONITOR_PROFILE_EDITED);
+            return true;
+        }
+        if (id == R.id.action_add_staff) {
+            Intent m = new Intent(ctx, ProfileActivity.class);
+            m.putExtra("personType", ProfileFragment.STAFF);
+            m.putExtra("editType", ProfileFragment.ADD_PERSON);
+
+            startActivityForResult(m, STAFF_PROFILE_EDITED);
+            return true;
+        }
+        if (id == R.id.action_add_project) {
             return true;
         }
 
@@ -494,6 +621,9 @@ public class StaffMainActivity extends AppCompatActivity implements
 
         Intent intentw = new Intent(this, RequestSyncService.class);
         bindService(intentw, rConnection, Context.BIND_AUTO_CREATE);
+
+        Intent intentx = new Intent(this, CachingService.class);
+        bindService(intentx, cConnection, Context.BIND_AUTO_CREATE);
         super.onStart();
     }
 
@@ -513,6 +643,10 @@ public class StaffMainActivity extends AppCompatActivity implements
         if (rBound) {
             unbindService(rConnection);
             rBound = false;
+        }
+        if (cBound) {
+            unbindService(cConnection);
+            cBound = false;
         }
 
     }
@@ -587,6 +721,13 @@ public class StaffMainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onProjectAssignmentRequested(MonitorDTO monitor) {
+        Intent w = new Intent(getApplicationContext(), ProjectSelectionActivity.class);
+        w.putExtra("monitor", monitor);
+        startActivityForResult(w, MONITOR_PROJECT_ASSIGNMENT);
+    }
+
+    @Override
     public void onMonitorPhotoRequired(MonitorDTO monitor) {
 
     }
@@ -594,6 +735,10 @@ public class StaffMainActivity extends AppCompatActivity implements
     @Override
     public void onMonitorEditRequested(MonitorDTO monitor) {
 
+        Intent w = new Intent(ctx,ProfileActivity.class);
+        w.putExtra("monitor",monitor);
+        w.putExtra("personType",ProfileFragment.MONITOR);
+        startActivityForResult(w, MONITOR_PROFILE_EDITED);
     }
 
     @Override
@@ -665,76 +810,150 @@ public class StaffMainActivity extends AppCompatActivity implements
     boolean companyDataRefreshed;
 
 
-    private void refreshProjectStatus() {
-        RequestDTO w = new RequestDTO(RequestDTO.GET_PROJECT_STATUS_PHOTOS);
-        w.setProjectID(selectedProject.getProjectID());
-        Log.w(LOG,"refreshProjectStatus sending request ...");
-        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
-            @Override
-            public void onResponse(ResponseDTO response) {
-                Log.i(LOG,"refreshProjectStatus onResponse");
-                selectedProject.setPhotoUploadList(response.getPhotoUploadList());
-                selectedProject.setProjectTaskList(response.getProjectTaskList());
-                projectListFragment.refreshProject(selectedProject);
-
-                //update cache
-                CacheUtil.getCachedStaffData(ctx, new CacheUtil.CacheUtilListener() {
-                    @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
-                        List<ProjectDTO> list = new ArrayList<>();
-                        for (ProjectDTO p : response.getProjectList()) {
-                            if (p.getProjectID().intValue() == selectedProject.getProjectID().intValue()) {
-                                list.add(selectedProject);
-                            } else {
-                                list.add(p);
-                            }
-
-                        }
-                        response.setProjectList(list);
-                        CacheUtil.cacheStaffData(ctx, response, null);
-                    }
-
-                    @Override
-                    public void onDataCached() {
-
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-            }
-
-            @Override
-            public void onError(String message) {
-
-            }
-
-
-        });
-
-    }
-
     @Override
     @DebugLog
     public void onActivityResult(int reqCode, final int resCode, Intent data) {
         Log.d(LOG, "onActivityResult reqCode " + reqCode + " resCode " + resCode);
         switch (reqCode) {
+            case STAFF_PROJECT_ASSIGNMENT:
+                if (resCode == RESULT_OK) {
+                    ResponseDTO w = (ResponseDTO)data.getSerializableExtra("staffProjectList");
+                    final List<StaffProjectDTO> spList = w.getStaffProjectList();
+                    final Integer id = spList.get(0).getStaffID();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Snappy.getStaffList(ctx, new Snappy.SnappyReadListener() {
+                                @Override
+                                public void onDataRead(ResponseDTO response) {
+                                    for (StaffDTO sp: response.getStaffList()) {
+                                        if (sp.getStaffID().intValue() == id) {
+                                            sp.setStaffProjectList(spList);
+                                            sp.setProjectCount(spList.size());
+                                        }
+                                    }
+                                    Snappy.writeStaffList(ctx, response.getStaffList(), new Snappy.SnappyWriteListener() {
+                                        @Override
+                                        public void onDataWritten() {
+                                            Log.e(LOG,"onActivityResult onDataWritten: staffList updated");
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    staffListFragment.getStaffList();
+                                                }
+                                            });
+
+                                        }
+
+                                        @Override
+                                        public void onError(String message) {
+
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onError(String message) {
+
+                                }
+                            });
+                        }
+                    });
+
+                }
+                break;
+            case MONITOR_PROJECT_ASSIGNMENT:
+                if (resCode == RESULT_OK) {
+                    ResponseDTO w = (ResponseDTO)data.getSerializableExtra("monitorProjectList");
+                    final List<MonitorProjectDTO> spListm = w.getMonitorProjectList();
+                    final Integer id = spListm.get(0).getMonitorID();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Snappy.getMonitorList(ctx, new Snappy.SnappyReadListener() {
+                                @Override
+                                public void onDataRead(ResponseDTO response) {
+                                    for (MonitorDTO sp: response.getMonitorList()) {
+                                        if (sp.getMonitorID().intValue() == id) {
+                                            sp.setMonitorProjectList(spListm);
+                                            sp.setProjectCount(spListm.size());
+                                        }
+                                    }
+                                    Snappy.writeMonitorList(ctx, response.getMonitorList(), new Snappy.SnappyWriteListener() {
+                                        @Override
+                                        public void onDataWritten() {
+                                            Log.e(LOG,"onActivityResult onDataWritten: monitorList updated");
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    monitorListFragment.getMonitorList();
+                                                }
+                                            });
+                                        }
+
+                                        @Override
+                                        public void onError(String message) {
+
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onError(String message) {
+
+                                }
+                            });
+                        }
+                    });
+
+                }
+                break;
+            case MONITOR_PROFILE_EDITED:
+                if (resCode == RESULT_OK) {
+                    monitorListFragment.getMonitorList();
+                }
+
+                break;
+            case STAFF_PROFILE_EDITED:
+                if (resCode == RESULT_OK) {
+                    staffListFragment.getStaffList();
+                }
+                break;
             case REQUEST_CAMERA:
                 if (resCode == RESULT_OK) {
-                    getRemoteStaffData(true);
-//                    refreshProjectStatus();
                 }
                 break;
             case REQUEST_STATUS_UPDATE:
                 if (resCode == RESULT_OK) {
                     boolean statusCompleted =
-                            data.getBooleanExtra("statusCompleted",false);
+                            data.getBooleanExtra("statusCompleted", false);
                     if (statusCompleted) {
                         Log.e(LOG, "StaffMainActivity statusCompleted, getting refreshed");
-//                        getRemoteStaffData(true);
-                        refreshProjectStatus();
+//                        RequestDTO w = new RequestDTO(RequestDTO.GET_PROJECT_TASKS);
+//                        w.setProjectID(selectedProject.getProjectID());
+//                        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
+//                            @Override
+//                            public void onResponse(final ResponseDTO response) {
+//                                runOnUiThread(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        if (response.getStatusCode() == 0) {
+//                                            selectedProject.setProjectTaskList(response.getProjectTaskList());
+//                                            projectListFragment.refreshProject(selectedProject);
+//                                            CacheUtil.cacheProject(ctx,selectedProject,null);
+//                                        }
+//                                    }
+//                                });
+//
+//                            }
+//
+//                            @Override
+//                            public void onError(String message) {
+//                                Log.e(LOG,message);
+//                            }
+//                        });
+
+
                     }
                 }
                 break;
@@ -743,7 +962,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                     PhotoUploadDTO x = (PhotoUploadDTO) data.getSerializableExtra("photo");
                     SharedUtil.savePhoto(getApplicationContext(), x);
                     Log.e(LOG, "photo returned uri: " + x.getUri());
-                    staffProfileFragment.setPicture(x);
+                    profileFragment.setPicture(x);
                 }
                 break;
             case LOCATION_REQUESTED:
@@ -772,31 +991,43 @@ public class StaffMainActivity extends AppCompatActivity implements
         }
     }
 
+
+    @Override
+    public void onUpdated(Person person) {
+
+    }
+
+    @Override
+    public void onAdded(Person person) {
+
+    }
+
+    @Override
+    public void onPictureRequested(Person person) {
+        Intent w = new Intent(getApplicationContext(), PictureActivity.class);
+        if (person instanceof MonitorDTO) {
+            w.putExtra("monitor", (MonitorDTO) person);
+        }
+        if (person instanceof StaffDTO) {
+            w.putExtra("staff", (StaffDTO) person);
+        }
+        startActivityForResult(w, PICTURE_REQUESTED);
+    }
+
+    static final int PICTURE_REQUESTED = 364, STAFF_PROJECT_ASSIGNMENT = 544,
+            MONITOR_PROJECT_ASSIGNMENT = 908;
+
     @Override
     public void setBusy(boolean busy) {
         setRefreshActionButtonState(busy);
     }
 
     @Override
-    public void onStaffPictureRequired(StaffDTO staff) {
-        Intent w = new Intent(this, ProfilePhotoActivity.class);
+    public void onProjectAssigmentWanted(StaffDTO staff) {
+
+        Intent w = new Intent(getApplicationContext(), ProjectSelectionActivity.class);
         w.putExtra("staff", staff);
-        startActivityForResult(w, STAFF_PICTURE_REQUESTED);
-    }
-
-    @Override
-    public void onStaffAdded(StaffDTO staff) {
-
-    }
-
-    @Override
-    public void onStaffUpdated(StaffDTO staff) {
-
-    }
-
-    @Override
-    public void onAppInvitationRequested(StaffDTO staff, int appType) {
-
+        startActivityForResult(w, STAFF_PROJECT_ASSIGNMENT);
     }
 
     @Override
@@ -811,18 +1042,22 @@ public class StaffMainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onCompanyStaffPictureRequested(StaffDTO companyStaff) {
+    public void onStaffPictureRequested(StaffDTO companyStaff) {
 
     }
 
     @Override
-    public void onCompanyStaffEditRequested(StaffDTO companyStaff) {
+    public void onStaffEditRequested(StaffDTO companyStaff) {
 
+        Intent w = new Intent(ctx, ProfileActivity.class);
+        w.putExtra("staff", companyStaff);
+        w.putExtra("personType", ProfileFragment.STAFF);
+        startActivityForResult(w,STAFF_EDIT_REQUESTED);
     }
 
     static final int REQUEST_CAMERA = 3329,
             REQUEST_VIDEO = 3488,
-            LOCATION_REQUESTED = 9031, REQUEST_STATUS_UPDATE = 3291;
+            LOCATION_REQUESTED = 9031, REQUEST_STATUS_UPDATE = 3291, STAFF_EDIT_REQUESTED = 1524;
 
     ProjectDTO selectedProject;
 
@@ -958,7 +1193,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     @Override
     public void onStatusReportRequired(ProjectDTO project) {
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
-        SharedUtil.saveLastProjectID(ctx, project.getProjectID());
+
         Intent w = new Intent(this, StatusReportActivity.class);
         w.putExtra("project", project);
         w.putExtra("darkColor", themeDarkColor);
@@ -1010,9 +1245,10 @@ public class StaffMainActivity extends AppCompatActivity implements
         }
     }
 
-    boolean mBound, rBound;
+    boolean mBound, rBound, cBound;
     PhotoUploadService mService;
     RequestSyncService rService;
+    CachingService cService;
 
 
     private ServiceConnection rConnection = new ServiceConnection() {
@@ -1066,6 +1302,24 @@ public class StaffMainActivity extends AppCompatActivity implements
         public void onServiceDisconnected(ComponentName arg0) {
             Log.w(LOG, "## PhotoUploadService onServiceDisconnected");
             mBound = false;
+        }
+    };
+    private ServiceConnection cConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            Log.w(LOG, "## CachingService ServiceConnection onServiceConnected");
+            CachingService.LocalBinder binder = (CachingService.LocalBinder) service;
+            cService = binder.getService();
+            cBound = true;
+            Log.e(LOG, "CachingService bound and ready and waiting");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.w(LOG, "## CachingService onServiceDisconnected");
+            cBound = false;
         }
     };
 

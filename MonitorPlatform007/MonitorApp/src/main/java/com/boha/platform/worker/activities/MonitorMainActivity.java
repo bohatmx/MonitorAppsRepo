@@ -34,7 +34,6 @@ import android.view.View;
 import com.boha.monitor.library.activities.GPSActivity;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.activities.PictureActivity;
-import com.boha.monitor.library.activities.ProfilePhotoActivity;
 import com.boha.monitor.library.activities.ProjectMapActivity;
 import com.boha.monitor.library.activities.StatusReportActivity;
 import com.boha.monitor.library.activities.ThemeSelectorActivity;
@@ -43,6 +42,7 @@ import com.boha.monitor.library.activities.VideoActivity;
 import com.boha.monitor.library.dto.ChatMessageDTO;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
+import com.boha.monitor.library.dto.Person;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
@@ -52,7 +52,7 @@ import com.boha.monitor.library.dto.VideoUploadDTO;
 import com.boha.monitor.library.fragments.MediaDialogFragment;
 import com.boha.monitor.library.fragments.MessagingFragment;
 import com.boha.monitor.library.fragments.MonitorListFragment;
-import com.boha.monitor.library.fragments.MonitorProfileFragment;
+import com.boha.monitor.library.fragments.ProfileFragment;
 import com.boha.monitor.library.fragments.PageFragment;
 import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.fragments.SimpleMessageFragment;
@@ -63,13 +63,12 @@ import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.DepthPageTransformer;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
+import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
-import com.boha.monitor.library.util.WebCheck;
 import com.boha.platform.worker.R;
 import com.boha.platform.worker.fragments.NavigationDrawerFragment;
 import com.boha.platform.worker.fragments.NoProjectsAssignedFragment;
-import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -79,14 +78,12 @@ import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 /**
  * The Monitor App main activity. Started by SignInActivity
  */
-public class MonitorAppDrawerActivity extends AppCompatActivity
+public class MonitorMainActivity extends AppCompatActivity
         implements
         LocationListener,
         GoogleApiClient.ConnectionCallbacks,
@@ -96,7 +93,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         ProjectListFragment.ProjectListFragmentListener,
         MonitorListFragment.MonitorListListener,
         MessagingFragment.MessagingListener,
-        MonitorProfileFragment.MonitorProfileListener {
+        ProfileFragment.ProfileListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -106,7 +103,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     ViewPager mPager;
     MonitorPagerAdapter monitorPagerAdapter;
     MessagingFragment messagingFragment;
-    MonitorProfileFragment monitorProfileFragment;
+    ProfileFragment profileFragment;
     MonitorListFragment monitorListFragment;
     ProjectListFragment projectListFragment;
     NoProjectsAssignedFragment noProjectsAssignedFragment;
@@ -124,7 +121,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ctx = getApplicationContext();
-        Log.d(LOG, "################## MonitorAppDrawerActivity onCreate");
+        Log.d(LOG, "################## MonitorMainActivity onCreate");
         ThemeChooser.setTheme(this);
         Resources.Theme theme = getTheme();
         TypedValue typedValue = new TypedValue();
@@ -165,7 +162,6 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         strip.setVisibility(View.GONE);
         mPager.setOffscreenPageLimit(4);
 
-        getCachedData();
         ActionBar bar = getSupportActionBar();
 
         Util.setCustomActionBar(ctx, bar,
@@ -173,6 +169,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
                 "Project Monitoring",
                 ContextCompat.getDrawable(ctx, R.drawable.glasses48));
         mNavigationDrawerFragment.openDrawer();
+        buildPages();
     }
 
     @Override
@@ -181,31 +178,6 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
     }
 
-    private void getCachedData() {
-        Log.d(LOG,"getCachedData .........");
-        CacheUtil.getCachedMonitorProjects(ctx, new CacheUtil.CacheUtilListener() {
-            @Override
-            public void onFileDataDeserialized(ResponseDTO r) {
-                if (r.getProjectList() != null && !r.getProjectList().isEmpty()) {
-                    response = r;
-                    buildPages();
-                } else {
-                    getRemoteData();
-                }
-
-            }
-
-            @Override
-            public void onDataCached() {
-
-            }
-
-            @Override
-            public void onError() {
-                getRemoteData();
-            }
-        });
-    }
 
     private void getRemoteData() {
 
@@ -218,7 +190,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         setRefreshActionButtonState(true);
         Util.setActionBarIconSpinning(mMenu, R.id.action_refresh, true);
         busyGettingRemoteData = true;
-        Snackbar.make(mPager,"Refreshing your data. May take a minute or two ...",Snackbar.LENGTH_LONG).show();
+        Snackbar.make(mPager, "Refreshing your data. May take a minute or two ...", Snackbar.LENGTH_LONG).show();
         NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(final ResponseDTO r) {
@@ -232,15 +204,48 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
                             Util.showErrorToast(ctx, response.getMessage());
                             return;
                         }
+                        Util.cacheOnSnappy(ctx, r, new Util.SnappyListener() {
+                            @Override
+                            public void onCachingComplete() {
+                                buildPages();
+                                final MonitorDTO m = SharedUtil.getMonitor(ctx);
+                                Snappy.getMonitorList(ctx, new Snappy.SnappyReadListener() {
+                                    @Override
+                                    public void onDataRead(ResponseDTO response) {
+                                        List<MonitorDTO> list = response.getMonitorList();
+                                        if (list != null) {
+                                            for (final MonitorDTO p : list) {
+                                                if (p.getMonitorID().intValue() == m.getMonitorID().intValue()) {
+                                                    SharedUtil.saveMonitor(ctx, p);
+                                                    runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            if (p.getPhotoUploadList() != null) {
+                                                                mNavigationDrawerFragment.setPicture(p.getPhotoUploadList().get(0));
+                                                                profileFragment.setPicture(p.getPhotoUploadList().get(0));
+                                                            }
+                                                        }
+                                                    });
 
-                        for (ProjectDTO d : response.getProjectList()) {
-                            for (ProjectTaskDTO pt : d.getProjectTaskList()) {
-                                pt.setLatitude(d.getLatitude());
-                                pt.setLongitude(d.getLongitude());
+                                                }
+                                            }
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onError(String message) {
+
+                                    }
+                                });
                             }
-                        }
-                        buildPages();
-                        CacheUtil.cacheMonitorProjects(ctx, response, null);
+
+                            @Override
+                            public void onError(String message) {
+
+                            }
+                        });
+
                     }
                 });
             }
@@ -263,104 +268,79 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
     }
 
-    private void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-    }
-
 
     private void buildPages() {
-        pageFragmentList = new ArrayList<>();
-
-
-        if (!response.getProjectList().isEmpty()) {
-            projectListFragment = ProjectListFragment.newInstance(response);
-            projectListFragment.setPageTitle(getString(R.string.projects));
-            projectListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
-        } else {
-            noProjectsAssignedFragment = NoProjectsAssignedFragment.newInstance();
-            noProjectsAssignedFragment.setPageTitle("No Projects Assigned");
-            noProjectsAssignedFragment.setThemeColors(themePrimaryColor, themeDarkColor);
-
-        }
-
-
-        monitorProfileFragment = MonitorProfileFragment.newInstance(SharedUtil.getMonitor(ctx));
-        monitorProfileFragment.setPageTitle(getString(R.string.profile));
-        monitorProfileFragment.setThemeColors(themePrimaryColor, themeDarkColor);
-
-
-        HashMap<Integer, MonitorDTO> map = new HashMap<>();
-        for (ProjectDTO dto : response.getProjectList()) {
-            for (MonitorDTO x : dto.getMonitorList()) {
-                map.put(x.getMonitorID(), x);
-            }
-        }
-        List<MonitorDTO> list = new ArrayList<>();
-        Set<Integer> set = map.keySet();
-        for (Integer id : set) {
-            list.add(map.get(id));
-        }
-        monitorListFragment = MonitorListFragment.newInstance(list, MonitorListFragment.MONITOR);
-        monitorListFragment.setPageTitle(getString(R.string.monitors));
-        monitorListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
-
-        simpleMessageFragment = SimpleMessageFragment.newInstance(null, list);
-        simpleMessageFragment.setPageTitle(getString(R.string.messaging));
-        simpleMessageFragment.setThemeColors(themePrimaryColor, themeDarkColor);
-
-        if (!response.getProjectList().isEmpty()) {
-            pageFragmentList.add(projectListFragment);
-        } else {
-            pageFragmentList.add(noProjectsAssignedFragment);
-        }
-
-        pageFragmentList.add(monitorListFragment);
-        pageFragmentList.add(simpleMessageFragment);
-        pageFragmentList.add(monitorProfileFragment);
-
-        monitorPagerAdapter = new MonitorPagerAdapter(getSupportFragmentManager());
-        mPager.setAdapter(monitorPagerAdapter);
-
-        mPager.setPageTransformer(true, new DepthPageTransformer());
-
-        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        runOnUiThread(new Runnable() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            public void run() {
 
-            }
 
-            @Override
-            public void onPageSelected(int position) {
-                currentPageIndex = position;
-                PageFragment pf = pageFragmentList.get(currentPageIndex);
+                pageFragmentList = new ArrayList<>();
 
-                if (pf instanceof ProjectListFragment) {
-                    projectListFragment.animateHeroHeight();
-                }
-                if (pf instanceof MonitorProfileFragment) {
-                    monitorProfileFragment.animateHeroHeight();
-                }
-                if (pf instanceof MessagingFragment) {
-                    messagingFragment.animateHeroHeight();
-                }
-                if (pf instanceof MonitorListFragment) {
-                    monitorListFragment.animateHeroHeight();
-                }
-                if (pf instanceof ProjectListFragment) {
-                    projectListFragment.setLastProject();
-                    projectListFragment.animateHeroHeight();
-                }
-            }
+                projectListFragment = new ProjectListFragment();
+                projectListFragment.setPageTitle(getString(R.string.projects));
+                projectListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
 
-            @Override
-            public void onPageScrollStateChanged(int state) {
+                profileFragment = new ProfileFragment();
+                profileFragment.setPageTitle(getString(R.string.profile));
+                profileFragment.setThemeColors(themePrimaryColor, themeDarkColor);
+                profileFragment.setMonitor(SharedUtil.getMonitor(ctx));
 
+                monitorListFragment = new MonitorListFragment();
+                monitorListFragment.setPageTitle(getString(R.string.monitors));
+                monitorListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
+
+//        simpleMessageFragment = SimpleMessageFragment.newInstance(null, list);
+//        simpleMessageFragment.setPageTitle(getString(R.string.messaging));
+//        simpleMessageFragment.setThemeColors(themePrimaryColor, themeDarkColor);
+
+                pageFragmentList.add(projectListFragment);
+                pageFragmentList.add(monitorListFragment);
+//        pageFragmentList.add(simpleMessageFragment);
+                pageFragmentList.add(profileFragment);
+
+                monitorPagerAdapter = new MonitorPagerAdapter(getSupportFragmentManager());
+                mPager.setAdapter(monitorPagerAdapter);
+
+                mPager.setPageTransformer(true, new DepthPageTransformer());
+
+                mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+                        currentPageIndex = position;
+                        PageFragment pf = pageFragmentList.get(currentPageIndex);
+
+                        if (pf instanceof ProjectListFragment) {
+                            projectListFragment.animateHeroHeight();
+                        }
+                        if (pf instanceof ProfileFragment) {
+                            profileFragment.animateHeroHeight();
+                        }
+                        if (pf instanceof MessagingFragment) {
+                            messagingFragment.animateHeroHeight();
+                        }
+                        if (pf instanceof MonitorListFragment) {
+                            monitorListFragment.animateHeroHeight();
+                        }
+                        if (pf instanceof ProjectListFragment) {
+                            projectListFragment.setLastProject();
+                            projectListFragment.animateHeroHeight();
+                        }
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+
+                    }
+                });
+                mPager.setCurrentItem(currentPageIndex);
             }
         });
-        mPager.setCurrentItem(currentPageIndex);
-
     }
 
     @Override
@@ -397,7 +377,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     }
 
     static final int REQUEST_THEME_CHANGE = 9631, LOCATION_REQUESTED = 6754;
-    static final String LOG = MonitorAppDrawerActivity.class.getSimpleName();
+    static final String LOG = MonitorMainActivity.class.getSimpleName();
 
     @Override
     public void onActivityResult(int reqCode, int resCode, Intent data) {
@@ -406,16 +386,11 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
         switch (reqCode) {
 
             case REQUEST_STATUS_UPDATE:
-                Log.e(LOG, "++++ getCachedData after possible update to cache");
-                if (WebCheck.checkNetworkAvailability(getApplicationContext()).isNetworkUnavailable()) {
-                    getCachedData();
-                } else {
-                    getRemoteData();
-                }
+
                 break;
             case REQUEST_THEME_CHANGE:
                 finish();
-                Intent w = new Intent(this, MonitorAppDrawerActivity.class);
+                Intent w = new Intent(this, MonitorMainActivity.class);
                 startActivity(w);
 
                 break;
@@ -427,14 +402,16 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
                 break;
             case MONITOR_PICTURE_REQUESTED:
                 if (resCode == RESULT_OK) {
-                    PhotoUploadDTO x = (PhotoUploadDTO) data.getSerializableExtra("photo");
-                    monitorProfileFragment.setPicture(x);
-                    mNavigationDrawerFragment.setPicture(x);
-                    SharedUtil.savePhoto(ctx, x);
+                    String x = data.getStringExtra("file");
+                    PhotoUploadDTO p = new PhotoUploadDTO();
+                    p.setThumbFilePath(x);
+                    profileFragment.setPicture(p);
+                    mNavigationDrawerFragment.setPicture(p);
+                    SharedUtil.savePhoto(ctx, p);
                 }
                 break;
             default:
-                Log.e(LOG,"Switch statement is falling thru");
+                Log.e(LOG, "Switch statement is falling thru");
                 break;
         }
     }
@@ -460,6 +437,11 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     @Override
     public void onMonitorSelected(MonitorDTO monitor) {
 
+    }
+
+    @Override
+    public void onProjectAssignmentRequested(MonitorDTO monitor) {
+        //Not available for Monitor app
     }
 
     @Override
@@ -543,7 +525,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
                 w.putExtra("project", project);
                 w.putExtra("darkColor", themeDarkColor);
                 w.putExtra("type", type);
-                startActivityForResult(w,REQUEST_STATUS_UPDATE);
+                startActivityForResult(w, REQUEST_STATUS_UPDATE);
             }
 
             @Override
@@ -753,16 +735,21 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
 
     }
 
+
     @Override
-    public void onProfileUpdated(MonitorDTO monitor) {
+    public void onUpdated(Person person) {
 
     }
 
     @Override
-    public void onMonitorPictureRequested(MonitorDTO monitor) {
+    public void onAdded(Person person) {
 
-        Intent w = new Intent(this, ProfilePhotoActivity.class);
-        w.putExtra("monitor", monitor);
+    }
+
+    @Override
+    public void onPictureRequested(Person person) {
+        Intent w = new Intent(this, PictureActivity.class);
+        w.putExtra("monitor", (MonitorDTO) person);
         startActivityForResult(w, MONITOR_PICTURE_REQUESTED);
     }
 
@@ -802,7 +789,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
             if (pf instanceof MessagingFragment) {
                 title = getString(R.string.messaging);
             }
-            if (pf instanceof MonitorProfileFragment) {
+            if (pf instanceof ProfileFragment) {
                 title = getString(R.string.profile);
             }
 
@@ -1016,6 +1003,7 @@ public class MonitorAppDrawerActivity extends AppCompatActivity
     };
 
     boolean busyGettingRemoteData;
+
     private boolean checkSettings() {
 
 

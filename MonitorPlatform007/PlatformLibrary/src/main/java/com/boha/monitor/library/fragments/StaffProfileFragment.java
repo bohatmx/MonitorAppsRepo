@@ -43,7 +43,7 @@ public class StaffProfileFragment extends Fragment implements PageFragment {
     public StaffProfileFragment() {
         // Required empty public constructor
     }
-
+    public static final int ADD_STAFF = 1, UPDATE_STAFF = 2;
     public static StaffProfileFragment newInstance(StaffDTO staff) {
 
         StaffProfileFragment sf = new StaffProfileFragment();
@@ -88,7 +88,7 @@ public class StaffProfileFragment extends Fragment implements PageFragment {
         if (x != null) {
             setPicture(x);
         } else {
-            getRemotePhotos();
+            //getRemotePhotos();
         }
 
         return view;
@@ -334,6 +334,17 @@ public class StaffProfileFragment extends Fragment implements PageFragment {
     @Override
     public void setThemeColors(int primaryColor, int darkColor) {
 
+    }
+
+    StaffFragmentListener staffFragmentListener;
+    int type;
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public void setListener(StaffFragmentListener staffFragmentListener) {
+        this.staffFragmentListener = staffFragmentListener;
     }
 
     public interface StaffFragmentListener {

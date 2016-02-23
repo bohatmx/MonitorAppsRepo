@@ -32,10 +32,8 @@ public class Statics {
 //    public static final String PDF_URL = "http://192.168.2.64:8080/monitor_documents/";
 
     public static final String INVITE_DESTINATION = "https://play.google.com/store/apps/details?id=";
-    public static final String INVITE_EXEC = INVITE_DESTINATION + "com.boha.monitor.exec";
-    public static final String INVITE_OPERATIONS_MGR = INVITE_DESTINATION + "com.boha.monitor.operations";
-    public static final String INVITE_PROJECT_MGR = INVITE_DESTINATION + "com.boha.monitor.pmanager";
-    public static final String INVITE_SITE_MGR = INVITE_DESTINATION + "com.boha.monitor.site";
+    public static final String INVITE_MONITOR = INVITE_DESTINATION + "com.boha.platform.worker";
+    public static final String INVITE_STAFF = INVITE_DESTINATION + "com.boha.monitor.supervisor";
 
     public static final String UPLOAD_URL_REQUEST = "uploadUrl?";
     public static final String CRASH_REPORTS_URL = URL + "crash?";

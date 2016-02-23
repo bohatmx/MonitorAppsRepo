@@ -24,6 +24,7 @@ import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.SimpleDividerItemDecoration;
+import com.boha.monitor.library.util.Snappy;
 import com.boha.platform.library.R;
 
 import java.util.ArrayList;
@@ -34,7 +35,6 @@ import java.util.List;
  * Activities that contain this fragment must implement the
  * {@link ProjectListFragmentListener} interface
  * to handle interaction events.
- * Use the {@link ProjectListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class ProjectListFragment extends Fragment implements PageFragment {
@@ -50,13 +50,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
     private static final String LOG = ProjectListFragment.class.getSimpleName();
 
-    public static ProjectListFragment newInstance(ResponseDTO response) {
-        ProjectListFragment fragment = new ProjectListFragment();
-        Bundle args = new Bundle();
-        args.putSerializable("response", response);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     public ProjectListFragment() {
     }
@@ -64,10 +57,18 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mResponse = (ResponseDTO) getArguments().getSerializable("response");
-            projectList = mResponse.getProjectList();
-        }
+        Log.d(LOG, "onCreate");
+        Snappy.getProjectList(getActivity(), new Snappy.SnappyReadListener() {
+            @Override
+            public void onDataRead(ResponseDTO response) {
+                projectList = response.getProjectList();
+            }
+
+            @Override
+            public void onError(String message) {
+
+            }
+        });
     }
 
     @Override
@@ -81,6 +82,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(LOG, "onCreateView .......");
         view = inflater.inflate(R.layout.fragment_project_list, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         auto = (AutoCompleteTextView) view.findViewById(R.id.autocomplete_project);
@@ -91,24 +93,50 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
         mRecyclerView.setHasFixedSize(true);
 
-        setList();
+        if (auto != null) {
+            hideKeyboard();
+        }
+
         return view;
     }
 
     ProjectAdapter projectAdapter;
     List<String> projectNameList;
     ProjectDTO selectedProject;
-    public void refreshProjectList(List<ProjectDTO> projectList) {
-        this.projectList = projectList;
-        if (mRecyclerView != null) {
-            setList();
-        }
+
+
+    @Override
+    public void onResume() {
+        getProjectList();
+        super.onResume();
+    }
+    public void getProjectList() {
+        Log.w(LOG, "..... getProjectList .....Snappy");
+        Snappy.getProjectList(getActivity(), new Snappy.SnappyReadListener() {
+            @Override
+            public void onDataRead(ResponseDTO response) {
+                projectList = response.getProjectList();
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setList();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onError(String message) {
+
+            }
+        });
     }
 
     public void refreshProject(ProjectDTO p) {
         selectedProject = p;
         List<ProjectDTO> list = new ArrayList<>();
-        for (ProjectDTO proj: projectList) {
+        for (ProjectDTO proj : projectList) {
             if (proj.getProjectID().intValue() == p.getProjectID().intValue()) {
                 list.add(p);
             } else {
@@ -118,16 +146,31 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         projectList = list;
         setList();
 
-        Log.i(LOG,"refreshProject done, " + p.getProjectName());
+        Log.i(LOG, "refreshProject done .........., " + p.getProjectName());
 
     }
+
+    public void refreshProjectList(List<ProjectDTO> pList) {
+        if (pList == null) {
+            return;
+        }
+        projectList = pList;
+        setList();
+
+        Log.i(LOG, "refreshProjectList done .........., " + pList.size());
+
+    }
+
     private void setList() {
 
         if (projectList == null || projectList.isEmpty()) {
-            Log.e(LOG,"--- projectList is NULL");
+            Log.e(LOG, "--- projectList is NULL");
             return;
         }
-        if (projectList.size() > 19) {
+        if (getContext() == null) {
+            return;
+        }
+        if (projectList.size() > 10) {
             projectNameList = new ArrayList<>(projectList.size());
             for (ProjectDTO p : projectList) {
                 projectNameList.add(p.getProjectName());
@@ -137,6 +180,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             auto.setAdapter(adapter);
             auto.setHint("Search Projects");
             auto.setThreshold(2);
+            auto.setVisibility(View.VISIBLE);
 
             auto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -156,7 +200,11 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                     Log.i(LOG, "i = " + i + ", scrolled to " + index + " for " + name);
                 }
             });
+
+        } else {
+            auto.setVisibility(View.GONE);
         }
+
         projectAdapter = new ProjectAdapter(projectList, getActivity(),
                 darkColor, new ProjectListFragmentListener() {
             @Override
@@ -223,6 +271,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         mRecyclerView.setAdapter(projectAdapter);
         Integer pID = SharedUtil.getLastProjectID(getActivity());
 
+
         int index = 0;
         boolean isFound = false;
         if (pID != null) {
@@ -234,21 +283,25 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                 index++;
             }
         }
-        if (index == 0) return;
+
+
         if (isFound) {
             if (index + 1 < projectList.size()) {
                 mRecyclerView.scrollToPosition(index + 1);
-            } else {
-                mRecyclerView.scrollToPosition(index);
             }
         }
 
+
     }
-    void hideKeyboard() {
+
+
+    private void hideKeyboard() {
+
         InputMethodManager imm = (InputMethodManager) getContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(auto.getWindowToken(), 0);
     }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -273,6 +326,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 //        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
 //        refWatcher.watch(this);
     }
+
     @Override
     public void animateHeroHeight() {
     }
@@ -289,7 +343,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         boolean isFound = false;
         int index = 0;
         if (id.intValue() > 0) {
-            for (ProjectDTO p : mResponse.getProjectList()) {
+            for (ProjectDTO p : projectList) {
                 if (p.getProjectID().intValue() == id.intValue()) {
                     isFound = true;
                     break;
@@ -344,4 +398,5 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         this.primaryColor = primaryColor;
         this.darkColor = darkColor;
     }
+
 }

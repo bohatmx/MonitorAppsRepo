@@ -13,7 +13,7 @@ import java.util.Date;
  *
  * @author aubreyM
  */
-public class MonitorProjectDTO implements Serializable {
+public class MonitorProjectDTO implements Serializable, PersonProject {
     private static final long serialVersionUID = 1L;
     private Integer monitorProjectID;
     private Long dateAssigned;

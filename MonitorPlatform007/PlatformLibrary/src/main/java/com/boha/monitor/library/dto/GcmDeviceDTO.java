@@ -19,14 +19,14 @@ public class GcmDeviceDTO implements Serializable{
     private Integer gcmDeviceID;
     private String registrationID;
     private String manufacturer;
-    private String model, app;
+    private String model, app, name;
     private String product;
     private Integer messageCount;
     private long dateRegistered;
     private String serialNumber, androidVersion;
     private Integer companyID;
-    private StaffDTO staff;
-    private MonitorDTO monitor;
+    private Integer staffID;
+    private Integer monitorID;
     private List<LocationTrackerDTO> trackerList;
 
     public List<LocationTrackerDTO> getTrackerList() {
@@ -35,6 +35,14 @@ public class GcmDeviceDTO implements Serializable{
 
     public void setTrackerList(List<LocationTrackerDTO> trackerList) {
         this.trackerList = trackerList;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getApp() {
@@ -125,19 +133,19 @@ public class GcmDeviceDTO implements Serializable{
         this.companyID = companyID;
     }
 
-    public StaffDTO getStaff() {
-        return staff;
+    public Integer getStaffID() {
+        return staffID;
     }
 
-    public void setStaff(StaffDTO staff) {
-        this.staff = staff;
+    public void setStaffID(Integer staffID) {
+        this.staffID = staffID;
     }
 
-    public MonitorDTO getMonitor() {
-        return monitor;
+    public Integer getMonitorID() {
+        return monitorID;
     }
 
-    public void setMonitor(MonitorDTO monitor) {
-        this.monitor = monitor;
+    public void setMonitorID(Integer monitorID) {
+        this.monitorID = monitorID;
     }
 }

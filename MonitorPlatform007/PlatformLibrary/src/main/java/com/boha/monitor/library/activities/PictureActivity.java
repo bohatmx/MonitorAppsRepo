@@ -95,6 +95,12 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         inflater = getLayoutInflater();
         setContentView(R.layout.camera);
 
+        monitor = (MonitorDTO) getIntent().getSerializableExtra("monitor");
+        staff = (StaffDTO) getIntent().getSerializableExtra("staff");
+        project = (ProjectDTO) getIntent().getSerializableExtra("project");
+        projectTask = (ProjectTaskDTO) getIntent().getSerializableExtra("projectTask");
+        projectTaskStatus = (ProjectTaskStatusDTO) getIntent().getSerializableExtra("projectTaskStatus");
+
         setFields();
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -104,60 +110,60 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
         //
         type = getIntent().getIntExtra("type", 0);
+        if (monitor != null)
+            type = PhotoUploadDTO.MONITOR_IMAGE;
+        if (staff != null)
+            type = PhotoUploadDTO.STAFF_IMAGE;
+        if (project != null)
+            type = PhotoUploadDTO.PROJECT_IMAGE;
+        if (projectTask != null)
+            type = PhotoUploadDTO.TASK_IMAGE;
+        if (projectTaskStatus != null)
+            type = PhotoUploadDTO.TASK_IMAGE;
 
         switch (type) {
-            case PhotoUploadDTO.STAFF_IMAGE:
-                staff = (StaffDTO) getIntent().getSerializableExtra("staff");
-                if (staff != null) {
-                    txtTitle.setText(staff.getFirstName() + " " + staff.getLastName());
-                    dispatchTakePictureIntent();
-                    Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
-                            staff.getFullName(), "Profile Photo",
-                            ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
+            case PhotoUploadDTO.MONITOR_IMAGE:
+                txtTitle.setText(monitor.getFullName());
+                dispatchTakePictureIntent();
+                Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
+                        monitor.getFullName(), "Profile Photo",
+                        ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
 
-                }
+
+                break;
+            case PhotoUploadDTO.STAFF_IMAGE:
+                txtTitle.setText(staff.getFirstName() + " " + staff.getLastName());
+                dispatchTakePictureIntent();
+                Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
+                        staff.getFullName(), "Profile Photo",
+                        ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
+
                 break;
             case PhotoUploadDTO.PROJECT_IMAGE:
-                project = (ProjectDTO) getIntent().getSerializableExtra("project");
-                if (project != null) {
-                    txtTitle.setText(project.getProjectName());
-                    Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
-                            project.getProjectName(), project.getCityName(),
-                            ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
-                }
+
+                txtTitle.setText(project.getProjectName());
+                Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
+                        project.getProjectName(), project.getCityName(),
+                        ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
+
                 break;
 
             case PhotoUploadDTO.TASK_IMAGE:
-                projectTask = (ProjectTaskDTO) getIntent().getSerializableExtra("projectTask");
-                projectTaskStatus = (ProjectTaskStatusDTO) getIntent().getSerializableExtra("projectTaskStatus");
-                if (projectTask != null) {
-                    txtTitle.setText(projectTask.getProjectName());
-                    txtSubtitle.setText(projectTask.getTask().getTaskName());
-                    Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
-                            projectTask.getProjectName(), projectTask.getTask().getTaskName(),
-                            ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
-                }
-                break;
-            default:
-                projectTask = (ProjectTaskDTO) getIntent().getSerializableExtra("projectTask");
-                projectTaskStatus = (ProjectTaskStatusDTO) getIntent().getSerializableExtra("projectTaskStatus");
-                if (projectTask != null) {
-                    txtTitle.setText(projectTask.getProjectName());
-                    txtSubtitle.setText(projectTask.getTask().getTaskName());
-                    Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
-                            projectTask.getProjectName(), projectTask.getTask().getTaskName(),
-                            ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
+                txtTitle.setText(projectTask.getProjectName());
+                txtSubtitle.setText(projectTask.getTask().getTaskName());
+                Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
+                        projectTask.getProjectName(), projectTask.getTask().getTaskName(),
+                        ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
 
-                    break;
-                }
-                throw new UnsupportedOperationException("No data passed to activity");
+                break;
+
         }
 
 
         checkPermissions();
-        Intent w = new Intent(ctx, PhotoUploadService.class);
-        w.putExtra("sat", "sat");
-        startService(w);
+//        Intent w = new Intent(ctx, PhotoUploadService.class);
+//        w.putExtra("sat", "sat");
+//        startService(w);
 
     }
 
@@ -167,7 +173,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         Log.d(LOG, "@@@@@@ onResume...........");
         super.onResume();
         if (currentThumbFile != null) {
-            Log.w(LOG,"onResume currentThumbFile size: " + currentThumbFile.length());
+            Log.w(LOG, "onResume currentThumbFile size: " + currentThumbFile.length());
             Picasso.with(ctx).load(currentThumbFile).into(imageView);
         }
 
@@ -185,12 +191,12 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         String path = savedInstanceState.getString("thumbPath");
         if (path != null) {
             currentThumbFile = new File(path);
-            Log.d(LOG,"onRestoreInstanceState currentThumbFile: " + currentThumbFile.length());
+            Log.d(LOG, "onRestoreInstanceState currentThumbFile: " + currentThumbFile.length());
         }
         String path2 = savedInstanceState.getString("photoFile");
         if (path2 != null) {
             photoFile = new File(path2);
-            Log.d(LOG,"onRestoreInstanceState photoFile: " + photoFile.length());
+            Log.d(LOG, "onRestoreInstanceState photoFile: " + photoFile.length());
         }
         double lat = savedInstanceState.getDouble("latitude");
         double lng = savedInstanceState.getDouble("longitude");
@@ -225,7 +231,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
     }
 
-    static final int PROXIMITY_LIMIT = 200;
+    static final int PROXIMITY_LIMIT = 500;
 
     /**
      * The camera app returns control to PictureActivity.
@@ -245,7 +251,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
             case CAPTURE_IMAGE:
                 if (resultCode == Activity.RESULT_OK) {
                     if (resultCode == Activity.RESULT_OK) {
-                        Location pLoc = new Location("");
+                        Location pLoc = new Location("deviceLoc");
                         if (type == PhotoUploadDTO.PROJECT_IMAGE
                                 || type == PhotoUploadDTO.TASK_IMAGE) {
                             if (project != null) {
@@ -264,7 +270,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                                     new PhotoTask().execute();
                                 } else {
                                     Util.showErrorToast(ctx,
-                                            "You seem to be more than "+PROXIMITY_LIMIT+" metres away from the project. Picture cannot be taken.");
+                                            "You seem to be more than " + PROXIMITY_LIMIT + " metres away from the project. Picture cannot be taken.");
                                 }
                             } else {
                                 Util.showErrorToast(ctx, "Your GPS location is currently undefined");
@@ -287,7 +293,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                 + " - " + new Date().toString());
         if (loc.getAccuracy() <= ACCURACY_THRESHOLD) {
             this.location = loc;
-            Log.e(LOG,"device location updated, accuracy: " + loc.getAccuracy());
+            Log.e(LOG, "device location updated, accuracy: " + loc.getAccuracy());
 
         }
     }
@@ -334,6 +340,16 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
     @Override
     public void onConnected(Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         location = LocationServices.FusedLocationApi.getLastLocation(
                 googleApiClient);
         if (location != null)
@@ -490,7 +506,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         if (!pics.exists()) {
             boolean isOK = pics.mkdir();
             if (!isOK) {
-                Util.showErrorToast(this,"Unable to get file storage for picture");
+                Util.showErrorToast(this, "Unable to get file storage for picture");
                 return;
             }
         }
@@ -546,6 +562,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
             ResponseDTO r = new ResponseDTO();
             Intent i = new Intent();
             i.putExtra("pictureTakenOK", pictureTakenOK);
+            i.putExtra("file",currentThumbFile.getAbsolutePath());
             setResult(RESULT_OK, i);
         } else {
             Log.d(LOG, "onBackPressed ... cancelled");
@@ -643,7 +660,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
             options.inSampleSize = 4;
             Bitmap main = BitmapFactory.decodeFile(photoFile.getAbsolutePath(), options);
             Bitmap bm = ScalingUtilities.createScaledBitmap(
-                    main, 300, 400, ScalingUtilities.ScalingLogic.CROP);
+                    main, 600, 800, ScalingUtilities.ScalingLogic.CROP);
 
             if (main.getWidth() > main.getHeight()) {
                 Log.d(LOG, "*** this image in landscape");
@@ -706,7 +723,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
         @Override
         protected void onPostExecute(Integer result) {
-            Log.e(LOG,"onPostExecute result: " + result.intValue());
+            Log.e(LOG, "onPostExecute result: " + result.intValue());
             if (result > 0) {
                 pictureTakenOK = false;
                 Util.showErrorToast(ctx, getString(R.string.camera_error));
@@ -735,6 +752,9 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                 break;
             case PhotoUploadDTO.STAFF_IMAGE:
                 addStaffPicture();
+                break;
+            case PhotoUploadDTO.MONITOR_IMAGE:
+                addMonitorPicture();
                 break;
         }
         //
@@ -780,18 +800,10 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
             @Override
             public void onDataCached(PhotoUploadDTO p) {
-//                Log.w(LOG, "### photo has been cached");
                 Intent a = new Intent(ctx, PhotoUploadService.class);
                 a.putExtra("photo", dto);
                 startService(a);
-//                mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
-//                    @Override
-//                    public void onUploadsComplete(List<PhotoUploadDTO> list) {
-//                        Snackbar.make(txtTitle, "Photos uploaded: " + list.size(), Snackbar.LENGTH_LONG);
-//                    }
-//                });
             }
-
             @Override
             public void onError() {
                 Util.showErrorToast(ctx, getString(R.string.photo_error));
@@ -821,8 +833,6 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         }
 
         dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
-        dto.setThumbFlag(1);
-
         dto.setDateTaken(new Date().getTime());
         if (location != null) {
             dto.setLatitude(location.getLatitude());
@@ -838,6 +848,13 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         final PhotoUploadDTO dto = getObject();
         dto.setStaffID(staff.getStaffID());
         dto.setPictureType(PhotoUploadDTO.STAFF_IMAGE);
+        dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
+        saveAndUpload(dto);
+    }
+    public void addMonitorPicture() {
+        final PhotoUploadDTO dto = getObject();
+        dto.setMonitorID(monitor.getMonitorID());
+        dto.setPictureType(PhotoUploadDTO.MONITOR_IMAGE);
         dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
         saveAndUpload(dto);
     }

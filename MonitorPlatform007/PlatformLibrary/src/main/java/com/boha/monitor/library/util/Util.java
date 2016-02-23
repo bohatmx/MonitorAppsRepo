@@ -7,9 +7,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -53,7 +51,6 @@ import com.boha.monitor.library.adapters.PopupListAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
-import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.platform.library.R;
 import com.google.gson.Gson;
 
@@ -85,6 +82,61 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Mostly, the method names speak for themselves
  */
 public class Util {
+
+    public interface SnappyListener {
+        void onCachingComplete();
+        void onError(String message);
+    }
+    public static void cacheOnSnappy(final Context ctx,
+                                      final ResponseDTO response,
+                                      final SnappyListener listener) {
+
+        Log.e(LOG, "################### START cachingService for: status types, projects, staff and monitors......");
+
+        Snappy.writeProjectList(ctx, response.getProjectList(), new Snappy.SnappyWriteListener() {
+            @Override
+            public void onDataWritten() {
+                Snappy.writeStaffList(ctx, response.getStaffList(), new Snappy.SnappyWriteListener() {
+                    @Override
+                    public void onDataWritten() {
+                        Snappy.writeMonitorList(ctx, response.getMonitorList(), new Snappy.SnappyWriteListener() {
+                            @Override
+                            public void onDataWritten() {
+                                Snappy.writeTaskStatusTypeList(ctx, response.getTaskStatusTypeList(), new Snappy.SnappyWriteListener() {
+                                    @Override
+                                    public void onDataWritten() {
+                                        Log.e(LOG, "Yeaaaah!! Data written to SnappyDB. Caching is complete");
+                                        listener.onCachingComplete();
+                                    }
+
+                                    @Override
+                                    public void onError(String message) {
+                                        listener.onError(message);
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onError(String message) {
+                                listener.onError(message);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        listener.onError(message);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String message) {
+                listener.onError(message);
+            }
+        });
+
+    }
     @SuppressLint("NewApi")
     public static String getRealPathFromURI_API19(Context context, Uri uri) {
         String filePath = "";
@@ -674,164 +726,109 @@ public class Util {
         pop.show();
     }
 
-    public static void showConfirmAppInvitationDialog(final Context ctx, final Activity act,
-                                                      final StaffDTO companyStaff, final int type) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(act);
-        switch (type) {
-//            case COMPANY_EXEC:
-//                dialog.setTitle("Company Exec");
-//                break;
-//            case OPS:
-//                dialog.setTitle("Portfolio Exec");
-//                break;
-//            case PROJ:
-//                dialog.setTitle("Project Manager"));
-//                break;
-//            case PROGRAMME:
-//                dialog.setTitle("Programme Exec");
-//                break;
-        }
-        dialog.setMessage(ctx.getResources().getString(R.string.invite_dialog))
-                .setPositiveButton(ctx.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        sendInvitation(ctx, act, companyStaff, type);
-                    }
-                })
-                .setNegativeButton(ctx.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
 
-                    }
-                }).show();
-    }
 
-    public static final int COMPANY_EXEC = 1, PORTFOLIO_EXEC = 2, PROJECT_MGR = 3, PROGRAMME_EXEC = 4;
+    public static final int MONITOR = 1, STAFF = 2;
 
-    private static void sendInvitation(final Context ctx, Activity act, final StaffDTO companyStaff,
-                                       int type) {
-        StringBuilder sba = new StringBuilder();
-        sba.append(getHeader(ctx, type));
-        switch (type) {
-            case COMPANY_EXEC:
-                sba.append(getExecLink(ctx, companyStaff));
-                break;
-            case PORTFOLIO_EXEC:
-                sba.append(getOperationsLink(ctx, companyStaff));
-                sba.append(getFooter(ctx));
-                break;
-            case PROJECT_MGR:
-                sba.append(getProjectManagerLink(ctx, companyStaff));
-                break;
-            case PROGRAMME_EXEC:
-                sba.append(getSiteManagerLink(ctx, companyStaff));
-                break;
-        }
-        sba.append(getFooter(ctx));
+    public static void sendNewPIN(final Context ctx,
+                                         final String name, String email,
+                                         final String pin, int type) {
+        String emailBody = getMailBodyNewPIN(ctx, name, email, pin, type);
+        Log.w(LOG, "before email send body = \n" + emailBody);
 
-        Log.w(LOG, "before send intent, sba = \n" + sba.toString());
-        final Intent shareIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + companyStaff.getEmail()));
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, ctx.getResources().getString(R.string.subject));
+        final Intent shareIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + email));
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Monitor Platform New PIN");
         shareIntent.putExtra(
                 Intent.EXTRA_TEXT,
-                Html.fromHtml(sba.toString())
+                Html.fromHtml(emailBody)
         );
         Log.e(LOG, shareIntent.toString());
         ctx.startActivity(Intent.createChooser(shareIntent, "Email:"));
-
-        //update app date
-
-        StaffDTO cs = new StaffDTO();
-        cs.setAppInvitationDate(new Date().getTime());
-        cs.setStaffID(companyStaff.getStaffID());
-        RequestDTO w = new RequestDTO(RequestDTO.UPDATE_COMPANY_STAFF);
-        w.setStaff(cs);
-
-        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
-            @Override
-            public void onResponse(final ResponseDTO response) {
-
-            }
-
-            @Override
-            public void onError(final String message) {
-
-            }
-
-
-        });
-
-
     }
 
-    private static String getHeader(Context ctx, int type) {
+    public static void sendAppInvitation(final Context ctx,
+                                         final String name, String email,
+                                         final String pin, int type) {
+        String emailBody = getMailBody(ctx, name, email, pin, type);
+        Log.w(LOG, "before email send body = \n" + emailBody);
+
+        final Intent shareIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + email));
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Monitor Platform App Invitation");
+        shareIntent.putExtra(
+                Intent.EXTRA_TEXT,
+                Html.fromHtml(emailBody)
+        );
+        Log.e(LOG, shareIntent.toString());
+        ctx.startActivity(Intent.createChooser(shareIntent, "Email:"));
+    }
+
+    private static String getMailBody(Context ctx, String name, String email, String pin, int type) {
         StringBuilder sb = new StringBuilder();
         sb.append("<h2>").append(SharedUtil.getCompany(ctx).getCompanyName()).append("</h2>");
-//        sb.append("<p>").append(ctx.getResources().getString(R.string.invited)).append("</p>");
+        String link = "";
         switch (type) {
-//            case COMPANY_EXEC:
-//                sb.append("<h3>").append(ctx.getString(R.string.exec_app)).append("</h3>");
-//                break;
-//            case OPS:
-//                sb.append("<h3>").append(ctx.getString(R.string.operations_app)).append("</h3>");
-//                break;
-//            case PROJ:
-//                sb.append("<h3>").append(ctx.getString(R.string.pm_app)).append("</h3>");
-//                break;
-//            case PROGRAMME:
-//                sb.append("<h3>").append(ctx.getString(R.string.supervisor_app)).append("</h3>");
-//                break;
+            case MONITOR:
+                sb.append("<h3>").append("Monitor App").append("</h3>\n");
+                link = Statics.INVITE_MONITOR;
+                break;
+            case STAFF:
+                sb.append("<h3>").append("Staff Supervisor App").append("</h3>\n");
+                link = Statics.INVITE_STAFF;
+                break;
+
         }
+        sb.append("<h4>Hi ").append(name).append(",</h4>");
+        sb.append("<p>Welcome aboard The Monitor Platform! You have been registered as a Monitor on the platform.");
+        sb.append("Please use the following credentials to sign in to the Monitor app:</p>\n\n");
+        sb.append("<h4>Email Address: ").append(email).append("</h4>");
+        sb.append("<h4>PIN Code: ").append(pin).append("</h4>\n\n");
+        sb.append("<p>If you have not already downloaded it and if the app file is not attached to this mail, " +
+                "please download the Monitor app from the Google Play Store. " +
+                "Please let us know if you experience any problems or issues.</p>\n\n");
+        sb.append("<h4>Again, Welcome Aboard!</h4>");
+        sb.append("<p>The link to download the app: ").append(link).append("</p>");
+        sb.append("<p>Regards,</p>");
+        sb.append("<h2>The Monitor Team</h2>");
+
 
 
         return sb.toString();
     }
-
-    private static String getFooter(Context ctx) {
+    private static String getMailBodyNewPIN(Context ctx, String name, String email, String pin, int type) {
         StringBuilder sb = new StringBuilder();
-//        sb.append(ctx.getString(R.string.contact_us));
-//        sb.append("<h2>").append(ctx.getResources().getString(R.string.enjoy)).append("</h2>");
+        sb.append("<h2>").append(SharedUtil.getCompany(ctx).getCompanyName()).append("</h2>");
+        String link = "";
+        switch (type) {
+            case MONITOR:
+                sb.append("<h3>").append("Monitor App").append("</h3>\n");
+                link = Statics.INVITE_MONITOR;
+                break;
+            case STAFF:
+                sb.append("<h3>").append("Staff Supervisor App").append("</h3>\n");
+                link = Statics.INVITE_STAFF;
+                break;
+
+        }
+        sb.append("<h4>Hi ").append(name).append(",</h4>");
+        sb.append("<p>Your PIN has been freshly re-generated and you can now use the app again.");
+        sb.append("Please use the following credentials to sign in to the Monitor app:</p>\n\n");
+        sb.append("<h4>Email Address: ").append(email).append("</h4>");
+        sb.append("<h4>PIN Code: ").append(pin).append("</h4>\n\n");
+        sb.append("<p>If you have not already downloaded it and if the app file is not attached to this mail, " +
+                "please download the Monitor app from the Google Play Store. " +
+                "Please let us know if you experience any problems or issues.</p>\n\n");
+        sb.append("<h4>Again, Welcome Aboard!</h4>");
+        sb.append("<p>The link to download the app: ").append(link).append("</p>");
+        sb.append("<p>Regards,</p>");
+        sb.append("<h2>The Monitor Team</h2>");
+
+
+
         return sb.toString();
     }
 
-    private static String getSiteManagerLink(Context ctx, StaffDTO companyStaff) {
-        StringBuilder sb = new StringBuilder();
-//        sb.append("<p>").append(ctx.getResources().getString(R.string.click_link)).append("</p>");
-        sb.append("<p>").append(Statics.INVITE_SITE_MGR).append("</p>");
-        sb.append(getPinNote(ctx, companyStaff));
-        return sb.toString();
-    }
 
-    private static String getProjectManagerLink(Context ctx, StaffDTO companyStaff) {
-        StringBuilder sb = new StringBuilder();
-//        sb.append("<p>").append(ctx.getResources().getString(R.string.click_link)).append("</p>");
-        sb.append("<p>").append(Statics.INVITE_PROJECT_MGR).append("</p>");
-        sb.append(getPinNote(ctx, companyStaff));
-        return sb.toString();
-    }
 
-    private static String getPinNote(Context ctx, StaffDTO companyStaff) {
-        StringBuilder sb = new StringBuilder();
-//        sb.append("<p>").append(ctx.getResources().getString(R.string.pin_note)).append("</p>");
-        sb.append("<h4>").append(companyStaff.getPin()).append("</h4>");
-        return sb.toString();
-    }
-
-    private static String getOperationsLink(Context ctx, StaffDTO companyStaff) {
-        StringBuilder sb = new StringBuilder();
-//        sb.append("<p>").append(ctx.getResources().getString(R.string.click_link)).append("</p>");
-        sb.append("<p>").append(Statics.INVITE_OPERATIONS_MGR).append("</p>");
-        sb.append(getPinNote(ctx, companyStaff));
-        return sb.toString();
-    }
-
-    private static String getExecLink(Context ctx, StaffDTO companyStaff) {
-        StringBuilder sb = new StringBuilder();
-//        sb.append("<p>").append(ctx.getResources().getString(R.string.click_link)).append("</p>");
-        sb.append("<p>").append(Statics.INVITE_EXEC).append("</p>");
-        sb.append(getPinNote(ctx, companyStaff));
-        return sb.toString();
-    }
 
     public static void preen(final View v, final int duration, final int max, final UtilAnimationListener listener) {
         final ObjectAnimator an = ObjectAnimator.ofFloat(v, "alpha", 1, 1);

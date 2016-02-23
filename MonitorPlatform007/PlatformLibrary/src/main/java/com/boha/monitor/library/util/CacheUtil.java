@@ -1,14 +1,21 @@
 package com.boha.monitor.library.util;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 
 import com.boha.monitor.library.dto.LocationTrackerDTO;
+import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
+import com.boha.monitor.library.dto.TaskStatusTypeDTO;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,10 +28,12 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.net.Uri.fromFile;
+
 /**
  * Utility class that hosts helper methods to cache and retrieve on-device data.
  * Some methods need CacheUtilListener to return asynchronous response to caller.
- *
+ * <p/>
  * Created by aubreyM on 2014/06/30.
  */
 public class CacheUtil {
@@ -36,11 +45,13 @@ public class CacheUtil {
 
         public void onError();
     }
+
     public interface CacheRetrievedListener {
         public void onFileDataDeserialized(ResponseDTO response);
 
         public void onError();
     }
+
     public interface CacheSavedListener {
         public void onDataCached();
 
@@ -52,13 +63,13 @@ public class CacheUtil {
     }
 
     static CacheUtilListener utilListener;
-    static  CacheRetrievedListener cacheRetrievedListener;
+    static CacheRetrievedListener cacheRetrievedListener;
     static CacheSavedListener cacheSavedListener;
 
     public static final int CACHE_DATA = 1, CACHE_COUNTRIES = 3, CACHE_SITE = 7,
             CACHE_PROJECT = 5, CACHE_REQUEST = 6, CACHE_PROJECT_STATUS = 4,
             CACHE_TRACKER = 8, CACHE_CHAT = 9, CACHE_MONITOR_PROJECTS = 10,
-            CACHE_TASK_STATUS = 11, CACHE_COMPANY = 12, CACHE_PORTFOLIOS = 14,
+            CACHE_TASK_STATUS = 11, CACHE_TASK_STATUS_TYPES = 17, CACHE_COMPANY = 12, CACHE_PORTFOLIOS = 14,
             CACHE_STAFF_DATA = 15, CACHE_MESSAGES = 16;
     static int dataType;
     static Integer projectID;
@@ -69,7 +80,8 @@ public class CacheUtil {
     static final String JSON_DATA = "data.json", JSON_COUNTRIES = "countries.json", JSON_COMPANY_DATA = "company_data",
             JSON_PROJECT_DATA = "project_data", JSON_PROJECT_STATUS = "project_status", JSON_MON_PROJECTS = "monprojects.json",
             JSON_REQUEST = "requestCache.json", JSON_SITE = "site", JSON_PORTFOLIOS = "portfolios.json", JSON_MESSAGES = "messages.json",
-            JSON_TRACKER = "tracker.json", JSON_CHAT = "chat", JSON_STATUS = "status", JSON_STAFF_DATA = "staffData.json";
+            JSON_TRACKER = "tracker.json", JSON_STAFF_LIST = "stafflist.json", JSON_MONITOR_LIST = "monlist.json",
+            JSON_PROJECT = "project", JSON_PROJECT_LITE = "projectLite", JSON_TASK_STATUS_TYPES = "taskType.json", JSON_CHAT = "chat", JSON_STATUS = "status", JSON_STAFF_DATA = "staffData.json";
 
 
     public static void cacheData(Context context, ResponseDTO r, int type, CacheUtilListener cacheUtilListener) {
@@ -90,6 +102,7 @@ public class CacheUtil {
         ctx = context;
         new CacheTask().execute();
     }
+
 
     public static void cachePortfolios(Context context, ResponseDTO r, CacheUtilListener cacheUtilListener) {
         dataType = CACHE_PORTFOLIOS;
@@ -158,16 +171,16 @@ public class CacheUtil {
     }
 
 
-    public static void addLocationTrack(final Context ctx, final LocationTrackerDTO locationTracker, final AddLocationTrackerListener addLocationTrackerListener) {
+    public static void addLocationTrack(final LocationTrackerDTO locationTracker, final AddLocationTrackerListener addLocationTrackerListener) {
 
-        getCachedTrackerData(ctx, new CacheUtilListener() {
+        getCachedTrackerData(new CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
                 if (response.getLocationTrackerList() == null) {
                     response.setLocationTrackerList(new ArrayList<LocationTrackerDTO>());
                 }
                 response.getLocationTrackerList().add(locationTracker);
-                cacheTrackerData(ctx, response, null);
+                cacheTrackerData(response, null);
                 if (addLocationTrackerListener != null)
                     addLocationTrackerListener.onLocationTrackerAdded(response);
             }
@@ -184,9 +197,9 @@ public class CacheUtil {
         });
     }
 
-    public static void updateLocationTrack(final Context ctx, final List<LocationTrackerDTO> locationTrackerList, final AddLocationTrackerListener addLocationTrackerListener) {
+    public static void updateLocationTrack(final List<LocationTrackerDTO> locationTrackerList, final AddLocationTrackerListener addLocationTrackerListener) {
 
-        getCachedTrackerData(ctx, new CacheUtilListener() {
+        getCachedTrackerData(new CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(final ResponseDTO response) {
                 ResponseDTO f = new ResponseDTO();
@@ -194,7 +207,7 @@ public class CacheUtil {
                     f = response;
                 }
                 f.setLocationTrackerList(locationTrackerList);
-                cacheTrackerData(ctx, f, new CacheUtilListener() {
+                cacheTrackerData(f, new CacheUtilListener() {
                     @Override
                     public void onFileDataDeserialized(ResponseDTO response) {
 
@@ -226,18 +239,149 @@ public class CacheUtil {
         });
     }
 
-    public static void cacheTrackerData(final Context context, final ResponseDTO r, final CacheUtilListener cacheUtilListener) {
-
-        Thread thread = new Thread(new Runnable() {
+    public static void cacheTrackerData(final ResponseDTO r, final CacheUtilListener cacheUtilListener) {
+        AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 String json = gson.toJson(r);
                 FileOutputStream outputStream = null;
                 try {
-                    outputStream = context.openFileOutput(JSON_TRACKER, Context.MODE_PRIVATE);
+                    File dir = Environment.getExternalStorageDirectory();
+                    File file = new File(dir, JSON_TRACKER);
+                    outputStream = new FileOutputStream(file);
                     outputStream.write(json.getBytes());
                     outputStream.close();
-                    File file = context.getFileStreamPath(JSON_TRACKER);
+                    Log.w(LOG, "cacheTrackerData file: " + file.getAbsolutePath());
+                    if (cacheUtilListener != null)
+                        cacheUtilListener.onDataCached();
+                } catch (IOException e) {
+                    Log.e(LOG, "Cache failed", e);
+                    if (cacheUtilListener != null)
+                        cacheUtilListener.onError();
+                }
+            }
+        });
+
+    }
+
+    public static void cacheProjectList(final List<ProjectDTO> projectList, final CacheUtilListener cacheUtilListener) {
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                List<ProjectDTO> pList = new ArrayList<>();
+                for (ProjectDTO p : projectList) {
+                    ProjectDTO px = new ProjectDTO();
+                    px.setProjectName(p.getProjectName());
+                    px.setProjectID(p.getProjectID());
+                    pList.add(px);
+                    String json = gson.toJson(p);
+                    FileOutputStream outputStream = null;
+                    try {
+                        File dir = Environment.getExternalStorageDirectory();
+                        File file = new File(dir, JSON_PROJECT + p.getProjectID());
+                        outputStream = new FileOutputStream(file);
+                        outputStream.write(json.getBytes());
+                        outputStream.close();
+                        Log.w(LOG, "Project cached: " + p.getProjectName() + " length: " + file.length() + " " + file.getAbsolutePath());
+
+                    } catch (IOException e) {
+                        Log.e(LOG, "Cache failed", e);
+                        if (cacheUtilListener != null)
+                            cacheUtilListener.onError();
+                    }
+
+                }
+                Log.d(LOG,"lite projects, before caching: " + pList.size());
+                FileOutputStream outputStream2 = null;
+                try {
+                    File dir = Environment.getExternalStorageDirectory();
+                    File filex = new File(dir, JSON_PROJECT_LITE);
+                    ResponseDTO z = new ResponseDTO();
+                    z.setProjectList(pList);
+                    String json2 = gson.toJson(z);
+                    outputStream2 = new FileOutputStream(filex);
+                    outputStream2.write(json2.getBytes());
+                    outputStream2.close();
+                    Log.w(LOG, "********** Project Lite list cached, list: "+pList.size()+" - fileLength: " + filex.length() + " " + filex.getAbsolutePath());
+
+
+                } catch (IOException e) {
+                    Log.e(LOG, "Cache failed", e);
+                    if (cacheUtilListener != null)
+                        cacheUtilListener.onError();
+                }
+
+
+            }
+        });
+
+    }
+
+    public static void cacheProject(final ProjectDTO project, final CacheUtilListener cacheUtilListener) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                String json = gson.toJson(project);
+                FileOutputStream outputStream;
+                try {
+                    File dir = Environment.getExternalStorageDirectory();
+                    File file = new File(dir, JSON_PROJECT + project.getProjectID());
+                    outputStream = new FileOutputStream(file);
+                    outputStream.write(json.getBytes());
+                    outputStream.close();
+                    Log.d(LOG, "Project cached: " + project.getProjectName() + " - " + file.getAbsolutePath());
+                    if (cacheUtilListener != null)
+                        cacheUtilListener.onDataCached();
+                } catch (IOException e) {
+                    Log.e(LOG, "Cache failed", e);
+                    if (cacheUtilListener != null)
+                        cacheUtilListener.onError();
+                }
+            }
+        });
+
+    }
+
+    public static void cacheTaskStatusTypes(final ResponseDTO r, final CacheUtilListener cacheUtilListener) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                String json = gson.toJson(r);
+                FileOutputStream outputStream = null;
+                try {
+                    File dir = Environment.getExternalStorageDirectory();
+                    File file = new File(dir, JSON_TASK_STATUS_TYPES);
+                    outputStream = new FileOutputStream(file);
+                    outputStream.write(json.getBytes());
+                    outputStream.close();
+                    Log.d(LOG, "&&&&&&&&& --> Status Types cached, list: " + r.getTaskStatusTypeList().size());
+
+                    if (cacheUtilListener != null)
+                        cacheUtilListener.onDataCached();
+                } catch (IOException e) {
+                    Log.e(LOG, "Cache failed", e);
+                    if (cacheUtilListener != null)
+                        cacheUtilListener.onError();
+                }
+            }
+        });
+
+    }
+
+    public static void cacheStaffList(final ResponseDTO r, final CacheUtilListener cacheUtilListener) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                String json = gson.toJson(r);
+                FileOutputStream outputStream = null;
+                try {
+                    File dir = Environment.getExternalStorageDirectory();
+                    File file = new File(dir, JSON_STAFF_LIST);
+                    outputStream = new FileOutputStream(file);
+                    outputStream.write(json.getBytes());
+                    outputStream.close();
+                    Log.w(LOG, "Staff List cached, list: " + r.getStaffList().size());
 
                     if (cacheUtilListener != null)
                         cacheUtilListener.onDataCached();
@@ -249,12 +393,128 @@ public class CacheUtil {
 
             }
         });
-        thread.start();
+
     }
 
-    public static void getCachedTrackerData(final Context context, final CacheUtilListener cacheUtilListener) {
+    public static void cacheMonitorList(final ResponseDTO r, final CacheUtilListener cacheUtilListener) {
 
-        Thread thread = new Thread(new Runnable() {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                String json = gson.toJson(r);
+                FileOutputStream outputStream = null;
+                try {
+                    File dir = Environment.getExternalStorageDirectory();
+                    File file = new File(dir, JSON_MONITOR_LIST);
+                    outputStream = new FileOutputStream(file);
+                    outputStream.write(json.getBytes());
+                    outputStream.close();
+
+                    if (cacheUtilListener != null)
+                        cacheUtilListener.onDataCached();
+                } catch (IOException e) {
+                    Log.e(LOG, "Cache failed", e);
+                    if (cacheUtilListener != null)
+                        cacheUtilListener.onError();
+                }
+            }
+        });
+
+    }
+
+    public interface ProjectListener {
+        void onProjectReturned(ProjectDTO project);
+
+        void onProjectsReturned(List<ProjectDTO> list);
+
+        void onCacheCleared(int count);
+    }
+
+    public static void getCachedProject(final Integer projectID, final ProjectListener listener) {
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                File dir = Environment.getExternalStorageDirectory();
+                File file = new File(dir, JSON_PROJECT + projectID);
+                FileInputStream stream = null;
+                ProjectDTO project;
+
+                try {
+                    stream = new FileInputStream(file);
+                    String json = getStringFromInputStream(stream);
+                    project = gson.fromJson(json, ProjectDTO.class);
+                    listener.onProjectReturned(project);
+                } catch (JsonSyntaxException e) {
+                    Log.e(LOG, "Error getting track cache: " + e.getMessage());
+                    listener.onProjectReturned(null);
+                } catch (Exception e) {
+                    listener.onProjectReturned(null);
+                }
+            }
+        });
+
+    }
+
+    public static void clearProjectCache(final ProjectListener listener) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("clearProjectCache ... clearing bloody cache");
+                File dir = Environment.getExternalStorageDirectory();
+                File[] files = dir.listFiles();
+                int count = 0;
+                for (File f : files) {
+                    if (f.isDirectory()) {
+                        continue;
+                    }
+                    if (f.getName().contains(JSON_PROJECT)) {
+                        boolean OK = f.delete();
+                        if (OK) {
+                            count++;
+                        }
+
+                    }
+                }
+                listener.onCacheCleared(count);
+            }
+        });
+
+    }
+
+    public static void getCachedProjectsLite(final ProjectListener listener) {
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                FileInputStream stream = null;
+                ResponseDTO response = new ResponseDTO();
+
+                try {
+                    File dir = Environment.getExternalStorageDirectory();
+                    File file = new File(dir, JSON_PROJECT_LITE);
+                    stream = new FileInputStream(file);
+                    String json = getStringFromInputStream(stream);
+                    response = gson.fromJson(json, ResponseDTO.class);
+                    if (response.getProjectList() == null) {
+                        response.setProjectList(new ArrayList<ProjectDTO>());
+                    }
+                    Log.d(LOG, "%%%%% should have projects ...list: " + response.getProjectList().size());
+                    listener.onProjectsReturned(response.getProjectList());
+                } catch (JsonSyntaxException e) {
+                    Log.e(LOG, "++++++++++++++++++++++Error getting track cache: " + e.getMessage());
+                    listener.onProjectsReturned(null);
+                } catch (Exception e) {
+                    Log.e(LOG, "+++++++++++++++ ERROR: ", e);
+                    listener.onProjectsReturned(null);
+                }
+            }
+        });
+
+    }
+
+    public static void getCachedTrackerData(final CacheUtilListener cacheUtilListener) {
+        AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 FileInputStream stream = null;
@@ -262,7 +522,9 @@ public class CacheUtil {
                 response.setLocationTrackerList(new ArrayList<LocationTrackerDTO>());
 
                 try {
-                    stream = context.openFileInput(JSON_TRACKER);
+                    File dir = Environment.getExternalStorageDirectory();
+                    File file = new File(dir, JSON_TRACKER);
+                    stream = new FileInputStream(file);
                     String json = getStringFromInputStream(stream);
                     response = gson.fromJson(json, ResponseDTO.class);
                     cacheUtilListener.onFileDataDeserialized(response);
@@ -273,10 +535,90 @@ public class CacheUtil {
                     Log.e(LOG, "## cache not found, starting new cache");
                     cacheUtilListener.onFileDataDeserialized(response);
                 }
+            }
+        });
+
+    }
+
+    public static void getCachedTaskStatusTypes(final CacheUtilListener cacheUtilListener) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                FileInputStream stream = null;
+                ResponseDTO response = new ResponseDTO();
+                response.setTaskStatusTypeList(new ArrayList<TaskStatusTypeDTO>());
+
+                try {
+                    File dir = Environment.getExternalStorageDirectory();
+                    File d = new File(dir, JSON_TASK_STATUS_TYPES);
+                    stream = new FileInputStream(d);
+                    String json = getStringFromInputStream(stream);
+                    response = gson.fromJson(json, ResponseDTO.class);
+                    cacheUtilListener.onFileDataDeserialized(response);
+                } catch (JsonSyntaxException e) {
+                    Log.e(LOG, "Error getting task status types cache: " + e.getMessage());
+                    cacheUtilListener.onFileDataDeserialized(response);
+                } catch (Exception e) {
+                    Log.e(LOG, "## cache not found, starting new cache");
+                    cacheUtilListener.onFileDataDeserialized(response);
+                }
 
             }
         });
-        thread.start();
+
+    }
+
+    public static void getCachedStaffList(final Context context, final CacheUtilListener cacheUtilListener) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                FileInputStream stream = null;
+                ResponseDTO response = new ResponseDTO();
+                response.setTaskStatusTypeList(new ArrayList<TaskStatusTypeDTO>());
+
+                try {
+                    File dir = Environment.getExternalStorageDirectory();
+                    File file = new File(dir, JSON_STAFF_LIST);
+                    stream = new FileInputStream(file);
+                    String json = getStringFromInputStream(stream);
+                    response = gson.fromJson(json, ResponseDTO.class);
+                    cacheUtilListener.onFileDataDeserialized(response);
+                } catch (JsonSyntaxException e) {
+                    Log.e(LOG, "Error getting staff list cache");
+                } catch (Exception e) {
+                    Log.e(LOG, "## cache not found, starting new cache");
+                    cacheUtilListener.onFileDataDeserialized(response);
+                }
+            }
+        });
+
+    }
+
+    public static void getCachedMonitorList(final CacheUtilListener cacheUtilListener) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                FileInputStream stream = null;
+                ResponseDTO response = new ResponseDTO();
+                response.setTaskStatusTypeList(new ArrayList<TaskStatusTypeDTO>());
+
+                try {
+                    File dir = Environment.getExternalStorageDirectory();
+                    File file = new File(dir, JSON_MONITOR_LIST);
+                    stream = new FileInputStream(file);
+                    String json = getStringFromInputStream(stream);
+                    response = gson.fromJson(json, ResponseDTO.class);
+                    cacheUtilListener.onFileDataDeserialized(response);
+                } catch (JsonSyntaxException e) {
+                    Log.e(LOG, "Error getting monitors cache: " + e.getMessage());
+                    cacheUtilListener.onFileDataDeserialized(response);
+                } catch (Exception e) {
+                    Log.e(LOG, "## cache not found, starting new cache");
+                    cacheUtilListener.onFileDataDeserialized(response);
+                }
+            }
+        });
+
     }
 
     public static void addMessage(final Context context, final SimpleMessageDTO s, final CacheUtilListener cacheUtilListener) {

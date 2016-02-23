@@ -30,7 +30,7 @@ import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
  * Fragment that builds and manages a list of ProjectTasks. User selects a task
  * and notifies the listener via onStatusUpdateRequested(projectTask,position);
  */
-public class ProjectTaskListFragment extends Fragment implements PageFragment{
+public class ProjectTaskListFragment extends Fragment implements PageFragment {
 
     ProjectDTO project;
     private View view;
@@ -43,22 +43,26 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
 
 
     private void buildList() {
-        projectTaskList = project.getProjectTaskList();
-        if (view != null) {
-            setList();
-        } else {
-            Log.e(LOG, "$%#$## WTF?");
+        if (project != null) {
+            projectTaskList = project.getProjectTaskList();
+            Log.d(LOG, "buildList projectTaskList: " + projectTaskList.size());
+            if (view != null) {
+                setList();
+            } else {
+                Log.e(LOG, "$%#$## WTF?");
+            }
         }
+
     }
 
 
-    public static ProjectTaskListFragment newInstance(ProjectDTO project) {
-        ProjectTaskListFragment fragment = new ProjectTaskListFragment();
-        Bundle args = new Bundle();
-        args.putSerializable("project", project);
-        fragment.setArguments(args);
-        return fragment;
-    }
+//    public static ProjectTaskListFragment newInstance(ProjectDTO project) {
+//        ProjectTaskListFragment fragment = new ProjectTaskListFragment();
+//        Bundle args = new Bundle();
+//        args.putSerializable("project", project);
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
     public ProjectTaskListFragment() {
     }
@@ -66,18 +70,18 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            project = (ProjectDTO) getArguments().getSerializable("project");
-        }
+//        if (getArguments() != null) {
+//            project = (ProjectDTO) getArguments().getSerializable("project");
+//        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_project_task_list, container, false);
-        Log.i(LOG,"++ onCreateView");
-        txtCount = (TextView)view.findViewById(R.id.PRH_count);
-        txtTaskType = (TextView)view.findViewById(R.id.PRH_programme);
+        Log.i(LOG, "++++++++++++++++ onCreateView");
+        txtCount = (TextView) view.findViewById(R.id.PRH_count);
+        txtTaskType = (TextView) view.findViewById(R.id.PRH_programme);
 
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
@@ -113,15 +117,16 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(LOG,"#### onResume");
+        Log.d(LOG, "#### onResume");
         buildList();
     }
+
 
     /**
      * Create new adapter to manage projectTaskList and set it to the RecyclerView
      */
     private void setList() {
-        Log.i(LOG,"+++ setList");
+        Log.i(LOG, "+++ ---------> setList");
         txtCount.setText("" + projectTaskList.size());
         if (projectTaskList.isEmpty()) {
             return;
@@ -131,7 +136,8 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
             @Override
             public void onTaskNameClicked(ProjectTaskDTO projTask, int position) {
                 projectTask = projTask;
-                mListener.onStatusUpdateRequested(projectTask,position);
+                if (mListener != null)
+                    mListener.onStatusUpdateRequested(projectTask, position);
             }
 
 
@@ -141,11 +147,13 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
         mRecyclerView.scrollToPosition(selectedIndex);
 
     }
+
     private ProjectTaskDTO projectTask;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        Log.d(LOG,"++ onAttach ...........");
+        Log.d(LOG, "++ onAttach ...........");
         try {
             mListener = (ProjectTaskListener) activity;
         } catch (ClassCastException e) {
@@ -153,15 +161,20 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
                     + " must implement StatusUpdateListener");
         }
     }
+
     ProjectTaskListener mListener;
 
     public void setProject(ProjectDTO project) {
         this.project = project;
         projectTaskList = project.getProjectTaskList();
         try {
+            if (view == null) {
+                Log.d(LOG, "view not created yet, setting project: " + project.getProgrammeName());
+                return;
+            }
             setList();
         } catch (Exception e) {
-            Log.e(LOG,"List failed",e);
+            Log.e(LOG, "List failed", e);
         }
     }
 
@@ -179,7 +192,9 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
     public void animateHeroHeight() {
 
     }
+
     String pageTitle;
+
     @Override
     public void setPageTitle(String title) {
         pageTitle = title;
@@ -191,6 +206,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
 //        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
 //        refWatcher.watch(this);
     }
+
     @Override
     public String getPageTitle() {
         return pageTitle;
@@ -198,7 +214,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
 
     public void refreshProjectTask(ProjectTaskDTO projectTask) {
 
-        for (ProjectTaskDTO x: projectTaskList) {
+        for (ProjectTaskDTO x : projectTaskList) {
             if (x.getProjectTaskID().intValue() == projectTask.getProjectTaskID().intValue()) {
                 x = projectTask;
                 projectTaskAdapter.notifyDataSetChanged();
@@ -206,16 +222,20 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment{
             }
         }
     }
+
     public void setDarkColor(int darkColor) {
         this.darkColor = darkColor;
     }
 
     public interface ProjectTaskListener {
         void onStatusUpdateRequested(ProjectTaskDTO task, int position);
+
         void onCameraRequested(ProjectDTO project);
 
     }
+
     int primaryColor, darkColor;
+
     @Override
     public void setThemeColors(int primaryColor, int darkColor) {
         this.primaryColor = primaryColor;

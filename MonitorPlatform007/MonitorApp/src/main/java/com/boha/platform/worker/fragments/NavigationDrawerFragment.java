@@ -32,6 +32,7 @@ import android.widget.TextView;
 import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
+import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.util.ImageUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Util;
@@ -246,13 +247,30 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
 
-        PhotoUploadDTO x = SharedUtil.getPhoto(getActivity());
-        if (x != null) {
-            setPicture(x);
-        }
+        setPicture(null);
     }
 
-    public void setPicture(PhotoUploadDTO photo) {
+    public void setPicture(PhotoUploadDTO p) {
+        PhotoUploadDTO photo = null;
+        if (p == null) {
+            MonitorDTO mon = SharedUtil.getMonitor(getActivity());
+            StaffDTO staff = SharedUtil.getCompanyStaff(getActivity());
+            if (mon != null) {
+                if (mon.getPhotoUploadList() != null) {
+                    photo = mon.getPhotoUploadList().get(0);
+                }
+            }
+            if (staff != null) {
+                if (staff.getPhotoUploadList() != null) {
+                    photo = staff.getPhotoUploadList().get(0);
+                }
+            }
+        } else {
+            photo = p;
+        }
+        if (photo == null) {
+            return;
+        }
 
         if (photo.getThumbFilePath() == null) {
             if (photo.getUri() != null) {

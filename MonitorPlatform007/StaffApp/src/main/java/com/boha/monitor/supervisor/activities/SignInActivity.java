@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.dto.GcmDeviceDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
@@ -32,6 +33,8 @@ import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.GCMUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
+import com.boha.monitor.library.util.Snappy;
+import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.supervisor.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -80,8 +83,7 @@ public class SignInActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         Log.d(LOG, "#################### onResume");
-        checkPermissions();
-        getEmail();
+       // checkPermissions();
         checkVirgin();
     }
     private void checkPermissions() {
@@ -126,10 +128,32 @@ public class SignInActivity extends AppCompatActivity {
                         MY_PERMISSIONS_GET_ACCOUNTS);
 
             }
+        } else {
+            getEmail();
+        }
+        if (ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE);
+
+            }
         }
     }
     static final int MY_PERMISSIONS_ACCESS_FINE_LOCATION = 83;
     static final int MY_PERMISSIONS_GET_ACCOUNTS = 85;
+    static final int MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE = 87;
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -157,6 +181,18 @@ public class SignInActivity extends AppCompatActivity {
                 }
                 return;
             }
+            case MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.w(LOG,"WRITE_EXTERNAL_STORAGE permission granted");
+                    registerGCMDevice();
+
+                } else {
+                    Log.e(LOG,"WRITE_EXTERNAL_STORAGE permission denied");
+
+                }
+                return;
+            }
 
             // other 'case' lines to check for other
             // permissions this app might request
@@ -169,6 +205,8 @@ public class SignInActivity extends AppCompatActivity {
      * @see StaffMainActivity
      */
     private void checkVirgin() {
+
+
 
         StaffDTO dto = SharedUtil.getCompanyStaff(ctx);
         if (dto != null) {
@@ -189,10 +227,7 @@ public class SignInActivity extends AppCompatActivity {
         registerGCMDevice();
     }
 
-    /**
-     * Register device to Google Cloud Messaging
-     */
-    public void registerGCMDevice() {
+    private void buildDevice() {
         gcmDevice = new GcmDeviceDTO();
         gcmDevice.setManufacturer(Build.MANUFACTURER);
         gcmDevice.setModel(Build.MODEL);
@@ -201,6 +236,12 @@ public class SignInActivity extends AppCompatActivity {
         gcmDevice.setProduct(Build.PRODUCT);
         gcmDevice.setApp(ctx.getPackageName());
 
+    }
+    /**
+     * Register device to Google Cloud Messaging
+     */
+    public void registerGCMDevice() {
+        buildDevice();
         Snackbar.make(btnSave, "Just a second, checking services ...", Snackbar.LENGTH_LONG)
                 .setAction("CLOSE", null)
                 .show();
@@ -218,8 +259,9 @@ public class SignInActivity extends AppCompatActivity {
                     if (gcmOnly) {
                         RequestDTO w = new RequestDTO(RequestDTO.UPDATE_STAFF_DEVICE);
                         StaffDTO staff = SharedUtil.getCompanyStaff(ctx);
-                        gcmDevice.setStaff(staff);
+                        gcmDevice.setStaffID(staff.getStaffID());
                         w.setGcmDevice(gcmDevice);
+                        w.setZipResponse(false);
                         //update staff device on server
                         NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
                             @Override
@@ -284,6 +326,9 @@ public class SignInActivity extends AppCompatActivity {
         r.setEmail(email);
         r.setPin(ePin.getText().toString());
         gcmDevice = SharedUtil.getGCMDevice(ctx);
+        if (gcmDevice == null) {
+            buildDevice();
+        }
         if (gcmDevice.getRegistrationID() != null) {
             r.setGcmDevice(gcmDevice);
         }
@@ -318,22 +363,10 @@ public class SignInActivity extends AppCompatActivity {
                                     + response.getStaff().getStaffID());
                         } catch (Exception e) {//ignore}
                         }
-                        CacheUtil.cacheStaffData(ctx, response, new CacheUtil.CacheUtilListener() {
-                            @Override
-                            public void onFileDataDeserialized(ResponseDTO response) {
-                            }
+                        startSnappy(response);
+                        Intent m = new Intent(ctx, ThemeSelectorActivity.class);
+                        startActivity(m);
 
-                            @Override
-                            public void onDataCached() {
-                                Intent intent = new Intent(ctx, StaffMainActivity.class);
-                                intent.putExtra("justSignedIn", true);
-                                startActivity(intent);
-                            }
-
-                            @Override
-                            public void onError() {
-                            }
-                        });
                     }
                 });
             }
@@ -355,7 +388,53 @@ public class SignInActivity extends AppCompatActivity {
 
 
     }
+    private void startSnappy(final ResponseDTO response) {
 
+        Log.e(LOG, "################### START cachingService for: status types, projects, staff and monitors......");
+
+        Snappy.writeProjectList(ctx, response.getProjectList(), new Snappy.SnappyWriteListener() {
+            @Override
+            public void onDataWritten() {
+                Snappy.writeStaffList(ctx, response.getStaffList(), new Snappy.SnappyWriteListener() {
+                    @Override
+                    public void onDataWritten() {
+                        Snappy.writeMonitorList(ctx, response.getMonitorList(), new Snappy.SnappyWriteListener() {
+                            @Override
+                            public void onDataWritten() {
+                                Snappy.writeTaskStatusTypeList(ctx, response.getTaskStatusTypeList(), new Snappy.SnappyWriteListener() {
+                                    @Override
+                                    public void onDataWritten() {
+                                        Log.e(LOG, "Yeaaaah!! Data written to SnappyDB");
+                                    }
+
+                                    @Override
+                                    public void onError(String message) {
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onError(String message) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String message) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String message) {
+
+            }
+        });
+
+    }
     public void setFields() {
         ePin = (EditText) findViewById(R.id.SI_pin);
         editEmail = (EditText) findViewById(R.id.SI_editEmail);
@@ -363,7 +442,7 @@ public class SignInActivity extends AppCompatActivity {
         label = (TextView) findViewById(R.id.SI_welcome);
         txtApp = (TextView) findViewById(R.id.SI_app);
         btnSave = (Button) findViewById(R.id.btnRed);
-        txtApp.setText("Company Staff");
+        txtApp.setText("Monitor Supervisor");
         btnSave.setText("Sign In");
         btnSave.setEnabled(true);
 
@@ -454,12 +533,12 @@ public class SignInActivity extends AppCompatActivity {
 
 
     public void getEmail() {
-        Log.d(LOG,"getEmail accounts");
-        if (ContextCompat.checkSelfPermission(this,Manifest.permission.GET_ACCOUNTS)
-                != PackageManager.PERMISSION_GRANTED) {
-            checkPermissions();
-            return;
-        }
+        Log.d(LOG,"getEmail accounts...............");
+//        if (ContextCompat.checkSelfPermission(this,Manifest.permission.GET_ACCOUNTS)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            checkPermissions();
+//            return;
+//        }
         Log.d(LOG,"... getting AccountManager");
         AccountManager am = AccountManager.get(getApplicationContext());
         Account[] accts = am.getAccounts();

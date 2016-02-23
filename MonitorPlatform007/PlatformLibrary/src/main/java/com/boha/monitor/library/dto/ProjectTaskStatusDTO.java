@@ -17,13 +17,21 @@ public class ProjectTaskStatusDTO implements Serializable, Comparable<ProjectTas
     private Integer projectTaskStatusID;
     private Long statusDate;
     private Long dateUpdated,localID;
-    private ProjectTaskDTO projectTask;
+    private Integer projectTaskID;
     private TaskStatusTypeDTO taskStatusType;
     private Integer staffID;
     private Integer monitorID;
-    private String staffName, monitorName;
+    private String staffName, monitorName, taskName;
 
     public ProjectTaskStatusDTO() {
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 
     public Integer getProjectTaskStatusID() {
@@ -58,12 +66,12 @@ public class ProjectTaskStatusDTO implements Serializable, Comparable<ProjectTas
         this.localID = localID;
     }
 
-    public ProjectTaskDTO getProjectTask() {
-        return projectTask;
+    public Integer getProjectTaskID() {
+        return projectTaskID;
     }
 
-    public void setProjectTask(ProjectTaskDTO projectTask) {
-        this.projectTask = projectTask;
+    public void setProjectTaskID(Integer projectTaskID) {
+        this.projectTaskID = projectTaskID;
     }
 
     public TaskStatusTypeDTO getTaskStatusType() {

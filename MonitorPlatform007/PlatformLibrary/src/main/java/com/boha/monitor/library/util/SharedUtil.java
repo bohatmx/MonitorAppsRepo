@@ -40,6 +40,7 @@ public class SharedUtil {
             LOG = "SharedUtil",
             REMINDER_TIME = "reminderTime",
             APP_VERSION = "appVersion";
+
     public static void setThemeSelection(Context ctx, int theme) {
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -51,6 +52,7 @@ public class SharedUtil {
         Log.w(LOG, "#### theme saved: " + theme);
 
     }
+
     public static int getThemeSelection(Context ctx) {
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -58,6 +60,7 @@ public class SharedUtil {
         Log.i(LOG, "#### theme retrieved: " + j);
         return j;
     }
+
     public static void setDrawerCount(Context ctx, int count) {
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -65,14 +68,17 @@ public class SharedUtil {
         ed.putInt(DRAWER, count);
         ed.commit();
     }
-    public static int getDrawerCount( Context context) {
+
+    public static int getDrawerCount(Context context) {
         final SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(context);
         int count = prefs.getInt(DRAWER, 0);
 
         return count;
     }
+
     public static final int MAX_SLIDING_TAB_VIEWS = 1000;
+
     /**
      * Stores the registration ID and app versionCode in the application's
      * {@code SharedPreferences}.
@@ -80,7 +86,7 @@ public class SharedUtil {
      * @param context application's context.
      * @param regId   registration ID
      */
-    public static void storeRegistrationId( Context context, String regId) {
+    public static void storeRegistrationId(Context context, String regId) {
         final SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(context);
         int appVersion = getAppVersion(context);
@@ -100,7 +106,7 @@ public class SharedUtil {
      * @return registration ID, or empty string if there is no existing
      * registration ID.
      */
-    public static String getRegistrationId( Context context) {
+    public static String getRegistrationId(Context context) {
         final SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(context);
         String registrationId = prefs.getString(GCM_REGISTRATION_ID, null);
@@ -119,7 +125,8 @@ public class SharedUtil {
         }
         return registrationId;
     }
-    public static void saveReminderTime( Context ctx,  Date date) {
+
+    public static void saveReminderTime(Context ctx, Date date) {
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -129,7 +136,7 @@ public class SharedUtil {
         Log.e("SharedUtil", "%%%%% reminderTime: " + date + " saved in SharedPreferences");
     }
 
-    public static Date getReminderTime( Context ctx) {
+    public static Date getReminderTime(Context ctx) {
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -141,7 +148,8 @@ public class SharedUtil {
         }
         return new Date(t);
     }
-    public static void saveSessionID( Context ctx, String sessionID) {
+
+    public static void saveSessionID(Context ctx, String sessionID) {
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -152,13 +160,14 @@ public class SharedUtil {
     }
 
 
-    public static String getSessionID( Context ctx) {
+    public static String getSessionID(Context ctx) {
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
         return sp.getString(SESSION_ID, null);
     }
-    public static void saveMonitor( Context ctx,  MonitorDTO dto) {
+
+    public static void saveMonitor(Context ctx, MonitorDTO dto) {
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -170,7 +179,7 @@ public class SharedUtil {
     }
 
 
-    public static MonitorDTO getMonitor( Context ctx) {
+    public static MonitorDTO getMonitor(Context ctx) {
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -182,7 +191,8 @@ public class SharedUtil {
         }
         return monitorDTO;
     }
-    public static void saveCompanyStaff( Context ctx,  StaffDTO dto) {
+
+    public static void saveCompanyStaff(Context ctx, StaffDTO dto) {
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -194,7 +204,7 @@ public class SharedUtil {
     }
 
 
-    public static StaffDTO getCompanyStaff( Context ctx) {
+    public static StaffDTO getCompanyStaff(Context ctx) {
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -206,7 +216,8 @@ public class SharedUtil {
         }
         return golfGroup;
     }
-    public static void saveCompany( Context ctx,  CompanyDTO dto) {
+
+    public static void saveCompany(Context ctx, CompanyDTO dto) {
 
         CompanyDTO xx = new CompanyDTO();
         xx.setCompanyName(dto.getCompanyName());
@@ -222,7 +233,7 @@ public class SharedUtil {
     }
 
 
-    public static CompanyDTO getCompany( Context ctx) {
+    public static CompanyDTO getCompany(Context ctx) {
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -235,7 +246,7 @@ public class SharedUtil {
         return co;
     }
 
-    public static void saveCreditCard( Context ctx,  CreditCardDTO dto) {
+    public static void saveCreditCard(Context ctx, CreditCardDTO dto) {
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -247,7 +258,7 @@ public class SharedUtil {
     }
 
 
-    public static CreditCardDTO getCreditCard( Context ctx) {
+    public static CreditCardDTO getCreditCard(Context ctx) {
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -260,7 +271,7 @@ public class SharedUtil {
         return co;
     }
 
-    public static void saveGCMDevice( Context ctx,  GcmDeviceDTO dto) {
+    public static void saveGCMDevice(Context ctx, GcmDeviceDTO dto) {
 
 
         SharedPreferences sp = PreferenceManager
@@ -273,7 +284,7 @@ public class SharedUtil {
     }
 
 
-    public static GcmDeviceDTO getGCMDevice( Context ctx) {
+    public static GcmDeviceDTO getGCMDevice(Context ctx) {
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -283,11 +294,12 @@ public class SharedUtil {
             co = gson.fromJson(adm, GcmDeviceDTO.class);
 
         }
-        Log.e("SharedUtil", "%%%%% Device found in SharedPreferences: " + co.getModel());
+        if (co != null)
+            Log.e("SharedUtil", "%%%%% Device found in SharedPreferences: " + co.getModel());
         return co;
     }
 
-    public static void savePhoto( Context ctx,  PhotoUploadDTO dto) {
+    public static void savePhoto(Context ctx, PhotoUploadDTO dto) {
 
 
         SharedPreferences sp = PreferenceManager
@@ -300,7 +312,7 @@ public class SharedUtil {
     }
 
 
-    public static PhotoUploadDTO getPhoto( Context ctx) {
+    public static PhotoUploadDTO getPhoto(Context ctx) {
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -317,7 +329,7 @@ public class SharedUtil {
     /**
      * @return Application's version code from the {@code PackageManager}.
      */
-    public static int getAppVersion( Context context) {
+    public static int getAppVersion(Context context) {
         try {
             PackageInfo packageInfo = context.getPackageManager()
                     .getPackageInfo(context.getPackageName(), 0);
@@ -329,7 +341,7 @@ public class SharedUtil {
     }
 
 
-    public static void saveLastProjectID( Context ctx, Integer projectID) {
+    public static void saveLastProjectID(Context ctx, Integer projectID) {
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
@@ -339,7 +351,7 @@ public class SharedUtil {
         Log.e("SharedUtil", "%%%%% projectID: " + projectID + " saved in SharedPreferences");
     }
 
-    public static Integer getLastProjectID( Context ctx) {
+    public static Integer getLastProjectID(Context ctx) {
 
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);

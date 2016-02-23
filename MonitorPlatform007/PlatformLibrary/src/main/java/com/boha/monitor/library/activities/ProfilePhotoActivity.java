@@ -547,7 +547,6 @@ public class ProfilePhotoActivity extends AppCompatActivity {
         }
 
         dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
-        dto.setThumbFlag(1);
         dto.setDateTaken(new Date().getTime());
 
 

@@ -68,5 +68,12 @@
     <string name="select_media">Please select the media you want to use for this update. Video clips should be no longer than 2 minutes long.</string>
     <string name="title_activity_photo_scroller">PhotoScrollerActivity</string>
     <string name="title_activity_location_tracker">LocationTrackerActivity</string>
+    <string name="proj_assgn">Project Assignments</string>
+    <string name="title_activity_project_assignment">ProjectAssignmentActivity</string>
+    <string name="req_deviceloc">Request Device Location</string>
+    <string name="upd_profile">Update Profile</string>
+    <string name="generate_pin">Generate new PIN</string>
+    <string name="title_activity_high_def">HighDefActivity</string>
+    <string name="title_activity_project_selection">ProjectSelectionActivity</string>
 
 </resources>

@@ -6,6 +6,7 @@ package com.boha.monitor.library.util;
  */
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 
@@ -39,16 +40,15 @@ public class GCMUtil {
      * Start device registration to Google Cloud Messaging
      * Receive GCM registration string and complete GCM registration by calling back-end
      *
-     * @see com.boha.monitor.library.util.GCMUtil.GCMUtilListener
      * @param context
      * @param listener
+     * @see com.boha.monitor.library.util.GCMUtil.GCMUtilListener
      */
     public static void startGCMRegistration(final Context context, final GCMUtilListener listener) {
         ctx = context;
         gcmUtilListener = listener;
         weCool = false;
-
-        Thread gcmThread = new Thread(new Runnable() {
+        AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 Log.e(LOG, "... startin GCM registration");
@@ -56,12 +56,14 @@ public class GCMUtil {
                     if (gcm == null) {
                         gcm = GoogleCloudMessaging.getInstance(ctx);
                     }
+
                     registrationID = gcm.register(context.getString(R.string.gcm_sender_id));
                     msg = "Device registered, registration ID = \n" + registrationID;
                     SharedUtil.storeRegistrationId(ctx, registrationID);
                     RequestDTO w = new RequestDTO();
                     w.setRequestType(RequestDTO.SEND_GCM_REGISTRATION);
                     w.setGcmRegistrationID(registrationID);
+                    w.setZipResponse(false);
                     NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
                         @Override
                         public void onResponse(final ResponseDTO response) {
@@ -75,7 +77,7 @@ public class GCMUtil {
                                 gcmDevice.setProduct(Build.PRODUCT);
                                 gcmDevice.setApp(ctx.getPackageName());
                                 gcmDevice.setRegistrationID(registrationID);
-                                SharedUtil.saveGCMDevice(ctx,gcmDevice);
+                                SharedUtil.saveGCMDevice(ctx, gcmDevice);
                                 weCool = true;
                                 listener.onDeviceRegistered(registrationID);
                             }
@@ -100,9 +102,9 @@ public class GCMUtil {
                 }
             }
         });
-        gcmThread.start();
-    }
 
+
+    }
 
 
 }
