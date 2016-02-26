@@ -58,7 +58,7 @@ public class ProjectTaskAdapter extends RecyclerView.Adapter<ProjectTaskAdapter.
     public void onBindViewHolder(final TaskViewHolder holder, final int position) {
 
         final ProjectTaskDTO p = projectTaskList.get(position);
-
+        Log.w("ProjectTaskAdapter","onBindViewHolder " + p.getTask().getTaskName());
         holder.txtStatusColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xgrey_oval_small));
         holder.txtStatusColor.setHeight(20);
         holder.txtStatusColor.setWidth(20);

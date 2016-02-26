@@ -14,10 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.ProjectTaskAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.util.SimpleDividerItemDecoration;
+import com.boha.monitor.library.util.Snappy;
+import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
@@ -40,21 +43,53 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment {
     private ProjectTaskAdapter projectTaskAdapter;
     private FloatingActionButton fab;
     static final String LOG = ProjectTaskListFragment.class.getSimpleName();
+    MonApp monApp;
 
+    public MonApp getMonApp() {
+        return monApp;
+    }
 
-    private void buildList() {
-        if (project != null) {
-            projectTaskList = project.getProjectTaskList();
-            Log.d(LOG, "buildList projectTaskList: " + projectTaskList.size());
-            if (view != null) {
-                setList();
-            } else {
-                Log.e(LOG, "$%#$## WTF?");
+    public void setMonApp(MonApp monApp) {
+        this.monApp = monApp;
+    }
+
+    public void buildList() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (project != null) {
+                    Snappy.getProject(monApp, project.getProjectID(), new Snappy.SnappyProjectListener() {
+                        @Override
+                        public void onProjectFound(ProjectDTO p) {
+                            project = p;
+                            projectTaskList = project.getProjectTaskList();
+                            Log.w(LOG, "Project from Snappy. tasks: " + projectTaskList.size());
+                            if (view != null) {
+                                setList();
+                            } else {
+                                Log.e(LOG, "$%#$## WTF?");
+                            }
+                        }
+
+                        @Override
+                        public void onError() {
+                            Util.showErrorToast(getActivity(),"Unable to get project from cache");
+                        }
+                    });
+
+                } else {
+                    Log.e(LOG, "buildList, project is NULL so have not accessed Snappy");
+                }
             }
-        }
+        });
+
 
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle b) {
+        Log.d(LOG, "onSaveInstanceState");
+    }
 
 //    public static ProjectTaskListFragment newInstance(ProjectDTO project) {
 //        ProjectTaskListFragment fragment = new ProjectTaskListFragment();
@@ -117,7 +152,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(LOG, "#### onResume");
+        Log.d(LOG, "#### onResume, about to buildList");
         buildList();
     }
 
@@ -126,9 +161,9 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment {
      * Create new adapter to manage projectTaskList and set it to the RecyclerView
      */
     private void setList() {
-        Log.i(LOG, "+++ ---------> setList");
         txtCount.setText("" + projectTaskList.size());
         if (projectTaskList.isEmpty()) {
+            Log.e(LOG, "++++++++ projectTaskList is NULL, bypassing setList");
             return;
         }
 
@@ -142,7 +177,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment {
 
 
         });
-
+        Log.w(LOG, ".....about to set mRecyclerView adapter");
         mRecyclerView.setAdapter(projectTaskAdapter);
         mRecyclerView.scrollToPosition(selectedIndex);
 
@@ -153,7 +188,6 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        Log.d(LOG, "++ onAttach ...........");
         try {
             mListener = (ProjectTaskListener) activity;
         } catch (ClassCastException e) {
@@ -167,15 +201,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment {
     public void setProject(ProjectDTO project) {
         this.project = project;
         projectTaskList = project.getProjectTaskList();
-        try {
-            if (view == null) {
-                Log.d(LOG, "view not created yet, setting project: " + project.getProgrammeName());
-                return;
-            }
-            setList();
-        } catch (Exception e) {
-            Log.e(LOG, "List failed", e);
-        }
+
     }
 
     public void setListener(ProjectTaskListener mListener) {

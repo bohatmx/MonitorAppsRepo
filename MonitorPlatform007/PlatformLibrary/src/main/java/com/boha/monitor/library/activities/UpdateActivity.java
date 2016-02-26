@@ -25,6 +25,7 @@ import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.fragments.MediaDialogFragment;
+import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.fragments.ProjectTaskListFragment;
 import com.boha.monitor.library.fragments.TaskStatusUpdateFragment;
 import com.boha.monitor.library.fragments.TaskTypeListFragment;
@@ -33,6 +34,7 @@ import com.boha.monitor.library.services.RequestSyncService;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
+import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.library.util.WebCheck;
@@ -85,44 +87,24 @@ public class UpdateActivity extends AppCompatActivity
             if (savedInstanceState != null) {
                 return;
             }
-//            getProjectTasks();
-            addTaskFragment();
+            getRealProject();
         }
     }
 
-    private void getProjectTasks() {
-        RequestDTO w = new RequestDTO(RequestDTO.GET_PROJECT_TASKS);
-        w.setProjectID(project.getProjectID());
-
-        NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {
-            @Override
-            public void onResponse(final ResponseDTO response) {
-                runOnUiThread(new Runnable() {
+    private void getRealProject() {
+        Snappy.getProject((MonApp) getApplication(),
+                project.getProjectID(), new Snappy.SnappyProjectListener() {
                     @Override
-                    public void run() {
-                        if (response.getStatusCode() == 0) {
-                            project.setProjectTaskList(response.getProjectTaskList());
-                            if (projectTaskListFragment != null) {
-                                projectTaskListFragment.setProject(project);
-                            }
-                        } else {
-                            Util.showErrorToast(getApplicationContext(), response.getMessage());
-                        }
+                    public void onProjectFound(ProjectDTO p) {
+                        project = p;
+                        addTaskFragment();
+                    }
+
+                    @Override
+                    public void onError() {
+                        Util.showErrorToast(getApplicationContext(),"Unable to get project from cache");
                     }
                 });
-
-            }
-
-            @Override
-            public void onError(final String message) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Util.showErrorToast(getApplicationContext(), message);
-                    }
-                });
-            }
-        });
     }
 
     private void addTaskFragment() {
@@ -131,9 +113,11 @@ public class UpdateActivity extends AppCompatActivity
 
         //ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
         projectTaskListFragment = new ProjectTaskListFragment();
+        projectTaskListFragment.setMonApp((MonApp) getApplication());
         projectTaskListFragment.setThemeColors(primaryColor, darkColor);
         projectTaskListFragment.setListener(this);
         projectTaskListFragment.setProject(project);
+
         ft.add(R.id.frameLayout, projectTaskListFragment);
         ft.commit();
     }
@@ -144,9 +128,11 @@ public class UpdateActivity extends AppCompatActivity
 
         //ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
         taskStatusUpdateFragment = new TaskStatusUpdateFragment();
+        taskStatusUpdateFragment.setMonApp((MonApp) getApplication());
         taskStatusUpdateFragment.setProjectTask(projectTask);
         taskStatusUpdateFragment.setThemeColors(primaryColor, darkColor);
         taskStatusUpdateFragment.setListener(this);
+
         ft.replace(R.id.frameLayout, taskStatusUpdateFragment);
         ft.commit();
     }
@@ -239,27 +225,22 @@ public class UpdateActivity extends AppCompatActivity
      * A project task has had its status updated. Insert new status
      * into the projectTask status list and let fragment resfresh its ui
      *
-     * @param projectTask
-     * @param projectTaskStatus
+     * @param p
      */
     @Override
-    public void onStatusComplete(ProjectTaskDTO projectTask,
-                                 ProjectTaskStatusDTO projectTaskStatus) {
-        Log.i(LOG, "onStatusComplete ... add new status to project..and cache");
+    public void onStatusComplete(final ProjectDTO p) {
+        Log.i(LOG, "onStatusComplete ... projectTaskListFragment.buildList");
         statusCompleted = true;
-        for (ProjectTaskDTO m : project.getProjectTaskList()) {
-            if (m.getProjectTaskID().intValue() == projectTask.getProjectTaskID().intValue()) {
-                if (m.getProjectTaskStatusList() == null) {
-                    m.setProjectTaskStatusList(new ArrayList<ProjectTaskStatusDTO>());
-                }
-                m.getProjectTaskStatusList().add(0, projectTaskStatus);
-                break;
+        project = p;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                replaceWithTaskList();
+                isStatusUpdate = false;
             }
-        }
-        replaceWithTaskList();
-        projectTaskListFragment.setProject(project);
-        cacheProject();
-        isStatusUpdate = false;
+        });
+
+
     }
 
     boolean statusCompleted;
@@ -269,7 +250,9 @@ public class UpdateActivity extends AppCompatActivity
         FragmentTransaction ft = fm.beginTransaction();
         ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
         projectTaskListFragment = new ProjectTaskListFragment();
+        projectTaskListFragment.setMonApp((MonApp) getApplication());
         projectTaskListFragment.setListener(this);
+        projectTaskListFragment.setProject(project);
         projectTaskListFragment.setThemeColors(primaryColor, darkColor);
         projectTaskListFragment.setSelectedIndex(position);
 
@@ -300,6 +283,7 @@ public class UpdateActivity extends AppCompatActivity
                 if (resCode == RESULT_OK) {
                     boolean isTaken = data.getBooleanExtra("pictureTakenOK", false);
                     taskStatusUpdateFragment.onPictureTaken(isTaken);
+                    statusCompleted = true;
                 } else {
                     taskStatusUpdateFragment.onPictureTaken(false);
                 }
@@ -363,27 +347,6 @@ public class UpdateActivity extends AppCompatActivity
 
     }
 
-    private void cacheProject() {
-        Log.e(LOG, "cacheProject ....");
-        cachingBusy = true;
-        CacheUtil.cacheProject(project, new CacheUtil.CacheUtilListener() {
-            @Override
-            public void onFileDataDeserialized(ResponseDTO response) {
-
-            }
-
-            @Override
-            public void onDataCached() {
-                cachingBusy = false;
-            }
-
-            @Override
-            public void onError() {
-
-            }
-        });
-
-    }
 
     @Override
     public void onBackPressed() {
@@ -451,8 +414,8 @@ public class UpdateActivity extends AppCompatActivity
         Intent intent = new Intent(this, PhotoUploadService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
-        Intent intentw = new Intent(this, RequestSyncService.class);
-        bindService(intentw, rConnection, Context.BIND_AUTO_CREATE);
+//        Intent intentw = new Intent(this, RequestSyncService.class);
+//        bindService(intentw, rConnection, Context.BIND_AUTO_CREATE);
 
     }
 
@@ -464,56 +427,56 @@ public class UpdateActivity extends AppCompatActivity
             unbindService(mConnection);
             mBound = false;
         }
-        if (rBound) {
-            unbindService(rConnection);
-            rBound = false;
-        }
+//        if (rBound) {
+//            unbindService(rConnection);
+//            rBound = false;
+//        }
 
     }
 
     boolean mBound, rBound;
     PhotoUploadService mService;
-    RequestSyncService rService;
+//    RequestSyncService rService;
 
 
-    private ServiceConnection rConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            Log.w(LOG, "## RequestSyncService ServiceConnection onServiceConnected");
-            RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
-            rService = binder.getService();
-            rBound = true;
-            rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
-                @Override
-                public void onTasksSynced(int goodResponses, int badResponses) {
-                    Log.i(LOG, "## onTasksSynced, goodResponses: " + goodResponses + " badResponses: " + badResponses);
-                    if (goodResponses > 0) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                refreshData(project.getProjectID());
-                            }
-                        });
-
-                    }
-                }
-
-                @Override
-                public void onError(String message) {
-                    Log.e(LOG, "Error with sync: " + message);
-                }
-            });
-
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            Log.w(LOG, "## RequestSyncService onServiceDisconnected");
-            mBound = false;
-        }
-    };
+//    private ServiceConnection rConnection = new ServiceConnection() {
+//
+//        @Override
+//        public void onServiceConnected(ComponentName className,
+//                                       IBinder service) {
+//            Log.w(LOG, "## RequestSyncService ServiceConnection onServiceConnected");
+//            RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
+//            rService = binder.getService();
+//            rBound = true;
+//            rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
+//                @Override
+//                public void onTasksSynced(int goodResponses, int badResponses) {
+//                    Log.i(LOG, "## onTasksSynced, goodResponses: " + goodResponses + " badResponses: " + badResponses);
+//                    if (goodResponses > 0) {
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                refreshData(project.getProjectID());
+//                            }
+//                        });
+//
+//                    }
+//                }
+//
+//                @Override
+//                public void onError(String message) {
+//                    Log.e(LOG, "Error with sync: " + message);
+//                }
+//            });
+//
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName arg0) {
+//            Log.w(LOG, "## RequestSyncService onServiceDisconnected");
+//            mBound = false;
+//        }
+//    };
 
     private ServiceConnection mConnection = new ServiceConnection() {
 

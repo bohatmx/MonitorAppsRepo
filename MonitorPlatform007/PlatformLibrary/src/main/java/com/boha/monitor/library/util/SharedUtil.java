@@ -83,7 +83,7 @@ public class SharedUtil {
      * Stores the registration ID and app versionCode in the application's
      * {@code SharedPreferences}.
      *
-     * @param context application's context.
+     * @param context application's monApp.
      * @param regId   registration ID
      */
     public static void storeRegistrationId(Context context, String regId) {

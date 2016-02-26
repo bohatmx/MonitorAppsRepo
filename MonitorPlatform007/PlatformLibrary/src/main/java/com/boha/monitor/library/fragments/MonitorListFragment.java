@@ -24,6 +24,7 @@ import android.widget.ListPopupWindow;
 import android.widget.TextView;
 
 import com.boha.monitor.library.activities.HighDefActivity;
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.MonitorListAdapter;
 import com.boha.monitor.library.adapters.PopupListIconAdapter;
 import com.boha.monitor.library.dto.MonitorDTO;
@@ -71,12 +72,21 @@ public class MonitorListFragment extends Fragment implements PageFragment {
     ImageView hero;
     View actionsView, handle;
     int type;
+    MonApp monApp;
 
+    public MonApp getMonApp() {
+        return monApp;
+    }
+
+    public void setMonApp(MonApp monApp) {
+        this.monApp = monApp;
+    }
     ImageView iconClose, iconCloseActions;
     TextView txtPerson, txtFromMsg, txtTotal;
     EditText editMessage;
     Button btnSend, btnLoc, btnMsg;
     SlidingUpPanelLayout paneLayout;
+
 
     public static final int STAFF = 1, MONITOR = 2;
     static final String LOG = MonitorListFragment.class.getSimpleName();
@@ -205,7 +215,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
     }
 
     public void getMonitorList() {
-        Snappy.getMonitorList(getActivity(), new Snappy.SnappyReadListener() {
+        Snappy.getMonitorList(monApp, new Snappy.SnappyReadListener() {
             @Override
             public void onDataRead(final ResponseDTO response) {
                 if (getActivity() != null) {

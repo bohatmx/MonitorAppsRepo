@@ -18,7 +18,9 @@ public class ProjectDTO implements Serializable {
     private List<PhotoUploadDTO> photoUploadList;
     private static final long serialVersionUID = 1L;
     private Integer projectID, cityID,companyID;
-    private Integer programmeID, portfolioID, statusCount, photoCount;
+    private Integer programmeID, portfolioID,
+            statusCount = 0, photoCount = 0, projectTaskCount = 0,
+            monitorCount = 0, staffCount = 0;
     private String projectName;
     private Double latitude;
     private Double longitude;
@@ -35,8 +37,41 @@ public class ProjectDTO implements Serializable {
     private List<StaffDTO> staffList;
     private ProjectTaskStatusDTO lastStatus;
     private Boolean selected = Boolean.FALSE;
+    private Long dateUploaded;
 
     public ProjectDTO() {
+    }
+
+    public Long getDateUploaded() {
+        return dateUploaded;
+    }
+
+    public Integer getProjectTaskCount() {
+        return projectTaskCount;
+    }
+
+    public void setProjectTaskCount(Integer projectTaskCount) {
+        this.projectTaskCount = projectTaskCount;
+    }
+
+    public Integer getMonitorCount() {
+        return monitorCount;
+    }
+
+    public void setMonitorCount(Integer monitorCount) {
+        this.monitorCount = monitorCount;
+    }
+
+    public Integer getStaffCount() {
+        return staffCount;
+    }
+
+    public void setStaffCount(Integer staffCount) {
+        this.staffCount = staffCount;
+    }
+
+    public void setDateUploaded(Long dateUploaded) {
+        this.dateUploaded = dateUploaded;
     }
 
     public Integer getCompanyID() {

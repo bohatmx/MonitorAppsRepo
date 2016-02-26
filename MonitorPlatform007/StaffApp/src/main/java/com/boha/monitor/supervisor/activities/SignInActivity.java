@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.dto.GcmDeviceDTO;
 import com.boha.monitor.library.dto.RequestDTO;
@@ -77,6 +78,8 @@ public class SignInActivity extends AppCompatActivity {
         setFields();
         banner.setImageDrawable(Util.getRandomBackgroundImage(ctx));
 
+        MonApp app = (MonApp) getApplication();
+        app.getSnappyDB();
     }
 
     @Override
@@ -246,14 +249,12 @@ public class SignInActivity extends AppCompatActivity {
                 .setAction("CLOSE", null)
                 .show();
         boolean ok = checkPlayServices();
-        setBusyIndicator(true);
         if (ok) {
             Log.e(LOG, "############# Starting Google Cloud Messaging registration");
             GCMUtil.startGCMRegistration(getApplicationContext(), new GCMUtil.GCMUtilListener() {
                 @Override
                 public void onDeviceRegistered(String id) {
                     Log.i(LOG, "############# GCM - we cool, GcmDeviceDTO waiting to be sent with signin .....: " + id);
-                    setBusyIndicator(false);
                     gcmDevice.setRegistrationID(id);
                     SharedUtil.saveGCMDevice(ctx, gcmDevice);
                     if (gcmOnly) {
@@ -392,6 +393,7 @@ public class SignInActivity extends AppCompatActivity {
 
         Log.e(LOG, "################### START cachingService for: status types, projects, staff and monitors......");
 
+        final MonApp ctx = (MonApp) getApplication();
         Snappy.writeProjectList(ctx, response.getProjectList(), new Snappy.SnappyWriteListener() {
             @Override
             public void onDataWritten() {

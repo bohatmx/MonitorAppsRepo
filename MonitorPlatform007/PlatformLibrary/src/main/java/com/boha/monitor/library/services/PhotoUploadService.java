@@ -7,6 +7,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.CDNUploader;
@@ -173,6 +174,7 @@ public class PhotoUploadService extends IntentService {
     private void executeUpload(final PhotoUploadDTO dto) {
 //        Log.d(LOG, "** executeUpload, projectID: " + dto.getProjectID());
 
+        final MonApp monApp = (MonApp) getApplication();
         CDNUploader.uploadFile(getApplicationContext(), dto, new CDNUploader.CDNUploaderListener() {
             @Override
             public void onFileUploaded(PhotoUploadDTO photo) {
@@ -180,7 +182,7 @@ public class PhotoUploadService extends IntentService {
                 PhotoCacheUtil.updateUploadedPhoto(getApplicationContext(), dto);
                 List<PhotoUploadDTO> list = new ArrayList<PhotoUploadDTO>();
                 list.add(photo);
-                Snappy.writePhotoList(getApplicationContext(), list, new Snappy.PhotoListener() {
+                Snappy.writePhotoList(monApp, list, new Snappy.PhotoListener() {
                     @Override
                     public void onPhotoAdded() {
 

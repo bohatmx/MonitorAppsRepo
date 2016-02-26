@@ -41,6 +41,7 @@ import android.widget.TextView;
 
 import com.boha.monitor.library.activities.GPSActivity;
 import com.boha.monitor.library.activities.DeviceListActivity;
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.activities.PictureActivity;
 import com.boha.monitor.library.activities.ProfileActivity;
@@ -122,7 +123,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
     @Override
     public void onResume() {
-        Log.w(LOG, "++++++++ ############## onResume - will get cache data");
+        Log.w(LOG, "++++++++ ############## onResume ");
         super.onResume();
         if (navImage != null) {
             navImage.setImageDrawable(Util.getRandomBackgroundImage(ctx));
@@ -244,7 +245,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                 }
 
                 if (menuItem.getItemId() == R.id.nav_projectMaps) {
-                    Snappy.getProjectList(ctx, new Snappy.SnappyReadListener() {
+                    Snappy.getProjectList((MonApp) getApplication(), new Snappy.SnappyReadListener() {
                         @Override
                         public void onDataRead(ResponseDTO response) {
                             List<ProjectDTO> list = new ArrayList<>();
@@ -370,7 +371,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                         companyDataRefreshed = true;
                         response = r;
                         buildPages();
-                        Util.cacheOnSnappy(ctx, r, new Util.SnappyListener() {
+                        Util.cacheOnSnappy((MonApp) getApplication(), r, new Util.SnappyListener() {
                             @Override
                             public void onCachingComplete() {
 
@@ -405,6 +406,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
         Log.e(LOG, "################### START cachingService for: status types, projects, staff and monitors......");
 
+        final MonApp ctx = (MonApp) getApplication();
         Snappy.writeProjectList(ctx, response.getProjectList(), new Snappy.SnappyWriteListener() {
             @Override
             public void onDataWritten() {
@@ -414,7 +416,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                         Snappy.writeMonitorList(ctx, response.getMonitorList(), new Snappy.SnappyWriteListener() {
                             @Override
                             public void onDataWritten() {
-                                Snappy.writeTaskStatusTypeList(ctx, response.getTaskStatusTypeList(), new Snappy.SnappyWriteListener() {
+                                Snappy.writeTaskStatusTypeList((MonApp) getApplication(), response.getTaskStatusTypeList(), new Snappy.SnappyWriteListener() {
                                     @Override
                                     public void onDataWritten() {
                                         Log.e(LOG, "Yeaaaah!! Data written to SnappyDB");
@@ -458,6 +460,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                 StaffDTO staff = SharedUtil.getCompanyStaff(ctx);
                 profileFragment = new ProfileFragment();
                 profileFragment.setStaff(staff);
+                profileFragment.setMonApp((MonApp) getApplication());
                 profileFragment.setPersonType(ProfileFragment.STAFF);
                 if (staff != null) {
                     profileFragment.setEditType(ProfileFragment.UPDATE_PERSON);
@@ -466,8 +469,11 @@ public class StaffMainActivity extends AppCompatActivity implements
                 }
 
                 monitorListFragment = new MonitorListFragment();
+                monitorListFragment.setMonApp((MonApp) getApplication());
                 staffListFragment = new StaffListFragment();
+                staffListFragment.setMonApp((MonApp) getApplication());
                 projectListFragment = new ProjectListFragment();
+                projectListFragment.setMonApp((MonApp) getApplication());
 //                simpleMessageFragment = new SimpleMessageFragment();
 
 
@@ -619,11 +625,11 @@ public class StaffMainActivity extends AppCompatActivity implements
         Intent intent = new Intent(this, PhotoUploadService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
-        Intent intentw = new Intent(this, RequestSyncService.class);
-        bindService(intentw, rConnection, Context.BIND_AUTO_CREATE);
+//        Intent intentw = new Intent(this, RequestSyncService.class);
+//        bindService(intentw, rConnection, Context.BIND_AUTO_CREATE);
 
-        Intent intentx = new Intent(this, CachingService.class);
-        bindService(intentx, cConnection, Context.BIND_AUTO_CREATE);
+//        Intent intentx = new Intent(this, CachingService.class);
+//        bindService(intentx, cConnection, Context.BIND_AUTO_CREATE);
         super.onStart();
     }
 
@@ -640,14 +646,14 @@ public class StaffMainActivity extends AppCompatActivity implements
             unbindService(mConnection);
             mBound = false;
         }
-        if (rBound) {
-            unbindService(rConnection);
-            rBound = false;
-        }
-        if (cBound) {
-            unbindService(cConnection);
-            cBound = false;
-        }
+//        if (rBound) {
+//            unbindService(rConnection);
+//            rBound = false;
+//        }
+//        if (cBound) {
+//            unbindService(cConnection);
+//            cBound = false;
+//        }
 
     }
 
@@ -823,7 +829,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Snappy.getStaffList(ctx, new Snappy.SnappyReadListener() {
+                            Snappy.getStaffList((MonApp) getApplication(), new Snappy.SnappyReadListener() {
                                 @Override
                                 public void onDataRead(ResponseDTO response) {
                                     for (StaffDTO sp: response.getStaffList()) {
@@ -832,7 +838,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                                             sp.setProjectCount(spList.size());
                                         }
                                     }
-                                    Snappy.writeStaffList(ctx, response.getStaffList(), new Snappy.SnappyWriteListener() {
+                                    Snappy.writeStaffList((MonApp) getApplication(), response.getStaffList(), new Snappy.SnappyWriteListener() {
                                         @Override
                                         public void onDataWritten() {
                                             Log.e(LOG,"onActivityResult onDataWritten: staffList updated");
@@ -870,7 +876,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Snappy.getMonitorList(ctx, new Snappy.SnappyReadListener() {
+                            Snappy.getMonitorList((MonApp) getApplication(), new Snappy.SnappyReadListener() {
                                 @Override
                                 public void onDataRead(ResponseDTO response) {
                                     for (MonitorDTO sp: response.getMonitorList()) {
@@ -879,7 +885,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                                             sp.setProjectCount(spListm.size());
                                         }
                                     }
-                                    Snappy.writeMonitorList(ctx, response.getMonitorList(), new Snappy.SnappyWriteListener() {
+                                    Snappy.writeMonitorList((MonApp) getApplication(), response.getMonitorList(), new Snappy.SnappyWriteListener() {
                                         @Override
                                         public void onDataWritten() {
                                             Log.e(LOG,"onActivityResult onDataWritten: monitorList updated");
@@ -928,32 +934,8 @@ public class StaffMainActivity extends AppCompatActivity implements
                     boolean statusCompleted =
                             data.getBooleanExtra("statusCompleted", false);
                     if (statusCompleted) {
-                        Log.e(LOG, "StaffMainActivity statusCompleted, getting refreshed");
-//                        RequestDTO w = new RequestDTO(RequestDTO.GET_PROJECT_TASKS);
-//                        w.setProjectID(selectedProject.getProjectID());
-//                        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
-//                            @Override
-//                            public void onResponse(final ResponseDTO response) {
-//                                runOnUiThread(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        if (response.getStatusCode() == 0) {
-//                                            selectedProject.setProjectTaskList(response.getProjectTaskList());
-//                                            projectListFragment.refreshProject(selectedProject);
-//                                            CacheUtil.cacheProject(ctx,selectedProject,null);
-//                                        }
-//                                    }
-//                                });
-//
-//                            }
-//
-//                            @Override
-//                            public void onError(String message) {
-//                                Log.e(LOG,message);
-//                            }
-//                        });
-
-
+                        Log.e(LOG, "statusCompleted, projectListFragment.getProjectList();");
+                        projectListFragment.getProjectList();
                     }
                 }
                 break;
@@ -1251,35 +1233,35 @@ public class StaffMainActivity extends AppCompatActivity implements
     CachingService cService;
 
 
-    private ServiceConnection rConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            Log.w(LOG, "## RequestSyncService ServiceConnection onServiceConnected");
-            RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
-            rService = binder.getService();
-            rBound = true;
-            rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
-                @Override
-                public void onTasksSynced(int goodResponses, int badResponses) {
-                    Log.i(LOG, "## onTasksSynced, goodResponses: " + goodResponses + " badResponses: " + badResponses);
-                }
-
-                @Override
-                public void onError(String message) {
-                    Log.e(LOG, "Error with sync: " + message);
-                }
-            });
-
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            Log.w(LOG, "## RequestSyncService onServiceDisconnected");
-            mBound = false;
-        }
-    };
+//    private ServiceConnection rConnection = new ServiceConnection() {
+//
+//        @Override
+//        public void onServiceConnected(ComponentName className,
+//                                       IBinder service) {
+//            Log.w(LOG, "## RequestSyncService ServiceConnection onServiceConnected");
+//            RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
+//            rService = binder.getService();
+//            rBound = true;
+//            rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
+//                @Override
+//                public void onTasksSynced(int goodResponses, int badResponses) {
+//                    Log.i(LOG, "## onTasksSynced, goodResponses: " + goodResponses + " badResponses: " + badResponses);
+//                }
+//
+//                @Override
+//                public void onError(String message) {
+//                    Log.e(LOG, "Error with sync: " + message);
+//                }
+//            });
+//
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName arg0) {
+//            Log.w(LOG, "## RequestSyncService onServiceDisconnected");
+//            mBound = false;
+//        }
+//    };
 
     private ServiceConnection mConnection = new ServiceConnection() {
 
@@ -1304,24 +1286,24 @@ public class StaffMainActivity extends AppCompatActivity implements
             mBound = false;
         }
     };
-    private ServiceConnection cConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            Log.w(LOG, "## CachingService ServiceConnection onServiceConnected");
-            CachingService.LocalBinder binder = (CachingService.LocalBinder) service;
-            cService = binder.getService();
-            cBound = true;
-            Log.e(LOG, "CachingService bound and ready and waiting");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            Log.w(LOG, "## CachingService onServiceDisconnected");
-            cBound = false;
-        }
-    };
+//    private ServiceConnection cConnection = new ServiceConnection() {
+//
+//        @Override
+//        public void onServiceConnected(ComponentName className,
+//                                       IBinder service) {
+//            Log.w(LOG, "## CachingService ServiceConnection onServiceConnected");
+//            CachingService.LocalBinder binder = (CachingService.LocalBinder) service;
+//            cService = binder.getService();
+//            cBound = true;
+//            Log.e(LOG, "CachingService bound and ready and waiting");
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName arg0) {
+//            Log.w(LOG, "## CachingService onServiceDisconnected");
+//            cBound = false;
+//        }
+//    };
 
 
     static final String LOG = StaffMainActivity.class.getSimpleName();

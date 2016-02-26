@@ -18,6 +18,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.ProjectMapActivity;
 import com.boha.monitor.library.adapters.ProjectAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
@@ -25,6 +26,7 @@ import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.monitor.library.util.Snappy;
+import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
 
 import java.util.ArrayList;
@@ -47,7 +49,15 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     private RecyclerView mRecyclerView;
     private AutoCompleteTextView auto;
     private TextView txtProgramme, txtProjectCount;
+    MonApp monApp;
 
+    public MonApp getMonApp() {
+        return monApp;
+    }
+
+    public void setMonApp(MonApp monApp) {
+        this.monApp = monApp;
+    }
     private static final String LOG = ProjectListFragment.class.getSimpleName();
 
 
@@ -57,18 +67,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(LOG, "onCreate");
-        Snappy.getProjectList(getActivity(), new Snappy.SnappyReadListener() {
-            @Override
-            public void onDataRead(ResponseDTO response) {
-                projectList = response.getProjectList();
-            }
 
-            @Override
-            public void onError(String message) {
-
-            }
-        });
     }
 
     @Override
@@ -86,6 +85,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         view = inflater.inflate(R.layout.fragment_project_list, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         auto = (AutoCompleteTextView) view.findViewById(R.id.autocomplete_project);
+        txtCount = (TextView) view.findViewById(R.id.count);
         top = view.findViewById(R.id.top);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(),
                 LinearLayoutManager.VERTICAL, false);
@@ -103,19 +103,23 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     ProjectAdapter projectAdapter;
     List<String> projectNameList;
     ProjectDTO selectedProject;
+    TextView txtCount;
 
 
     @Override
     public void onResume() {
+        Log.e(LOG,"------------------ onResume, getting projects ............");
         getProjectList();
         super.onResume();
     }
     public void getProjectList() {
-        Log.w(LOG, "..... getProjectList .....Snappy");
-        Snappy.getProjectList(getActivity(), new Snappy.SnappyReadListener() {
+        Log.w(LOG, "..... getProjectList .....from Snappy");
+
+        Snappy.SnappyReadListener listener = new Snappy.SnappyReadListener() {
             @Override
             public void onDataRead(ResponseDTO response) {
                 projectList = response.getProjectList();
+                Log.e(LOG,"onDataRead: projectList: " + projectList.size());
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -128,37 +132,11 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
             @Override
             public void onError(String message) {
-
+                Log.e(LOG,"Failed to get projects: " + message);
             }
-        });
-    }
-
-    public void refreshProject(ProjectDTO p) {
-        selectedProject = p;
-        List<ProjectDTO> list = new ArrayList<>();
-        for (ProjectDTO proj : projectList) {
-            if (proj.getProjectID().intValue() == p.getProjectID().intValue()) {
-                list.add(p);
-            } else {
-                list.add(proj);
-            }
-        }
-        projectList = list;
-        setList();
-
-        Log.i(LOG, "refreshProject done .........., " + p.getProjectName());
-
-    }
-
-    public void refreshProjectList(List<ProjectDTO> pList) {
-        if (pList == null) {
-            return;
-        }
-        projectList = pList;
-        setList();
-
-        Log.i(LOG, "refreshProjectList done .........., " + pList.size());
-
+        };
+        monApp.getSnappyDB();
+        Snappy.getProjectList(monApp, listener);
     }
 
     private void setList() {
@@ -170,16 +148,18 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         if (getContext() == null) {
             return;
         }
-        if (projectList.size() > 10) {
+        txtCount.setText("" + projectList.size());
+        Statics.setRobotoFontBoldCondensed(getActivity(),txtCount);
+        if (projectList.size() > 2) {
             projectNameList = new ArrayList<>(projectList.size());
             for (ProjectDTO p : projectList) {
                 projectNameList.add(p.getProjectName());
             }
             final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
-                    android.R.layout.simple_spinner_item, projectNameList);
+                    R.layout.simple_spinner_item, projectNameList);
             auto.setAdapter(adapter);
             auto.setHint("Search Projects");
-            auto.setThreshold(2);
+            auto.setThreshold(1);
             auto.setVisibility(View.VISIBLE);
 
             auto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -191,13 +171,12 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                     String name = adapter.getItem(i);
                     for (ProjectDTO p : projectList) {
                         if (p.getProjectName().equalsIgnoreCase(name)) {
-                            mRecyclerView.scrollToPosition(index + 1);
+                            mRecyclerView.scrollToPosition(index);
                             auto.setText("");
                             break;
                         }
                         index++;
                     }
-                    Log.i(LOG, "i = " + i + ", scrolled to " + index + " for " + name);
                 }
             });
 
@@ -274,6 +253,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
         int index = 0;
         boolean isFound = false;
+        mRecyclerView.scrollToPosition(0);
         if (pID != null) {
             for (ProjectDTO x : projectList) {
                 if (x.getProjectID().intValue() == pID.intValue()) {
@@ -286,7 +266,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
 
         if (isFound) {
-            if (index + 1 < projectList.size()) {
+            if (index + 1  < projectList.size()) {
                 mRecyclerView.scrollToPosition(index + 1);
             }
         }
@@ -316,7 +296,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        Log.d(LOG, "### onDetach");
+//        Log.d(LOG, "### onDetach");
         mListener = null;
     }
 

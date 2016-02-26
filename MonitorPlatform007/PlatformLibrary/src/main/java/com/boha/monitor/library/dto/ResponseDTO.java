@@ -26,6 +26,7 @@ public class ResponseDTO implements Serializable{
     private ChatDTO chat;
     private StaffDTO staff;
     private MonitorDTO monitor;
+    private List<RequestDTO> requestList;
     private List<SimpleMessageDTO> simpleMessageList;
     private List<GcmDeviceDTO> gcmDeviceList;
     private List<ChatDTO> chatList;
@@ -115,6 +116,17 @@ public class ResponseDTO implements Serializable{
 
     public void setPortfolioList(List<PortfolioDTO> portfolioList) {
         this.portfolioList = portfolioList;
+    }
+
+    public List<RequestDTO> getRequestList() {
+        if (requestList == null) {
+            requestList = new ArrayList<>();
+        }
+        return requestList;
+    }
+
+    public void setRequestList(List<RequestDTO> requestList) {
+        this.requestList = requestList;
     }
 
     public List<CompanyDTO> getCompanyList() {

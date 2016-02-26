@@ -16,11 +16,17 @@ import android.util.Log;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.services.LocationTrackerReceiver;
+import com.boha.monitor.library.services.SnappyReceiver;
 import com.boha.monitor.library.util.SharedUtil;
+import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.snappydb.DB;
+import com.snappydb.DBFactory;
+import com.snappydb.SnappyDB;
+import com.snappydb.SnappydbException;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
@@ -64,11 +70,32 @@ public class MonApp extends Application implements Application.ActivityLifecycle
     static final String PROPERTY_ID = "UA-53661372-2";
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
     private AlarmManager alarmMgr;
-    private PendingIntent alarmIntent;
+    private PendingIntent alarmIntent1,alarmIntent2;
     private ChatMessageListActivity chatMessageListActivity;
     private boolean messageActivityVisible;
     static final String LOG = MonApp.class.getSimpleName();
     public static Picasso picasso;
+    public DB snappyDB;
+
+    public DB getSnappyDB() {
+        try {
+            if (snappyDB == null || !snappyDB.isOpen()) {
+                snappyDB = DBFactory.open(getApplicationContext());
+            }
+            if (snappyDB.isOpen()) {
+                //Log.e(LOG,"getSnappyDB - database is OPEN!");
+            }
+        } catch (SnappydbException e) {
+            e.printStackTrace();
+        }
+
+        return snappyDB;
+    }
+
+    public void setSnappyDB(DB snappyDB) {
+        this.snappyDB = snappyDB;
+    }
+
     static final long MAX_CACHE_SIZE = 1024 * 1024 * 1024; // 1 GB cache on device
 //
 //    public static RefWatcher getRefWatcher(Context context) {
@@ -130,10 +157,16 @@ public class MonApp extends Application implements Application.ActivityLifecycle
             // cannot set it after Picasso.with(Context) was already in use
         }
         //SnappyDB
+        try {
+            snappyDB = DBFactory.open(getApplicationContext());
+            Log.w(LOG,"################ SnappyDB has been opened");
+        } catch (SnappydbException e) {
+            e.printStackTrace();
+        }
 
         if (isDebuggable) {
             Picasso.with(getApplicationContext())
-                    .setIndicatorsEnabled(true);
+                    .setIndicatorsEnabled(false);
             Picasso.with(getApplicationContext())
                     .setLoggingEnabled(false);
         }
@@ -154,6 +187,8 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         } else {
             Log.d(LOG, "###### ACRA Crash Reporting has NOT been initiated, in DEBUG mode");
         }
+
+        startRequestCacheAlarm();
         startLocationAlarm();
 
     }
@@ -161,12 +196,22 @@ public class MonApp extends Application implements Application.ActivityLifecycle
     public void startLocationAlarm() {
         alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         Intent intentx = new Intent(getApplicationContext(), LocationTrackerReceiver.class);
-        alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intentx, 0);
+        alarmIntent1 = PendingIntent.getBroadcast(getApplicationContext(), 0, intentx, 0);
 
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), ONE_MINUTE * 30, alarmIntent);
+                SystemClock.elapsedRealtime(), HALF_HOUR, alarmIntent1);
 
-        Log.d(LOG, "###### AlarmManager: alarm set to pull the device tracker trigger every: HOUR");
+        Log.d(LOG, "###### Location AlarmManager: alarm set to pull the device tracker trigger every: HALF_HOUR");
+    }
+    public void startRequestCacheAlarm() {
+        alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intentx = new Intent(getApplicationContext(), SnappyReceiver.class);
+        alarmIntent2 = PendingIntent.getBroadcast(getApplicationContext(), 0, intentx, 0);
+
+        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime(), FIVE_MINUTES, alarmIntent2);
+
+        Log.d(LOG, "###### Request Cache AlarmManager: alarm set to send cached requests every: ONE_MINUTE");
     }
 
     static final int

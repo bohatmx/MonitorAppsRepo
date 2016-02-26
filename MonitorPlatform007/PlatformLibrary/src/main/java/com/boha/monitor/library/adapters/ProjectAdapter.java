@@ -88,6 +88,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             hvh.txtCount.setText("" + projectList.size());
             hvh.image.setImageDrawable(Util.getRandomBackgroundImage(ctx));
             Statics.setRobotoFontLight(ctx, hvh.txtProgramme);
+
         }
 
         if (holder instanceof ProjectViewHolder) {
@@ -99,125 +100,89 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             pvh.txtPhotos.setText("");
             pvh.txtMuni.setText("");
             pvh.txtStatusCount.setText("");
-            final ProjectDTO tempProject = projectList.get(position - 1);
-            pvh.txtProjectName.setText(tempProject.getProjectName());
-            Log.w("ProjectAdapter", "... getting cached project: " + tempProject.getProjectName());
-            Snappy.getProject(ctx, tempProject.getProjectID(), new Snappy.SnappyProjectListener() {
+            final ProjectDTO project = projectList.get(position - 1);
+            pvh.txtProjectName.setText(project.getProjectName());
+            Log.w("ProjectAdapter", "... laying out project: " + project.getProjectName());
+
+            pvh.imageLayout.setVisibility(View.GONE);
+            pvh.image.setVisibility(View.GONE);
+
+            pvh.txtProjectName.setText(project.getProjectName());
+            pvh.txtNumber.setText("" + (position));
+            if (project.getLastStatus() != null) {
+                pvh.txtLastDate.setText(sdf.format(new Date(project.getLastStatus().getStatusDate())));
+            } else {
+                pvh.txtLastDate.setText("No Status Date");
+            }
+            pvh.txtPhotos.setText(df.format(project.getPhotoCount()));
+            pvh.txtStatusCount.setText(df.format(project.getStatusCount()));
+            pvh.txtTasks.setText(df.format(project.getProjectTaskCount()));
+            setPlaceNames(project, pvh);
+
+            pvh.txtStatusCount.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onProjectFound(final ProjectDTO project) {
-
-                    pvh.imageLayout.setVisibility(View.GONE);
-                    pvh.image.setVisibility(View.GONE);
-
-                    if (project != null) {
-                        pvh.txtProjectName.setText(project.getProjectName());
-                        pvh.txtNumber.setText("" + (position));
-                        if (project.getProjectTaskList() != null) {
-                            pvh.txtTasks.setText("" + project.getProjectTaskList().size());
-
-                        } else {
-                            pvh.txtTasks.setText("0");
-                        }
-
-                        List<PhotoUploadDTO> photoList = new ArrayList<>();
-                        int photoCount = 0, statusCount = 0;
-                        if (project.getPhotoUploadList() != null) {
-                            photoCount = project.getPhotoUploadList().size();
-                            photoList.addAll(project.getPhotoUploadList());
-                        }
-
-                        List<ProjectTaskStatusDTO> statusList = new ArrayList<>();
-                        if (project.getProjectTaskList() == null) {
-                            project.setProjectTaskList(new ArrayList<ProjectTaskDTO>());
-                        }
-                        for (ProjectTaskDTO task : project.getProjectTaskList()) {
-                            if (task.getPhotoUploadList() != null) {
-                                photoCount += task.getPhotoUploadList().size();
-                                photoList.addAll(task.getPhotoUploadList());
-                            }
-                            if (task.getProjectTaskStatusList() != null) {
-                                statusCount += task.getProjectTaskStatusList().size();
-                                statusList.addAll(task.getProjectTaskStatusList());
-                            }
-                        }
-                        Collections.sort(statusList);
-                        Collections.sort(photoList);
-                        if (!statusList.isEmpty()) {
-                            pvh.txtLastDate.setText(sdf.format(new Date(statusList.get(0).getDateUpdated())));
-                        } else {
-                            pvh.txtLastDate.setText("No Status Date");
-                        }
-                        pvh.txtPhotos.setText(df.format(photoCount));
-                        pvh.txtStatusCount.setText(df.format(statusCount));
-                        setPlaceNames(project, pvh);
-
-                        pvh.txtStatusCount.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                listener.onStatusReportRequired(project);
-                            }
-                        });
-                        pvh.txtPhotos.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                listener.onGalleryRequired(project);
-                            }
-                        });
-
-                        pvh.iconCamera.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                listener.onCameraRequired(project);
-                            }
-                        });
-                        pvh.iconDirections.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                listener.onDirectionsRequired(project);
-                            }
-                        });
-                        pvh.iconDoStatus.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                listener.onStatusUpdateRequired(project);
-                            }
-                        });
-                        pvh.iconLocation.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                listener.onLocationRequired(project);
-                            }
-                        });
-
-                        if (darkColor != 0) {
-                            pvh.iconCamera.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-                            pvh.iconDirections.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-                            pvh.iconDoStatus.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-                            pvh.iconLocation.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-                            pvh.txtProjectName.setTextColor(darkColor);
-                        }
-                        if (project.getLatitude() == null) {
-                            pvh.iconCamera.setEnabled(false);
-                            pvh.iconDirections.setEnabled(false);
-                            pvh.iconDoStatus.setEnabled(false);
-                            pvh.iconCamera.setAlpha(0.2f);
-                            pvh.iconDirections.setAlpha(0.2f);
-                            pvh.iconDoStatus.setAlpha(0.2f);
-                        } else {
-                            pvh.iconCamera.setEnabled(true);
-                            pvh.iconDirections.setEnabled(true);
-                            pvh.iconDoStatus.setEnabled(true);
-                            pvh.iconCamera.setAlpha(1.0f);
-                            pvh.iconDirections.setAlpha(1.0f);
-                            pvh.iconDoStatus.setAlpha(1.0f);
-                        }
-
-                    }
+                public void onClick(View v) {
+                    listener.onStatusReportRequired(project);
                 }
-
+            });
+            pvh.txtPhotos.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onGalleryRequired(project);
+                }
             });
 
+            pvh.iconCamera.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onCameraRequired(project);
+                }
+            });
+            pvh.iconDirections.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onDirectionsRequired(project);
+                }
+            });
+            pvh.iconDoStatus.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onStatusUpdateRequired(project);
+                }
+            });
+            pvh.iconLocation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onLocationRequired(project);
+                }
+            });
+
+            if (darkColor != 0) {
+                pvh.iconCamera.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
+                pvh.iconDirections.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
+                pvh.iconDoStatus.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
+                pvh.iconLocation.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
+                pvh.txtProjectName.setTextColor(darkColor);
+            }
+            if (project.getLatitude() == null) {
+                pvh.iconCamera.setEnabled(false);
+                pvh.iconDirections.setEnabled(false);
+                pvh.iconDoStatus.setEnabled(false);
+                pvh.iconCamera.setAlpha(0.2f);
+                pvh.iconDirections.setAlpha(0.2f);
+                pvh.iconDoStatus.setAlpha(0.2f);
+            } else {
+                pvh.iconCamera.setEnabled(true);
+                pvh.iconDirections.setEnabled(true);
+                pvh.iconDoStatus.setEnabled(true);
+                pvh.iconCamera.setAlpha(1.0f);
+                pvh.iconDirections.setAlpha(1.0f);
+                pvh.iconDoStatus.setAlpha(1.0f);
+            }
+
         }
+
+
     }
 
     private void setPlaceNames(ProjectDTO project, ProjectViewHolder pvh) {

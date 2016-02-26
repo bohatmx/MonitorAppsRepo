@@ -21,6 +21,7 @@
 
         <!-- RECEIVERS -->
         <receiver android:name="com.boha.monitor.library.services.LocationTrackerReceiver" />
+        <receiver android:name="com.boha.monitor.library.services.SnappyReceiver" />
         <receiver android:name="com.boha.monitor.library.services.BootReceiver" />
         <receiver
             android:name="com.google.android.gms.analytics.AnalyticsReceiver"
@@ -62,9 +63,13 @@
             android:label="@string/title_activity_high_def" />
         <activity
             android:name="com.boha.monitor.library.activities.ProjectSelectionActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"
+            android:label="@string/title_activity_project_selection"
             android:screenOrientation="portrait"
-            android:label="@string/title_activity_project_selection"></activity>
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <service
+            android:name="com.boha.monitor.library.services.RequestIntentService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

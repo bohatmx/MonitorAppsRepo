@@ -32,6 +32,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.boha.monitor.library.activities.GPSActivity;
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.activities.PictureActivity;
 import com.boha.monitor.library.activities.ProjectMapActivity;
@@ -204,12 +205,12 @@ public class MonitorMainActivity extends AppCompatActivity
                             Util.showErrorToast(ctx, response.getMessage());
                             return;
                         }
-                        Util.cacheOnSnappy(ctx, r, new Util.SnappyListener() {
+                        Util.cacheOnSnappy((MonApp) getApplication(), r, new Util.SnappyListener() {
                             @Override
                             public void onCachingComplete() {
                                 buildPages();
                                 final MonitorDTO m = SharedUtil.getMonitor(ctx);
-                                Snappy.getMonitorList(ctx, new Snappy.SnappyReadListener() {
+                                Snappy.getMonitorList((MonApp) getApplication(), new Snappy.SnappyReadListener() {
                                     @Override
                                     public void onDataRead(ResponseDTO response) {
                                         List<MonitorDTO> list = response.getMonitorList();
@@ -821,12 +822,12 @@ public class MonitorMainActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
-        Log.i(LOG, "## onStart Binding to PhotoUploadService, RequestSyncService");
+        Log.i(LOG, "## onStart Binding to PhotoUploadService, VideoUploadService");
         Intent intent = new Intent(this, PhotoUploadService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
-        Intent intentw = new Intent(this, RequestSyncService.class);
-        bindService(intentw, rConnection, Context.BIND_AUTO_CREATE);
+//        Intent intentw = new Intent(this, RequestSyncService.class);
+//        bindService(intentw, rConnection, Context.BIND_AUTO_CREATE);
 
         Intent intentz = new Intent(this, VideoUploadService.class);
         bindService(intentz, vConnection, Context.BIND_AUTO_CREATE);
@@ -870,10 +871,7 @@ public class MonitorMainActivity extends AppCompatActivity
             unbindService(mConnection);
             mBound = false;
         }
-        if (rBound) {
-            unbindService(rConnection);
-            rBound = false;
-        }
+
         if (vBound) {
             unbindService(vConnection);
             vBound = false;
@@ -889,45 +887,6 @@ public class MonitorMainActivity extends AppCompatActivity
     RequestSyncService rService;
     VideoUploadService vService;
 
-
-    private ServiceConnection rConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            Log.w(LOG, "## RequestSyncService ServiceConnection onServiceConnected");
-            RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
-            rService = binder.getService();
-            rBound = true;
-            rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
-                @Override
-                public void onTasksSynced(final int goodResponses, int badResponses) {
-                    Log.i(LOG, "## onTasksSynced, goodResponses: " + goodResponses + " badResponses: " + badResponses);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (goodResponses > 0) {
-                                getRemoteData();
-                            }
-                        }
-                    });
-
-                }
-
-                @Override
-                public void onError(String message) {
-                    Log.e(LOG, "Error with sync: " + message);
-                }
-            });
-
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            Log.w(LOG, "## RequestSyncService onServiceDisconnected");
-            mBound = false;
-        }
-    };
 
     private ServiceConnection mConnection = new ServiceConnection() {
 

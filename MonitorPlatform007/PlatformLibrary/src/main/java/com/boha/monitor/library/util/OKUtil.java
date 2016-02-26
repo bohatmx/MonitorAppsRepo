@@ -44,6 +44,9 @@ public class OKUtil {
     public static final String DEV_URL = "http://192.168.1.254:40405/mp/gatex";
     public static final String PROD_URL = "http://bohamaker.com:3030/mp/gatex";
 
+    public static final String DEV_URL_CACHED = "http://192.168.1.254:40405/mp/cachedRequests";
+    public static final String PROD_URL_CACHED = "http://bohamaker.com:3030/mp/cachedRequests";
+
     static final String FAILED_RESPONSE_NOT_SUCCESSFUL = "Request failed. Response not successful";
     static final String FAILED_DATA_EXTRACTION = "Request failed. Unable to extract data from response";
     static final String FAILED_IO = "Request failed. Communication links are not working";
@@ -72,6 +75,15 @@ public class OKUtil {
             return DEV_URL;
         } else {
             return PROD_URL;
+        }
+    }
+    private String getURLCached(Context ctx) {
+        boolean isDebuggable = 0 != (ctx.getApplicationInfo().flags
+                &= ApplicationInfo.FLAG_DEBUGGABLE);
+        if (isDebuggable) {
+            return DEV_URL_CACHED;
+        } else {
+            return PROD_URL_CACHED;
         }
     }
 
@@ -108,7 +120,7 @@ public class OKUtil {
                                  final RequestList req,
                                  final OKListener listener) throws OKHttpException {
 
-        String url = getURL(ctx);
+        String url = getURLCached(ctx);
         OkHttpClient client = new OkHttpClient();
         configureTimeouts(client);
         RequestBody body = new FormEncodingBuilder()

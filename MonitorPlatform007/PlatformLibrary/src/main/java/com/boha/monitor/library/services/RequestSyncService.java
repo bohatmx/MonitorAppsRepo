@@ -6,11 +6,15 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.RequestList;
 import com.boha.monitor.library.dto.ResponseDTO;
-import com.boha.monitor.library.util.NetUtil;
-import com.boha.monitor.library.util.RequestCacheUtil;
+import com.boha.monitor.library.util.OKHttpException;
+import com.boha.monitor.library.util.OKUtil;
+import com.boha.monitor.library.util.Snappy;
+import com.boha.monitor.library.util.WebCheck;
+import com.boha.monitor.library.util.WebCheckResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,139 +43,84 @@ public class RequestSyncService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.w(LOG, "### RequestSyncService onHandleIntent");
-        RequestCacheUtil.getRequests(getApplicationContext(), new RequestCacheUtil.RequestCacheListener() {
+        Log.w(LOG, "### @@@@@@@@@@@@@@@@@@@@@@@@@@@ - RequestSyncService onHandleIntent");
+        WebCheckResult wc = WebCheck.checkNetworkAvailability(getApplicationContext());
+        if (wc.isNetworkUnavailable()) {
+            Log.e(LOG,"........isNetworkUnavailable: " + wc.isNetworkUnavailable() + ", Service quitting ... ");
+            return;
+        }
+        MonApp app = (MonApp) getApplication();
+        app.getSnappyDB();
+        Snappy.getRequests(app, new Snappy.SnappyReadListener() {
             @Override
-            public void onError(String message) {}
-
-            @Override
-            public void onRequestAdded() {}
-
-            @Override
-            public void onRequestsRetrieved(RequestList list) {
-                requestList = list;
-                Log.i(LOG, "++ RequestCache returned from disk, entries: "
-                        + requestList.getRequests().size());
-                if (requestList.getRequests().isEmpty()) {
-                    if (requestSyncListener != null) {
-                        requestSyncListener.onTasksSynced(0,0);
-                    }
-                    return;
-
-                }
-                if (requestList.isRideWebSocket()) {
-                    NetUtil.sendRequest(getApplicationContext(), list, new NetUtil.NetUtilListener() {
-                        @Override
-                        public void onResponse(ResponseDTO response) {
-                            Log.i(LOG, "** cached requests sent up via websocket! good responses: " + response.getGoodCount() +
-                                    " bad responses: " + response.getBadCount());
-                            RequestCacheUtil.clearCache(getApplicationContext(),null);
-                            if (requestSyncListener != null) {
-                                if (response != null) {
-                                    requestSyncListener.onTasksSynced(response.getGoodCount(),
-                                            response.getBadCount());
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onError(String message) {
-                            if (requestSyncListener != null)
-                                requestSyncListener.onError(message);
-                        }
-
-
-                    });
+            public void onDataRead(ResponseDTO response) {
+                Log.w(LOG, "......................................." +
+                        "onDataRead ... about to send if appropriate");
+                if (response == null) {
+                    list = new ArrayList<>();
                 } else {
-                    controlRequestUpload();
+                    list = response.getRequestList();
                 }
-            }
-
-        });
-
-    }
-
-    int index, batches, batchIndex;
-    static final int BATCH_SIZE = 12;
-
-    private void controlRequestUpload() {
-
-        if (requestList.getRequests().isEmpty()) {
-            Log.d(LOG, "#### no requests cached, quitting...");
-            requestSyncListener.onTasksSynced(0, 0);
-            return;
-        }
-
-        index = 0;
-        batches = requestList.getRequests().size() / BATCH_SIZE;
-        int rem = requestList.getRequests().size() % BATCH_SIZE;
-        if (rem > 0) {
-            batches++;
-        }
-        lists = new ArrayList<>();
-        for (int i = 0; i < batches; i++) {
-            lists.add(new RequestList());
-        }
-        batchIndex = 0;
-        prepareBatch();
-
-    }
-
-    List<RequestList> lists;
-    RequestList requestList;
-
-    private void prepareBatch() {
-
-        RequestList rex = new RequestList();
-        rex.setRequests(new ArrayList<RequestDTO>());
-        for (RequestDTO x: requestList.getRequests()) {
-            rex.getRequests().add(x);
-            if ((index + 1) % BATCH_SIZE == 0) {
-                lists.get(batchIndex).setRequests(rex.getRequests());
-                rex.setRequests(new ArrayList<RequestDTO>());
-                batchIndex++;
-            }
-            index++;
-        }
-
-        batchIndex = 0;
-        controlBatch();
-    }
-
-    int good, bad;
-    private void controlBatch() {
-        if (batchIndex < lists.size()) {
-            sendBatch(lists.get(batchIndex));
-            return;
-        }
-        RequestCacheUtil.clearCache(getApplicationContext(),null);
-        if (requestSyncListener != null)
-            requestSyncListener.onTasksSynced(good, bad);
-    }
-    private void sendBatch (final RequestList list) {
-        NetUtil.sendRequest(getApplicationContext(), list, new NetUtil.NetUtilListener() {
-            @Override
-            public void onResponse(ResponseDTO response) {
-                Log.i(LOG, "** cached requests sent up! good responses: " + response.getGoodCount() +
-                        " bad responses: " + response.getBadCount());
-                good += response.getGoodCount();
-                bad += response.getBadCount();
-                batchIndex++;
-                controlBatch();
-
+                if (list.isEmpty()) {
+                    Log.e(LOG, "#### no requests in list from cache, quitting this scene...");
+                    if (requestSyncListener != null)
+                        requestSyncListener.onTasksSynced(0, 0);
+                } else {
+                    Log.w(LOG, "...processing requests found in cache: " + list.size());
+                    sendRequest(list);
+                }
             }
 
             @Override
             public void onError(String message) {
-                if (requestSyncListener != null)
-                    requestSyncListener.onError(message);
+
             }
-
-
         });
-
     }
 
+    List<RequestDTO> list = new ArrayList<>();
+    int good, bad, index;
+    OKUtil okUtil = new OKUtil();
+
+
+    private void sendRequest(final List<RequestDTO> list) {
+        Log.d(LOG, ".......... sendRequest list: " + list.size());
+        List<RequestDTO> mList = new ArrayList<>();
+        for (RequestDTO w : list) {
+            if (w.getDateUploaded() == null) {
+                mList.add(w);
+            }
+        }
+        if (mList.isEmpty()) {
+            Log.w(LOG, "No requests to upload");
+            return;
+        }
+        try {
+            Log.e(LOG, ".......about to send cached requests: " + mList.size());
+            RequestList rList = new RequestList();
+            rList.getRequests().addAll(mList);
+            okUtil.sendPOSTRequest(getApplicationContext(), rList, new OKUtil.OKListener() {
+                @Override
+                public void onResponse(ResponseDTO response) {
+                    if (response.getStatusCode() == 0) {
+                        good = response.getGoodCount();
+                        Snappy.updateRequestDates((MonApp) getApplication(), list);
+                    } else {
+                        bad = response.getBadCount();
+                    }
+
+                }
+
+                @Override
+                public void onError(String message) {
+                    Log.e(LOG, message);
+                }
+            });
+        } catch (OKHttpException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     static final String LOG = RequestSyncService.class.getSimpleName();
 
@@ -190,10 +139,10 @@ public class RequestSyncService extends IntentService {
 
     private final IBinder mBinder = new LocalBinder();
 
-    public void startSyncCachedRequests(RequestSyncListener rsl) {
-        requestSyncListener = rsl;
-        onHandleIntent(null);
-    }
+//    public void startSyncCachedRequests(RequestSyncListener rsl) {
+//        requestSyncListener = rsl;
+//        onHandleIntent(null);
+//    }
 
 
     public interface RequestSyncListener {

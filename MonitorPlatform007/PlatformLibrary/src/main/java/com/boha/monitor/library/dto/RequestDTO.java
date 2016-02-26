@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author aubreyM
  */
-public class RequestDTO implements Serializable {
+public class RequestDTO implements Serializable, Comparable<RequestDTO> {
     private static final long serialVersionUID = 1L;
     public RequestDTO() {
     }
@@ -29,7 +29,7 @@ public class RequestDTO implements Serializable {
     private Integer numberOfDays;
 
     private String email, pin, gcmRegistrationID;
-    private Long startDate, endDate;
+    private Long startDate, endDate, requestDate, dateUploaded;
     private Double latitude, longitude;
     private Float accuracy;
     private SimpleMessageDTO simpleMessage;
@@ -208,6 +208,22 @@ public class RequestDTO implements Serializable {
 
     public void setSimpleMessage(SimpleMessageDTO simpleMessage) {
         this.simpleMessage = simpleMessage;
+    }
+
+    public Long getRequestDate() {
+        return requestDate;
+    }
+
+    public Long getDateUploaded() {
+        return dateUploaded;
+    }
+
+    public void setDateUploaded(Long dateUploaded) {
+        this.dateUploaded = dateUploaded;
+    }
+
+    public void setRequestDate(Long requestDate) {
+        this.requestDate = requestDate;
     }
 
     public boolean isZipResponse() {
@@ -601,5 +617,16 @@ public class RequestDTO implements Serializable {
 
     public void setChatMemberList(List<ChatMemberDTO> chatMemberList) {
         this.chatMemberList = chatMemberList;
+    }
+
+    @Override
+    public int compareTo(RequestDTO another) {
+        if (this.requestDate < another.requestDate) {
+            return -1;
+        }
+        if (this.requestDate > another.requestDate) {
+            return 1;
+        }
+        return 0;
     }
 }

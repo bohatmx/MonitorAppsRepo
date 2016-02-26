@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.dto.GcmDeviceDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.RequestDTO;
@@ -279,7 +280,7 @@ public class SignInActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             Log.e(LOG,"failed to save custome data for ACRA");
                         }
-                        Util.cacheOnSnappy(ctx, response, new Util.SnappyListener() {
+                        Util.cacheOnSnappy((MonApp) getApplication(), response, new Util.SnappyListener() {
                             @Override
                             public void onCachingComplete() {
                                 Intent w = new Intent(ctx,MonitorMainActivity.class);

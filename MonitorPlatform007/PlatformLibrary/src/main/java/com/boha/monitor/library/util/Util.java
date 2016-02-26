@@ -47,6 +47,7 @@ import android.widget.ListPopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.PopupListAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.RequestDTO;
@@ -87,7 +88,7 @@ public class Util {
         void onCachingComplete();
         void onError(String message);
     }
-    public static void cacheOnSnappy(final Context ctx,
+    public static void cacheOnSnappy(final MonApp ctx,
                                       final ResponseDTO response,
                                       final SnappyListener listener) {
 

@@ -23,6 +23,7 @@ import android.widget.ListPopupWindow;
 import android.widget.TextView;
 
 import com.boha.monitor.library.activities.HighDefActivity;
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.MonitorMapActivity;
 import com.boha.monitor.library.adapters.PopupListIconAdapter;
 import com.boha.monitor.library.adapters.StaffListAdapter;
@@ -56,7 +57,15 @@ public class StaffListFragment extends Fragment
 
 
     private CompanyStaffListListener mListener;
+    MonApp monApp;
 
+    public MonApp getMonApp() {
+        return monApp;
+    }
+
+    public void setMonApp(MonApp monApp) {
+        this.monApp = monApp;
+    }
     /**
      * The fragment's ListView/GridView.
      */
@@ -146,7 +155,7 @@ public class StaffListFragment extends Fragment
      * Get list of Staff from cache and set the RecyclerView
      */
     public void getStaffList() {
-        Snappy.getStaffList(getActivity(), new Snappy.SnappyReadListener() {
+        Snappy.getStaffList(monApp, new Snappy.SnappyReadListener() {
             @Override
             public void onDataRead(final ResponseDTO response) {
                 if (getActivity() != null) {

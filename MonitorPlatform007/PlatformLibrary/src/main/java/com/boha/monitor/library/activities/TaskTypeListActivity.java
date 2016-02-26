@@ -96,54 +96,22 @@ public class TaskTypeListActivity extends AppCompatActivity implements TaskTypeL
     public void onStart() {
         super.onStart();
         Log.i(LOG, "## onStart Bind to RequestSyncService");
-        Intent intent = new Intent(this, RequestSyncService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+//        Intent intent = new Intent(this, RequestSyncService.class);
+//        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
     }
     @Override
     public void onStop() {
         super.onStop();
         Log.e(LOG, "## onStop unBind from RequestSyncService");
-        if (mBound) {
-            unbindService(mConnection);
-            mBound = false;
-        }
+//        if (mBound) {
+//            unbindService(mConnection);
+//            mBound = false;
+//        }
 
     }
     boolean mBound;
-    RequestSyncService mService;
 
-
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            Log.w(LOG, "## RequestSyncService ServiceConnection onServiceConnected");
-            RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
-            mService = binder.getService();
-            mBound = true;
-            mService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
-                @Override
-                public void onTasksSynced(int goodResponses, int badResponses) {
-                    Log.e(LOG,"### onTasksSynced, goodResponses: "
-                            + goodResponses + " badResponses: " + badResponses);
-                }
-
-                @Override
-                public void onError(String message) {
-                    Log.e(LOG, message);
-                }
-            });
-
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            Log.w(LOG, "## PhotoUploadService onServiceDisconnected");
-            mBound = false;
-        }
-    };
 
     static final String LOG = TaskTypeListActivity.class.getSimpleName();
 }

@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.Person;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
@@ -63,7 +64,15 @@ public class ProfileFragment extends Fragment implements PageFragment {
     int editType;
     int personType, takeSelfie;
     String firstName, lastName;
+    MonApp monApp;
 
+    public MonApp getMonApp() {
+        return monApp;
+    }
+
+    public void setMonApp(MonApp monApp) {
+        this.monApp = monApp;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -185,6 +194,7 @@ public class ProfileFragment extends Fragment implements PageFragment {
 
         btnSave.setVisibility(View.GONE);
         mListener.setBusy(true);
+
         NetUtil.sendRequest(getActivity(), w, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(final ResponseDTO response) {
@@ -203,7 +213,7 @@ public class ProfileFragment extends Fragment implements PageFragment {
                                         MonitorDTO x = response.getMonitorList().get(0);
                                         Util.sendAppInvitation(getActivity(), x.getFullName(), x.getEmail(),
                                                 x.getPin(), Util.MONITOR);
-                                        Snappy.addMonitor(getActivity(), x, new Snappy.SnappyWriteListener() {
+                                        Snappy.addMonitor(monApp, x, new Snappy.SnappyWriteListener() {
                                             @Override
                                             public void onDataWritten() {
                                                 Log.e("ProfileFragment", "Monitor added to disk cache");
@@ -227,7 +237,7 @@ public class ProfileFragment extends Fragment implements PageFragment {
                                         StaffDTO x = response.getStaffList().get(0);
                                         Util.sendAppInvitation(getActivity(), x.getFullName(), x.getEmail(),
                                                 x.getPin(), Util.STAFF);
-                                        Snappy.addStaff(getActivity(), x, new Snappy.SnappyWriteListener() {
+                                        Snappy.addStaff(monApp, x, new Snappy.SnappyWriteListener() {
                                             @Override
                                             public void onDataWritten() {
                                                 Log.e("ProfileFragment", "Monitor added to disk cache");
@@ -428,7 +438,7 @@ public class ProfileFragment extends Fragment implements PageFragment {
 
     private void getPhotosFromCache() {
         if (monitor != null) {
-            Snappy.getMonitorProfilePhotoList(getActivity(), monitor.getMonitorID(), new Snappy.PhotoListener() {
+            Snappy.getMonitorProfilePhotoList(monApp, monitor.getMonitorID(), new Snappy.PhotoListener() {
                 @Override
                 public void onPhotoAdded() {
 
@@ -457,7 +467,7 @@ public class ProfileFragment extends Fragment implements PageFragment {
             });
         } else {
             if (staff != null) {
-                Snappy.getStaffProfilePhotoList(getActivity(), staff.getStaffID(), new Snappy.PhotoListener() {
+                Snappy.getStaffProfilePhotoList(monApp, staff.getStaffID(), new Snappy.PhotoListener() {
                     @Override
                     public void onPhotoAdded() {
 

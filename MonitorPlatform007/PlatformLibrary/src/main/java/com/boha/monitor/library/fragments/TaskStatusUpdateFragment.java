@@ -3,6 +3,7 @@ package com.boha.monitor.library.fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.RequiresPermission;
 import android.support.design.widget.FloatingActionButton;
@@ -23,9 +24,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.TaskStatusTypeAdapter;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
+import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.dto.RequestDTO;
@@ -33,6 +36,8 @@ import com.boha.monitor.library.dto.RequestList;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.dto.TaskStatusTypeDTO;
+import com.boha.monitor.library.services.RequestIntentService;
+import com.boha.monitor.library.services.RequestSyncService;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.RequestCacheUtil;
@@ -61,7 +66,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
         void onProjectTaskCameraRequested(ProjectTaskDTO projectTask);
 
-        void onStatusComplete(ProjectTaskDTO projectTask, ProjectTaskStatusDTO projectTaskStatus);
+        void onStatusComplete(ProjectDTO project);
 
         void onCancelStatusUpdate(ProjectTaskDTO projectTask);
 
@@ -80,7 +85,15 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
     List<TaskStatusTypeDTO> taskStatusTypeList;
     LayoutInflater inflater;
 
+    MonApp monApp;
 
+    public MonApp getMonApp() {
+        return monApp;
+    }
+
+    public void setMonApp(MonApp monApp) {
+        this.monApp = monApp;
+    }
     static final String LOG = TaskStatusUpdateFragment.class.getSimpleName();
 
     public void setProjectTask(ProjectTaskDTO projectTask) {
@@ -107,7 +120,6 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i(LOG, "++ onCreate ......");
         if (getArguments() != null) {
             projectTask = (ProjectTaskDTO) getArguments().getSerializable("projectTask");
         }
@@ -138,9 +150,8 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
 
     private void getStatusTypes() {
-        Log.d(LOG, "----- getStatusTypes");
 
-        Snappy.getTaskStatusTypeList(getActivity(), new Snappy.SnappyReadListener() {
+        Snappy.getTaskStatusTypeList(monApp, new Snappy.SnappyReadListener() {
             @Override
             public void onDataRead(final ResponseDTO response) {
                 if (getActivity() != null) {
@@ -165,7 +176,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
     TaskStatusTypeAdapter adapter;
 
     private void setList() {
-        Log.d(LOG, "+++++++ setList");
+//        Log.d(LOG, "+++++++ setList");
         txtTaskName.setText(projectTask.getTask().getTaskName());
 
         adapter = new TaskStatusTypeAdapter(taskStatusTypeList, darkColor, getActivity(), new TaskStatusTypeAdapter.TaskStatusTypeListener() {
@@ -186,7 +197,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
                         break;
                 }
 
-                Util.expand(actionView, 1000, null);
+                Util.expand(actionView, 500, null);
 
 
             }
@@ -241,6 +252,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
                 mListener.onProjectTaskCameraRequested(projectTask);
             }
         });
+        Util.expand(fab,1000,null);
         iconCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -259,6 +271,7 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
                 Util.flashOnce(btnSubmit, 300, new Util.UtilAnimationListener() {
                     @Override
                     public void onAnimationEnded() {
+                        btnSubmit.setEnabled(false);
                         processRequest();
                     }
                 });
@@ -281,7 +294,6 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         Util.collapse(actionView, 1000, null);
         btnDone.setVisibility(View.GONE);
         scrollView.setVisibility(View.GONE);
-        mListener.onStatusComplete(projectTask, projectTaskStatus);
 
 
     }
@@ -321,98 +333,118 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         r.setTaskStatusTypeID(taskStatusType.getTaskStatusTypeID());
         projectTaskStatus.setTaskStatusType(taskStatusType);
         projectTaskStatus.setStatusDate(new Date().getTime());
-        projectTaskStatus.setDateUpdated(new Date().getTime());
         projectTaskStatus.setProjectTaskID(pt.getProjectTaskID());
         //
         final RequestDTO request = new RequestDTO(RequestDTO.ADD_PROJECT_TASK_STATUS);
         request.setProjectTaskStatus(projectTaskStatus);
-
-        if (WebCheck.checkNetworkAvailability(getActivity()).isNetworkUnavailable()) {
-            saveRequestInCache(request);
-            btnSubmit.setEnabled(true);
-            return;
-        }
-
-        mListener.setBusy(true);
-        request.setZipResponse(false);
-        NetUtil.sendRequest(getActivity(), request, new NetUtil.NetUtilListener() {
+        request.setRequestDate(new Date().getTime());
+        Snappy.cacheRequest(monApp, request, new Snappy.SnappyWriteListener() {
             @Override
-            public void onResponse(final ResponseDTO response) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mListener.setBusy(false);
-                        btnSubmit.setEnabled(true);
-                        if (response.getProjectTaskStatusList() != null
-                                && !response.getProjectTaskStatusList().isEmpty()) {
-                            returnedStatus = response.getProjectTaskStatusList().get(0);
-                            Snackbar.make(mRecyclerView, "The status update has been sent", Snackbar.LENGTH_LONG).show();
+            public void onDataWritten() {
+                returnedStatus = projectTaskStatus;
+                projectTask.getProjectTaskStatusList().add(0, projectTaskStatus);
+                updateProjectInCache(projectTaskStatus);
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
                             txtTime.setText(sdf.format(new Date()));
                             txtResult.setText("Status updated: " + projectTask.getTask().getTaskName());
 
                             Util.collapse(actionView, 1000, null);
-                            showCameraDialog();
+                            Util.expand(fab, 1000, null);
+                            Intent m = new Intent(getContext(), RequestIntentService.class);
+                            getActivity().startService(m);
                         }
-                    }
-                });
+                    });
 
+                }
             }
 
             @Override
-            public void onError(final String message) {
-                getActivity().runOnUiThread(new Runnable() {
+            public void onError(String message) {
+
+            }
+        });
+
+
+    }
+
+    private void updateProjectInCache(final ProjectTaskStatusDTO status) {
+        Snappy.getProject(monApp, projectTask.getProjectID(), new Snappy.SnappyProjectListener() {
+            @Override
+            public void onProjectFound(final ProjectDTO project) {
+                List<ProjectTaskDTO> ptList = new ArrayList<>();
+                for (ProjectTaskDTO pt : project.getProjectTaskList()) {
+                    if (pt.getProjectTaskID().intValue() == projectTask.getProjectTaskID()) {
+                        ptList.add(projectTask);
+                    } else {
+                        ptList.add(pt);
+                    }
+                }
+                project.setProjectTaskList(ptList);
+                project.setStatusCount(project.getStatusCount() + 1);
+                project.setLastStatus(status);
+                List<ProjectDTO> pList = new ArrayList<>();
+                pList.add(project);
+                Snappy.writeProjectList(monApp, pList, new Snappy.SnappyWriteListener() {
                     @Override
-                    public void run() {
-                        mListener.setBusy(false);
-                        saveRequestInCache(request);
-                        Util.showErrorToast(getActivity(), message);
+                    public void onDataWritten() {
+                        Log.e(LOG, "Project updated with projectTask that contains new status: " +
+                                project.getProjectName() + " - " + projectTask.getTask().getTaskName());
+                        if (mListener != null) {
+                            mListener.onStatusComplete(project);
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        Log.e(LOG,message);
+//                        Util.showErrorToast(getActivity(),"Unable to get project from cache");
                     }
                 });
-
             }
 
-
-        });
-
-
-    }
-
-
-    private void showCameraDialog() {
-        getActivity().runOnUiThread(new Runnable() {
             @Override
-            public void run() {
-                AlertDialog.Builder diag = new AlertDialog.Builder(getActivity());
-                diag.setTitle("Task Status Photo")
-                        .setMessage("Do you want to take pictures for this update?\n\n"
-                                + projectTask.getTask().getTaskName())
-                        .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                mListener.onProjectTaskCameraRequested(projectTask);
-                            }
-                        })
-                        .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                mListener.onStatusComplete(projectTask,returnedStatus);
-                            }
-                        })
-                        .show();
+            public void onError() {
+
             }
         });
-
     }
+
+//    private void showCameraDialog(final ProjectDTO p) {
+//        AlertDialog.Builder d = new AlertDialog.Builder(getContext());
+//
+//
+//        d.setTitle("Status Camera")
+//                .setMessage("Do you want to take pictures for this task:\n"
+//                        + projectTask.getTask().getTaskName() + "?")
+//                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        mListener.onProjectTaskCameraRequested(projectTask);
+//                    }
+//                })
+//                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        mListener.onStatusComplete(p);
+//                    }
+//                })
+//                .show();
+//    }
 
     private List<PhotoUploadDTO> photoUploadList;
 
     public void onPictureTaken(boolean isTaken) {
         if (isTaken) {
-            Snackbar.make(scrollView,"Photo has been taken and saved",Snackbar.LENGTH_LONG).show();
+            Snackbar.make(scrollView, "Photo has been taken and saved", Snackbar.LENGTH_LONG).show();
         } else {
-            Util.showErrorToast(getActivity(),"Photo has not been taken. Please try again");
+            Util.showErrorToast(getActivity(), "Photo has not been taken. Please try again");
         }
     }
+
     public void displayPhotos(List<PhotoUploadDTO> list) {
         Log.i(LOG, "## photos Taken: " + list.size());
         if (photoUploadList == null) {
@@ -447,32 +479,12 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
 
     private ProjectTaskStatusDTO returnedStatus;
 
-    private void saveRequestInCache(RequestDTO request) {
-        RequestCacheUtil.addRequest(getActivity(), request, new RequestCacheUtil.RequestCacheListener() {
-            @Override
-            public void onError(String message) {
-                Log.e(LOG, message);
-            }
-
-            @Override
-            public void onRequestAdded() {
-                Snackbar.make(mRecyclerView, "The task status update has been saved", Snackbar.LENGTH_LONG).show();
-                showCameraDialog();
-            }
-
-            @Override
-            public void onRequestsRetrieved(RequestList requestList) {
-
-            }
-        });
-    }
-
     TaskStatusUpdateListener mListener;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        Log.d(LOG, "++ onAttach");
+//        Log.d(LOG, "++ onAttach");
         try {
             mListener = (TaskStatusUpdateListener) activity;
         } catch (ClassCastException e) {
