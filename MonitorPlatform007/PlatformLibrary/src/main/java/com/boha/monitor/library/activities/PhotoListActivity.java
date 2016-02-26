@@ -71,7 +71,7 @@ public class PhotoListActivity extends AppCompatActivity implements
             Util.setCustomActionBar(getApplicationContext(),
                     getSupportActionBar(), project.getProjectName(),
                     project.getCityName(),
-                    ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
+                    ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses));
             response = new ResponseDTO();
             response.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
             if (project.getPhotoUploadList() != null) {
@@ -122,7 +122,7 @@ public class PhotoListActivity extends AppCompatActivity implements
             ImageView logo = Util.setCustomActionBar(ctx, getSupportActionBar(),
                     project.getProjectName(),
                     sb.toString(),
-                    ContextCompat.getDrawable(ctx, R.drawable.glasses48));
+                    ContextCompat.getDrawable(ctx, R.drawable.glasses));
             logo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

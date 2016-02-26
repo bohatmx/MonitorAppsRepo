@@ -141,7 +141,7 @@ public class StaffGCMListenerService extends GcmListenerService {
         }
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.glasses48)
+                .setSmallIcon(R.drawable.glasses)
                 .setContentTitle(name + " - " + "Message received")
                 .setContentText(simpleMessage.getMessage())
                 .setAutoCancel(true)
@@ -179,7 +179,7 @@ public class StaffGCMListenerService extends GcmListenerService {
         }
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.glasses48)
+                .setSmallIcon(R.drawable.glasses)
                 .setContentTitle(name + " - " + "Current Location")
                 .setContentText("This is a location sent to you")
                 .setAutoCancel(true)
@@ -204,7 +204,7 @@ public class StaffGCMListenerService extends GcmListenerService {
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.glasses48)
+                .setSmallIcon(R.drawable.glasses)
                 .setContentTitle(getString(R.string.welcome_msg))
                 .setContentText(message)
                 .setAutoCancel(true)

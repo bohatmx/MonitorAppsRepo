@@ -33,7 +33,7 @@ StatusReportFragment statusReportFragment;
 
         Util.setCustomActionBar(getApplicationContext(),getSupportActionBar(),
                 project.getProjectName(), project.getCityName(),
-                ContextCompat.getDrawable(getApplicationContext(),R.drawable.glasses48));
+                ContextCompat.getDrawable(getApplicationContext(),R.drawable.glasses));
     }
 
 

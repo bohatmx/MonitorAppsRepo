@@ -92,7 +92,7 @@ public class DataSetupGCMListenerService extends GcmListenerService {
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.glasses48)
+                .setSmallIcon(R.drawable.glasses)
                 .setContentTitle(getString(com.boha.monitor.setup.R.string.welcome_msg))
                 .setContentText(message)
                 .setAutoCancel(true)

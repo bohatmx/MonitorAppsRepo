@@ -13,12 +13,8 @@ import com.boha.monitor.library.dto.Person;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.fragments.ProfileFragment;
 import com.boha.monitor.library.fragments.StaffProfileFragment;
-import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity
         implements ProfileFragment.ProfileListener {
@@ -59,7 +55,7 @@ public class ProfileActivity extends AppCompatActivity
                 getApplicationContext(),
                 getSupportActionBar(),
                 "Profile Management", name,
-                ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
+                ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses));
 
     }
 

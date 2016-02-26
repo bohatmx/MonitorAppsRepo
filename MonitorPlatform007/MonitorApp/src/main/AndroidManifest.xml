@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.boha.platform.worker" >
     <!-- PERMISSIONS -->
     <permission
@@ -31,8 +32,9 @@
         android:required="true" />
     <application
         android:allowBackup="true"
-        android:icon="@drawable/glasses48"
+        android:icon="@drawable/glasses"
         android:label="@string/app_name"
+        tools:replace="android:icon"
         android:name="com.boha.monitor.library.activities.MonApp"
         android:theme="@style/TealTheme" >
         <!-- Keys and metadata -->

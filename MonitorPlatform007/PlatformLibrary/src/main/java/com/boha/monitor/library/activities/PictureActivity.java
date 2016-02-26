@@ -127,7 +127,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                 dispatchTakePictureIntent();
                 Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
                         monitor.getFullName(), "Profile Photo",
-                        ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
+                        ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses));
 
 
                 break;
@@ -136,7 +136,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                 dispatchTakePictureIntent();
                 Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
                         staff.getFullName(), "Profile Photo",
-                        ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
+                        ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses));
 
                 break;
             case PhotoUploadDTO.PROJECT_IMAGE:
@@ -144,7 +144,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                 txtTitle.setText(project.getProjectName());
                 Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
                         project.getProjectName(), project.getCityName(),
-                        ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
+                        ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses));
 
                 break;
 
@@ -153,7 +153,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                 txtSubtitle.setText(projectTask.getTask().getTaskName());
                 Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
                         projectTask.getProjectName(), projectTask.getTask().getTaskName(),
-                        ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
+                        ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses));
 
                 break;
 
@@ -270,7 +270,10 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                                     new PhotoTask().execute();
                                 } else {
                                     Util.showErrorToast(ctx,
-                                            "You seem to be more than " + PROXIMITY_LIMIT + " metres away from the project. Picture cannot be taken.");
+                                            "You seem to be more than " + PROXIMITY_LIMIT +
+                                                    " metres away from the project. Picture cannot be taken.");
+                                    pictureTakenOK = false;
+                                    onBackPressed();
                                 }
                             } else {
                                 Util.showErrorToast(ctx, "Your GPS location is currently undefined");

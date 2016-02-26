@@ -38,7 +38,7 @@ public class SimpleMessagingActivity extends AppCompatActivity implements Simple
             Log.e(LOG,"GCM msg received: " + simpleMessage.getMessage());
         }
         Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),"Monitor Messaging",
-                ContextCompat.getDrawable(getApplicationContext(),R.drawable.glasses48));
+                ContextCompat.getDrawable(getApplicationContext(),R.drawable.glasses));
     }
 
     @Override

@@ -25,12 +25,10 @@ import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.fragments.MediaDialogFragment;
-import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.fragments.ProjectTaskListFragment;
 import com.boha.monitor.library.fragments.TaskStatusUpdateFragment;
 import com.boha.monitor.library.fragments.TaskTypeListFragment;
 import com.boha.monitor.library.services.PhotoUploadService;
-import com.boha.monitor.library.services.RequestSyncService;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
@@ -40,7 +38,6 @@ import com.boha.monitor.library.util.Util;
 import com.boha.monitor.library.util.WebCheck;
 import com.boha.platform.library.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -81,7 +78,7 @@ public class UpdateActivity extends AppCompatActivity
                 getApplicationContext(),
                 getSupportActionBar(),
                 project.getProjectName(), project.getCityName(),
-                ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
+                ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses));
 
         if (findViewById(R.id.frameLayout) != null) {
             if (savedInstanceState != null) {

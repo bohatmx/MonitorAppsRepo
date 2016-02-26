@@ -3,7 +3,6 @@ package com.boha.monitor.library.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -47,7 +46,7 @@ public class ProjectSelectionActivity extends AppCompatActivity implements Proje
         Util.setCustomActionBar(ctx, bar,
                 SharedUtil.getCompany(ctx).getCompanyName(),
                 "Project Assignment",
-                ContextCompat.getDrawable(ctx, R.drawable.glasses48));
+                ContextCompat.getDrawable(ctx, R.drawable.glasses));
 
     }
 

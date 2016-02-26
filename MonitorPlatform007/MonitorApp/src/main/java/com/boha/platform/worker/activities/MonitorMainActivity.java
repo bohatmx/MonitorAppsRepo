@@ -46,7 +46,6 @@ import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.Person;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
-import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.VideoUploadDTO;
@@ -168,7 +167,7 @@ public class MonitorMainActivity extends AppCompatActivity
         Util.setCustomActionBar(ctx, bar,
                 SharedUtil.getCompany(ctx).getCompanyName(),
                 "Project Monitoring",
-                ContextCompat.getDrawable(ctx, R.drawable.glasses48));
+                ContextCompat.getDrawable(ctx, R.drawable.glasses));
         mNavigationDrawerFragment.openDrawer();
         buildPages();
     }

@@ -17,7 +17,7 @@
     <application
         android:name="com.boha.monitor.library.activities.MonApp"
         android:allowBackup="true"
-        android:icon="@drawable/glasses48"
+        android:icon="@drawable/glasses"
         android:label="@string/app_name"
         android:theme="@style/RedTheme"
         tools:replace="theme" >

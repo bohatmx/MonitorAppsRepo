@@ -21,8 +21,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/MON_imagex"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_centerVertical="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/black_woman" />

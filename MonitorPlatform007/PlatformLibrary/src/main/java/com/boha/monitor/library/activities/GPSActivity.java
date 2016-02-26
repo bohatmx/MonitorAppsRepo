@@ -77,7 +77,7 @@ public class GPSActivity extends AppCompatActivity
 
         Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
                 project.getProjectName(),project.getCityName(),
-                ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
+                ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses));
 
     }
 

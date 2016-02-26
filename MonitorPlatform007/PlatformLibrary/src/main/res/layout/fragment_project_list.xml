@@ -9,6 +9,8 @@
         android:id="@+id/count"
         style="@style/Title1TextStyleBlack"
         android:text="0"
+        android:textSize="48dp"
+        android:textStyle="normal"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/mon_margin"
         android:layout_marginTop="@dimen/mon_margin"

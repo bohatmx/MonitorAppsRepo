@@ -140,7 +140,7 @@ public class ProjectMapActivity extends AppCompatActivity
 
         Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
                 SharedUtil.getCompany(ctx).getCompanyName(), "Project Locations",
-                ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));
+                ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses));
         projectList = response.getProjectList();
         txtCount.setText("" + projectList.size());
         setProjectMarkers();

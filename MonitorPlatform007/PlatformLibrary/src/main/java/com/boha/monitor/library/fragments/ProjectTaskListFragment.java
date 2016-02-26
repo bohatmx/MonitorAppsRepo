@@ -24,6 +24,7 @@ import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
+import java.util.Collections;
 import java.util.List;
 
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
@@ -166,7 +167,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment {
             Log.e(LOG, "++++++++ projectTaskList is NULL, bypassing setList");
             return;
         }
-
+        Collections.sort(projectTaskList);
         projectTaskAdapter = new ProjectTaskAdapter(projectTaskList, darkColor, getActivity(), new ProjectTaskAdapter.TaskListener() {
             @Override
             public void onTaskNameClicked(ProjectTaskDTO projTask, int position) {

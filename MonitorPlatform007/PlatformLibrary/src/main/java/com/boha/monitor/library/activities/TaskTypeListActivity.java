@@ -1,11 +1,6 @@
 package com.boha.monitor.library.activities;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,7 +10,6 @@ import android.view.MenuItem;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.TaskTypeDTO;
 import com.boha.monitor.library.fragments.TaskTypeListFragment;
-import com.boha.monitor.library.services.RequestSyncService;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
@@ -50,7 +44,7 @@ public class TaskTypeListActivity extends AppCompatActivity implements TaskTypeL
 
         Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
                 projectDTO.getProjectName(), projectDTO.getCityName(),
-                ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses48));    }
+                ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses));    }
 
     @Override
     public void onSaveInstanceState(Bundle b) {

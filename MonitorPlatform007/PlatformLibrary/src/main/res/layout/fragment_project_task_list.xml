@@ -31,7 +31,7 @@
                 android:text="Programme Name" />
             <TextView
                 android:id="@+id/PRH_subTitle"
-                style="@style/TextStyleWhite"
+                style="@style/Title1TextStyleWhite"
                 android:padding="@dimen/mon_margin"
                 android:layout_alignParentTop="true"
                 android:layout_width="match_parent"
@@ -42,7 +42,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="@dimen/mon_margin"
-                android:layout_marginRight="@dimen/mon_wider"
+                android:layout_marginRight="@dimen/mon_wide"
                 style="@style/TransparentCircleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

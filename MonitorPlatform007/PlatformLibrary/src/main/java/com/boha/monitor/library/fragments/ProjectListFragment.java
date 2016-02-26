@@ -86,6 +86,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         auto = (AutoCompleteTextView) view.findViewById(R.id.autocomplete_project);
         txtCount = (TextView) view.findViewById(R.id.count);
+        Statics.setRobotoFontLight(getActivity(),txtCount);
         top = view.findViewById(R.id.top);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(),
                 LinearLayoutManager.VERTICAL, false);
@@ -149,7 +150,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             return;
         }
         txtCount.setText("" + projectList.size());
-        Statics.setRobotoFontBoldCondensed(getActivity(),txtCount);
         if (projectList.size() > 2) {
             projectNameList = new ArrayList<>(projectList.size());
             for (ProjectDTO p : projectList) {

@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author aubreyM
  */
-public class ProjectTaskDTO implements Serializable {
+public class ProjectTaskDTO implements Serializable, Comparable<ProjectTaskDTO> {
 
     private static final long serialVersionUID = 1L;
     private Integer projectTaskID;
@@ -129,4 +129,14 @@ public class ProjectTaskDTO implements Serializable {
         return "com.boha.monitor.data.ProjectTask[ projectTaskID=" + projectTaskID + " ]";
     }
 
+    @Override
+    public int compareTo(ProjectTaskDTO another) {
+        try {
+            int w = this.getTask().getTaskName().compareTo(another.getTask().getTaskName());
+            return w;
+        } catch (Exception e) {
+
+        }
+        return 0;
+    }
 }

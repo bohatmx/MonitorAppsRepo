@@ -143,7 +143,7 @@ public class MonitorMapActivity extends AppCompatActivity
             }
             final String dispName = name;
             Util.setCustomActionBar(ctx, getSupportActionBar(), dispName, "Location",
-                    ContextCompat.getDrawable(ctx, R.drawable.glasses48));
+                    ContextCompat.getDrawable(ctx, R.drawable.glasses));
 
             txtTime.setOnClickListener(new View.OnClickListener() {
                 @Override

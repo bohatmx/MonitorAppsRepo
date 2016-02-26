@@ -45,7 +45,6 @@ import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.activities.PictureActivity;
 import com.boha.monitor.library.activities.ProfileActivity;
-import com.boha.monitor.library.activities.ProjectAssignmentActivity;
 import com.boha.monitor.library.activities.ProjectMapActivity;
 import com.boha.monitor.library.activities.ProjectSelectionActivity;
 import com.boha.monitor.library.activities.StatusReportActivity;
@@ -211,7 +210,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
         Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
                 SharedUtil.getCompany(ctx).getCompanyName(), "Project Monitoring",
-                ContextCompat.getDrawable(getApplicationContext(), com.boha.platform.library.R.drawable.glasses48));
+                ContextCompat.getDrawable(getApplicationContext(), com.boha.platform.library.R.drawable.glasses));
 
     }
 
