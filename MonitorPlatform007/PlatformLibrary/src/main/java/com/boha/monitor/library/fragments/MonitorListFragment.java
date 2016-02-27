@@ -202,18 +202,6 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         return view;
     }
 
-    public void updateMonitorList(List<MonitorDTO> list) {
-        monitorList = list;
-        if (getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    setList();
-                }
-            });
-        }
-    }
-
     public void getMonitorList() {
         Snappy.getMonitorList(monApp, new Snappy.SnappyReadListener() {
             @Override
@@ -376,19 +364,37 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         monitorListAdapter = new MonitorListAdapter(monitorList, darkColor, getActivity(), new MonitorListAdapter.MonitorListener() {
             @Override
             public void onHighDefPhoto(PhotoUploadDTO photo) {
+                SharedUtil.saveLastMonitorID(getActivity(),monitor.getMonitorID());
                 Intent w = new Intent(getContext(), HighDefActivity.class);
                 w.putExtra("photo",photo);
                 startActivity(w);
             }
             @Override
             public void onMonitorNameClicked(MonitorDTO monitor) {
+                SharedUtil.saveLastMonitorID(getActivity(),monitor.getMonitorID());
                 showPopup(monitor);
             }
         });
 
         recyclerView.setAdapter(monitorListAdapter);
+        int index = getIndex();
+        if (index > 0) {
+            recyclerView.scrollToPosition(index);
+        }
+
     }
 
+    private int getIndex() {
+        Integer x = SharedUtil.getLastMonitorID(getActivity());
+        int index = 0;
+        for (MonitorDTO m: monitorList) {
+            if (m.getMonitorID().intValue() == x.intValue()) {
+                return index;
+            }
+            index++;
+        }
+        return 0;
+    }
     private void showPopup(final MonitorDTO monitor) {
         final ListPopupWindow pop = new ListPopupWindow(getActivity());
         LayoutInflater inf = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

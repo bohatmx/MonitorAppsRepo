@@ -66,10 +66,6 @@ public class ProfileFragment extends Fragment implements PageFragment {
     String firstName, lastName;
     MonApp monApp;
 
-    public MonApp getMonApp() {
-        return monApp;
-    }
-
     public void setMonApp(MonApp monApp) {
         this.monApp = monApp;
     }
@@ -210,10 +206,10 @@ public class ProfileFragment extends Fragment implements PageFragment {
                             switch (personType) {
                                 case MONITOR:
                                     if (monitor == null) {
-                                        MonitorDTO x = response.getMonitorList().get(0);
-                                        Util.sendAppInvitation(getActivity(), x.getFullName(), x.getEmail(),
-                                                x.getPin(), Util.MONITOR);
-                                        Snappy.addMonitor(monApp, x, new Snappy.SnappyWriteListener() {
+                                        MonitorDTO mon = response.getMonitorList().get(0);
+                                        Util.sendAppInvitation(getActivity(), mon.getFullName(), mon.getEmail(),
+                                                mon.getPin(), Util.MONITOR);
+                                        Snappy.addMonitor(monApp, mon, new Snappy.SnappyWriteListener() {
                                             @Override
                                             public void onDataWritten() {
                                                 Log.e("ProfileFragment", "Monitor added to disk cache");
@@ -224,7 +220,7 @@ public class ProfileFragment extends Fragment implements PageFragment {
 
                                             }
                                         });
-                                        mListener.onAdded(x);
+                                        mListener.onAdded(mon);
                                     } else {
                                         monitor = response.getMonitorList().get(0);
                                         mListener.onUpdated(monitor);

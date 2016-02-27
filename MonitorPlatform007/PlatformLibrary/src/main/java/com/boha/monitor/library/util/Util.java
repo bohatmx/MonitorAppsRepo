@@ -92,7 +92,7 @@ public class Util {
                                       final ResponseDTO response,
                                       final SnappyListener listener) {
 
-        Log.e(LOG, "################### START cachingService for: status types, projects, staff and monitors......");
+        Log.w(LOG, "################### caching on Snappy for: status types, projects, staff and monitors......");
 
         Snappy.writeProjectList(ctx, response.getProjectList(), new Snappy.SnappyWriteListener() {
             @Override
@@ -106,7 +106,7 @@ public class Util {
                                 Snappy.writeTaskStatusTypeList(ctx, response.getTaskStatusTypeList(), new Snappy.SnappyWriteListener() {
                                     @Override
                                     public void onDataWritten() {
-                                        Log.e(LOG, "Yeaaaah!! Data written to SnappyDB. Caching is complete");
+                                        Log.d(LOG, "Yeaaaah!! Data written to SnappyDB. Caching is complete");
                                         listener.onCachingComplete();
                                     }
 

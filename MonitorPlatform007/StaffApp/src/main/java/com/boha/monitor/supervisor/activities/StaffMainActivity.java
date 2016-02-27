@@ -3,10 +3,12 @@ package com.boha.monitor.supervisor.activities;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -22,6 +24,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
@@ -70,9 +73,8 @@ import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.fragments.SimpleMessageFragment;
 import com.boha.monitor.library.fragments.StaffListFragment;
 import com.boha.monitor.library.fragments.TaskTypeListFragment;
-import com.boha.monitor.library.services.CachingService;
+import com.boha.monitor.library.services.DataRefreshService;
 import com.boha.monitor.library.services.PhotoUploadService;
-import com.boha.monitor.library.services.RequestSyncService;
 import com.boha.monitor.library.util.DepthPageTransformer;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
@@ -148,6 +150,25 @@ public class StaffMainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_staff_main);
 
+        setFields();
+
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+        setMenuDestinations();
+        mDrawerLayout.openDrawer(GravityCompat.START);
+
+        //receive notification when DataRefreshService has completed work
+        IntentFilter mStatusIntentFilter = new IntentFilter(
+                DataRefreshService.BROADCAST_ACTION);
+        DataRefreshDoneReceiver receiver = new DataRefreshDoneReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver,mStatusIntentFilter);
+    }
+
+    private void setFields() {
         actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -188,32 +209,19 @@ public class StaffMainActivity extends AppCompatActivity implements
         mPager = (ViewPager) findViewById(R.id.viewpager);
         mPager.setOffscreenPageLimit(4);
         PagerTitleStrip strip = (PagerTitleStrip) mPager.findViewById(R.id.pager_title_strip);
-        strip.setVisibility(View.GONE);
+        strip.setVisibility(View.VISIBLE);
         strip.setBackgroundColor(themeDarkColor);
-
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(themeDarkColor);
             window.setNavigationBarColor(themeDarkColor);
         }
-
-        setMenuDestinations();
-        mDrawerLayout.openDrawer(GravityCompat.START);
-
         Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
                 SharedUtil.getCompany(ctx).getCompanyName(), "Project Monitoring",
                 ContextCompat.getDrawable(getApplicationContext(), com.boha.platform.library.R.drawable.glasses));
 
     }
-
     private void setMenuDestinations() {
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -360,94 +368,8 @@ public class StaffMainActivity extends AppCompatActivity implements
         if (showBusy) {
             Snackbar.make(mPager, "Refreshing your data, this may take a minute or two ...", Snackbar.LENGTH_LONG).show();
         }
-        NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {
-            @Override
-            public void onResponse(final ResponseDTO r) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setRefreshActionButtonState(false);
-                        companyDataRefreshed = true;
-                        response = r;
-                        buildPages();
-                        Util.cacheOnSnappy((MonApp) getApplication(), r, new Util.SnappyListener() {
-                            @Override
-                            public void onCachingComplete() {
-
-                            }
-
-                            @Override
-                            public void onError(String message) {
-
-                            }
-                        });
-
-                    }
-                });
-
-            }
-
-            @Override
-            public void onError(final String message) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setRefreshActionButtonState(false);
-                        Util.showErrorToast(getApplicationContext(), message);
-                    }
-                });
-            }
-
-        });
-    }
-
-    private void startSnappy(final ResponseDTO response) {
-
-        Log.e(LOG, "################### START cachingService for: status types, projects, staff and monitors......");
-
-        final MonApp ctx = (MonApp) getApplication();
-        Snappy.writeProjectList(ctx, response.getProjectList(), new Snappy.SnappyWriteListener() {
-            @Override
-            public void onDataWritten() {
-                Snappy.writeStaffList(ctx, response.getStaffList(), new Snappy.SnappyWriteListener() {
-                    @Override
-                    public void onDataWritten() {
-                        Snappy.writeMonitorList(ctx, response.getMonitorList(), new Snappy.SnappyWriteListener() {
-                            @Override
-                            public void onDataWritten() {
-                                Snappy.writeTaskStatusTypeList((MonApp) getApplication(), response.getTaskStatusTypeList(), new Snappy.SnappyWriteListener() {
-                                    @Override
-                                    public void onDataWritten() {
-                                        Log.e(LOG, "Yeaaaah!! Data written to SnappyDB");
-                                    }
-
-                                    @Override
-                                    public void onError(String message) {
-
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onError(String message) {
-
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onError(String message) {
-
-                    }
-                });
-            }
-
-            @Override
-            public void onError(String message) {
-
-            }
-        });
-
+        Intent m = new Intent(ctx,DataRefreshService.class);
+        startService(m);
     }
 
     @DebugLog
@@ -456,10 +378,11 @@ public class StaffMainActivity extends AppCompatActivity implements
             @Override
             public void run() {
                 pageFragmentList = new ArrayList<>();
+                MonApp app = (MonApp) getApplication();
                 StaffDTO staff = SharedUtil.getCompanyStaff(ctx);
                 profileFragment = new ProfileFragment();
                 profileFragment.setStaff(staff);
-                profileFragment.setMonApp((MonApp) getApplication());
+                profileFragment.setMonApp(app);
                 profileFragment.setPersonType(ProfileFragment.STAFF);
                 if (staff != null) {
                     profileFragment.setEditType(ProfileFragment.UPDATE_PERSON);
@@ -468,24 +391,21 @@ public class StaffMainActivity extends AppCompatActivity implements
                 }
 
                 monitorListFragment = new MonitorListFragment();
-                monitorListFragment.setMonApp((MonApp) getApplication());
+                monitorListFragment.setMonApp(app);
                 staffListFragment = new StaffListFragment();
-                staffListFragment.setMonApp((MonApp) getApplication());
+                staffListFragment.setMonApp(app);
                 projectListFragment = new ProjectListFragment();
-                projectListFragment.setMonApp((MonApp) getApplication());
-//                simpleMessageFragment = new SimpleMessageFragment();
+                projectListFragment.setMonApp(app);
 
 
                 profileFragment.setThemeColors(themePrimaryColor, themeDarkColor);
                 monitorListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
                 staffListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
                 projectListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
-//                simpleMessageFragment.setThemeColors(themePrimaryColor, themeDarkColor);
 
                 pageFragmentList.add(projectListFragment);
                 pageFragmentList.add(staffListFragment);
                 pageFragmentList.add(monitorListFragment);
-//        pageFragmentList.add(simpleMessageFragment);
                 pageFragmentList.add(profileFragment);
 
                 adapter = new StaffPagerAdapter(getSupportFragmentManager());
@@ -623,12 +543,6 @@ public class StaffMainActivity extends AppCompatActivity implements
         Log.i(LOG, "## onStart Bind to PhotoUploadService, RequestService");
         Intent intent = new Intent(this, PhotoUploadService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-
-//        Intent intentw = new Intent(this, RequestSyncService.class);
-//        bindService(intentw, rConnection, Context.BIND_AUTO_CREATE);
-
-//        Intent intentx = new Intent(this, CachingService.class);
-//        bindService(intentx, cConnection, Context.BIND_AUTO_CREATE);
         super.onStart();
     }
 
@@ -1226,41 +1140,10 @@ public class StaffMainActivity extends AppCompatActivity implements
         }
     }
 
-    boolean mBound, rBound, cBound;
+    boolean mBound;
     PhotoUploadService mService;
-    RequestSyncService rService;
-    CachingService cService;
 
 
-//    private ServiceConnection rConnection = new ServiceConnection() {
-//
-//        @Override
-//        public void onServiceConnected(ComponentName className,
-//                                       IBinder service) {
-//            Log.w(LOG, "## RequestSyncService ServiceConnection onServiceConnected");
-//            RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
-//            rService = binder.getService();
-//            rBound = true;
-//            rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
-//                @Override
-//                public void onTasksSynced(int goodResponses, int badResponses) {
-//                    Log.i(LOG, "## onTasksSynced, goodResponses: " + goodResponses + " badResponses: " + badResponses);
-//                }
-//
-//                @Override
-//                public void onError(String message) {
-//                    Log.e(LOG, "Error with sync: " + message);
-//                }
-//            });
-//
-//        }
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName arg0) {
-//            Log.w(LOG, "## RequestSyncService onServiceDisconnected");
-//            mBound = false;
-//        }
-//    };
 
     private ServiceConnection mConnection = new ServiceConnection() {
 
@@ -1285,25 +1168,23 @@ public class StaffMainActivity extends AppCompatActivity implements
             mBound = false;
         }
     };
-//    private ServiceConnection cConnection = new ServiceConnection() {
-//
-//        @Override
-//        public void onServiceConnected(ComponentName className,
-//                                       IBinder service) {
-//            Log.w(LOG, "## CachingService ServiceConnection onServiceConnected");
-//            CachingService.LocalBinder binder = (CachingService.LocalBinder) service;
-//            cService = binder.getService();
-//            cBound = true;
-//            Log.e(LOG, "CachingService bound and ready and waiting");
-//        }
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName arg0) {
-//            Log.w(LOG, "## CachingService onServiceDisconnected");
-//            cBound = false;
-//        }
-//    };
 
+    // Broadcast receiver for receiving status updates from DataRefreshService
+    private class DataRefreshDoneReceiver extends BroadcastReceiver {
+
+        // Called when the BroadcastReceiver gets an Intent it's registered to receive
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            setRefreshActionButtonState(false);
+            Log.e(LOG,"+++++++DataRefreshDoneReceiver onReceive, data must have been refreshed: "
+                    + intent.toString());
+            Log.d(LOG,"+++++++++++++++++ starting refreshes on all fragments .....");
+            projectListFragment.getProjectList();
+            staffListFragment.getStaffList();
+            monitorListFragment.getMonitorList();
+
+        }
+    }
 
     static final String LOG = StaffMainActivity.class.getSimpleName();
     static final int ACCURACY_THRESHOLD = 20;

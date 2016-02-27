@@ -7,19 +7,19 @@ import android.util.Log;
 
 import java.util.Date;
 
-public class SnappyReceiver extends BroadcastReceiver {
-    public SnappyReceiver() {
+public class RequestAlarmReceiver extends BroadcastReceiver {
+    public RequestAlarmReceiver() {
     }
 
 
 
     @Override
     public void onReceive( Context context, Intent intent) {
-        Log.d(LOG,"### onReceive, starting RequestSyncService... " + new Date().toString());
+        Log.e(LOG,"### onReceive, starting RequestIntentService... " + new Date().toString());
         Intent x = new Intent(context,RequestIntentService.class);
         context.startService(x);
     }
 
 
-    static final String LOG = SnappyReceiver.class.getSimpleName();
+    static final String LOG = RequestAlarmReceiver.class.getSimpleName();
 }

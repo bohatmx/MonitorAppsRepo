@@ -2,10 +2,12 @@ package com.boha.platform.worker.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.location.Location;
@@ -20,6 +22,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -56,8 +59,8 @@ import com.boha.monitor.library.fragments.ProfileFragment;
 import com.boha.monitor.library.fragments.PageFragment;
 import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.fragments.SimpleMessageFragment;
+import com.boha.monitor.library.services.DataRefreshService;
 import com.boha.monitor.library.services.PhotoUploadService;
-import com.boha.monitor.library.services.RequestSyncService;
 import com.boha.monitor.library.services.VideoUploadService;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.DepthPageTransformer;
@@ -129,23 +132,29 @@ public class MonitorMainActivity extends AppCompatActivity
         themeDarkColor = typedValue.data;
         theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
         themePrimaryColor = typedValue.data;
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_drawer);
 
-        final ActionBar ab = getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-        ab.setDisplayHomeAsUpEnabled(true);
-
-
-        // ATTENTION: This "addApi(AppIndex.API)"was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .addApi(AppIndex.API).build();
+
+        setFields();
+        buildPages();
+
+        //receive notification when DataRefreshService has completed work
+        IntentFilter mStatusIntentFilter = new IntentFilter(
+                DataRefreshService.BROADCAST_ACTION);
+        DataRefreshDoneReceiver receiver = new DataRefreshDoneReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, mStatusIntentFilter);
+    }
+
+    private void setFields() {
+        final ActionBar ab = getSupportActionBar();
+        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        ab.setDisplayHomeAsUpEnabled(true);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -162,14 +171,11 @@ public class MonitorMainActivity extends AppCompatActivity
         strip.setVisibility(View.GONE);
         mPager.setOffscreenPageLimit(4);
 
-        ActionBar bar = getSupportActionBar();
-
-        Util.setCustomActionBar(ctx, bar,
+        Util.setCustomActionBar(ctx, ab,
                 SharedUtil.getCompany(ctx).getCompanyName(),
                 "Project Monitoring",
                 ContextCompat.getDrawable(ctx, R.drawable.glasses));
         mNavigationDrawerFragment.openDrawer();
-        buildPages();
     }
 
     @Override
@@ -191,79 +197,82 @@ public class MonitorMainActivity extends AppCompatActivity
         Util.setActionBarIconSpinning(mMenu, R.id.action_refresh, true);
         busyGettingRemoteData = true;
         Snackbar.make(mPager, "Refreshing your data. May take a minute or two ...", Snackbar.LENGTH_LONG).show();
-        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
-            @Override
-            public void onResponse(final ResponseDTO r) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setRefreshActionButtonState(false);
-                        busyGettingRemoteData = false;
-                        response = r;
-                        if (response.getStatusCode() > 0) {
-                            Util.showErrorToast(ctx, response.getMessage());
-                            return;
-                        }
-                        Util.cacheOnSnappy((MonApp) getApplication(), r, new Util.SnappyListener() {
-                            @Override
-                            public void onCachingComplete() {
-                                buildPages();
-                                final MonitorDTO m = SharedUtil.getMonitor(ctx);
-                                Snappy.getMonitorList((MonApp) getApplication(), new Snappy.SnappyReadListener() {
-                                    @Override
-                                    public void onDataRead(ResponseDTO response) {
-                                        List<MonitorDTO> list = response.getMonitorList();
-                                        if (list != null) {
-                                            for (final MonitorDTO p : list) {
-                                                if (p.getMonitorID().intValue() == m.getMonitorID().intValue()) {
-                                                    SharedUtil.saveMonitor(ctx, p);
-                                                    runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            if (p.getPhotoUploadList() != null) {
-                                                                mNavigationDrawerFragment.setPicture(p.getPhotoUploadList().get(0));
-                                                                profileFragment.setPicture(p.getPhotoUploadList().get(0));
-                                                            }
-                                                        }
-                                                    });
 
-                                                }
-                                            }
-                                        }
-
-                                    }
-
-                                    @Override
-                                    public void onError(String message) {
-
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onError(String message) {
-
-                            }
-                        });
-
-                    }
-                });
-            }
-
-            @Override
-            public void onError(final String message) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setRefreshActionButtonState(false);
-                        busyGettingRemoteData = false;
-                        Util.showErrorToast(ctx, message);
-                    }
-                });
-            }
-
-
-        });
+        Intent m = new Intent(ctx,DataRefreshService.class);
+        startService(m);
+//        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
+//            @Override
+//            public void onResponse(final ResponseDTO r) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        setRefreshActionButtonState(false);
+//                        busyGettingRemoteData = false;
+//                        response = r;
+//                        if (response.getStatusCode() > 0) {
+//                            Util.showErrorToast(ctx, response.getMessage());
+//                            return;
+//                        }
+//                        Util.cacheOnSnappy((MonApp) getApplication(), r, new Util.SnappyListener() {
+//                            @Override
+//                            public void onCachingComplete() {
+//                                buildPages();
+//                                final MonitorDTO m = SharedUtil.getMonitor(ctx);
+//                                Snappy.getMonitorList((MonApp) getApplication(), new Snappy.SnappyReadListener() {
+//                                    @Override
+//                                    public void onDataRead(ResponseDTO response) {
+//                                        List<MonitorDTO> list = response.getMonitorList();
+//                                        if (list != null) {
+//                                            for (final MonitorDTO p : list) {
+//                                                if (p.getMonitorID().intValue() == m.getMonitorID().intValue()) {
+//                                                    SharedUtil.saveMonitor(ctx, p);
+//                                                    runOnUiThread(new Runnable() {
+//                                                        @Override
+//                                                        public void run() {
+//                                                            if (p.getPhotoUploadList() != null) {
+//                                                                mNavigationDrawerFragment.setPicture(p.getPhotoUploadList().get(0));
+//                                                                profileFragment.setPicture(p.getPhotoUploadList().get(0));
+//                                                            }
+//                                                        }
+//                                                    });
+//
+//                                                }
+//                                            }
+//                                        }
+//
+//                                    }
+//
+//                                    @Override
+//                                    public void onError(String message) {
+//
+//                                    }
+//                                });
+//                            }
+//
+//                            @Override
+//                            public void onError(String message) {
+//
+//                            }
+//                        });
+//
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onError(final String message) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        setRefreshActionButtonState(false);
+//                        busyGettingRemoteData = false;
+//                        Util.showErrorToast(ctx, message);
+//                    }
+//                });
+//            }
+//
+//
+//        });
 
 
     }
@@ -274,29 +283,27 @@ public class MonitorMainActivity extends AppCompatActivity
             @Override
             public void run() {
 
-
+                MonApp app = (MonApp) getApplication();
                 pageFragmentList = new ArrayList<>();
 
                 projectListFragment = new ProjectListFragment();
+                projectListFragment.setMonApp(app);
                 projectListFragment.setPageTitle(getString(R.string.projects));
                 projectListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
 
                 profileFragment = new ProfileFragment();
+                profileFragment.setMonApp(app);
                 profileFragment.setPageTitle(getString(R.string.profile));
                 profileFragment.setThemeColors(themePrimaryColor, themeDarkColor);
                 profileFragment.setMonitor(SharedUtil.getMonitor(ctx));
 
                 monitorListFragment = new MonitorListFragment();
+                monitorListFragment.setMonApp(app);
                 monitorListFragment.setPageTitle(getString(R.string.monitors));
                 monitorListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
 
-//        simpleMessageFragment = SimpleMessageFragment.newInstance(null, list);
-//        simpleMessageFragment.setPageTitle(getString(R.string.messaging));
-//        simpleMessageFragment.setThemeColors(themePrimaryColor, themeDarkColor);
-
                 pageFragmentList.add(projectListFragment);
                 pageFragmentList.add(monitorListFragment);
-//        pageFragmentList.add(simpleMessageFragment);
                 pageFragmentList.add(profileFragment);
 
                 monitorPagerAdapter = new MonitorPagerAdapter(getSupportFragmentManager());
@@ -825,9 +832,6 @@ public class MonitorMainActivity extends AppCompatActivity
         Intent intent = new Intent(this, PhotoUploadService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
-//        Intent intentw = new Intent(this, RequestSyncService.class);
-//        bindService(intentw, rConnection, Context.BIND_AUTO_CREATE);
-
         Intent intentz = new Intent(this, VideoUploadService.class);
         bindService(intentz, vConnection, Context.BIND_AUTO_CREATE);
 
@@ -883,7 +887,6 @@ public class MonitorMainActivity extends AppCompatActivity
 
     boolean mBound, rBound, vBound;
     PhotoUploadService mService;
-    RequestSyncService rService;
     VideoUploadService vService;
 
 
@@ -959,6 +962,21 @@ public class MonitorMainActivity extends AppCompatActivity
             vBound = false;
         }
     };
+
+    // Broadcast receiver for receiving status updates from DataRefreshService
+    private class DataRefreshDoneReceiver extends BroadcastReceiver {
+
+        // Called when the BroadcastReceiver gets an Intent it's registered to receive
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            setRefreshActionButtonState(false);
+            Log.e(LOG, "+++++++DataRefreshDoneReceiver onReceive, data must have been refreshed: "
+                    + intent.toString());
+            Log.d(LOG, "+++++++++++++++++ starting refreshes on all fragments .....");
+            projectListFragment.getProjectList();
+            monitorListFragment.getMonitorList();
+        }
+    }
 
     boolean busyGettingRemoteData;
 

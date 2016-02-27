@@ -14,7 +14,7 @@
         <ImageView
             android:id="@+id/PRH_image"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/mon_hero_height_medium"
+            android:layout_height="@dimen/mon_hero_height_small"
             android:scaleType="centerCrop"
             android:src="@drawable/back13" />
         <TextView

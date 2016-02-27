@@ -319,10 +319,12 @@ public class StaffListFragment extends Fragment
             @Override
             public void onStaffNameClicked(StaffDTO s) {
                 staff = s;
+                SharedUtil.saveLastStaffID(getActivity(),staff.getStaffID());
                 showPopup(staff);
             }
             @Override
             public void onHighDefPhoto(PhotoUploadDTO photo) {
+                SharedUtil.saveLastStaffID(getActivity(),staff.getStaffID());
                 Intent w = new Intent(getContext(), HighDefActivity.class);
                 w.putExtra("photo",photo);
                 startActivity(w);
@@ -336,8 +338,23 @@ public class StaffListFragment extends Fragment
         mRecycler.setLayoutManager(llm);
         mRecycler.setAdapter(staffAdapter);
 
-    }
+        int index = getIndex();
+        if (index > 0) {
+            mRecycler.scrollToPosition(index);
+        }
 
+    }
+    private int getIndex() {
+        Integer x = SharedUtil.getLastStaffID(getActivity());
+        int index = 0;
+        for (StaffDTO m: staffList) {
+            if (m.getStaffID().intValue() == x.intValue()) {
+                return index;
+            }
+            index++;
+        }
+        return 0;
+    }
     private void showPopup(final StaffDTO staff) {
         popupItemList = new ArrayList<>();
         PopupItem item1 = new PopupItem(R.drawable.ic_action_location_on, ctx.getString(R.string.send_my_location));

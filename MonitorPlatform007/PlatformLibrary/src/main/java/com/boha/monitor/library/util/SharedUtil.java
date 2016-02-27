@@ -30,6 +30,8 @@ public class SharedUtil {
             GCMDEVICE = "gcmd",
             MONITOR_JSON = "monitor",
             PROJECT_ID = "projectID",
+            LAST_MONITOR_ID = "lastMonID",
+            LAST_STAFF_ID = "lastStaffID",
             GCM_REGISTRATION_ID = "gcm",
             SESSION_ID = "sessionID",
             SITE_LOCATION = "siteLocation",
@@ -356,6 +358,41 @@ public class SharedUtil {
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
         int id = sp.getInt(PROJECT_ID, 0);
+        return id;
+    }
+
+    public static void saveLastStaffID(Context ctx, Integer staffID) {
+
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putInt(LAST_STAFF_ID, staffID);
+        ed.commit();
+        Log.e("SharedUtil", "%%%%% staffID: " + staffID + " saved in SharedPreferences");
+    }
+
+    public static Integer getLastStaffID(Context ctx) {
+
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        int id = sp.getInt(LAST_STAFF_ID, 0);
+        return id;
+    }
+    public static void saveLastMonitorID(Context ctx, Integer monitorID) {
+
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putInt(LAST_MONITOR_ID, monitorID);
+        ed.commit();
+        Log.e("SharedUtil", "%%%%% monitorID " + monitorID + " saved in SharedPreferences");
+    }
+
+    public static Integer getLastMonitorID(Context ctx) {
+
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        int id = sp.getInt(LAST_MONITOR_ID, 0);
         return id;
     }
 }

@@ -12,6 +12,7 @@ import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.OKHttpException;
 import com.boha.monitor.library.util.OKUtil;
 import com.boha.monitor.library.util.Snappy;
+import com.boha.monitor.library.util.WebCheck;
 import com.google.gson.Gson;
 import com.snappydb.DB;
 
@@ -32,6 +33,11 @@ public class RequestIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.w(LOG,"################### onHandleIntent");
+        if (WebCheck.checkNetworkAvailability(getApplicationContext())
+                .isNetworkUnavailable()) {
+            Log.e(LOG, "--- No Network: boolean = isNetworkUnavailable");
+            return;
+        }
         try {
             app = (MonApp) getApplication();
             final DB snappyDB = app.getSnappyDB();
@@ -68,6 +74,7 @@ public class RequestIntentService extends IntentService {
                     public void onResponse(ResponseDTO response) {
                         Log.w(LOG,"...onResponse statusCode: " + response.getStatusCode());
                         doWork(rList.getRequests());
+
 
                     }
 

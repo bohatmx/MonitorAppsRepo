@@ -15,17 +15,16 @@ import android.util.Log;
 
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.StaffDTO;
+import com.boha.monitor.library.services.DataRefreshReceiver;
 import com.boha.monitor.library.services.LocationTrackerReceiver;
-import com.boha.monitor.library.services.SnappyReceiver;
+import com.boha.monitor.library.services.RequestAlarmReceiver;
 import com.boha.monitor.library.util.SharedUtil;
-import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.snappydb.DB;
 import com.snappydb.DBFactory;
-import com.snappydb.SnappyDB;
 import com.snappydb.SnappydbException;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
@@ -69,8 +68,8 @@ import java.util.HashMap;
 public class MonApp extends Application implements Application.ActivityLifecycleCallbacks {
     static final String PROPERTY_ID = "UA-53661372-2";
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
-    private AlarmManager alarmMgr;
-    private PendingIntent alarmIntent1,alarmIntent2;
+    private AlarmManager alarmMgr1, alarmMgr2, alarmMgr3;
+    private PendingIntent alarmIntent1,alarmIntent2, alarmIntent3;
     private ChatMessageListActivity chatMessageListActivity;
     private boolean messageActivityVisible;
     static final String LOG = MonApp.class.getSimpleName();
@@ -92,9 +91,6 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         return snappyDB;
     }
 
-    public void setSnappyDB(DB snappyDB) {
-        this.snappyDB = snappyDB;
-    }
 
     static final long MAX_CACHE_SIZE = 1024 * 1024 * 1024; // 1 GB cache on device
 //
@@ -188,30 +184,41 @@ public class MonApp extends Application implements Application.ActivityLifecycle
             Log.d(LOG, "###### ACRA Crash Reporting has NOT been initiated, in DEBUG mode");
         }
 
+        startDataRefreshAlarm();
         startRequestCacheAlarm();
         startLocationAlarm();
 
     }
 
     public void startLocationAlarm() {
-        alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        Intent intentx = new Intent(getApplicationContext(), LocationTrackerReceiver.class);
-        alarmIntent1 = PendingIntent.getBroadcast(getApplicationContext(), 0, intentx, 0);
+        alarmMgr1 = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        Intent m = new Intent(getApplicationContext(), LocationTrackerReceiver.class);
+        alarmIntent1 = PendingIntent.getBroadcast(getApplicationContext(), 123, m, 0);
 
-        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+        alarmMgr1.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
                 SystemClock.elapsedRealtime(), HALF_HOUR, alarmIntent1);
 
         Log.d(LOG, "###### Location AlarmManager: alarm set to pull the device tracker trigger every: HALF_HOUR");
     }
     public void startRequestCacheAlarm() {
-        alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        Intent intentx = new Intent(getApplicationContext(), SnappyReceiver.class);
-        alarmIntent2 = PendingIntent.getBroadcast(getApplicationContext(), 0, intentx, 0);
+        alarmMgr2 = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        Intent m = new Intent(getApplicationContext(), RequestAlarmReceiver.class);
+        alarmIntent2 = PendingIntent.getBroadcast(getApplicationContext(), 124, m, 0);
 
-        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+        alarmMgr2.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
                 SystemClock.elapsedRealtime(), FIVE_MINUTES, alarmIntent2);
 
-        Log.d(LOG, "###### Request Cache AlarmManager: alarm set to send cached requests every: ONE_MINUTE");
+        Log.d(LOG, "###### Request Cache AlarmManager: alarm set to send cached requests every: FIVE_MINUTES");
+    }
+    public void startDataRefreshAlarm() {
+        alarmMgr3 = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        Intent m = new Intent(getApplicationContext(), DataRefreshReceiver.class);
+        alarmIntent3 = PendingIntent.getBroadcast(getApplicationContext(), 125, m, 0);
+
+        alarmMgr3.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime(), HOUR, alarmIntent3);
+
+        Log.w(LOG, "###### Data Refresh AlarmManager: alarm set to refresh data every: HOUR");
     }
 
     static final int

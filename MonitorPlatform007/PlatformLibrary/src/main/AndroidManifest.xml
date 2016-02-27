@@ -12,7 +12,6 @@
         <service android:name="com.boha.monitor.library.services.GPSLocationService" />
         <service android:name="com.boha.monitor.library.services.PhotoUploadService" />
         <service android:name="com.boha.monitor.library.services.VideoUploadService" />
-        <service android:name="com.boha.monitor.library.services.RequestSyncService" />
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
         <service
             android:name="com.google.android.gms.analytics.AnalyticsService"
@@ -21,7 +20,8 @@
 
         <!-- RECEIVERS -->
         <receiver android:name="com.boha.monitor.library.services.LocationTrackerReceiver" />
-        <receiver android:name="com.boha.monitor.library.services.SnappyReceiver" />
+        <receiver android:name="com.boha.monitor.library.services.RequestAlarmReceiver" />
+        <receiver android:name="com.boha.monitor.library.services.DataRefreshReceiver" />
         <receiver android:name="com.boha.monitor.library.services.BootReceiver" />
         <receiver
             android:name="com.google.android.gms.analytics.AnalyticsReceiver"
@@ -69,7 +69,10 @@
 
         <service
             android:name="com.boha.monitor.library.services.RequestIntentService"
-            android:exported="false"></service>
+            android:exported="false" />
+        <service
+            android:name="com.boha.monitor.library.services.DataRefreshService"
+            android:exported="false"/>
     </application>
 
 </manifest>

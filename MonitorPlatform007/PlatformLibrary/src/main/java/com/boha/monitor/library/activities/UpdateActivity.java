@@ -407,73 +407,25 @@ public class UpdateActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
-        Log.i(LOG, "## onStart Bind to PhotoUploadService, RequestSyncService");
+        Log.i(LOG, "## onStart Bind to PhotoUploadService");
         Intent intent = new Intent(this, PhotoUploadService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-
-//        Intent intentw = new Intent(this, RequestSyncService.class);
-//        bindService(intentw, rConnection, Context.BIND_AUTO_CREATE);
 
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.e(LOG, "## onStop unBind from PhotoUploadService, RequestSyncService");
+        Log.e(LOG, "## onStop unBind from PhotoUploadService");
         if (mBound) {
             unbindService(mConnection);
             mBound = false;
         }
-//        if (rBound) {
-//            unbindService(rConnection);
-//            rBound = false;
-//        }
 
     }
 
     boolean mBound, rBound;
     PhotoUploadService mService;
-//    RequestSyncService rService;
-
-
-//    private ServiceConnection rConnection = new ServiceConnection() {
-//
-//        @Override
-//        public void onServiceConnected(ComponentName className,
-//                                       IBinder service) {
-//            Log.w(LOG, "## RequestSyncService ServiceConnection onServiceConnected");
-//            RequestSyncService.LocalBinder binder = (RequestSyncService.LocalBinder) service;
-//            rService = binder.getService();
-//            rBound = true;
-//            rService.startSyncCachedRequests(new RequestSyncService.RequestSyncListener() {
-//                @Override
-//                public void onTasksSynced(int goodResponses, int badResponses) {
-//                    Log.i(LOG, "## onTasksSynced, goodResponses: " + goodResponses + " badResponses: " + badResponses);
-//                    if (goodResponses > 0) {
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                refreshData(project.getProjectID());
-//                            }
-//                        });
-//
-//                    }
-//                }
-//
-//                @Override
-//                public void onError(String message) {
-//                    Log.e(LOG, "Error with sync: " + message);
-//                }
-//            });
-//
-//        }
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName arg0) {
-//            Log.w(LOG, "## RequestSyncService onServiceDisconnected");
-//            mBound = false;
-//        }
-//    };
 
     private ServiceConnection mConnection = new ServiceConnection() {
 
