@@ -306,7 +306,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-//        Log.d(LOG, "### onDetach");
         mListener = null;
     }
 
