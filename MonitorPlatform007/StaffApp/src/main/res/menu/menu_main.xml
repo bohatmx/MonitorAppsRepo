@@ -15,6 +15,12 @@
         android:icon="@drawable/ic_action_edit"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_add_task"
+        android:orderInCategory="100"
+        android:title="Add New Thing to Monitor"
+        android:icon="@drawable/ic_action_add_circle"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_add_project"
         android:orderInCategory="100"
         android:title="Add New Project"

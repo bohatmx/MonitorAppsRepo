@@ -1,5 +1,6 @@
 package com.boha.monitor.library.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -7,18 +8,21 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
-import com.boha.monitor.library.dto.TaskTypeDTO;
-import com.boha.monitor.library.fragments.TaskTypeListFragment;
+import com.boha.monitor.library.dto.TaskDTO;
+import com.boha.monitor.library.fragments.TaskListFragment;
+import com.boha.monitor.library.services.DataRefreshService;
+import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
-public class TaskTypeListActivity extends AppCompatActivity implements TaskTypeListFragment.TaskTypeListener{
+public class TaskListActivity extends AppCompatActivity implements TaskListFragment.TaskListListener {
 
-    ProjectDTO projectDTO;
-    TaskTypeListFragment taskTypeListFragment;
-    int themeDarkColor, type;
+    TaskListFragment taskListFragment;
+    int themeDarkColor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,33 +30,23 @@ public class TaskTypeListActivity extends AppCompatActivity implements TaskTypeL
         ThemeChooser.setTheme(this);
         setContentView(R.layout.activity_task_type_list);
 
-        themeDarkColor = getIntent().getIntExtra("darkColor", R.color.teal_900);
-        projectDTO = (ProjectDTO) getIntent().getSerializableExtra("project");
-        type = getIntent().getIntExtra("type",0);
-        if (savedInstanceState != null) {
-            projectDTO = (ProjectDTO)savedInstanceState.getSerializable("project");
-        }
-        if (projectDTO == null) {
-            Log.e(LOG,"Project is NULL");
-            finish();
-            return;
-        }
-         taskTypeListFragment = (TaskTypeListFragment)
+        taskListFragment = (TaskListFragment)
                 getSupportFragmentManager().findFragmentById(R.id.fragment);
-//        taskTypeListFragment.setProject(projectDTO, type);
-        taskTypeListFragment.setDarkColor(themeDarkColor);
+        taskListFragment.setApp((MonApp) getApplication());
+        taskListFragment.setDarkColor(themeDarkColor);
 
+        CompanyDTO c = SharedUtil.getCompany(getApplicationContext());
         Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
-                projectDTO.getProjectName(), projectDTO.getCityName(),
-                ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses));    }
+                c.getCompanyName(), "Tasks",
+                ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses));
+    }
 
     @Override
     public void onSaveInstanceState(Bundle b) {
-        Log.w(LOG,"## onSaveInstanceState");
-        b.putSerializable("project",projectDTO);
-        b.putInt("themeDarkColor",themeDarkColor);
+        Log.w(LOG, "## onSaveInstanceState");
         super.onSaveInstanceState(b);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -76,17 +70,6 @@ public class TaskTypeListActivity extends AppCompatActivity implements TaskTypeL
     }
 
     @Override
-    public void onTaskTypeClicked(TaskTypeDTO taskType) {
-//        Intent w = new Intent(this,ProjectTaskListActivity.class);
-//        w.putExtra("project",projectDTO);
-//        w.putExtra("taskType",taskType);
-//        w.putExtra("type",type);
-//        w.putExtra("darkColor", themeDarkColor);
-//
-//        startActivity(w);
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
         Log.i(LOG, "## onStart Bind to RequestSyncService");
@@ -94,6 +77,7 @@ public class TaskTypeListActivity extends AppCompatActivity implements TaskTypeL
 //        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
     }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -104,8 +88,25 @@ public class TaskTypeListActivity extends AppCompatActivity implements TaskTypeL
 //        }
 
     }
+
     boolean mBound;
 
 
-    static final String LOG = TaskTypeListActivity.class.getSimpleName();
+    static final String LOG = TaskListActivity.class.getSimpleName();
+
+    boolean tasksAdded;
+
+    @Override
+    public void onTaskAdded(TaskDTO task) {
+        tasksAdded = true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (tasksAdded) {
+            Intent m = new Intent(getApplicationContext(), DataRefreshService.class);
+            startService(m);
+        }
+        finish();
+    }
 }

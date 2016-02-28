@@ -21,10 +21,13 @@ import android.widget.TextView;
 import com.boha.monitor.library.adapters.SelectionAdapter;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.MonitorProjectDTO;
+import com.boha.monitor.library.dto.Person;
 import com.boha.monitor.library.dto.PersonProject;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.dto.SimpleMessageDTO;
+import com.boha.monitor.library.dto.SimpleMessageDestinationDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.dto.StaffProjectDTO;
 import com.boha.monitor.library.util.NetUtil;
@@ -314,10 +317,12 @@ public class ProjectSelectionFragment extends Fragment {
                             public void run() {
                                 if (monitor != null) {
                                     monitor.setMonitorProjectList(response.getMonitorProjectList());
+                                    sendMessage(monitor);
                                     mListener.onSelectionCompleteForMonitor(response.getMonitorProjectList());
                                 }
                                 if (staff != null) {
                                     staff.setStaffProjectList(response.getStaffProjectList());
+                                    sendMessage(staff);
                                     mListener.onSelectionCompleteForStaff(response.getStaffProjectList());
                                 }
 
@@ -350,6 +355,40 @@ public class ProjectSelectionFragment extends Fragment {
         }
     }
 
+    private void sendMessage(Person p) {
+        SimpleMessageDTO sm = new SimpleMessageDTO();
+        sm.setMessage("Your projects have been updated, please refresh your data");
+        sm.setStaffID(SharedUtil.getCompanyStaff(getActivity()).getStaffID());
+        if (p instanceof StaffDTO) {
+            StaffDTO s = (StaffDTO)p;
+            SimpleMessageDestinationDTO smd = new SimpleMessageDestinationDTO();
+            smd.setStaffID(s.getStaffID());
+            sm.getSimpleMessageDestinationList().add(smd);
+
+        }
+        if (p instanceof MonitorDTO) {
+            MonitorDTO m = (MonitorDTO) p;
+            SimpleMessageDestinationDTO smd = new SimpleMessageDestinationDTO();
+            smd.setMonitorID(m.getMonitorID());
+            sm.getSimpleMessageDestinationList().add(smd);
+
+        }
+        RequestDTO w = new RequestDTO(RequestDTO.SEND_SIMPLE_MESSAGE);
+        w.setSimpleMessage(sm);
+
+        NetUtil.sendRequest(getActivity(), w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(ResponseDTO response) {
+                Log.e("ProjSelectFragment","onResponse Message sent");
+            }
+
+            @Override
+            public void onError(String message) {
+                Log.e("ProjSelectFragment",message);
+            }
+        });
+
+    }
     private void hideKeyboard() {
 
         InputMethodManager imm = (InputMethodManager) getContext()

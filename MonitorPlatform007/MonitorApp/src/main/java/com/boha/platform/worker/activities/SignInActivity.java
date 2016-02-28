@@ -31,6 +31,7 @@ import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.GCMUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
+import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.worker.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -280,9 +281,9 @@ public class SignInActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             Log.e(LOG,"failed to save custome data for ACRA");
                         }
-                        Util.cacheOnSnappy((MonApp) getApplication(), response, new Util.SnappyListener() {
+                        Snappy.cacheData((MonApp) getApplication(), response, new Snappy.SnappyWriteListener() {
                             @Override
-                            public void onCachingComplete() {
+                            public void onDataWritten() {
                                 Intent w = new Intent(ctx,MonitorMainActivity.class);
                                 startActivity(w);
                             }
@@ -292,6 +293,7 @@ public class SignInActivity extends AppCompatActivity {
 
                             }
                         });
+
 
                     }
                 });

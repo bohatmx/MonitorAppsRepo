@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author aubreyM
  */
-public class ProjectDTO implements Serializable {
+public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
     private List<PhotoUploadDTO> photoUploadList;
     private static final long serialVersionUID = 1L;
     private Integer projectID, cityID,companyID;
@@ -336,6 +336,9 @@ public class ProjectDTO implements Serializable {
         return "com.boha.monitor.data.Project[ projectID=" + projectID + " ]";
     }
 
-   
-    
+
+    @Override
+    public int compareTo(ProjectDTO another) {
+        return this.projectName.compareTo(another.projectName);
+    }
 }

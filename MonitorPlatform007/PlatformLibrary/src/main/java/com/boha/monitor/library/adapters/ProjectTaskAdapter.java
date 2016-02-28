@@ -58,51 +58,40 @@ public class ProjectTaskAdapter extends RecyclerView.Adapter<ProjectTaskAdapter.
     public void onBindViewHolder(final TaskViewHolder holder, final int position) {
 
         final ProjectTaskDTO p = projectTaskList.get(position);
-        Log.w("ProjectTaskAdapter","onBindViewHolder " + p.getTask().getTaskName());
-        holder.txtStatusColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xgrey_oval_small));
+        Log.w("ProjectTaskAdapter", "onBindViewHolder " + p.getTask().getTaskName());
+        holder.txtStatusColor.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgrey_oval_small));
         holder.txtStatusColor.setHeight(20);
         holder.txtStatusColor.setWidth(20);
 
-        if (p.getProjectTaskStatusList() != null && !p.getProjectTaskStatusList().isEmpty()) {
-            if (p.getProjectTaskStatusList().get(0) == null) {
-                Log.e("TaskAdapter", "--- p.getProjectTaskStatusList().get(0) is NULL");
-            } else {
-                if (p.getProjectTaskStatusList().get(0).getDateUpdated() == null) {
-                    p.getProjectTaskStatusList().get(0).setDateUpdated(new Date().getTime());
-                }
-                holder.txtLastDate.setText(sdf.format(new Date(p.getProjectTaskStatusList().get(0).getDateUpdated())));
-                ProjectTaskStatusDTO m = p.getProjectTaskStatusList().get(0);
-                holder.txtStatusName.setText(m.getTaskStatusType().getTaskStatusTypeName());
-                switch (m.getTaskStatusType().getStatusColor()) {
-                    case TaskStatusTypeDTO.STATUS_COLOR_RED:
-                        holder.txtStatusColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xred_oval_small));
-                        break;
-                    case TaskStatusTypeDTO.STATUS_COLOR_AMBER:
-                        holder.txtStatusColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xamber_oval_small));
-                        break;
-                    case TaskStatusTypeDTO.STATUS_COLOR_GREEN:
-                        holder.txtStatusColor.setBackground(ContextCompat.getDrawable(ctx,R.drawable.xgreen_oval_small));
-                        break;
-                }
+        if (p.getLastStatus() != null) {
+            holder.txtLastDate.setText(sdf.format(new Date(p.getLastStatus().getDateUpdated())));
+            holder.txtStatusName.setText(p.getLastStatus().getTaskStatusType().getTaskStatusTypeName());
+
+            switch (p.getLastStatus().getTaskStatusType().getStatusColor()) {
+                case TaskStatusTypeDTO.STATUS_COLOR_RED:
+                    holder.txtStatusColor.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xred_oval_small));
+                    break;
+                case TaskStatusTypeDTO.STATUS_COLOR_AMBER:
+                    holder.txtStatusColor.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xamber_oval_small));
+                    break;
+                case TaskStatusTypeDTO.STATUS_COLOR_GREEN:
+                    holder.txtStatusColor.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgreen_oval_small));
+                    break;
             }
-            holder.txtStatusCount.setText(df.format(p.getProjectTaskStatusList().size()));
         } else {
             holder.txtLastDate.setText("No Status Date");
             holder.txtStatusName.setText("No Status");
-            holder.txtStatusCount.setText("0");
+            holder.txtStatusColor.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xgrey_oval_small));
         }
+
+        holder.txtStatusCount.setText(df.format(p.getStatusCount()));
+        holder.txtPhotos.setText(df.format(p.getPhotoCount()));
+
         if (p.getTask() != null) {
             holder.txtTaskName.setText(p.getTask().getTaskName());
         }
-        if (p.getPhotoUploadList() != null && !p.getPhotoUploadList().isEmpty()) {
-            holder.txtPhotos.setText(df.format(p.getPhotoUploadList().size()));
-        } else {
-            holder.txtPhotos.setText("0");
-        }
 
         holder.image.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-
-
         holder.nameView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,7 +119,7 @@ public class ProjectTaskAdapter extends RecyclerView.Adapter<ProjectTaskAdapter.
         protected ImageView image;
         protected CardView card;
         protected TextView txtTaskName, txtStatusCount, txtStatusColor,
-                txtStatusName,txtLastDate, txtPhotos;
+                txtStatusName, txtLastDate, txtPhotos;
         protected View nameView;
 
 

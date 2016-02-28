@@ -41,6 +41,7 @@ import com.boha.monitor.library.util.PMException;
 import com.boha.monitor.library.util.PhotoCacheUtil;
 import com.boha.monitor.library.util.ScalingUtilities;
 import com.boha.monitor.library.util.SharedUtil;
+import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
@@ -56,7 +57,9 @@ import org.acra.ACRA;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Manages picture taking - starts onboard camera app and caches
@@ -805,6 +808,9 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     }
 
     private void saveAndUpload(final PhotoUploadDTO dto) {
+
+
+
         PhotoCacheUtil.cachePhoto(ctx, dto, new PhotoCacheUtil.PhotoCacheListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {

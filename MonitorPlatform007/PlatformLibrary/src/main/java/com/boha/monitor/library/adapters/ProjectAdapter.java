@@ -156,6 +156,12 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     listener.onLocationRequired(project);
                 }
             });
+            pvh.iconAddTasks.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onProjectTasksRequired(project);
+                }
+            });
 
             if (darkColor != 0) {
                 pvh.iconCamera.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
@@ -179,7 +185,9 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 pvh.iconDirections.setAlpha(1.0f);
                 pvh.iconDoStatus.setAlpha(1.0f);
             }
-
+            if (SharedUtil.getMonitor(ctx) != null) {
+                pvh.iconAddTasks.setVisibility(View.GONE);
+            }
         }
 
 
@@ -216,7 +224,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 txtPhotos, txtTasks, txtCity, txtMuni, txtNumber, txtCaption;
         protected ImageView
                 iconCamera, iconDirections, iconDoStatus,
-                iconLocation;
+                iconLocation, iconAddTasks;
         protected View imageLayout;
 
 
@@ -225,6 +233,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             super(itemView);
             imageLayout = itemView.findViewById(R.id.PI_imageLayout);
             image = (ImageView) itemView.findViewById(R.id.PI_photo);
+            iconAddTasks = (ImageView) itemView.findViewById(R.id.PI_addTaskIcon);
             txtProjectName = (TextView) itemView.findViewById(R.id.PI_projectName);
             txtPhotos = (TextView) itemView.findViewById(R.id.PI_photoCount);
             txtStatusCount = (TextView) itemView.findViewById(R.id.PI_statusCount);

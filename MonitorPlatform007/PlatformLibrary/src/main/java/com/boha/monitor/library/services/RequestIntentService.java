@@ -104,9 +104,7 @@ public class RequestIntentService extends IntentService {
                 RequestDTO req = gson.fromJson(json, RequestDTO.class);
                 snappyDB.del(REQUEST + w.getRequestDate());
                 String[] keys = snappyDB.findKeys(REQUEST);
-                android.util.Log.w(LOG, "*** Request deleted on Snappy, requestType: " + req.getRequestType() + " " +
-                        new Date(req.getRequestDate()).toString()
-                        + " requests remaining: " + keys.length);
+                android.util.Log.w(LOG, "*** Request deleted from Snappy");
             }
         } catch (Exception e) {
             Log.e(LOG,"Fail",e);

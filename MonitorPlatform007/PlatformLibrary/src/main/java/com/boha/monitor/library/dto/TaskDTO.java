@@ -22,8 +22,18 @@ public class TaskDTO implements Serializable {
     private List<ProjectTaskDTO> projectTaskList;
     private List<SubTaskDTO> subTaskList;
     private Integer taskTypeID, programmeID;
+    private Boolean selected = Boolean.FALSE;
+
 
     public TaskDTO() {
+    }
+
+    public Boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
     }
 
     public String getProgrammeName() {

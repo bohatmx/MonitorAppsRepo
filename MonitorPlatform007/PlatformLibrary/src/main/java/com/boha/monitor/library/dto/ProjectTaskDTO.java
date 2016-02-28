@@ -20,9 +20,11 @@ public class ProjectTaskDTO implements Serializable, Comparable<ProjectTaskDTO> 
     private Long dateRegistered;
     private Double latitude;
     private Double longitude;
-    private Integer projectID;
+    private Integer projectID,statusCount, photoCount;
     private TaskDTO task;
     private String projectName;
+    private ProjectTaskStatusDTO lastStatus;
+    private PhotoUploadDTO lastPhoto;
     private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
     private List<ProjectTaskStatusDTO> projectTaskStatusList = new ArrayList<>();
 
@@ -31,6 +33,38 @@ public class ProjectTaskDTO implements Serializable, Comparable<ProjectTaskDTO> 
 
     public TaskDTO getTask() {
         return task;
+    }
+
+    public ProjectTaskStatusDTO getLastStatus() {
+        return lastStatus;
+    }
+
+    public void setLastStatus(ProjectTaskStatusDTO lastStatus) {
+        this.lastStatus = lastStatus;
+    }
+
+    public PhotoUploadDTO getLastPhoto() {
+        return lastPhoto;
+    }
+
+    public void setLastPhoto(PhotoUploadDTO lastPhoto) {
+        this.lastPhoto = lastPhoto;
+    }
+
+    public Integer getStatusCount() {
+        return statusCount;
+    }
+
+    public void setStatusCount(Integer statusCount) {
+        this.statusCount = statusCount;
+    }
+
+    public Integer getPhotoCount() {
+        return photoCount;
+    }
+
+    public void setPhotoCount(Integer photoCount) {
+        this.photoCount = photoCount;
     }
 
     public Double getLatitude() {
@@ -89,6 +123,9 @@ public class ProjectTaskDTO implements Serializable, Comparable<ProjectTaskDTO> 
  
 
     public List<PhotoUploadDTO> getPhotoUploadList() {
+        if (photoUploadList == null) {
+            photoUploadList = new ArrayList<>();
+        }
         return photoUploadList;
     }
 
@@ -97,6 +134,9 @@ public class ProjectTaskDTO implements Serializable, Comparable<ProjectTaskDTO> 
     }
 
     public List<ProjectTaskStatusDTO> getProjectTaskStatusList() {
+        if (projectTaskStatusList == null) {
+            projectTaskStatusList = new ArrayList<>();
+        }
         return projectTaskStatusList;
     }
 

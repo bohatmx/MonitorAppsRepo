@@ -98,7 +98,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name="com.boha.monitor.library.activities.TaskTypeListActivity"
+            android:name="com.boha.monitor.library.activities.TaskListActivity"
             android:screenOrientation="portrait"
             android:parentActivityName=".activities.MonitorMainActivity" >
         </activity>

@@ -394,40 +394,10 @@ public class SignInActivity extends AppCompatActivity {
         Log.e(LOG, "################### START cachingService for: status types, projects, staff and monitors......");
 
         final MonApp ctx = (MonApp) getApplication();
-        Snappy.writeProjectList(ctx, response.getProjectList(), new Snappy.SnappyWriteListener() {
+        Snappy.cacheData(ctx, response, new Snappy.SnappyWriteListener() {
             @Override
             public void onDataWritten() {
-                Snappy.writeStaffList(ctx, response.getStaffList(), new Snappy.SnappyWriteListener() {
-                    @Override
-                    public void onDataWritten() {
-                        Snappy.writeMonitorList(ctx, response.getMonitorList(), new Snappy.SnappyWriteListener() {
-                            @Override
-                            public void onDataWritten() {
-                                Snappy.writeTaskStatusTypeList(ctx, response.getTaskStatusTypeList(), new Snappy.SnappyWriteListener() {
-                                    @Override
-                                    public void onDataWritten() {
-                                        Log.e(LOG, "Yeaaaah!! Data written to SnappyDB");
-                                    }
-
-                                    @Override
-                                    public void onError(String message) {
-
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onError(String message) {
-
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onError(String message) {
-
-                    }
-                });
+                Log.e(LOG, "Yeaaaah!! Overall Data cached to SnappyDB");
             }
 
             @Override

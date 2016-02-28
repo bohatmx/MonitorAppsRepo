@@ -153,7 +153,7 @@ public class TaskTypeListFragment extends Fragment {
     public void onSaveInstanceState(Bundle b) {
         b.putSerializable("programme", programme);
         super.onSaveInstanceState(b);
-        Log.d("TaskTypeListFragment","onSaveInstanceState programme saved");
+        Log.d("TaskListFragment","onSaveInstanceState programme saved");
     }
     @Override
     public void onAttach(Activity activity) {

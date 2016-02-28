@@ -72,7 +72,11 @@
             android:exported="false" />
         <service
             android:name="com.boha.monitor.library.services.DataRefreshService"
-            android:exported="false"/>
+            android:exported="false" />
+
+        <activity
+            android:name="com.boha.monitor.library.activities.ProjectTaskActivity"
+            android:label="@string/title_activity_project_task"></activity>
     </application>
 
 </manifest>

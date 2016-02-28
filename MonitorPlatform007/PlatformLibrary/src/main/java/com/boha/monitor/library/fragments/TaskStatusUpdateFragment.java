@@ -370,12 +370,15 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
     }
 
     private void updateProjectInCache(final ProjectTaskStatusDTO status) {
+        status.setDateUpdated(new Date().getTime());
         Snappy.getProject(monApp, projectTask.getProjectID(), new Snappy.SnappyProjectListener() {
             @Override
             public void onProjectFound(final ProjectDTO project) {
                 List<ProjectTaskDTO> ptList = new ArrayList<>();
                 for (ProjectTaskDTO pt : project.getProjectTaskList()) {
                     if (pt.getProjectTaskID().intValue() == projectTask.getProjectTaskID()) {
+                        projectTask.setStatusCount(projectTask.getStatusCount() + 1);
+                        projectTask.setLastStatus(status);
                         ptList.add(projectTask);
                     } else {
                         ptList.add(pt);

@@ -14,6 +14,7 @@ import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.util.OKHttpException;
 import com.boha.monitor.library.util.OKUtil;
 import com.boha.monitor.library.util.SharedUtil;
+import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.library.util.WebCheck;
 
@@ -64,11 +65,10 @@ public class DataRefreshService extends IntentService {
                 @Override
                 public void onResponse(ResponseDTO response) {
                     if (response.getStatusCode() == 0) {
-                        Util.cacheOnSnappy((MonApp) getApplication(),
-                                response, new Util.SnappyListener() {
+                        Snappy.cacheData((MonApp) getApplication(),
+                                response, new Snappy.SnappyWriteListener() {
                             @Override
-                            public void onCachingComplete() {
-
+                            public void onDataWritten() {
                                 long end = System.currentTimeMillis();
                                 Log.w(LOG, "@@@@ DataRefreshService complete. Database duly refreshed: " +
                                         " elapsed ms: " + (end - start));
@@ -80,7 +80,7 @@ public class DataRefreshService extends IntentService {
 
                             @Override
                             public void onError(String message) {
-                                Log.e(LOG, message);
+                                Log.e(LOG,message);
                             }
                         });
                     } else {

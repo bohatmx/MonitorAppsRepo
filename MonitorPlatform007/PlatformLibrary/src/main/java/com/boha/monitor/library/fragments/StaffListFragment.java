@@ -520,7 +520,7 @@ public class StaffListFragment extends Fragment
 
     @Override
     public String getPageTitle() {
-        return pageTitle;
+        return "Staff List";
     }
 
 

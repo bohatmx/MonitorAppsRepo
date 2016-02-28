@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.ProjectMapActivity;
+import com.boha.monitor.library.activities.ProjectTaskActivity;
 import com.boha.monitor.library.adapters.ProjectAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
@@ -30,6 +31,7 @@ import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -58,6 +60,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     public void setMonApp(MonApp monApp) {
         this.monApp = monApp;
     }
+
     private static final String LOG = ProjectListFragment.class.getSimpleName();
 
 
@@ -86,7 +89,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         auto = (AutoCompleteTextView) view.findViewById(R.id.autocomplete_project);
         txtCount = (TextView) view.findViewById(R.id.count);
-        Statics.setRobotoFontLight(getActivity(),txtCount);
+        Statics.setRobotoFontLight(getActivity(), txtCount);
         top = view.findViewById(R.id.top);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(),
                 LinearLayoutManager.VERTICAL, false);
@@ -109,10 +112,11 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
     @Override
     public void onResume() {
-        Log.e(LOG,"------------------ onResume, getting projects ............");
+        Log.e(LOG, "------------------ onResume, getting projects ............");
         getProjectList();
         super.onResume();
     }
+
     public void getProjectList() {
         Log.w(LOG, "..... getProjectList .....from Snappy");
 
@@ -120,7 +124,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             @Override
             public void onDataRead(ResponseDTO response) {
                 projectList = response.getProjectList();
-                Log.e(LOG,"onDataRead: projectList: " + projectList.size());
+                Log.e(LOG, "onDataRead: projectList: " + projectList.size());
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -133,7 +137,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
             @Override
             public void onError(String message) {
-                Log.e(LOG,"Failed to get projects: " + message);
+                Log.e(LOG, "Failed to get projects: " + message);
             }
         };
         monApp.getSnappyDB();
@@ -149,6 +153,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         if (getContext() == null) {
             return;
         }
+        Collections.sort(projectList);
         txtCount.setText("" + projectList.size());
         if (projectList.size() > 2) {
             projectNameList = new ArrayList<>(projectList.size());
@@ -215,6 +220,11 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             }
 
             @Override
+            public void onProjectTasksRequired(ProjectDTO project) {
+                mListener.onProjectTasksRequired(project);
+            }
+
+            @Override
             public void onMessagingRequired(ProjectDTO project) {
                 Log.d(LOG, "### onMessagingRequired");
                 selectedProject = project;
@@ -266,7 +276,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
 
         if (isFound) {
-            if (index + 1  < projectList.size()) {
+            if (index + 1 < projectList.size()) {
                 mRecyclerView.scrollToPosition(index + 1);
             }
         }
@@ -311,7 +321,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     public void animateHeroHeight() {
     }
 
-    String pageTitle;
+    String pageTitle = "Projects";
 
     @Override
     public void setPageTitle(String title) {
@@ -360,6 +370,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
         void onDirectionsRequired(ProjectDTO project);
 
+        void onProjectTasksRequired(ProjectDTO project);
 
         void onMessagingRequired(ProjectDTO project);
 

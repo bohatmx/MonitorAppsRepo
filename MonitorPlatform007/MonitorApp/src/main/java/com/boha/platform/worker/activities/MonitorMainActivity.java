@@ -51,6 +51,7 @@ import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.dto.VideoUploadDTO;
 import com.boha.monitor.library.fragments.MediaDialogFragment;
 import com.boha.monitor.library.fragments.MessagingFragment;
@@ -59,6 +60,7 @@ import com.boha.monitor.library.fragments.ProfileFragment;
 import com.boha.monitor.library.fragments.PageFragment;
 import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.fragments.SimpleMessageFragment;
+import com.boha.monitor.library.fragments.StaffListFragment;
 import com.boha.monitor.library.services.DataRefreshService;
 import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.services.VideoUploadService;
@@ -96,6 +98,7 @@ public class MonitorMainActivity extends AppCompatActivity
         ProjectListFragment.ProjectListFragmentListener,
         MonitorListFragment.MonitorListListener,
         MessagingFragment.MessagingListener,
+        StaffListFragment.CompanyStaffListListener,
         ProfileFragment.ProfileListener {
 
     /**
@@ -109,6 +112,7 @@ public class MonitorMainActivity extends AppCompatActivity
     ProfileFragment profileFragment;
     MonitorListFragment monitorListFragment;
     ProjectListFragment projectListFragment;
+    StaffListFragment staffListFragment;
     NoProjectsAssignedFragment noProjectsAssignedFragment;
     SimpleMessageFragment simpleMessageFragment;
     List<PageFragment> pageFragmentList;
@@ -168,7 +172,7 @@ public class MonitorMainActivity extends AppCompatActivity
         PagerTitleStrip strip = (PagerTitleStrip) findViewById(R.id.pager_title_strip);
         strip.setBackgroundColor(themeDarkColor);
         strip.setTextColor(ContextCompat.getColor(ctx, R.color.white));
-        strip.setVisibility(View.GONE);
+        strip.setVisibility(View.VISIBLE);
         mPager.setOffscreenPageLimit(4);
 
         Util.setCustomActionBar(ctx, ab,
@@ -194,86 +198,11 @@ public class MonitorMainActivity extends AppCompatActivity
         w.setMonitorID(SharedUtil.getMonitor(ctx).getMonitorID());
 
         setRefreshActionButtonState(true);
-        Util.setActionBarIconSpinning(mMenu, R.id.action_refresh, true);
         busyGettingRemoteData = true;
         Snackbar.make(mPager, "Refreshing your data. May take a minute or two ...", Snackbar.LENGTH_LONG).show();
 
         Intent m = new Intent(ctx,DataRefreshService.class);
         startService(m);
-//        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
-//            @Override
-//            public void onResponse(final ResponseDTO r) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        setRefreshActionButtonState(false);
-//                        busyGettingRemoteData = false;
-//                        response = r;
-//                        if (response.getStatusCode() > 0) {
-//                            Util.showErrorToast(ctx, response.getMessage());
-//                            return;
-//                        }
-//                        Util.cacheOnSnappy((MonApp) getApplication(), r, new Util.SnappyListener() {
-//                            @Override
-//                            public void onCachingComplete() {
-//                                buildPages();
-//                                final MonitorDTO m = SharedUtil.getMonitor(ctx);
-//                                Snappy.getMonitorList((MonApp) getApplication(), new Snappy.SnappyReadListener() {
-//                                    @Override
-//                                    public void onDataRead(ResponseDTO response) {
-//                                        List<MonitorDTO> list = response.getMonitorList();
-//                                        if (list != null) {
-//                                            for (final MonitorDTO p : list) {
-//                                                if (p.getMonitorID().intValue() == m.getMonitorID().intValue()) {
-//                                                    SharedUtil.saveMonitor(ctx, p);
-//                                                    runOnUiThread(new Runnable() {
-//                                                        @Override
-//                                                        public void run() {
-//                                                            if (p.getPhotoUploadList() != null) {
-//                                                                mNavigationDrawerFragment.setPicture(p.getPhotoUploadList().get(0));
-//                                                                profileFragment.setPicture(p.getPhotoUploadList().get(0));
-//                                                            }
-//                                                        }
-//                                                    });
-//
-//                                                }
-//                                            }
-//                                        }
-//
-//                                    }
-//
-//                                    @Override
-//                                    public void onError(String message) {
-//
-//                                    }
-//                                });
-//                            }
-//
-//                            @Override
-//                            public void onError(String message) {
-//
-//                            }
-//                        });
-//
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onError(final String message) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        setRefreshActionButtonState(false);
-//                        busyGettingRemoteData = false;
-//                        Util.showErrorToast(ctx, message);
-//                    }
-//                });
-//            }
-//
-//
-//        });
-
 
     }
 
@@ -302,7 +231,13 @@ public class MonitorMainActivity extends AppCompatActivity
                 monitorListFragment.setPageTitle(getString(R.string.monitors));
                 monitorListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
 
+                staffListFragment = new StaffListFragment();
+                staffListFragment.setMonApp(app);
+                staffListFragment.setPageTitle(getString(R.string.projects));
+                staffListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
+
                 pageFragmentList.add(projectListFragment);
+                pageFragmentList.add(staffListFragment);
                 pageFragmentList.add(monitorListFragment);
                 pageFragmentList.add(profileFragment);
 
@@ -485,6 +420,21 @@ public class MonitorMainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onCompanyStaffInvitationRequested(List<StaffDTO> companyStaffList, int index) {
+
+    }
+
+    @Override
+    public void onStaffPictureRequested(StaffDTO companyStaff) {
+
+    }
+
+    @Override
+    public void onStaffEditRequested(StaffDTO companyStaff) {
+
+    }
+
 
     static final int REQUEST_CAMERA_PHOTO = 3329,
             REQUEST_CAMERA_VIDEO = 3339,
@@ -602,6 +552,11 @@ public class MonitorMainActivity extends AppCompatActivity
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
         startActivity(intent);
+    }
+
+    @Override
+    public void onProjectTasksRequired(ProjectDTO project) {
+
     }
 
     @Override
@@ -761,8 +716,18 @@ public class MonitorMainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onNewCompanyStaff() {
+
+    }
+
+    @Override
     public void setBusy(boolean busy) {
         setRefreshActionButtonState(busy);
+    }
+
+    @Override
+    public void onProjectAssigmentWanted(StaffDTO staff) {
+
     }
 
     private class MonitorPagerAdapter extends FragmentStatePagerAdapter {
@@ -784,23 +749,8 @@ public class MonitorMainActivity extends AppCompatActivity
 
         @Override
         public CharSequence getPageTitle(int position) {
-            //Log.e(LOG,"getPageTitle, position: " + position);
             PageFragment pf = pageFragmentList.get(position);
-            String title = "No Title";
-            if (pf instanceof ProjectListFragment) {
-                title = getString(R.string.projects);
-            }
-            if (pf instanceof MonitorListFragment) {
-                title = getString(R.string.monitors);
-            }
-            if (pf instanceof MessagingFragment) {
-                title = getString(R.string.messaging);
-            }
-            if (pf instanceof ProfileFragment) {
-                title = getString(R.string.profile);
-            }
-
-            return title;
+            return pf.getPageTitle();
         }
     }
 

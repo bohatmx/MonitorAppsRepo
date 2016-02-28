@@ -10,12 +10,14 @@ import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
+import com.boha.monitor.library.dto.TaskDTO;
 import com.boha.monitor.library.dto.TaskStatusTypeDTO;
 import com.google.gson.Gson;
 import com.snappydb.DB;
 import com.snappydb.SnappydbException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -50,7 +52,9 @@ public class Snappy {
     }
 
     static final Gson gson = new Gson();
-    public static final String PROJECT = "project", REQUEST = "request", PROJECT_LITE = "projectlite", STAFF = "staffs", TASK_STATUS_TYPES = "taskstatustypes",
+    public static final String PROJECT = "project", REQUEST = "request",
+            PROJECT_LITE = "projectlite", STAFF = "staffs", TASK_STATUS_TYPES = "taskstatustypes",
+            TASKS = "tasks",
             MONITOR = "monitors", LOG = Snappy.class.getSimpleName(), DB_NAME = "monDatabase";
 
     static SnappyWriteListener writeListener;
@@ -91,8 +95,9 @@ public class Snappy {
                     d.setProjectTaskCount(p.getProjectTaskCount());
                     d.setLastStatus(p.getLastStatus());
                     snappydb.put(PROJECT_LITE + p.getProjectID(), d);
+                    android.util.Log.w(LOG, "Project written: " + p.getProjectName()
+                            + " tasks: " + p.getProjectTaskList().size());
                 }
-//                snappydb.close();
                 android.util.Log.d(LOG, "Projects written: " + list.size());
 
             } catch (Exception e) {
@@ -138,7 +143,7 @@ public class Snappy {
                     android.util.Log.d(LOG, "Read projects from Snappy: " + w.getProjectList().size());
 
                 } catch (SnappydbException e) {
-                    Log.e(LOG,"Crapped out gettting projects: ",e);
+                    Log.e(LOG, "Crapped out gettting projects: ", e);
                     listener.onError("Failed to get projects: " + e.getMessage());
                 }
             }
@@ -533,14 +538,12 @@ public class Snappy {
                 ResponseDTO r = new ResponseDTO();
                 r.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
                 try {
-                    //DB snappydb = getDatabase(ctx);
                     String[] keys = snappydb.findKeys("monitor");
                     for (String key : keys) {
                         String json = snappydb.get(key);
                         PhotoUploadDTO p = gson.fromJson(json, PhotoUploadDTO.class);
                         r.getPhotoUploadList().add(p);
                     }
-//                    snappydb.close();
                     android.util.Log.d(LOG, "Photos read: " + r.getPhotoUploadList().size());
                     listener.onPhotosFound(r.getPhotoUploadList());
 
@@ -559,14 +562,12 @@ public class Snappy {
                 ResponseDTO r = new ResponseDTO();
                 r.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
                 try {
-                    //DB snappydb = getDatabase(ctx);
                     String[] keys = snappydb.findKeys("staff");
                     for (String key : keys) {
                         String json = snappydb.get(key);
                         PhotoUploadDTO p = gson.fromJson(json, PhotoUploadDTO.class);
                         r.getPhotoUploadList().add(p);
                     }
-//                    snappydb.close();
                     android.util.Log.d(LOG, "Photos read: " + r.getPhotoUploadList().size());
                     listener.onPhotosFound(r.getPhotoUploadList());
 
@@ -578,15 +579,14 @@ public class Snappy {
 
     }
 
-    public static void writePhotoList(final MonApp ctx, final List<PhotoUploadDTO> list, final PhotoListener listener) {
-        getDatabase(ctx);
+    public static void writePhotoList(final MonApp app, final List<PhotoUploadDTO> list, final PhotoListener listener) {
+        getDatabase(app);
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 ResponseDTO r = new ResponseDTO();
                 StringBuilder sb = new StringBuilder();
                 try {
-                    //DB snappydb = getDatabase(ctx);
                     for (PhotoUploadDTO p : list) {
 
                         if (p.getProjectID() != null) {
@@ -608,7 +608,6 @@ public class Snappy {
                         snappydb.put(sb.toString(), json);
                     }
 
-//                    snappydb.close();
                     android.util.Log.d(LOG, "** uploaded photo metadata written to snappy: " + list.size());
                     listener.onPhotoAdded();
 
@@ -629,10 +628,8 @@ public class Snappy {
                 ResponseDTO r = new ResponseDTO();
                 r.setTaskStatusTypeList(list);
                 try {
-                    //DB snappydb = getDatabase(ctx);
                     String json = gson.toJson(r);
                     snappydb.put(TASK_STATUS_TYPES, json);
-//                    snappydb.close();
                     android.util.Log.d(LOG, "TaskStatusTypes written: " + list.size());
                     listener.onDataWritten();
 
@@ -664,6 +661,49 @@ public class Snappy {
         });
 
     }
+
+    public static void writeTaskList(final MonApp ctx, final List<TaskDTO> list, final SnappyWriteListener listener) {
+        getDatabase(ctx);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                ResponseDTO r = new ResponseDTO();
+                r.setTaskList(list);
+                try {
+                    String json = gson.toJson(r);
+                    snappydb.put(TASKS, json);
+                    android.util.Log.d(LOG, "Tasks written: " + list.size());
+                    listener.onDataWritten();
+
+                } catch (SnappydbException e) {
+                    listener.onError(e.getMessage());
+                }
+            }
+        });
+
+
+    }
+
+    public static void getTaskList(final MonApp ctx, final SnappyReadListener listener) {
+        getDatabase(ctx);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                ResponseDTO r;
+                try {
+                    String json = snappydb.get(TASKS);
+                    r = gson.fromJson(json, ResponseDTO.class);
+                    android.util.Log.d(LOG, "Tasks read: " + r.getTaskList().size());
+                    listener.onDataRead(r);
+
+                } catch (SnappydbException e) {
+                    listener.onError(e.getMessage());
+                }
+            }
+        });
+
+    }
+
     static RequestTask requestTask;
 
     public static void cacheRequest(MonApp ctx, RequestDTO r, SnappyWriteListener listener) {
@@ -673,7 +713,6 @@ public class Snappy {
         getDatabase(ctx);
         requestTask = new RequestTask();
         requestTask.execute(CACHE_REQUEST);
-//        requestTask = (RequestTask) new RequestTask().execute(CACHE_REQUEST);
     }
 
     public static void getRequests(MonApp ctx, SnappyReadListener listener) {
@@ -685,6 +724,7 @@ public class Snappy {
     }
 
     static List<RequestDTO> requestList;
+
     public static void updateRequestDates(final MonApp ctx, final List<RequestDTO> list) {
         monApp = ctx;
         requestList = list;
@@ -692,7 +732,9 @@ public class Snappy {
         new RequestTask().execute(DELETE_REQUESTS);
 
     }
+
     static SnappyDeleteListener deleteListener;
+
     public static void deleteRequest(MonApp ctx, RequestDTO w, SnappyDeleteListener listener) {
         monApp = ctx;
         getDatabase(ctx);
@@ -728,7 +770,7 @@ public class Snappy {
                             response = new ResponseDTO();
                             for (String key : keys) {
                                 String json = snappydb.get(key);
-                                RequestDTO dto = gson.fromJson(json,RequestDTO.class);
+                                RequestDTO dto = gson.fromJson(json, RequestDTO.class);
                                 if (dto.getDateUploaded() == null)
                                     response.getRequestList().add(dto);
                             }
@@ -753,15 +795,15 @@ public class Snappy {
                             try {
                                 for (RequestDTO w : requestList) {
                                     String json = snappydb.get(REQUEST + w.getRequestDate());
-                                    RequestDTO req = gson.fromJson(json,RequestDTO.class);
+                                    RequestDTO req = gson.fromJson(json, RequestDTO.class);
                                     snappydb.del(REQUEST + w.getRequestDate());
                                     String[] keys = snappydb.findKeys(REQUEST);
                                     android.util.Log.w(LOG, "*** Request deleted on Snappy, requestType: " + req.getRequestType() + " " +
                                             new Date(req.getRequestDate()).toString()
-                                    + " requests remaining: " + keys.length);
+                                            + " requests remaining: " + keys.length);
                                 }
                             } catch (Exception e) {
-                                Log.e(LOG,e.getMessage());
+                                Log.e(LOG, e.getMessage());
                             }
                             String[] keys = snappydb.findKeys(REQUEST);
                             android.util.Log.w(LOG, "after delete, requests: " + keys.length);
@@ -807,6 +849,101 @@ public class Snappy {
 
     }
 
+    private static void delete(final MonApp app) {
+        try {
+            String[] keys = snappydb.findKeys(PROJECT);
+            for (String key : keys) {
+                snappydb.del(key);
+            }
+            keys = snappydb.findKeys(STAFF);
+            for (String key : keys) {
+                snappydb.del(key);
+            }
+            keys = snappydb.findKeys(PROJECT_LITE);
+            for (String key : keys) {
+                snappydb.del(key);
+            }
+            keys = snappydb.findKeys(MONITOR);
+            for (String key : keys) {
+                snappydb.del(key);
+            }
+            keys = snappydb.findKeys(TASK_STATUS_TYPES);
+            for (String key : keys) {
+                snappydb.del(key);
+            }
+            keys = snappydb.findKeys(TASKS);
+            for (String key : keys) {
+                snappydb.del(key);
+            }
+            Log.e(LOG, "*********** Snappy cache data removed prior to refresh ........ ");
+        } catch (Exception e) {
+
+        }
+    }
+    public static void cacheData(final MonApp ctx,
+                                 final ResponseDTO response,
+                                 final SnappyWriteListener listener) {
+
+        Log.w(LOG, "################### caching on Snappy for: status types, tasks, projects, staff and monitors......");
+        Collections.sort(response.getProjectList());
+        try {
+            delete(ctx);
+            writeProjectList(ctx, response.getProjectList(), new SnappyWriteListener() {
+                @Override
+                public void onDataWritten() {
+                    writeStaffList(ctx, response.getStaffList(), new SnappyWriteListener() {
+                        @Override
+                        public void onDataWritten() {
+                            writeMonitorList(ctx, response.getMonitorList(), new SnappyWriteListener() {
+                                @Override
+                                public void onDataWritten() {
+                                    writeTaskStatusTypeList(ctx, response.getTaskStatusTypeList(), new SnappyWriteListener() {
+                                        @Override
+                                        public void onDataWritten() {
+                                            writeTaskList(ctx, response.getTaskList(), new SnappyWriteListener() {
+                                                @Override
+                                                public void onDataWritten() {
+                                                    Log.d(LOG, "Yeaaaah!! Data written to SnappyDB. Caching is complete");
+                                                    listener.onDataWritten();
+                                                }
+
+                                                @Override
+                                                public void onError(String message) {
+                                                    listener.onError(message);
+                                                }
+                                            });
+                                        }
+
+                                        @Override
+                                        public void onError(String message) {
+                                            listener.onError(message);
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onError(String message) {
+                                    listener.onError(message);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onError(String message) {
+                            listener.onError(message);
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(String message) {
+                    listener.onError(message);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     private static void getDatabase(MonApp app) {
         try {

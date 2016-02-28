@@ -27,7 +27,7 @@ import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.fragments.MediaDialogFragment;
 import com.boha.monitor.library.fragments.ProjectTaskListFragment;
 import com.boha.monitor.library.fragments.TaskStatusUpdateFragment;
-import com.boha.monitor.library.fragments.TaskTypeListFragment;
+import com.boha.monitor.library.fragments.TaskListFragment;
 import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
@@ -50,7 +50,7 @@ public class UpdateActivity extends AppCompatActivity
     private ProjectTaskDTO projectTask;
     private ProjectTaskListFragment projectTaskListFragment;
     private TaskStatusUpdateFragment taskStatusUpdateFragment;
-    private TaskTypeListFragment taskTypeListFragment;
+    private TaskListFragment taskListFragment;
     private int type, darkColor, primaryColor, position;
     public static final int NO_TYPES = 1, TYPES = 2;
     private boolean isStatusUpdate;

@@ -90,7 +90,8 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.boha.monitor.library.activities.TaskTypeListActivity"
+            android:name="com.boha.monitor.library.activities.TaskListActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:parentActivityName="com.boha.monitor.supervisor.activities.StaffMainActivity" />
         <activity android:name="com.boha.monitor.library.activities.UpdateActivity"
             android:screenOrientation="portrait"/>

@@ -175,7 +175,6 @@ public class PhotoUploadService extends IntentService {
 
 
     private void executeUpload(final PhotoUploadDTO dto) {
-//        Log.d(LOG, "** executeUpload, projectID: " + dto.getProjectID());
 
         final MonApp monApp = (MonApp) getApplication();
         CDNUploader.uploadFile(getApplicationContext(), dto, new CDNUploader.CDNUploaderListener() {
@@ -188,7 +187,7 @@ public class PhotoUploadService extends IntentService {
                 Snappy.writePhotoList(monApp, list, new Snappy.PhotoListener() {
                     @Override
                     public void onPhotoAdded() {
-
+                        Log.d(LOG,"photo added to snappy");
                     }
 
                     @Override

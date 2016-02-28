@@ -50,7 +50,9 @@ import com.boha.monitor.library.activities.PictureActivity;
 import com.boha.monitor.library.activities.ProfileActivity;
 import com.boha.monitor.library.activities.ProjectMapActivity;
 import com.boha.monitor.library.activities.ProjectSelectionActivity;
+import com.boha.monitor.library.activities.ProjectTaskActivity;
 import com.boha.monitor.library.activities.StatusReportActivity;
+import com.boha.monitor.library.activities.TaskListActivity;
 import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.activities.UpdateActivity;
 import com.boha.monitor.library.activities.VideoActivity;
@@ -70,9 +72,10 @@ import com.boha.monitor.library.fragments.MonitorListFragment;
 import com.boha.monitor.library.fragments.ProfileFragment;
 import com.boha.monitor.library.fragments.PageFragment;
 import com.boha.monitor.library.fragments.ProjectListFragment;
+import com.boha.monitor.library.fragments.ProjectTaskFragment;
 import com.boha.monitor.library.fragments.SimpleMessageFragment;
 import com.boha.monitor.library.fragments.StaffListFragment;
-import com.boha.monitor.library.fragments.TaskTypeListFragment;
+import com.boha.monitor.library.fragments.TaskListFragment;
 import com.boha.monitor.library.services.DataRefreshService;
 import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.util.DepthPageTransformer;
@@ -503,7 +506,15 @@ public class StaffMainActivity extends AppCompatActivity implements
             startActivityForResult(m, STAFF_PROFILE_EDITED);
             return true;
         }
+        if (id == R.id.action_add_task) {
+            Intent m = new Intent(ctx, TaskListActivity.class);
+            startActivity(m);
+            return true;
+        }
         if (id == R.id.action_add_project) {
+            Intent m = new Intent(ctx, ProjectTaskActivity.class);
+            m.putExtra("type", ProjectTaskFragment.ADD_NEW_PROJECT);
+            startActivity(m);
             return true;
         }
 
@@ -734,6 +745,12 @@ public class StaffMainActivity extends AppCompatActivity implements
     public void onActivityResult(int reqCode, final int resCode, Intent data) {
         Log.d(LOG, "onActivityResult reqCode " + reqCode + " resCode " + resCode);
         switch (reqCode) {
+            case ADD_PROJECT_TASKS_REQUIRED:
+                if (resCode ==  RESULT_OK) {
+                    Intent m = new Intent(getApplicationContext(),DataRefreshService.class);
+                    startService(m);
+                }
+                break;
             case STAFF_PROJECT_ASSIGNMENT:
                 if (resCode == RESULT_OK) {
                     ResponseDTO w = (ResponseDTO)data.getSerializableExtra("staffProjectList");
@@ -951,7 +968,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     }
 
     static final int REQUEST_CAMERA = 3329,
-            REQUEST_VIDEO = 3488,
+            REQUEST_VIDEO = 3488, ADD_PROJECT_TASKS_REQUIRED = 8076,
             LOCATION_REQUESTED = 9031, REQUEST_STATUS_UPDATE = 3291, STAFF_EDIT_REQUESTED = 1524;
 
     ProjectDTO selectedProject;
@@ -992,7 +1009,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         Intent w = new Intent(this, UpdateActivity.class);
         w.putExtra("project", project);
         w.putExtra("darkColor", themeDarkColor);
-        w.putExtra("type", TaskTypeListFragment.STAFF);
+        w.putExtra("type", TaskListFragment.STAFF);
         startActivityForResult(w, REQUEST_STATUS_UPDATE);
     }
 
@@ -1070,6 +1087,14 @@ public class StaffMainActivity extends AppCompatActivity implements
         //this.project = project;
         startLocationUpdates();
 
+    }
+
+    @Override
+    public void onProjectTasksRequired(ProjectDTO project) {
+        Intent m = new Intent(getApplicationContext(), ProjectTaskActivity.class);
+        m.putExtra("type", ProjectTaskFragment.ASSIGN_TASKS_TO_ONE_PROJECT);
+        m.putExtra("project",project);
+        startActivityForResult(m, ADD_PROJECT_TASKS_REQUIRED);
     }
 
     @Override

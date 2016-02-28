@@ -88,56 +88,7 @@ public class Util {
         void onCachingComplete();
         void onError(String message);
     }
-    public static void cacheOnSnappy(final MonApp ctx,
-                                      final ResponseDTO response,
-                                      final SnappyListener listener) {
 
-        Log.w(LOG, "################### caching on Snappy for: status types, projects, staff and monitors......");
-
-        Snappy.writeProjectList(ctx, response.getProjectList(), new Snappy.SnappyWriteListener() {
-            @Override
-            public void onDataWritten() {
-                Snappy.writeStaffList(ctx, response.getStaffList(), new Snappy.SnappyWriteListener() {
-                    @Override
-                    public void onDataWritten() {
-                        Snappy.writeMonitorList(ctx, response.getMonitorList(), new Snappy.SnappyWriteListener() {
-                            @Override
-                            public void onDataWritten() {
-                                Snappy.writeTaskStatusTypeList(ctx, response.getTaskStatusTypeList(), new Snappy.SnappyWriteListener() {
-                                    @Override
-                                    public void onDataWritten() {
-                                        Log.d(LOG, "Yeaaaah!! Data written to SnappyDB. Caching is complete");
-                                        listener.onCachingComplete();
-                                    }
-
-                                    @Override
-                                    public void onError(String message) {
-                                        listener.onError(message);
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onError(String message) {
-                                listener.onError(message);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onError(String message) {
-                        listener.onError(message);
-                    }
-                });
-            }
-
-            @Override
-            public void onError(String message) {
-                listener.onError(message);
-            }
-        });
-
-    }
     @SuppressLint("NewApi")
     public static String getRealPathFromURI_API19(Context context, Uri uri) {
         String filePath = "";

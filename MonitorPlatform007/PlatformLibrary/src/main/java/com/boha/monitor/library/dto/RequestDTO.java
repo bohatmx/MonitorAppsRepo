@@ -7,6 +7,7 @@ package com.boha.monitor.library.dto;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -155,13 +156,14 @@ public class RequestDTO implements Serializable, Comparable<RequestDTO> {
             ADD_LOCATION_TRACKERS = 323,
 
 
-    ADD_CHAT = 324,
+            ADD_CHAT = 324,
             ADD_CHAT_MEMBERS = 325,
-            ADD_PROJECT_TASKS = 326,
+            ADD_PROJECT_TASKS_USING_COMPANY = 326,
             ADD_STAFF = 327,
             ADD_MONITORS = 328,
             ADD_SUB_TASKS = 329,
-            ADD_LOCATION_TRACK = 330;
+            ADD_LOCATION_TRACK = 330,
+            ADD_PROJECT_TASKS = 331;
 
     //updates
     public static final int
@@ -460,6 +462,9 @@ public class RequestDTO implements Serializable, Comparable<RequestDTO> {
     }
 
     public List<TaskDTO> getTaskList() {
+        if (taskList == null) {
+            taskList = new ArrayList<>();
+        }
         return taskList;
     }
 
@@ -468,6 +473,9 @@ public class RequestDTO implements Serializable, Comparable<RequestDTO> {
     }
 
     public List<StaffProjectDTO> getStaffProjectList() {
+        if (staffProjectList == null) {
+            staffProjectList = new ArrayList<>();
+        }
         return staffProjectList;
     }
 
@@ -476,6 +484,9 @@ public class RequestDTO implements Serializable, Comparable<RequestDTO> {
     }
 
     public List<MonitorProjectDTO> getMonitorProjectList() {
+        if (monitorProjectList == null) {
+            monitorProjectList = new ArrayList<>();
+        }
         return monitorProjectList;
     }
 
@@ -500,6 +511,9 @@ public class RequestDTO implements Serializable, Comparable<RequestDTO> {
     }
 
     public List<ProjectDTO> getProjectList() {
+        if (projectList == null) {
+            projectList = new ArrayList<>();
+        }
         return projectList;
     }
 

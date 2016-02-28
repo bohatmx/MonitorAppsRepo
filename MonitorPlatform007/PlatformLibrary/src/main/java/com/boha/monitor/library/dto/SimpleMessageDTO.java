@@ -1,6 +1,7 @@
 package com.boha.monitor.library.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +22,9 @@ public class SimpleMessageDTO implements Serializable, Comparable<SimpleMessageD
 
 
     public List<SimpleMessageDestinationDTO> getSimpleMessageDestinationList() {
+        if (simpleMessageDestinationList == null) {
+            simpleMessageDestinationList = new ArrayList<>();
+        }
         return simpleMessageDestinationList;
     }
 

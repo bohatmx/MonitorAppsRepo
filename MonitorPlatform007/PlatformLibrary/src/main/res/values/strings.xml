@@ -75,5 +75,7 @@
     <string name="generate_pin">Generate new PIN</string>
     <string name="title_activity_high_def">HighDefActivity</string>
     <string name="title_activity_project_selection">ProjectSelectionActivity</string>
+    <string name="title_activity_project_task">ProjectTaskActivity</string>
+    <string name="staff">Staff</string>
 
 </resources>
