@@ -17,6 +17,7 @@ import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.services.DataRefreshReceiver;
 import com.boha.monitor.library.services.LocationTrackerReceiver;
+import com.boha.monitor.library.services.PhotoUploadBroadcastReceiver;
 import com.boha.monitor.library.services.RequestAlarmReceiver;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Statics;
@@ -68,8 +69,8 @@ import java.util.HashMap;
 public class MonApp extends Application implements Application.ActivityLifecycleCallbacks {
     static final String PROPERTY_ID = "UA-53661372-2";
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
-    private AlarmManager alarmMgr1, alarmMgr2, alarmMgr3;
-    private PendingIntent alarmIntent1,alarmIntent2, alarmIntent3;
+    private AlarmManager alarmMgr1, alarmMgr2, alarmMgr3,alarmMgr4;
+    private PendingIntent alarmIntent1,alarmIntent2, alarmIntent3,alarmIntent4;
     private ChatMessageListActivity chatMessageListActivity;
     private boolean messageActivityVisible;
     static final String LOG = MonApp.class.getSimpleName();
@@ -187,6 +188,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         startDataRefreshAlarm();
         startRequestCacheAlarm();
         startLocationAlarm();
+        startPhotoUploadAlarm();
 
     }
 
@@ -219,6 +221,16 @@ public class MonApp extends Application implements Application.ActivityLifecycle
                 SystemClock.elapsedRealtime(), HOUR, alarmIntent3);
 
         Log.w(LOG, "###### Data Refresh AlarmManager: alarm set to refresh data every: HOUR");
+    }
+    public void startPhotoUploadAlarm() {
+        alarmMgr4 = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        Intent m = new Intent(getApplicationContext(), PhotoUploadBroadcastReceiver.class);
+        alarmIntent4 = PendingIntent.getBroadcast(getApplicationContext(), 126, m, 0);
+
+        alarmMgr4.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime(), FIVE_MINUTES, alarmIntent4);
+
+        Log.w(LOG, "###### Photo Upload AlarmManager: alarm set to refresh data every: FIVE_MINUTES");
     }
 
     static final int

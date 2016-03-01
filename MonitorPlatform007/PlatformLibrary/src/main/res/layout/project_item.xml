@@ -132,13 +132,70 @@
 
 
         </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/PI_middle2a"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:layout_below="@id/PI_middle2">
+
+            <TextView
+                android:id="@+id/PI_staffCount"
+                style="@style/GreyCircleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_alignParentLeft="true"
+                android:text="00" />
+            <TextView
+                android:id="@+id/PI_label2a"
+                style="@style/TextStyleSmall"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/PI_staffCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/mon_margin"
+                android:text="Staff" />
+
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/PI_middle2b"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/PI_middle2a">
+
+            <TextView
+                android:id="@+id/PI_monitorCount"
+                style="@style/GreyCircleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:text="00" />
+            <TextView
+                android:id="@+id/PI_label2b"
+                style="@style/TextStyleSmall"
+                android:layout_toRightOf="@id/PI_monitorCount"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/mon_margin"
+                android:text="@string/monitors" />
+
+
+        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/PI_middle3"
             android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/PI_middle2"
+            android:layout_below="@id/PI_middle2b"
             android:layout_marginTop="@dimen/mon_divider_tiny"
             android:gravity="center">
 

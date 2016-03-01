@@ -778,140 +778,18 @@ public class MonitorMainActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
-        Log.i(LOG, "## onStart Binding to PhotoUploadService, VideoUploadService");
-        Intent intent = new Intent(this, PhotoUploadService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-
-        Intent intentz = new Intent(this, VideoUploadService.class);
-        bindService(intentz, vConnection, Context.BIND_AUTO_CREATE);
-
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
-//        // ATTENTION: This was auto-generated to implement the App Indexing API.
-//        // See https://g.co/AppIndexing/AndroidStudio for more information.
-//        Action viewAction = Action.newAction(
-//                Action.TYPE_VIEW, // TODO: choose an action type.
-//                "MonitorAppDrawer Page", // TODO: Define a title for the content shown.
-//                // TODO: If you have web page content that matches this app activity's content,
-//                // make sure this auto-generated web page URL is correct.
-//                // Otherwise, set the URL to null.
-//                Uri.parse("http://host/path"),
-//                // TODO: Make sure this auto-generated app deep link URI is correct.
-//                Uri.parse("android-app://com.boha.platform.monitor.activities/http/host/path")
-//        );
-//        AppIndex.AppIndexApi.start(mGoogleApiClient, viewAction);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-//        Action viewAction = Action.newAction(
-//                Action.TYPE_VIEW, // TODO: choose an action type.
-//                "MonitorAppDrawer Page", // TODO: Define a title for the content shown.
-//                // TODO: If you have web page content that matches this app activity's content,
-//                // make sure this auto-generated web page URL is correct.
-//                // Otherwise, set the URL to null.
-//                Uri.parse("http://host/path"),
-//                // TODO: Make sure this auto-generated app deep link URI is correct.
-//                Uri.parse("android-app://com.boha.platform.monitor.activities/http/host/path")
-//        );
-//        AppIndex.AppIndexApi.end(mGoogleApiClient, viewAction);
-        Log.e(LOG, "## onStop unBind from PhotoUploadService, RequestSyncService, VideoUploadService");
-        if (mBound) {
-            unbindService(mConnection);
-            mBound = false;
-        }
 
-        if (vBound) {
-            unbindService(vConnection);
-            vBound = false;
-        }
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         mGoogleApiClient.disconnect();
     }
 
-    boolean mBound, rBound, vBound;
-    PhotoUploadService mService;
-    VideoUploadService vService;
-
-
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            Log.w(LOG, "## PhotoUploadService ServiceConnection onServiceConnected");
-            PhotoUploadService.LocalBinder binder = (PhotoUploadService.LocalBinder) service;
-            mService = binder.getService();
-            mBound = true;
-            mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
-                @Override
-                public void onUploadsComplete(final List<PhotoUploadDTO> list) {
-                    Log.w(LOG, "$$$ onUploadsComplete, list: " + list.size());
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!list.isEmpty()) {
-                                getRemoteData();
-                            }
-                        }
-                    });
-
-                }
-            });
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            Log.w(LOG, "## PhotoUploadService onServiceDisconnected");
-            mBound = false;
-        }
-    };
-
-    private ServiceConnection vConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            Log.w(LOG, "## VideoUploadService ServiceConnection onServiceConnected");
-            VideoUploadService.LocalBinder binder = (VideoUploadService.LocalBinder) service;
-            vService = binder.getService();
-            vBound = true;
-            vService.uploadCachedVideos(new VideoUploadService.UploadListener() {
-                @Override
-                public void onUploadsComplete(List<VideoUploadDTO> list) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            setBusy(false);
-                        }
-                    });
-                }
-
-                @Override
-                public void onUploadStarted() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            setBusy(true);
-                        }
-                    });
-                }
-            });
-
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            Log.w(LOG, "## VideoUploadService onServiceDisconnected");
-            vBound = false;
-        }
-    };
 
     // Broadcast receiver for receiving status updates from DataRefreshService
     private class DataRefreshDoneReceiver extends BroadcastReceiver {
@@ -927,6 +805,7 @@ public class MonitorMainActivity extends AppCompatActivity
             monitorListFragment.getMonitorList();
         }
     }
+
 
     boolean busyGettingRemoteData;
 

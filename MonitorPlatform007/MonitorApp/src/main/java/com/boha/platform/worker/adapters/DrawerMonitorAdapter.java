@@ -75,8 +75,8 @@ public class DrawerMonitorAdapter extends ArrayAdapter<String> {
         if (p.equalsIgnoreCase(ctx.getString(R.string.monitors))) {
             item.icon.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_action_person));
         }
-        if (p.equalsIgnoreCase(ctx.getString(R.string.messaging))) {
-            item.icon.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_action_email));
+        if (p.equalsIgnoreCase(ctx.getString(R.string.staff))) {
+            item.icon.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_action_person));
         }
         if (p.equalsIgnoreCase(ctx.getString(R.string.profile))) {
             item.icon.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.ic_action_add_person));

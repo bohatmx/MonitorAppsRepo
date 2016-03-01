@@ -517,13 +517,19 @@ public class MonitorMapActivity extends AppCompatActivity
 
         NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
-            public void onResponse(ResponseDTO response) {
-                if (response.getStatusCode() == 0) {
-                    if (!response.getPhotoUploadList().isEmpty()) {
-                        String url = response.getPhotoUploadList().get(0).getUri();
-                        Picasso.with(ctx).load(url).fit().into(image);
+            public void onResponse(final ResponseDTO response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (response.getStatusCode() == 0) {
+                            if (!response.getPhotoUploadList().isEmpty()) {
+                                String url = response.getPhotoUploadList().get(0).getUri();
+                                Picasso.with(ctx).load(url).fit().into(image);
+                            }
+                        }
                     }
-                }
+                });
+
             }
 
             @Override

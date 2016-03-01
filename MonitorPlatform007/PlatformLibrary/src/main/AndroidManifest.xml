@@ -76,7 +76,12 @@
 
         <activity
             android:name="com.boha.monitor.library.activities.ProjectTaskActivity"
-            android:label="@string/title_activity_project_task"></activity>
+            android:label="@string/title_activity_project_task" />
+
+        <receiver
+            android:name="com.boha.monitor.library.services.PhotoUploadBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
     </application>
 
 </manifest>

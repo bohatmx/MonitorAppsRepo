@@ -551,9 +551,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         if (googleApiClient != null) {
             googleApiClient.connect();
         }
-        Log.i(LOG, "## onStart Bind to PhotoUploadService, RequestService");
-        Intent intent = new Intent(this, PhotoUploadService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
         super.onStart();
     }
 
@@ -565,19 +563,6 @@ public class StaffMainActivity extends AppCompatActivity implements
             googleApiClient.disconnect();
             Log.e(LOG, "### onStop - locationClient disconnecting ");
         }
-        Log.e(LOG, "## onStop unBind from PhotoUploadService, RequestService");
-        if (mBound) {
-            unbindService(mConnection);
-            mBound = false;
-        }
-//        if (rBound) {
-//            unbindService(rConnection);
-//            rBound = false;
-//        }
-//        if (cBound) {
-//            unbindService(cConnection);
-//            cBound = false;
-//        }
 
     }
 
@@ -1165,34 +1150,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         }
     }
 
-    boolean mBound;
-    PhotoUploadService mService;
 
-
-
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            Log.w(LOG, "## PhotoUploadService ServiceConnection onServiceConnected");
-            PhotoUploadService.LocalBinder binder = (PhotoUploadService.LocalBinder) service;
-            mService = binder.getService();
-            mBound = true;
-            mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
-                @Override
-                public void onUploadsComplete(List<PhotoUploadDTO> list) {
-                    Log.w(LOG, "$$$ onUploadsComplete, list: " + list.size());
-                }
-            });
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            Log.w(LOG, "## PhotoUploadService onServiceDisconnected");
-            mBound = false;
-        }
-    };
 
     // Broadcast receiver for receiving status updates from DataRefreshService
     private class DataRefreshDoneReceiver extends BroadcastReceiver {

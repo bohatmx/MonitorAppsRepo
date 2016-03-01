@@ -18,12 +18,18 @@ import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.ProjectTaskAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
+import com.boha.monitor.library.dto.RequestDTO;
+import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.util.OKHttpException;
+import com.boha.monitor.library.util.OKUtil;
 import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
+import com.boha.monitor.library.util.WebCheck;
 import com.boha.platform.library.R;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,7 +60,67 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment {
         this.monApp = monApp;
     }
 
-    public void buildList() {
+    public void refreshData() {
+        if (WebCheck.checkNetworkAvailability(getActivity()).isNetworkUnavailable()) {
+            return;
+        }
+        mListener.setBusy(true);
+        RequestDTO w = new RequestDTO(RequestDTO.GET_PROJECT_TASKS);
+        w.setProjectID(project.getProjectID());
+        w.setZipResponse(true);
+        OKUtil okUtil = new OKUtil();
+        try {
+            okUtil.sendGETRequest(getActivity(), w, new OKUtil.OKListener() {
+                @Override
+                public void onResponse(ResponseDTO response) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mListener.setBusy(false);
+                        }
+                    });
+
+                    final List<ProjectTaskDTO> list = response.getProjectTaskList();
+
+                    Snappy.getProject(monApp, project.getProjectID(), new Snappy.SnappyProjectListener() {
+                        @Override
+                        public void onProjectFound(ProjectDTO project) {
+                            project.setProjectTaskList(list);
+                            project.setProjectTaskCount(list.size());
+                            List<ProjectDTO> pList = new ArrayList<>();
+                            pList.add(project);
+                            Snappy.writeProjectList(monApp, pList, new Snappy.SnappyWriteListener() {
+                                @Override
+                                public void onDataWritten() {
+                                    getCachedProject();
+                                }
+
+                                @Override
+                                public void onError(String message) {
+
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(String message) {
+
+                }
+            });
+        } catch (OKHttpException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getCachedProject() {
+        if (getActivity() == null) return;
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -83,22 +149,11 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment {
                 }
             }
         });
-
-
     }
-
     @Override
     public void onSaveInstanceState(Bundle b) {
         Log.d(LOG, "onSaveInstanceState");
     }
-
-//    public static ProjectTaskListFragment newInstance(ProjectDTO project) {
-//        ProjectTaskListFragment fragment = new ProjectTaskListFragment();
-//        Bundle args = new Bundle();
-//        args.putSerializable("project", project);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
 
     public ProjectTaskListFragment() {
     }
@@ -141,6 +196,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment {
             }
         });
 
+
         return view;
     }
 
@@ -153,8 +209,8 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(LOG, "#### onResume, about to buildList");
-        buildList();
+        Log.d(LOG, "#### onResume, about to getCachedProject");
+        getCachedProject();
     }
 
 
@@ -258,6 +314,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment {
         void onStatusUpdateRequested(ProjectTaskDTO task, int position);
 
         void onCameraRequested(ProjectDTO project);
+        void setBusy(boolean busy);
 
     }
 

@@ -1,8 +1,10 @@
 package com.boha.monitor.library.activities;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
@@ -28,7 +31,9 @@ import com.boha.monitor.library.fragments.MediaDialogFragment;
 import com.boha.monitor.library.fragments.ProjectTaskListFragment;
 import com.boha.monitor.library.fragments.TaskStatusUpdateFragment;
 import com.boha.monitor.library.fragments.TaskListFragment;
+import com.boha.monitor.library.services.DataRefreshService;
 import com.boha.monitor.library.services.PhotoUploadService;
+import com.boha.monitor.library.services.RequestIntentService;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
@@ -86,6 +91,12 @@ public class UpdateActivity extends AppCompatActivity
             }
             getRealProject();
         }
+        //receive notification when RequestIntentService has completed work
+        IntentFilter mStatusIntentFilter = new IntentFilter(
+                RequestIntentService.BROADCAST_ACTION);
+        RequestsUploadedReceiver receiver = new RequestsUploadedReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver,mStatusIntentFilter);
+
     }
 
     private void getRealProject() {
@@ -226,7 +237,7 @@ public class UpdateActivity extends AppCompatActivity
      */
     @Override
     public void onStatusComplete(final ProjectDTO p) {
-        Log.i(LOG, "onStatusComplete ... projectTaskListFragment.buildList");
+        Log.i(LOG, "onStatusComplete ...setting statusCompleted = true;");
         statusCompleted = true;
         project = p;
         runOnUiThread(new Runnable() {
@@ -376,6 +387,9 @@ public class UpdateActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
+            if (projectTaskListFragment != null) {
+                projectTaskListFragment.refreshData();
+            }
             return true;
         }
         if (id == R.id.action_help) {
@@ -393,7 +407,7 @@ public class UpdateActivity extends AppCompatActivity
 
     public void setRefreshActionButtonState(final boolean refreshing) {
         if (mMenu != null) {
-            final MenuItem refreshItem = mMenu.findItem(R.id.action_help);
+            final MenuItem refreshItem = mMenu.findItem(R.id.action_refresh);
             if (refreshItem != null) {
                 if (refreshing) {
                     refreshItem.setActionView(R.layout.action_bar_progess);
@@ -407,58 +421,29 @@ public class UpdateActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
-        Log.i(LOG, "## onStart Bind to PhotoUploadService");
-        Intent intent = new Intent(this, PhotoUploadService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.e(LOG, "## onStop unBind from PhotoUploadService");
-        if (mBound) {
-            unbindService(mConnection);
-            mBound = false;
-        }
+
 
     }
+    // Broadcast receiver for receiving status updates from DataRefreshService
+    private class RequestsUploadedReceiver extends BroadcastReceiver {
 
-    boolean mBound, rBound;
-    PhotoUploadService mService;
-
-    private ServiceConnection mConnection = new ServiceConnection() {
-
+        // Called when the BroadcastReceiver gets an Intent it's registered to receive
         @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            Log.w(LOG, "## PhotoUploadService ServiceConnection onServiceConnected");
-            PhotoUploadService.LocalBinder binder = (PhotoUploadService.LocalBinder) service;
-            mService = binder.getService();
-            mBound = true;
-            mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
-                @Override
-                public void onUploadsComplete(final List<PhotoUploadDTO> list) {
-                    Log.w(LOG, "$$$ onUploadsComplete, list: " + list.size());
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!list.isEmpty()) {
-                                refreshData(project.getProjectID());
-                            }
-                        }
-                    });
+        public void onReceive(Context context, Intent intent) {
+            setRefreshActionButtonState(false);
+            Log.e(LOG,"+++++++RequestsUploadedReceiver onReceive, requests uploaded: "
+                    + intent.toString());
+            projectTaskListFragment.getCachedProject();
 
-                }
-            });
         }
+    }
 
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            Log.w(LOG, "## PhotoUploadService onServiceDisconnected");
-            mBound = false;
-        }
-    };
 
     static final int GET_PROJECT_TASK_PHOTO = 6382,
             GET_PROJECT_TASK_VIDEO = 7896;

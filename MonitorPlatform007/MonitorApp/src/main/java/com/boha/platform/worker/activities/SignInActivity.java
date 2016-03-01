@@ -281,11 +281,22 @@ public class SignInActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             Log.e(LOG,"failed to save custome data for ACRA");
                         }
-                        Snappy.cacheData((MonApp) getApplication(), response, new Snappy.SnappyWriteListener() {
+                        Snappy.cacheProjects((MonApp) getApplication(), response, new Snappy.SnappyWriteListener() {
                             @Override
                             public void onDataWritten() {
-                                Intent w = new Intent(ctx,MonitorMainActivity.class);
-                                startActivity(w);
+                                Snappy.cacheLookups((MonApp) getApplication(), response, new Snappy.SnappyWriteListener() {
+                                    @Override
+                                    public void onDataWritten() {
+                                        Log.w(LOG,"##### initial data loaded after sign in, starting MonitorMainActivity");
+                                        Intent w = new Intent(ctx,MonitorMainActivity.class);
+                                        startActivity(w);
+                                    }
+
+                                    @Override
+                                    public void onError(String message) {
+
+                                    }
+                                });
                             }
 
                             @Override

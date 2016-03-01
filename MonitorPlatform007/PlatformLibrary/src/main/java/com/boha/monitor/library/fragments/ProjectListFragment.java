@@ -51,6 +51,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     private RecyclerView mRecyclerView;
     private AutoCompleteTextView auto;
     private TextView txtProgramme, txtProjectCount;
+    private View searchView;
     MonApp monApp;
 
     public MonApp getMonApp() {
@@ -86,6 +87,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                              Bundle savedInstanceState) {
         Log.d(LOG, "onCreateView .......");
         view = inflater.inflate(R.layout.fragment_project_list, container, false);
+        searchView = view.findViewById(R.id.top);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         auto = (AutoCompleteTextView) view.findViewById(R.id.autocomplete_project);
         txtCount = (TextView) view.findViewById(R.id.count);
@@ -109,6 +111,9 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     ProjectDTO selectedProject;
     TextView txtCount;
 
+    public void openSearch() {
+        searchView.setVisibility(View.VISIBLE);
+    }
 
     @Override
     public void onResume() {
@@ -172,10 +177,14 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                     hideKeyboard();
+                    mRecyclerView.scrollToPosition(i);
+                    auto.setText("");
+
                     int index = 0;
                     String name = adapter.getItem(i);
                     for (ProjectDTO p : projectList) {
                         if (p.getProjectName().equalsIgnoreCase(name)) {
+                            Log.d(LOG, "... scrolling to index " + index + " " + p.getProjectName());
                             mRecyclerView.scrollToPosition(index);
                             auto.setText("");
                             break;
@@ -276,8 +285,8 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
 
         if (isFound) {
-            if (index + 1 < projectList.size()) {
-                mRecyclerView.scrollToPosition(index + 1);
+            if (index < projectList.size()) {
+                mRecyclerView.scrollToPosition(index);
             }
         }
 

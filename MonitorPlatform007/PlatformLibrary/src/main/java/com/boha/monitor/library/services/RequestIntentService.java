@@ -2,7 +2,7 @@ package com.boha.monitor.library.services;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.Context;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.boha.monitor.library.activities.MonApp;
@@ -17,7 +17,6 @@ import com.google.gson.Gson;
 import com.snappydb.DB;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class RequestIntentService extends IntentService {
@@ -74,7 +73,13 @@ public class RequestIntentService extends IntentService {
                     public void onResponse(ResponseDTO response) {
                         Log.w(LOG,"...onResponse statusCode: " + response.getStatusCode());
                         doWork(rList.getRequests());
+                        Log.w(LOG,"Requests uploaded, broadcasting the fact");
 
+                        Intent m = new Intent(BROADCAST_ACTION);
+                        m.putExtra(REQUESTS_UPLOADED,true);
+                        m.putExtra("response",response);
+                        LocalBroadcastManager.getInstance(getApplicationContext())
+                                .sendBroadcast(m);
 
                     }
 
@@ -100,15 +105,15 @@ public class RequestIntentService extends IntentService {
                 app.getSnappyDB();
             }
             for (RequestDTO w : rList.getRequests()) {
-                String json = snappyDB.get(REQUEST + w.getRequestDate());
-                RequestDTO req = gson.fromJson(json, RequestDTO.class);
                 snappyDB.del(REQUEST + w.getRequestDate());
-                String[] keys = snappyDB.findKeys(REQUEST);
                 android.util.Log.w(LOG, "*** Request deleted from Snappy");
             }
+
         } catch (Exception e) {
             Log.e(LOG,"Fail",e);
         }
     }
-
+    public static final String REQUESTS_UPLOADED = "reqsUploaded";
+    public static final String BROADCAST_ACTION =
+            "com.boha.monitor.REQUESTS.UPLOADED";
 }

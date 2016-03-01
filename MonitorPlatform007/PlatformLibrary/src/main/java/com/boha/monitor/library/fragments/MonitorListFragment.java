@@ -364,7 +364,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         monitorListAdapter = new MonitorListAdapter(monitorList, darkColor, getActivity(), new MonitorListAdapter.MonitorListener() {
             @Override
             public void onHighDefPhoto(PhotoUploadDTO photo) {
-                SharedUtil.saveLastMonitorID(getActivity(),monitor.getMonitorID());
+//                SharedUtil.saveLastMonitorID(getActivity(),monitor.getMonitorID());
                 Intent w = new Intent(getContext(), HighDefActivity.class);
                 w.putExtra("photo",photo);
                 startActivity(w);

@@ -395,6 +395,7 @@ public class NavigationDrawerFragment extends Fragment {
         if (monitor != null) {
             destinationList.add(ctx.getString(R.string.projects));
             destinationList.add(ctx.getString(R.string.profile));
+            destinationList.add(ctx.getString(R.string.staff));
             destinationList.add(ctx.getString(R.string.monitors));
 //            destinationList.add(ctx.getString(R.string.messaging));
 

@@ -381,6 +381,9 @@ public class ProjectTaskFragment extends Fragment {
     }
 
     public void setProject(final ProjectDTO p) {
+        if (p == null) {
+            return;
+        }
         Snappy.getProject(app, p.getProjectID(), new Snappy.SnappyProjectListener() {
             @Override
             public void onProjectFound(final ProjectDTO p) {

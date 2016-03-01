@@ -133,6 +133,7 @@ public class StaffListFragment extends Fragment
             }
         });
 
+        pageTitle = getString(R.string.staff);
         getStaffList();
 
         return view;
@@ -324,7 +325,7 @@ public class StaffListFragment extends Fragment
             }
             @Override
             public void onHighDefPhoto(PhotoUploadDTO photo) {
-                SharedUtil.saveLastStaffID(getActivity(),staff.getStaffID());
+//                SharedUtil.saveLastStaffID(getActivity(),staff.getStaffID());
                 Intent w = new Intent(getContext(), HighDefActivity.class);
                 w.putExtra("photo",photo);
                 startActivity(w);
@@ -345,6 +346,7 @@ public class StaffListFragment extends Fragment
 
     }
     private int getIndex() {
+        if (getActivity() == null) return 0;
         Integer x = SharedUtil.getLastStaffID(getActivity());
         int index = 0;
         for (StaffDTO m: staffList) {
@@ -359,17 +361,19 @@ public class StaffListFragment extends Fragment
         popupItemList = new ArrayList<>();
         PopupItem item1 = new PopupItem(R.drawable.ic_action_location_on, ctx.getString(R.string.send_my_location));
         PopupItem item2 = new PopupItem(R.drawable.ic_action_email, ctx.getString(R.string.send_message));
-        PopupItem item3 = new PopupItem(R.drawable.ic_action_location_on, ctx.getString(R.string.get_location));
-        PopupItem item4 = new PopupItem(R.drawable.ic_action_add_circle, ctx.getString(R.string.proj_assgn));
-        PopupItem item5 = new PopupItem(R.drawable.ic_action_edit, ctx.getString(R.string.upd_profile));
-        PopupItem item6 = new PopupItem(R.drawable.ic_action_add_person, ctx.getString(R.string.generate_pin));
         popupItemList.add(item2);
         popupItemList.add(item1);
+        if (SharedUtil.getCompanyStaff(getActivity()) != null) {
+            PopupItem item3 = new PopupItem(R.drawable.ic_action_location_on, ctx.getString(R.string.get_location));
+            PopupItem item4 = new PopupItem(R.drawable.ic_action_add_circle, ctx.getString(R.string.proj_assgn));
+            PopupItem item5 = new PopupItem(R.drawable.ic_action_edit, ctx.getString(R.string.upd_profile));
+            PopupItem item6 = new PopupItem(R.drawable.ic_action_add_person, ctx.getString(R.string.generate_pin));
 
-        popupItemList.add(item3);
-        popupItemList.add(item4);
-        popupItemList.add(item5);
-        popupItemList.add(item6);
+            popupItemList.add(item3);
+            popupItemList.add(item4);
+            popupItemList.add(item5);
+            popupItemList.add(item6);
+        }
 
         final ListPopupWindow pop = new ListPopupWindow(getActivity());
         LayoutInflater inf = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -511,7 +515,7 @@ public class StaffListFragment extends Fragment
 
     }
 
-    String pageTitle = "Staff";
+    String pageTitle;
 
     @Override
     public void setPageTitle(String title) {
@@ -520,7 +524,7 @@ public class StaffListFragment extends Fragment
 
     @Override
     public String getPageTitle() {
-        return "Staff List";
+        return pageTitle;
     }
 
 

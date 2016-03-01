@@ -45,8 +45,10 @@ public class DataRefreshService extends IntentService {
     private void refreshData() {
         Log.d(LOG,"....starting data refresh from server ...........");
         final long start = System.currentTimeMillis();
-        OKUtil okUtil = new OKUtil();
+        final OKUtil okUtil = new OKUtil();
         RequestDTO w = new RequestDTO();
+        w.setZipResponse(true);
+        final MonApp app = (MonApp)getApplication();
 
         StaffDTO staff = SharedUtil.getCompanyStaff(getApplicationContext());
         MonitorDTO monitor = SharedUtil.getMonitor(getApplicationContext());
@@ -59,23 +61,24 @@ public class DataRefreshService extends IntentService {
             w.setRequestType(RequestDTO.GET_MONITOR_PROJECTS);
             w.setMonitorID(monitor.getMonitorID());
         }
+        if (staff == null && monitor == null) {
+            Log.w(LOG,"Device not signed in yet. DataRefreshService quittin");
+            return;
+        }
         try {
             Log.d(LOG,".....sending refresh request: " + w.getRequestType());
             okUtil.sendGETRequest(getApplicationContext(), w, new OKUtil.OKListener() {
                 @Override
                 public void onResponse(ResponseDTO response) {
                     if (response.getStatusCode() == 0) {
-                        Snappy.cacheData((MonApp) getApplication(),
+                        Snappy.cacheProjects(app,
                                 response, new Snappy.SnappyWriteListener() {
                             @Override
                             public void onDataWritten() {
                                 long end = System.currentTimeMillis();
-                                Log.w(LOG, "@@@@ DataRefreshService complete. Database duly refreshed: " +
+                                Log.w(LOG, "@@@@ DataRefreshService PART 1 complete. Projects duly refreshed: " +
                                         " elapsed ms: " + (end - start));
-                                Intent m = new Intent(BROADCAST_ACTION);
-                                m.putExtra(DATA_REFRESHED,true);
-                                LocalBroadcastManager.getInstance(getApplicationContext())
-                                        .sendBroadcast(m);
+                                getLookups(app,okUtil);
                             }
 
                             @Override
@@ -94,6 +97,43 @@ public class DataRefreshService extends IntentService {
                 }
             });
 
+        } catch (OKHttpException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getLookups(final MonApp app, final OKUtil okUtil) {
+        RequestDTO w = new RequestDTO(RequestDTO.GET_LOOKUPS);
+        w.setZipResponse(true);
+        w.setCompanyID(SharedUtil.getCompany(
+                getApplicationContext()).getCompanyID());
+        try {
+            okUtil.sendGETRequest(getApplicationContext(), w, new OKUtil.OKListener() {
+                @Override
+                public void onResponse(ResponseDTO response) {
+                    Snappy.cacheLookups(app, response, new Snappy.SnappyWriteListener() {
+                        @Override
+                        public void onDataWritten() {
+                            Log.w(LOG, "@@@@ DataRefreshService PART 2 complete. Lookups duly refreshed. Broadcasting SUCCESS! ");
+
+                            Intent m = new Intent(BROADCAST_ACTION);
+                            m.putExtra(DATA_REFRESHED,true);
+                            LocalBroadcastManager.getInstance(getApplicationContext())
+                                    .sendBroadcast(m);
+                        }
+
+                        @Override
+                        public void onError(String message) {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(String message) {
+
+                }
+            });
         } catch (OKHttpException e) {
             e.printStackTrace();
         }

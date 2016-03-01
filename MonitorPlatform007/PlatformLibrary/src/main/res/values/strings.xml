@@ -77,5 +77,6 @@
     <string name="title_activity_project_selection">ProjectSelectionActivity</string>
     <string name="title_activity_project_task">ProjectTaskActivity</string>
     <string name="staff">Staff</string>
+    <string name="refresh">Refresh</string>
 
 </resources>

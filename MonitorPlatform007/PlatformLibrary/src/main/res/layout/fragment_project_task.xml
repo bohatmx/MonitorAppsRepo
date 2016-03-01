@@ -95,6 +95,7 @@
             android:id="@+id/FPT_editProjectName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="textCapWords"
             android:layout_toLeftOf="@id/FPT_addIcon"
             android:hint="Enter new Project name" />
 

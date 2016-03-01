@@ -63,11 +63,12 @@ public class ProjectTaskAdapter extends RecyclerView.Adapter<ProjectTaskAdapter.
         holder.txtStatusColor.setHeight(20);
         holder.txtStatusColor.setWidth(20);
 
-        if (p.getLastStatus() != null) {
-            holder.txtLastDate.setText(sdf.format(new Date(p.getLastStatus().getDateUpdated())));
-            holder.txtStatusName.setText(p.getLastStatus().getTaskStatusType().getTaskStatusTypeName());
+        if (!p.getProjectTaskStatusList().isEmpty()) {
+            ProjectTaskStatusDTO pts = p.getProjectTaskStatusList().get(0);
+            holder.txtLastDate.setText(sdf.format(new Date(pts.getDateUpdated())));
+            holder.txtStatusName.setText(pts.getTaskStatusType().getTaskStatusTypeName());
 
-            switch (p.getLastStatus().getTaskStatusType().getStatusColor()) {
+            switch (pts.getTaskStatusType().getStatusColor()) {
                 case TaskStatusTypeDTO.STATUS_COLOR_RED:
                     holder.txtStatusColor.setBackground(ContextCompat.getDrawable(ctx, R.drawable.xred_oval_small));
                     break;

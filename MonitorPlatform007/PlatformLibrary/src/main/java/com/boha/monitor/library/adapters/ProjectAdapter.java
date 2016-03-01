@@ -33,7 +33,7 @@ import java.util.Locale;
 /**
  * Created by aubreyM on 14/12/17.
  */
-public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectViewHolder> {
 
 
     private ProjectListFragment.ProjectListFragmentListener listener;
@@ -51,143 +51,129 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
 
-    @Override
-    public int getItemViewType(int position) {
-        if (position == 0) {
-            return HEADER;
-        } else {
-            return ITEM;
-        }
-    }
+//    @Override
+//    public int getItemViewType(int position) {
+//        if (position == 0) {
+//            return HEADER;
+//        } else {
+//            return ITEM;
+//        }
+//    }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ProjectViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        if (viewType == HEADER) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.project_list_header, parent, false);
-            return new HeaderViewHolder(v);
-        } else {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.project_item, parent, false);
-            return new ProjectViewHolder(v);
-        }
+
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.project_item, parent, false);
+        return new ProjectViewHolder(v);
+
 
     }
 
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ProjectViewHolder pvh, final int position) {
 
-        if (holder instanceof HeaderViewHolder) {
-            final ProjectDTO p = projectList.get(0);
-            final HeaderViewHolder hvh = (HeaderViewHolder) holder;
-            if (p.getProgrammeName() != null && !p.getProgrammeName().isEmpty()) {
-                hvh.txtProgramme.setText(p.getProgrammeName());
-            } else {
-                hvh.txtProgramme.setText(SharedUtil.getCompany(ctx).getCompanyName());
-            }
-            hvh.txtCount.setText("" + projectList.size());
-            hvh.image.setImageDrawable(Util.getRandomBackgroundImage(ctx));
-            Statics.setRobotoFontLight(ctx, hvh.txtProgramme);
 
+        pvh.txtNumber.setText("" + (position));
+        pvh.txtTasks.setText("");
+        pvh.txtLastDate.setText("");
+        pvh.txtPhotos.setText("");
+        pvh.txtMuni.setText("");
+        pvh.txtStatusCount.setText("");
+        final ProjectDTO project = projectList.get(position);
+        pvh.txtProjectName.setText(project.getProjectName());
+        Log.w("ProjectAdapter", "... laying out project: " + project.getProjectName()
+        + " photos: " + project.getPhotoCount() + " statusCount: "
+                + project.getStatusCount() + " projectID: " + project.getProjectID());
+
+        pvh.imageLayout.setVisibility(View.GONE);
+        pvh.image.setVisibility(View.GONE);
+
+        pvh.txtProjectName.setText(project.getProjectName());
+        pvh.txtNumber.setText("" + (position));
+        if (project.getLastStatus() != null) {
+            pvh.txtLastDate.setText(sdf.format(new Date(project.getLastStatus().getStatusDate())));
+        } else {
+            pvh.txtLastDate.setText("No Status Date");
         }
+        pvh.txtPhotos.setText(df.format(project.getPhotoCount()));
+        pvh.txtStatusCount.setText(df.format(project.getStatusCount()));
+        pvh.txtTasks.setText(df.format(project.getProjectTaskCount()));
 
-        if (holder instanceof ProjectViewHolder) {
-            final ProjectViewHolder pvh = (ProjectViewHolder) holder;
+        pvh.txtStaff.setText(df.format(project.getStaffCount()));
+        pvh.txtMonitors.setText(df.format(project.getMonitorCount()));
 
-            pvh.txtNumber.setText("" + (position));
-            pvh.txtTasks.setText("");
-            pvh.txtLastDate.setText("");
-            pvh.txtPhotos.setText("");
-            pvh.txtMuni.setText("");
-            pvh.txtStatusCount.setText("");
-            final ProjectDTO project = projectList.get(position - 1);
-            pvh.txtProjectName.setText(project.getProjectName());
-            Log.w("ProjectAdapter", "... laying out project: " + project.getProjectName());
+        setPlaceNames(project, pvh);
 
-            pvh.imageLayout.setVisibility(View.GONE);
-            pvh.image.setVisibility(View.GONE);
-
-            pvh.txtProjectName.setText(project.getProjectName());
-            pvh.txtNumber.setText("" + (position));
-            if (project.getLastStatus() != null) {
-                pvh.txtLastDate.setText(sdf.format(new Date(project.getLastStatus().getStatusDate())));
-            } else {
-                pvh.txtLastDate.setText("No Status Date");
+        pvh.txtStatusCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onStatusReportRequired(project);
             }
-            pvh.txtPhotos.setText(df.format(project.getPhotoCount()));
-            pvh.txtStatusCount.setText(df.format(project.getStatusCount()));
-            pvh.txtTasks.setText(df.format(project.getProjectTaskCount()));
-            setPlaceNames(project, pvh);
-
-            pvh.txtStatusCount.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onStatusReportRequired(project);
-                }
-            });
-            pvh.txtPhotos.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onGalleryRequired(project);
-                }
-            });
-
-            pvh.iconCamera.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onCameraRequired(project);
-                }
-            });
-            pvh.iconDirections.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onDirectionsRequired(project);
-                }
-            });
-            pvh.iconDoStatus.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onStatusUpdateRequired(project);
-                }
-            });
-            pvh.iconLocation.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onLocationRequired(project);
-                }
-            });
-            pvh.iconAddTasks.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onProjectTasksRequired(project);
-                }
-            });
-
-            if (darkColor != 0) {
-                pvh.iconCamera.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-                pvh.iconDirections.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-                pvh.iconDoStatus.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-                pvh.iconLocation.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
-                pvh.txtProjectName.setTextColor(darkColor);
+        });
+        pvh.txtPhotos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onGalleryRequired(project);
             }
-            if (project.getLatitude() == null) {
-                pvh.iconCamera.setEnabled(false);
-                pvh.iconDirections.setEnabled(false);
-                pvh.iconDoStatus.setEnabled(false);
-                pvh.iconCamera.setAlpha(0.2f);
-                pvh.iconDirections.setAlpha(0.2f);
-                pvh.iconDoStatus.setAlpha(0.2f);
-            } else {
-                pvh.iconCamera.setEnabled(true);
-                pvh.iconDirections.setEnabled(true);
-                pvh.iconDoStatus.setEnabled(true);
-                pvh.iconCamera.setAlpha(1.0f);
-                pvh.iconDirections.setAlpha(1.0f);
-                pvh.iconDoStatus.setAlpha(1.0f);
+        });
+
+        pvh.iconCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onCameraRequired(project);
             }
-            if (SharedUtil.getMonitor(ctx) != null) {
-                pvh.iconAddTasks.setVisibility(View.GONE);
+        });
+        pvh.iconDirections.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onDirectionsRequired(project);
             }
+        });
+        pvh.iconDoStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onStatusUpdateRequired(project);
+            }
+        });
+        pvh.iconLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onLocationRequired(project);
+            }
+        });
+        pvh.iconAddTasks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onProjectTasksRequired(project);
+            }
+        });
+
+        if (darkColor != 0) {
+            pvh.iconCamera.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
+            pvh.iconDirections.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
+            pvh.iconDoStatus.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
+            pvh.iconLocation.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);
+//                pvh.txtProjectName.setTextColor(darkColor);
+        }
+        if (project.getLatitude() == null) {
+            pvh.iconCamera.setEnabled(false);
+            pvh.iconDirections.setEnabled(false);
+            pvh.iconDoStatus.setEnabled(false);
+            pvh.iconCamera.setAlpha(0.2f);
+            pvh.iconDirections.setAlpha(0.2f);
+            pvh.iconDoStatus.setAlpha(0.2f);
+        } else {
+            pvh.iconCamera.setEnabled(true);
+            pvh.iconDirections.setEnabled(true);
+            pvh.iconDoStatus.setEnabled(true);
+            pvh.iconCamera.setAlpha(1.0f);
+            pvh.iconDirections.setAlpha(1.0f);
+            pvh.iconDoStatus.setAlpha(1.0f);
+        }
+        if (SharedUtil.getMonitor(ctx) != null) {
+            pvh.iconAddTasks.setVisibility(View.GONE);
         }
 
 
@@ -221,6 +207,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public class ProjectViewHolder extends RecyclerView.ViewHolder {
         protected ImageView image;
         protected TextView txtProjectName, txtStatusCount, txtLastDate,
+                txtStaff, txtMonitors,
                 txtPhotos, txtTasks, txtCity, txtMuni, txtNumber, txtCaption;
         protected ImageView
                 iconCamera, iconDirections, iconDoStatus,
@@ -243,26 +230,13 @@ public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             txtMuni = (TextView) itemView.findViewById(R.id.PI_muniName);
             txtNumber = (TextView) itemView.findViewById(R.id.PI_number);
             txtCaption = (TextView) itemView.findViewById(R.id.PI_caption);
+            txtStaff = (TextView) itemView.findViewById(R.id.PI_staffCount);
+            txtMonitors = (TextView) itemView.findViewById(R.id.PI_monitorCount);
 
             iconCamera = (ImageView) itemView.findViewById(R.id.PA_camera);
             iconDirections = (ImageView) itemView.findViewById(R.id.PA_directions);
             iconDoStatus = (ImageView) itemView.findViewById(R.id.PA_doStatus);
             iconLocation = (ImageView) itemView.findViewById(R.id.PA_locations);
-        }
-
-    }
-
-    public class HeaderViewHolder extends RecyclerView.ViewHolder {
-        protected ImageView image;
-        protected TextView txtProgramme, txtCount;
-
-
-        public HeaderViewHolder(View itemView) {
-            super(itemView);
-            image = (ImageView) itemView.findViewById(R.id.PRH_image);
-            txtProgramme = (TextView) itemView.findViewById(R.id.PRH_programme);
-            txtCount = (TextView) itemView.findViewById(R.id.PRH_count);
-
         }
 
     }

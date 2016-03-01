@@ -2,8 +2,10 @@ package com.boha.monitor.library.activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,8 +19,10 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.RequiresPermission;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +39,7 @@ import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
+import com.boha.monitor.library.services.DataRefreshService;
 import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.util.ImageUtil;
 import com.boha.monitor.library.util.PMException;
@@ -164,10 +169,11 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
 
         checkPermissions();
-//        Intent w = new Intent(ctx, PhotoUploadService.class);
-//        w.putExtra("sat", "sat");
-//        startService(w);
-
+//receive notification when DataRefreshService has completed work
+        IntentFilter mStatusIntentFilter = new IntentFilter(
+                PhotoUploadService.BROADCAST_ACTION);
+        PhotoUploadedReceiver receiver = new PhotoUploadedReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, mStatusIntentFilter);
     }
 
 
@@ -299,7 +305,6 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                 + " - " + new Date().toString());
         if (loc.getAccuracy() <= ACCURACY_THRESHOLD) {
             this.location = loc;
-            Log.e(LOG, "device location updated, accuracy: " + loc.getAccuracy());
 
         }
     }
@@ -334,13 +339,11 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
             googleApiClient.disconnect();
             Log.e(LOG, "### onStop - GoogleApiClient disconnecting ");
         }
-        Log.e(LOG, "## onStop unBind from PhotoUploadService");
-
 
     }
 
     Location location;
-    static final float ACCURACY_THRESHOLD = 50;
+    static final float ACCURACY_THRESHOLD = 30;
     PictureActivity activity;
     boolean mRequestingLocationUpdates;
 
@@ -578,7 +581,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
             ResponseDTO r = new ResponseDTO();
             Intent i = new Intent();
             i.putExtra("pictureTakenOK", pictureTakenOK);
-            i.putExtra("file",currentThumbFile.getAbsolutePath());
+            i.putExtra("file", currentThumbFile.getAbsolutePath());
             setResult(RESULT_OK, i);
         } else {
             Log.d(LOG, "onBackPressed ... cancelled");
@@ -809,25 +812,19 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
     private void saveAndUpload(final PhotoUploadDTO dto) {
 
-
-
-        PhotoCacheUtil.cachePhoto(ctx, dto, new PhotoCacheUtil.PhotoCacheListener() {
+        Snappy.cachePhotoForUpload((MonApp) getApplication(), dto, new Snappy.SnappyWriteListener() {
             @Override
-            public void onFileDataDeserialized(ResponseDTO response) {
-
-            }
-
-            @Override
-            public void onDataCached(PhotoUploadDTO p) {
+            public void onDataWritten() {
                 Intent a = new Intent(ctx, PhotoUploadService.class);
-                a.putExtra("photo", dto);
                 startService(a);
             }
+
             @Override
-            public void onError() {
-                Util.showErrorToast(ctx, getString(R.string.photo_error));
+            public void onError(String message) {
+
             }
         });
+
     }
 
     public void addProjectPicture() {
@@ -870,6 +867,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
         saveAndUpload(dto);
     }
+
     public void addMonitorPicture() {
         final PhotoUploadDTO dto = getObject();
         dto.setMonitorID(monitor.getMonitorID());
@@ -877,5 +875,21 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         dto.setThumbFilePath(currentThumbFile.getAbsolutePath());
         saveAndUpload(dto);
     }
+
+    // Broadcast receiver for receiving status updates from DataRefreshService
+    private class PhotoUploadedReceiver extends BroadcastReceiver {
+
+        // Called when the BroadcastReceiver gets an Intent it's registered to receive
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e(LOG, "+++++++PhotoUploadedReceiver onReceive, photo uploaded: "
+                    + intent.toString());
+            Snackbar.make(txtTitle,
+                    "Photo has been uploaded OK",
+                    Snackbar.LENGTH_LONG).show();
+
+        }
+    }
+
 
 }

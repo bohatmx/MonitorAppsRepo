@@ -7,6 +7,7 @@ package com.boha.monitor.library.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,10 +37,16 @@ public class ProjectTaskDTO implements Serializable, Comparable<ProjectTaskDTO> 
     }
 
     public ProjectTaskStatusDTO getLastStatus() {
+        if (lastStatus == null) {
+            if (!getProjectTaskStatusList().isEmpty()) {
+                lastStatus = projectTaskStatusList.get(0);
+            }
+        }
         return lastStatus;
     }
 
     public void setLastStatus(ProjectTaskStatusDTO lastStatus) {
+
         this.lastStatus = lastStatus;
     }
 

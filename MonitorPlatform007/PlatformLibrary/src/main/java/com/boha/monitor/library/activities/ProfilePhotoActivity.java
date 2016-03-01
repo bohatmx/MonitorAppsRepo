@@ -2,10 +2,12 @@ package com.boha.monitor.library.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,6 +20,7 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +36,7 @@ import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
+import com.boha.monitor.library.services.DataRefreshService;
 import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.util.ImageUtil;
 import com.boha.monitor.library.util.PhotoCacheUtil;
@@ -71,6 +75,11 @@ public class ProfilePhotoActivity extends AppCompatActivity {
         staff = (StaffDTO) getIntent().getSerializableExtra("staff");
 
         setFields();
+        //receive notification when DataRefreshService has completed work
+        IntentFilter mStatusIntentFilter = new IntentFilter(
+                DataRefreshService.BROADCAST_ACTION);
+        PhotoUploadedReceiver receiver = new PhotoUploadedReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver,mStatusIntentFilter);
         dispatchTakePictureIntent();
     }
 
@@ -128,26 +137,7 @@ public class ProfilePhotoActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBound) {
-                    setRefreshActionButtonState(true);
-                    mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
-                        @Override
-                        public void onUploadsComplete(final List<PhotoUploadDTO> list) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    setRefreshActionButtonState(false);
-                                    if (!list.isEmpty()) {
-                                        newPhoto = list.get(0);
-                                        onBackPressed();
-                                    }
 
-                                }
-                            });
-
-                        }
-                    });
-                }
             }
         });
 
@@ -179,9 +169,7 @@ public class ProfilePhotoActivity extends AppCompatActivity {
     @Override
     public void onStart() {
 
-        Log.i(LOG, "## onStart Bind to PhotoUploadService");
-        Intent intent = new Intent(this, PhotoUploadService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
         super.onStart();
     }
 
@@ -189,11 +177,6 @@ public class ProfilePhotoActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
 
-        Log.e(LOG, "## onStop unBind from PhotoUploadService");
-        if (mBound) {
-            unbindService(mConnection);
-            mBound = false;
-        }
 
     }
 
@@ -421,14 +404,7 @@ public class ProfilePhotoActivity extends AppCompatActivity {
                         public void onDataCached(final PhotoUploadDTO photo) {
                             File file = new File(photo.getThumbFilePath());
                             Picasso.with(ctx).load(file).fit().into(image);
-                            setRefreshActionButtonState(true);
-                            mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
-                                @Override
-                                public void onUploadsComplete(List<PhotoUploadDTO> list) {
-                                    Log.i(LOG, "photos uploaded: " + list.size());
-                                    setRefreshActionButtonState(false);
-                                }
-                            });
+
                             newPhoto = photo;
                             onBackPressed();
 
@@ -456,34 +432,9 @@ public class ProfilePhotoActivity extends AppCompatActivity {
     }
 
 
-    boolean mBound;
-    PhotoUploadService mService;
+
     PhotoUploadDTO newPhoto;
 
-
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            Log.w(LOG, "## PhotoUploadService ServiceConnection onServiceConnected");
-            PhotoUploadService.LocalBinder binder = (PhotoUploadService.LocalBinder) service;
-            mService = binder.getService();
-            mBound = true;
-            mService.uploadCachedPhotos(new PhotoUploadService.UploadListener() {
-                @Override
-                public void onUploadsComplete(List<PhotoUploadDTO> list) {
-                    Log.w(LOG, "$$$ onUploadsComplete, list: " + list.size());
-                }
-            });
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            Log.w(LOG, "## PhotoUploadService onServiceDisconnected");
-            mBound = false;
-        }
-    };
 
     String mCurrentPhotoPath;
     ProjectDTO project;
@@ -564,6 +515,21 @@ public class ProfilePhotoActivity extends AppCompatActivity {
                     refreshItem.setActionView(null);
                 }
             }
+        }
+    }
+
+    // Broadcast receiver for receiving status updates from DataRefreshService
+    private class PhotoUploadedReceiver extends BroadcastReceiver {
+
+        // Called when the BroadcastReceiver gets an Intent it's registered to receive
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            setRefreshActionButtonState(false);
+            Log.e(LOG,"+++++++PhotoUploadedReceiver onReceive, photo must have been uploaded: "
+                    + intent.toString());
+            Log.d(LOG,"+++++++++++++++++ starting refreshes onPhoto .....");
+
+
         }
     }
 }

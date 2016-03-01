@@ -610,7 +610,7 @@ public class ProfileFragment extends Fragment implements PageFragment {
 //        refWatcher.watch(this);
     }
 
-    String pageTitle;
+    String pageTitle = "Profile";
 
     @Override
     public void setPageTitle(String title) {
