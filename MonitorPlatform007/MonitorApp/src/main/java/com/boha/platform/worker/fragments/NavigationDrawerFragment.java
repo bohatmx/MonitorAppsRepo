@@ -256,12 +256,12 @@ public class NavigationDrawerFragment extends Fragment {
             MonitorDTO mon = SharedUtil.getMonitor(getActivity());
             StaffDTO staff = SharedUtil.getCompanyStaff(getActivity());
             if (mon != null) {
-                if (mon.getPhotoUploadList() != null) {
+                if (!mon.getPhotoUploadList().isEmpty()) {
                     photo = mon.getPhotoUploadList().get(0);
                 }
             }
             if (staff != null) {
-                if (staff.getPhotoUploadList() != null) {
+                if (!staff.getPhotoUploadList().isEmpty()) {
                     photo = staff.getPhotoUploadList().get(0);
                 }
             }
