@@ -1089,6 +1089,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
     @Override
     public void onGalleryRequired(ProjectDTO project) {
+
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
         Intent w = new Intent(this, PhotoListActivity.class);
         w.putExtra("project", project);

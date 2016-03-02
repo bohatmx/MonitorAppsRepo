@@ -25,6 +25,7 @@ import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.fragments.PageFragment;
 import com.boha.monitor.library.fragments.PhotoGridFragment;
+import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
@@ -36,20 +37,22 @@ import java.util.Date;
 import java.util.List;
 
 public class PhotoListActivity extends AppCompatActivity implements
-        PhotoAdapter.PictureListener{
+        PhotoAdapter.PictureListener {
 
-    public static final int
-            PHOTO_LOCAL = 1,
-            PHOTO_REMOTE = 2;
+
     ResponseDTO response;
     PagerAdapter adapter;
     ViewPager mPager;
     Context ctx;
-    TextView txtCaption;
     int index, themeDarkColor, themePrimaryColor;
     ProjectDTO project;
+    List<PhotoUploadDTO> photoList;
+    static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+    static final String LOG = PhotoListActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e(LOG, "+++++++++++++++++++ PhotoListActivity onCreate");
         ThemeChooser.setTheme(this);
         Resources.Theme theme = getTheme();
         TypedValue typedValue = new TypedValue();
@@ -61,7 +64,7 @@ public class PhotoListActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo);
         ctx = getApplicationContext();
-        mPager = (ViewPager)findViewById(R.id.pager);
+        mPager = (ViewPager) findViewById(R.id.pager);
 
         project = (ProjectDTO) getIntent().getSerializableExtra("project");
         response = (ResponseDTO) getIntent().getSerializableExtra("response");
@@ -72,45 +75,54 @@ public class PhotoListActivity extends AppCompatActivity implements
                     getSupportActionBar(), project.getProjectName(),
                     project.getCityName(),
                     ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses));
-            response = new ResponseDTO();
-            response.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
-            if (project.getPhotoUploadList() != null) {
-                for (PhotoUploadDTO x : project.getPhotoUploadList()) {
-                    response.getPhotoUploadList().add(x);
-
-                }
-            }
-
-            for (ProjectTaskDTO s: project.getProjectTaskList()) {
-                if (s.getPhotoUploadList() != null) {
-                    for (PhotoUploadDTO z : s.getPhotoUploadList()) {
-                        response.getPhotoUploadList().add(z);
-                    }
-                }
-            }
+            getCachedProject();
+            return;
         }
         if (response != null) {
-            if (response.getPhotoUploadList() == null || response.getPhotoUploadList().isEmpty()) {
-                Log.w("PhotoActivity", "--- no photos to display");
-                finish();
+            if (!response.getPhotoUploadList().isEmpty()) {
+                photoList = response.getPhotoUploadList();
+                buildPhotoPages();
             }
         }
 
-        buildPhotoPages();
 
     }
 
-    static final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
-    private void buildPhotoPages() {
-        if (pageFragmentList == null) {
-            pageFragmentList = new ArrayList<>();
-        }
+    private void getCachedProject() {
+        MonApp app = (MonApp) getApplication();
+        Snappy.getProject(app, project.getProjectID(), new Snappy.SnappyProjectListener() {
+            @Override
+            public void onProjectFound(ProjectDTO p) {
+                project = p;
+                photoList = project.getPhotoUploadList();
 
-        Collections.sort(response.getPhotoUploadList());
+                for (ProjectTaskDTO s : project.getProjectTaskList()) {
+                    if (s.getPhotoUploadList() != null) {
+                        for (PhotoUploadDTO z : s.getPhotoUploadList()) {
+                            photoList.add(z);
+                        }
+                    }
+                }
+
+                buildPhotoPages();
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+    }
+
+
+
+    private void buildPhotoPages() {
+        pageFragmentList = new ArrayList<>();
+        Collections.sort(photoList);
         StringBuilder sb = new StringBuilder();
-        if (!response.getPhotoUploadList().isEmpty()) {
-            Date latest = new Date(response.getPhotoUploadList().get(0).getDateTaken().longValue());
-            PhotoUploadDTO oldestPhoto = response.getPhotoUploadList().get(response.getPhotoUploadList().size() - 1);
+        if (!photoList.isEmpty()) {
+            Date latest = new Date(photoList.get(0).getDateTaken().longValue());
+            PhotoUploadDTO oldestPhoto = photoList.get(photoList.size() - 1);
             Date oldest = new java.sql.Date(oldestPhoto.getDateTaken().longValue());
 
             sb.append("Photos ").append(sdf.format(oldest));
@@ -131,19 +143,11 @@ public class PhotoListActivity extends AppCompatActivity implements
                 }
             });
         }
-        pageFragmentList.add(PhotoGridFragment.newInstance(response));
-//
-//        int number = 0;
-//        int total = response.getPhotoUploadList().size();
-//        for (PhotoUploadDTO dto: response.getPhotoUploadList()) {
-//            pageFragmentList.add(PhotoFragment.newInstance(dto, total - number));
-//            number++;
-//        }
+        pageFragmentList.add(PhotoGridFragment.newInstance(photoList));
         adapter = new PagerAdapter(getSupportFragmentManager());
         mPager.setOffscreenPageLimit(2);
         mPager.setAdapter(adapter);
 
-//        mPager.setCurrentItem(index,true);
     }
 
     @Override
@@ -173,9 +177,11 @@ public class PhotoListActivity extends AppCompatActivity implements
         Log.e("PhotoListActivity", "photoClicked, id: " + photo.getPhotoUploadID() + " position: " + position);
 
         Intent w = new Intent(this, PhotoScrollerActivity.class);
+        response = new ResponseDTO();
+        response.setPhotoUploadList(photoList);
         w.putExtra("photos", response);
         w.putExtra("position", position - 1);
-        w.putExtra("project",project);
+        w.putExtra("project", project);
 
         startActivity(w);
 

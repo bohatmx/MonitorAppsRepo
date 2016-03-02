@@ -115,7 +115,9 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
         pvh.txtPhotos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onGalleryRequired(project);
+                if (project.getPhotoCount() > 0) {
+                    listener.onGalleryRequired(project);
+                }
             }
         });
 

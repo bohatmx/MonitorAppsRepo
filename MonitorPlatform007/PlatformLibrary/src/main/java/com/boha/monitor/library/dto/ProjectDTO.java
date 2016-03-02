@@ -124,6 +124,9 @@ public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
     }
 
     public Integer getPhotoCount() {
+        if (photoCount == null) {
+            photoCount = 0;
+        }
         return photoCount;
     }
 

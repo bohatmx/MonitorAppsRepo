@@ -18,6 +18,8 @@ import com.boha.platform.library.R;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.StatsSnapshot;
 
+import java.util.List;
+
 /**
  * Fragment that manages a grid of PhotoUploadDTO
  * List of photos are received from calling Activity which
@@ -31,9 +33,11 @@ public class PhotoGridFragment extends Fragment implements PageFragment {
     PhotoAdapter adapter;
     static final String LOG = PhotoGridFragment.class.getSimpleName();
 
-    public static PhotoGridFragment newInstance(ResponseDTO r) {
+    public static PhotoGridFragment newInstance(List<PhotoUploadDTO> photoList) {
         PhotoGridFragment fragment = new PhotoGridFragment();
         Bundle args = new Bundle();
+        ResponseDTO r = new ResponseDTO();
+        r.setPhotoUploadList(photoList);
         args.putSerializable("response", r);
         fragment.setArguments(args);
         return fragment;
