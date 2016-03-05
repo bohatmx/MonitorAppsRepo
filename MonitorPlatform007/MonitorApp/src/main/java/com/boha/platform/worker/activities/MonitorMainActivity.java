@@ -64,7 +64,6 @@ import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.fragments.SimpleMessageFragment;
 import com.boha.monitor.library.fragments.StaffListFragment;
 import com.boha.monitor.library.services.DataRefreshService;
-import com.boha.monitor.library.services.GPSLocationService;
 import com.boha.monitor.library.services.LocationTrackerReceiver;
 import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.services.VideoUploadService;
@@ -278,6 +277,9 @@ public class MonitorMainActivity extends AppCompatActivity
                         if (pf instanceof ProjectListFragment) {
                             projectListFragment.animateHeroHeight();
                         }
+                        if (pf instanceof StaffListFragment) {
+                            staffListFragment.animateHeroHeight();
+                        }
                         if (pf instanceof ProfileFragment) {
                             profileFragment.animateHeroHeight();
                         }
@@ -425,12 +427,12 @@ public class MonitorMainActivity extends AppCompatActivity
 
     @Override
     public void onMessagingRequested(MonitorDTO monitor) {
-        simpleMessageFragment.animateHeroHeight();
-        List<MonitorDTO> list = new ArrayList<>();
-        list.add(monitor);
-        simpleMessageFragment.setMonitorList(list);
-        simpleMessageFragment.openMessageToMonitors(list);
-        mPager.setCurrentItem(3, true);
+        Log.e(LOG,"onMessagingRequested: " + monitor.getFullName());
+//        List<MonitorDTO> list = new ArrayList<>();
+//        list.add(monitor);
+//        simpleMessageFragment.setMonitorList(list);
+//        simpleMessageFragment.openMessageToMonitors(list);
+//        mPager.setCurrentItem(3, true);
     }
 
     boolean sendLocation;
@@ -674,15 +676,7 @@ public class MonitorMainActivity extends AppCompatActivity
                 submitLocation();
                 return;
             }
-            Intent m = new Intent(ctx, GPSLocationService.class);
-            LocationTrackerDTO a = new LocationTrackerDTO();
-            a.setLatitude(mLocation.getLatitude());
-            a.setLongitude(mLocation.getLongitude());
-            a.setGcmDevice(SharedUtil.getGCMDevice(ctx));
-            a.getGcmDevice().setRegistrationID(null);
-            a.setMonitorID(SharedUtil.getMonitor(ctx).getMonitorID());
-            m.putExtra("track",a);
-            startService(m);
+
         }
     }
 
@@ -919,9 +913,7 @@ public class MonitorMainActivity extends AppCompatActivity
             Log.e(LOG, "+++++++ PhotoUploadedReceiver onReceive, photo uploaded: "
                     + intent.toString());
             projectListFragment.getProjectList();
-            Snackbar.make(projectListFragment.getView(),
-                    "Photo has been uploaded OK",
-                    Snackbar.LENGTH_LONG).show();
+           Log.e(LOG, "Photo has been uploaded OK");
 
         }
     }

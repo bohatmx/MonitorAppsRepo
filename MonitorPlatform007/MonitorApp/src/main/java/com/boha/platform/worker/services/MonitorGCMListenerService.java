@@ -20,7 +20,6 @@ import com.boha.monitor.library.activities.SimpleMessagingActivity;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
-import com.boha.monitor.library.services.GPSLocationService;
 import com.boha.monitor.library.util.CacheUtil;
 import com.boha.platform.library.MainActivity;
 import com.boha.platform.library.R;

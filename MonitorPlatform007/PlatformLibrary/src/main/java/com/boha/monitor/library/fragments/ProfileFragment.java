@@ -57,7 +57,7 @@ public class ProfileFragment extends Fragment implements PageFragment {
     RadioButton radioMale, radioFemale,
             radioActive, radioInactive;
     Button btnSave;
-    View view, box3,box5;
+    View view, box3, box5;
 
     public static final int ADD_PERSON = 1, UPDATE_PERSON = 2,
             MONITOR = 3, STAFF = 4, TAKE_SELFIE_FOR_PROFILE = 6;
@@ -276,8 +276,9 @@ public class ProfileFragment extends Fragment implements PageFragment {
 
 
     private void setPersonName() {
-            txtName.setText(eFirst.getText().toString() + " " + eLast.getText().toString());
+        txtName.setText(eFirst.getText().toString() + " " + eLast.getText().toString());
     }
+
     private void setFields() {
         box3 = view.findViewById(R.id.box3);
         box5 = view.findViewById(R.id.box5);
@@ -423,13 +424,14 @@ public class ProfileFragment extends Fragment implements PageFragment {
 
     private List<PhotoUploadDTO> filter(List<PhotoUploadDTO> list) {
         List<PhotoUploadDTO> mList = new ArrayList<>();
-        for (PhotoUploadDTO p: list) {
+        for (PhotoUploadDTO p : list) {
             if (p.getPictureType() == PhotoUploadDTO.STAFF_IMAGE
                     || p.getPictureType() == PhotoUploadDTO.MONITOR_IMAGE)
-            mList.add(p);
+                mList.add(p);
         }
         return mList;
     }
+
     List<PhotoUploadDTO> profilePhotos;
 
     private void getPhotosFromCache() {
@@ -532,12 +534,12 @@ public class ProfileFragment extends Fragment implements PageFragment {
                 try {
                     Picasso.with(getContext())
                             .load(f)
-                            .centerCrop().resize(100,100)
+                            .centerCrop().resize(100, 100)
                             .into(roundImage);
                     Picasso.with(getContext())
                             .load(f)
                             .centerCrop()
-                            .resize(600,800)
+                            .resize(600, 800)
                             .into(backDrop);
 
                 } catch (Exception e) {
@@ -548,37 +550,46 @@ public class ProfileFragment extends Fragment implements PageFragment {
 
         }
     }
-    public void setPicture(PhotoUploadDTO photo) {
 
-        if (photo.getThumbFilePath() == null) {
-            if (photo.getUri() != null) {
-                Picasso.with(getActivity())
-                        .load(photo.getUri())
-                        .centerCrop().resize(600,800)
-                        .into(backDrop);
-                Picasso.with(getActivity())
-                        .load(photo.getUri())
-                        .centerCrop().resize(100,100)
-                        .into(roundImage);
-            }
+    public void setPicture(final PhotoUploadDTO photo) {
 
-        } else {
-            File f = new File(photo.getThumbFilePath());
-            if (f.exists()) {
-                try {
-                    Picasso.with(getContext())
-                            .load(f)
-                            .centerCrop().resize(100,100)
-                            .into(roundImage);
-                    Picasso.with(getContext())
-                            .load(f)
-                            .centerCrop().resize(600,800)
-                            .into(backDrop);
-                } catch (Exception e) {
-                    e.printStackTrace();
+        if (getActivity() == null) return;
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                if (photo.getThumbFilePath() == null) {
+                    if (photo.getUri() != null) {
+                        Picasso.with(getActivity())
+                                .load(photo.getUri())
+                                .centerCrop().resize(600, 800)
+                                .into(backDrop);
+                        Picasso.with(getActivity())
+                                .load(photo.getUri())
+                                .centerCrop().resize(100, 100)
+                                .into(roundImage);
+                    }
+
+                } else {
+                    File f = new File(photo.getThumbFilePath());
+                    if (f.exists()) {
+                        try {
+                            Picasso.with(getContext())
+                                    .load(f)
+                                    .centerCrop().resize(100, 100)
+                                    .into(roundImage);
+                            Picasso.with(getContext())
+                                    .load(f)
+                                    .centerCrop().resize(600, 800)
+                                    .into(backDrop);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
+
             }
-        }
+        });
     }
 
     @Override

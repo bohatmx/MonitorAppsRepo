@@ -41,10 +41,13 @@ import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * A fragment that manages a list of Staff assigned to a project
@@ -379,8 +382,14 @@ public class StaffListFragment extends Fragment
         LayoutInflater inf = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inf.inflate(R.layout.hero_image_popup, null);
         TextView txt = (TextView) v.findViewById(R.id.HERO_caption);
-        txt.setText("To: " + staff.getFullName());
+        txt.setText(staff.getFullName());
         ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
+        CircleImageView cimg = (CircleImageView) v.findViewById(R.id.HERO_personImage);
+        if (!staff.getPhotoUploadList().isEmpty()) {
+            PhotoUploadDTO p = staff.getPhotoUploadList().get(0);
+            cimg.setAlpha(1.0f);
+            Picasso.with(getContext()).load(p.getSecureUrl()).into(cimg);
+        }
         img.setImageDrawable(Util.getRandomBackgroundImage(ctx));
 
         pop.setPromptView(v);
@@ -509,9 +518,13 @@ public class StaffListFragment extends Fragment
     @Override
     public void animateHeroHeight() {
         if (hero != null) {
+            Log.w(LOG,"animateHeroHeight, hero not null");
             hero.setImageDrawable(Util.getRandomBackgroundImage(getActivity()));
             Util.expand(hero, 500, null);
+        } else {
+            Log.e(LOG,"animateHeroHeight, hero is NULL");
         }
+
 
     }
 

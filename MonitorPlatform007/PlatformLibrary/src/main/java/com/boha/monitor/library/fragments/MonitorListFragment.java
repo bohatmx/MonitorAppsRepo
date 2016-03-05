@@ -401,11 +401,12 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         View v = inf.inflate(R.layout.hero_image_popup, null);
         TextView txt = (TextView) v.findViewById(R.id.HERO_caption);
         CircleImageView photo = (CircleImageView) v.findViewById(R.id.HERO_personImage);
-        txt.setText("To: " + monitor.getFullName());
+        txt.setText(monitor.getFullName());
         ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
         img.setImageDrawable(Util.getRandomBackgroundImage(ctx));
 
-        if (monitor.getPhotoUploadList() == null || monitor.getPhotoUploadList().isEmpty()) {
+
+        if (monitor.getPhotoUploadList().isEmpty()) {
             photo.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.boy));
             photo.setAlpha(0.3f);
         } else {
@@ -595,9 +596,13 @@ public class MonitorListFragment extends Fragment implements PageFragment {
     @Override
     public void animateHeroHeight() {
 
+
         if (hero != null) {
+            Log.w(LOG,"animateHeroHeight, hero not null");
             hero.setImageDrawable(Util.getRandomBackgroundImage(getActivity()));
             Util.expand(hero, 500, null);
+        } else {
+            Log.e(LOG,"animateHeroHeight, hero is NULL");
         }
     }
 
