@@ -12,6 +12,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.boha.monitor.library.activities.MonitorMapActivity;
@@ -75,12 +76,25 @@ public class StaffGCMListenerService extends GcmListenerService {
         }
 
     }
-
+    public static final String LOCATION_REQUESTED = "stafflocationRequested";
+    public static final String BROADCAST_ACTION =
+            "com.boha.staff.LOCATION.REQUESTED";
     /**
      * Cache the received SimpleMessageDTO on the device
      * @param message
      */
     private void cacheMessage(final SimpleMessageDTO message) {
+        if (message.getLocationRequest().equals(Boolean.TRUE)) {
+            //todo use broadcast service to ask for location from StaffmainActivity
+            Log.w(TAG, "@@@@ StaffGCMListenerService responding to loc request. Broadcasting Request! ");
+
+            Intent m = new Intent(BROADCAST_ACTION);
+            m.putExtra(LOCATION_REQUESTED, true);
+            m.putExtra("simpleMessage",message);
+            LocalBroadcastManager.getInstance(getApplicationContext())
+                    .sendBroadcast(m);
+            return;
+        }
         if (message.getLocationTracker() != null) {
             sendNotification(message.getLocationTracker());
             return;

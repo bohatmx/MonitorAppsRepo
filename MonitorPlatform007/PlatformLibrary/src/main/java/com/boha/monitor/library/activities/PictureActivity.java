@@ -2,6 +2,7 @@ package com.boha.monitor.library.activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +18,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.RequiresPermission;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -31,6 +32,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
@@ -38,8 +40,13 @@ import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.dto.SimpleMessageDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.services.DataRefreshService;
+import com.boha.monitor.library.services.GeofenceBroadcastReceiver;
+import com.boha.monitor.library.services.GeofenceController;
+import com.boha.monitor.library.services.GeofenceIntentService;
+import com.boha.monitor.library.services.NamedGeofence;
 import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.util.ImageUtil;
 import com.boha.monitor.library.util.PMException;
@@ -47,11 +54,16 @@ import com.boha.monitor.library.util.PhotoCacheUtil;
 import com.boha.monitor.library.util.ScalingUtilities;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Snappy;
+import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -66,6 +78,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
 /**
  * Manages picture taking - starts onboard camera app and caches
  * the resultant image. Invokes a service to upload the image to cloudinary CDN
@@ -73,11 +86,11 @@ import java.util.List;
  * Created by aubreyM on 2014/04/21.
  */
 public class PictureActivity extends AppCompatActivity implements LocationListener,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status> {
     LocationRequest mLocationRequest;
     GoogleApiClient googleApiClient;
     LayoutInflater inflater;
-    TextView txtTitle, txtSubtitle, txtCount;
+    TextView txtTitle, txtSubtitle, txtCount, txtMessage;
     ImageView imageView;
     MonitorDTO monitor;
     ProjectTaskStatusDTO projectTaskStatus;
@@ -93,6 +106,8 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     Context ctx;
     FloatingActionButton fab;
     public static final int CAPTURE_IMAGE = 9908;
+    GeofenceController geofenceController;
+    NamedGeofence geofence;
     static final String LOG = PictureActivity.class.getSimpleName();
 
     public void onCreate(Bundle savedInstanceState) {
@@ -153,7 +168,6 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
                 Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
                         project.getProjectName(), project.getCityName(),
                         ContextCompat.getDrawable(getApplicationContext(), R.drawable.glasses));
-
                 break;
 
             case PhotoUploadDTO.TASK_IMAGE:
@@ -169,21 +183,32 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
 
         checkPermissions();
-//receive notification when DataRefreshService has completed work
-        IntentFilter mStatusIntentFilter = new IntentFilter(
+
+        //receive notification when GeofenceIntentService has detected geofence event
+        IntentFilter mStatusIntentFilterx = new IntentFilter(
+                GeofenceIntentService.BROADCAST_ACTION);
+        GeofenceEventReceiver receiverx = new GeofenceEventReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiverx, mStatusIntentFilterx);
+
+        //receive notification when PhotoUploadService has uploaded photos
+        IntentFilter mStatusIntentFilter3 = new IntentFilter(
                 PhotoUploadService.BROADCAST_ACTION);
-        PhotoUploadedReceiver receiver = new PhotoUploadedReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, mStatusIntentFilter);
+        PhotoUploadedReceiver receiver3 = new PhotoUploadedReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver3,
+                mStatusIntentFilter3);
     }
 
 
     @Override
     public void onResume() {
-        Log.d(LOG, "@@@@@@ onResume...........");
+        Log.d(LOG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ onResume...........");
         super.onResume();
         if (currentThumbFile != null) {
             Log.w(LOG, "onResume currentThumbFile size: " + currentThumbFile.length());
             Picasso.with(ctx).load(currentThumbFile).into(imageView);
+        }
+        if (project != null) {
+            addFence();
         }
 
     }
@@ -222,6 +247,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         activity = this;
         txtTitle = (TextView) findViewById(R.id.CAM_title);
         txtSubtitle = (TextView) findViewById(R.id.CAM_subTitle);
+        txtMessage = (TextView) findViewById(R.id.CAM_message);
         txtCount = (TextView) findViewById(R.id.CAM_count);
         imageView = (ImageView) findViewById(R.id.CAM_image);
 
@@ -229,6 +255,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         txtTitle.setText("");
         txtSubtitle.setText("");
         txtCount.setText("0");
+        txtMessage.setVisibility(View.GONE);
 
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -335,10 +362,22 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     public void onStop() {
         super.onStop();
         stopLocationUpdates();
-        if (googleApiClient != null) {
-            googleApiClient.disconnect();
-            Log.e(LOG, "### onStop - GoogleApiClient disconnecting ");
-        }
+
+        Log.d(LOG,"onStop removeGeofences .....................");
+        LocationServices.GeofencingApi.removeGeofences(
+                googleApiClient,
+                getGeofencePendingIntent()
+        ).setResultCallback(new ResultCallback<Status>() {
+            @Override
+            public void onResult(@NonNull Status status) {
+                Log.d(LOG,"onStop ResultCallback onResult - fences removed");
+                if (googleApiClient != null) {
+                    googleApiClient.disconnect();
+                    Log.e(LOG, "### onStop - GoogleApiClient disconnecting ");
+                }
+            }
+        });
+
 
     }
 
@@ -370,6 +409,10 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         mRequestingLocationUpdates = true;
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 googleApiClient, mLocationRequest, this);
+
+        if (project != null) {
+            addFence();
+        }
 
     }
 
@@ -419,7 +462,6 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     /**
      * Start default on-board camera app
      */
-    @RequiresPermission
     private void dispatchTakePictureIntent() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -575,17 +617,20 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
     @Override
     public void onBackPressed() {
+        Intent i = new Intent();
+        i.putExtra("amIinTheFence", amIinTheFence);
 
         if (pictureTakenOK) {
             Log.d(LOG, "onBackPressed ... picture cached and scheduled for upload");
-            ResponseDTO r = new ResponseDTO();
-            Intent i = new Intent();
+            ResponseDTO resp = new ResponseDTO();
+            resp.setPhotoUploadList(photoUploadList);
+            i.putExtra("photos", resp);
             i.putExtra("pictureTakenOK", pictureTakenOK);
             i.putExtra("file", currentThumbFile.getAbsolutePath());
             setResult(RESULT_OK, i);
         } else {
             Log.d(LOG, "onBackPressed ... cancelled");
-            setResult(RESULT_CANCELED);
+            setResult(RESULT_CANCELED, i);
         }
         finish();
     }
@@ -784,6 +829,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     ResponseDTO response;
     int pictureCount;
     boolean pictureTakenOK;
+    List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
 
     private void getLog(Bitmap bm, String which) {
         if (bm == null) return;
@@ -811,7 +857,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     }
 
     private void saveAndUpload(final PhotoUploadDTO dto) {
-
+        photoUploadList.add(dto);
         Snappy.cachePhotoForUpload((MonApp) getApplication(), dto, new Snappy.SnappyWriteListener() {
             @Override
             public void onDataWritten() {
@@ -892,4 +938,100 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     }
 
 
+    //**************** GEOFENCE
+
+    PendingIntent mGeofencePendingIntent;
+    List<Geofence> mGeofenceList = new ArrayList<>();
+
+    @Override
+    public void onResult(@NonNull Status status) {
+        Log.w(LOG, "... onResult: status: " + status.toString());
+        if (status.isSuccess()) {
+            Log.e(LOG, "### Methinks a Geofence has been created OK, fences: "
+            + mGeofenceList.size());
+        }
+
+
+    }
+
+    static final float RADIUS = 300;
+    static final int GEOFENCE_EXPIRATION = 3000;
+
+    private void addFence() {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        if (!googleApiClient.isConnected()) {
+            return;
+        }
+        Log.w(LOG, ".... add project geoFence ....: " + project.getProjectName());
+        mGeofenceList.add(new Geofence.Builder()
+                .setRequestId(project.getProjectName())
+                .setCircularRegion(
+                        project.getLatitude(),
+                        project.getLongitude(),
+                        RADIUS
+                )
+                .setExpirationDuration(GEOFENCE_EXPIRATION)
+                .setTransitionTypes(
+                                Geofence.GEOFENCE_TRANSITION_ENTER |
+                                Geofence.GEOFENCE_TRANSITION_EXIT)
+                .build());
+
+        LocationServices.GeofencingApi.addGeofences(
+                googleApiClient,
+                getGeofencingRequest(),
+                getGeofencePendingIntent()
+        ).setResultCallback(this);
+    }
+
+    private PendingIntent getGeofencePendingIntent() {
+        if (mGeofencePendingIntent != null) {
+            return mGeofencePendingIntent;
+        }
+        Log.w(LOG, "... getGeofencePendingIntent");
+        Intent intent = new Intent(this, GeofenceIntentService.class);
+        return PendingIntent.getService(this, 0, intent, PendingIntent.
+                FLAG_UPDATE_CURRENT);
+    }
+
+    private GeofencingRequest getGeofencingRequest() {
+        Log.w(LOG, "... getGeofencingRequest");
+        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER
+                | GeofencingRequest.INITIAL_TRIGGER_DWELL
+                | GeofencingRequest.INITIAL_TRIGGER_EXIT);
+        builder.addGeofences(mGeofenceList);
+        return builder.build();
+    }
+
+    // Broadcast receiver for receiving location request
+    private class GeofenceEventReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String event = intent.getStringExtra("event");
+            Log.e(LOG, "+++++++GeofenceEventReceiver onReceive, location requested: "
+                    + intent.toString());
+            Statics.setRobotoFontLight(context,txtMessage);
+            if (event.equalsIgnoreCase("ENTER")) {
+                Log.w(LOG, "the device is INSIDE the project geofence");
+                amIinTheFence = true;
+                txtMessage.setVisibility(View.GONE);
+                Util.expand(fab, 1000, null);
+            }
+            if (event.equalsIgnoreCase("EXIT")) {
+                Log.w(LOG, "the device is OUTSIDE the project geofence");
+                amIinTheFence = false;
+                txtMessage.setVisibility(View.VISIBLE);
+                Util.collapse(fab, 1000, null);
+
+            }
+
+        }
+    }
+
+    boolean amIinTheFence;
 }

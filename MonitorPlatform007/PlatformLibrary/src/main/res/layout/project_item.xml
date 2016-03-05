@@ -78,6 +78,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/mon_wider"
                 android:layout_below="@id/PI_muniName"
                 android:layout_marginTop="@dimen/mon_divider">
 
@@ -193,6 +194,7 @@
         <RelativeLayout
             android:id="@+id/PI_middle3"
             android:background="@color/white"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/PI_middle2b"

@@ -81,6 +81,15 @@
         <receiver
             android:name="com.boha.monitor.library.services.PhotoUploadBroadcastReceiver"
             android:enabled="true"
+            android:exported="true" />
+
+        <service
+            android:name="com.boha.monitor.library.services.GeofenceIntentService"
+            android:exported="false" />
+
+        <receiver
+            android:name="com.boha.monitor.library.services.GeofenceBroadcastReceiver"
+            android:enabled="true"
             android:exported="true"></receiver>
     </application>
 

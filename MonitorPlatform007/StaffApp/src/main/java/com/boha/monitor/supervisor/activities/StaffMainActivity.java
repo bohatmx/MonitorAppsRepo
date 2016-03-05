@@ -4,19 +4,16 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -65,6 +62,7 @@ import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.dto.SimpleMessageDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.dto.StaffProjectDTO;
 import com.boha.monitor.library.fragments.MediaDialogFragment;
@@ -77,6 +75,7 @@ import com.boha.monitor.library.fragments.SimpleMessageFragment;
 import com.boha.monitor.library.fragments.StaffListFragment;
 import com.boha.monitor.library.fragments.TaskListFragment;
 import com.boha.monitor.library.services.DataRefreshService;
+import com.boha.monitor.library.services.LocationTrackerReceiver;
 import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.util.DepthPageTransformer;
 import com.boha.monitor.library.util.NetUtil;
@@ -169,6 +168,20 @@ public class StaffMainActivity extends AppCompatActivity implements
                 DataRefreshService.BROADCAST_ACTION);
         DataRefreshDoneReceiver receiver = new DataRefreshDoneReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver,mStatusIntentFilter);
+
+        //receive notification when LocationTrackerReceiver has received location request
+        IntentFilter mStatusIntentFilter2 = new IntentFilter(
+                LocationTrackerReceiver.BROADCAST_ACTION);
+        LocationRequestedReceiver receiver2 = new LocationRequestedReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver2, mStatusIntentFilter2);
+
+        //receive notification when PhotoUploadService has uploaded photos
+        IntentFilter mStatusIntentFilter3 = new IntentFilter(
+                PhotoUploadService.BROADCAST_ACTION);
+        PhotoUploadedReceiver receiver3 = new PhotoUploadedReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver3,
+                mStatusIntentFilter3);
+
     }
 
     private void setFields() {
@@ -588,6 +601,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         mLocationRequest.setInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setFastestInterval(500);
+        startLocationUpdates();
     }
 
     @Override
@@ -604,6 +618,7 @@ public class StaffMainActivity extends AppCompatActivity implements
             mLocation = location;
             stopLocationUpdates();
             mRequestingLocationUpdates = false;
+            projectListFragment.setLocation(location);
 
             if (directionRequired) {
                 directionRequired = false;
@@ -615,16 +630,22 @@ public class StaffMainActivity extends AppCompatActivity implements
                 intent.setClassName("com.google.android.apps.maps",
                         "com.google.android.maps.MapsActivity");
                 startActivity(intent);
+                return;
             }
             if (sendLocation) {
                 sendLocation = false;
                 submitTrack();
+                return;
+            }
+            if (isRegularTrack) {
+                isRegularTrack = false;
+                submitRegularTrack();
             }
 
         }
 
     }
-
+    boolean isRegularTrack;
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
@@ -701,6 +722,48 @@ public class StaffMainActivity extends AppCompatActivity implements
                     public void run() {
                         setBusy(false);
                         Util.showToast(ctx, "Location has been sent");
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setBusy(false);
+                    }
+                });
+            }
+
+
+        });
+
+    }
+
+    private void submitRegularTrack() {
+        RequestDTO w = new RequestDTO(RequestDTO.ADD_LOCATION_TRACK);
+        LocationTrackerDTO dto = new LocationTrackerDTO();
+        StaffDTO staff = SharedUtil.getCompanyStaff(ctx);
+
+        dto.setStaffID(staff.getStaffID());
+        dto.setDateTracked(new Date().getTime());
+        dto.setLatitude(mLocation.getLatitude());
+        dto.setLongitude(mLocation.getLongitude());
+        dto.setAccuracy(mLocation.getAccuracy());
+        dto.setStaffName(staff.getFullName());
+        dto.setGcmDevice(SharedUtil.getGCMDevice(ctx));
+        dto.getGcmDevice().setRegistrationID(null);
+        w.setLocationTracker(dto);
+
+        setBusy(true);
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(ResponseDTO response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setBusy(false);
                     }
                 });
             }
@@ -842,6 +905,11 @@ public class StaffMainActivity extends AppCompatActivity implements
                 break;
             case REQUEST_CAMERA:
                 if (resCode == RESULT_OK) {
+                    ResponseDTO photos = (ResponseDTO) data.getSerializableExtra("photos");
+                    Log.w(LOG,"onActivityResult Photos taken: " + photos.getPhotoUploadList().size());
+                    projectListFragment.addPhotosTaken(photos.getPhotoUploadList());
+                } else {
+                    Log.e(LOG,"onActivityResult, no photo taken");
                 }
                 break;
             case REQUEST_STATUS_UPDATE:
@@ -1169,7 +1237,36 @@ public class StaffMainActivity extends AppCompatActivity implements
 
         }
     }
+    // Broadcast receiver for receiving location request
+    private class LocationRequestedReceiver extends BroadcastReceiver {
 
+        // Called when the BroadcastReceiver gets an Intent it's registered to receive
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            simpleMessage = (SimpleMessageDTO)intent.getSerializableExtra("simpleMessage");
+            Log.e(LOG, "+++++++LocationRequestedReceiver onReceive, location requested: "
+                    + intent.toString());
+            Log.d(LOG, "+++++++++++++++++ starting startLocationUpdates .....");
+            isRegularTrack = true;
+            sendLocation = false;
+            startLocationUpdates();
+        }
+    }
+    // Broadcast receiver for receiving status updates from PhotoUploadService
+    private class PhotoUploadedReceiver extends BroadcastReceiver {
+
+        // Called when the BroadcastReceiver gets an Intent it's registered to receive
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e(LOG, "+++++++ PhotoUploadedReceiver onReceive, photo uploaded: "
+                    + intent.toString());
+            projectListFragment.getProjectList();
+            Log.w(LOG,
+                    "Photo has been uploaded OK");
+
+        }
+    }
+    SimpleMessageDTO simpleMessage;
     static final String LOG = StaffMainActivity.class.getSimpleName();
     static final int ACCURACY_THRESHOLD = 20;
     private DrawerLayout mDrawerLayout;

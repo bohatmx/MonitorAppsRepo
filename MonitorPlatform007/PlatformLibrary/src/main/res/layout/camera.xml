@@ -78,5 +78,15 @@
         android:layout_marginRight="@dimen/mon_margin"
         android:layout_marginTop="@dimen/mon_margin"
         android:text="0" />
+    <TextView
+        android:id="@+id/CAM_message"
+        style="@style/Title1TextStyleWhite"
+        android:padding="@dimen/mon_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/mon_wider"
+        android:layout_marginTop="@dimen/mon_margin"
+        android:text="You are outside the range of the Project. Picture cannot be taken here" />
 
 </RelativeLayout>

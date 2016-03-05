@@ -51,6 +51,8 @@ import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.dto.SimpleMessageDTO;
+import com.boha.monitor.library.dto.SimpleMessageDestinationDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.dto.VideoUploadDTO;
 import com.boha.monitor.library.fragments.MediaDialogFragment;
@@ -62,6 +64,8 @@ import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.fragments.SimpleMessageFragment;
 import com.boha.monitor.library.fragments.StaffListFragment;
 import com.boha.monitor.library.services.DataRefreshService;
+import com.boha.monitor.library.services.GPSLocationService;
+import com.boha.monitor.library.services.LocationTrackerReceiver;
 import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.services.VideoUploadService;
 import com.boha.monitor.library.util.CacheUtil;
@@ -74,6 +78,7 @@ import com.boha.monitor.library.util.Util;
 import com.boha.platform.worker.R;
 import com.boha.platform.worker.fragments.NavigationDrawerFragment;
 import com.boha.platform.worker.fragments.NoProjectsAssignedFragment;
+import com.boha.platform.worker.services.MonitorGCMListenerService;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -153,6 +158,19 @@ public class MonitorMainActivity extends AppCompatActivity
                 DataRefreshService.BROADCAST_ACTION);
         DataRefreshDoneReceiver receiver = new DataRefreshDoneReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, mStatusIntentFilter);
+
+        //receive notification when LocationTrackerReceiver has received location request
+        IntentFilter mStatusIntentFilter2 = new IntentFilter(
+                LocationTrackerReceiver.BROADCAST_ACTION);
+        LocationRequestedReceiver receiver2 = new LocationRequestedReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver2, mStatusIntentFilter2);
+
+        //receive notification when PhotoUploadService has uploaded photos
+        IntentFilter mStatusIntentFilter3 = new IntentFilter(
+                PhotoUploadService.BROADCAST_ACTION);
+        PhotoUploadedReceiver receiver3 = new PhotoUploadedReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver3,
+                mStatusIntentFilter3);
     }
 
     private void setFields() {
@@ -327,6 +345,15 @@ public class MonitorMainActivity extends AppCompatActivity
                 + reqCode + " resCode: " + resCode);
         switch (reqCode) {
 
+            case REQUEST_CAMERA_PHOTO:
+                if (resCode == RESULT_OK) {
+                    ResponseDTO photos = (ResponseDTO) data.getSerializableExtra("photos");
+                    Log.w(LOG,"onActivityResult Photos taken: " + photos.getPhotoUploadList().size());
+                    projectListFragment.addPhotosTaken(photos.getPhotoUploadList());
+                } else {
+                    Log.e(LOG,"onActivityResult, no photo taken");
+                }
+                break;
             case REQUEST_STATUS_UPDATE:
 
                 break;
@@ -602,6 +629,7 @@ public class MonitorMainActivity extends AppCompatActivity
         mLocationRequest.setInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setFastestInterval(500);
+        startLocationUpdates();
 
     }
 
@@ -636,13 +664,77 @@ public class MonitorMainActivity extends AppCompatActivity
         if (loc.getAccuracy() <= ACCURACY) {
             mLocation = loc;
             stopLocationUpdates();
+            projectListFragment.setLocation(loc);
             if (sendLocation) {
                 sendLocation = false;
                 submitTrack();
+                return;
             }
+            if (simpleMessage != null) {
+                submitLocation();
+                return;
+            }
+            Intent m = new Intent(ctx, GPSLocationService.class);
+            LocationTrackerDTO a = new LocationTrackerDTO();
+            a.setLatitude(mLocation.getLatitude());
+            a.setLongitude(mLocation.getLongitude());
+            a.setGcmDevice(SharedUtil.getGCMDevice(ctx));
+            a.getGcmDevice().setRegistrationID(null);
+            a.setMonitorID(SharedUtil.getMonitor(ctx).getMonitorID());
+            m.putExtra("track",a);
+            startService(m);
         }
     }
 
+    private void submitLocation() {
+        RequestDTO w = new RequestDTO(RequestDTO.SEND_LOCATION);
+        LocationTrackerDTO dto = new LocationTrackerDTO();
+        MonitorDTO monitor = SharedUtil.getMonitor(ctx);
+
+        dto.setMonitorID(monitor.getMonitorID());
+        dto.setDateTracked(new Date().getTime());
+        dto.setLatitude(mLocation.getLatitude());
+        dto.setLongitude(mLocation.getLongitude());
+        dto.setAccuracy(mLocation.getAccuracy());
+        dto.setMonitorName(monitor.getFullName());
+        if (simpleMessage.getMonitorID() != null) {
+            dto.getMonitorList().add(simpleMessage.getMonitorID());
+        }
+        if (simpleMessage.getStaffID() != null) {
+            dto.getStaffList().add(simpleMessage.getStaffID());
+        }
+        dto.setGcmDevice(SharedUtil.getGCMDevice(ctx));
+        dto.getGcmDevice().setRegistrationID(null);
+        w.setLocationTracker(dto);
+
+        setBusy(true);
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(ResponseDTO response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        simpleMessage = null;
+                        setBusy(false);
+                        Util.showToast(ctx, "Location has been sent");
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setBusy(false);
+                    }
+                });
+            }
+
+
+        });
+
+    }
     private void submitTrack() {
         RequestDTO w = new RequestDTO(RequestDTO.SEND_LOCATION);
         LocationTrackerDTO dto = new LocationTrackerDTO();
@@ -805,8 +897,36 @@ public class MonitorMainActivity extends AppCompatActivity
             monitorListFragment.getMonitorList();
         }
     }
+    // Broadcast receiver for receiving location request
+    private class LocationRequestedReceiver extends BroadcastReceiver {
 
+        // Called when the BroadcastReceiver gets an Intent it's registered to receive
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            simpleMessage = (SimpleMessageDTO)intent.getSerializableExtra("simpleMessage");
+            Log.e(LOG, "+++++++LocationRequestedReceiver onReceive, location requested: "
+                    + intent.toString());
+            Log.d(LOG, "+++++++++++++++++ starting startLocationUpdates .....");
+            startLocationUpdates();
+        }
+    }
+    // Broadcast receiver for receiving status updates from PhotoUploadService
+    private class PhotoUploadedReceiver extends BroadcastReceiver {
 
+        // Called when the BroadcastReceiver gets an Intent it's registered to receive
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e(LOG, "+++++++ PhotoUploadedReceiver onReceive, photo uploaded: "
+                    + intent.toString());
+            projectListFragment.getProjectList();
+            Snackbar.make(projectListFragment.getView(),
+                    "Photo has been uploaded OK",
+                    Snackbar.LENGTH_LONG).show();
+
+        }
+    }
+
+    SimpleMessageDTO simpleMessage;
     boolean busyGettingRemoteData;
 
     private boolean checkSettings() {

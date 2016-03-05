@@ -113,7 +113,6 @@ public class OKUtil {
                 .build();
 
         execute(client,okHttpRequest, req.isZipResponse(), listener);
-
     }
 
     public  void sendPOSTRequest(final Context ctx,

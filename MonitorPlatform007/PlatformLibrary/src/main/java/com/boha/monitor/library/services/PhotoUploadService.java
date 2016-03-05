@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
+import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.CDNUploader;
 import com.boha.monitor.library.util.Snappy;
@@ -80,12 +81,7 @@ public class PhotoUploadService extends IntentService {
             }
 
         } else {
-            Log.w(LOG,"******* PhotoUploadService complete, photos uploaded: " +
-                    uploadedList.size() + " - Broadcasting successful upload ...");
-            Intent m = new Intent(BROADCAST_ACTION);
-            m.putExtra(PHOTO_UPLOADED,true);
-            LocalBroadcastManager.getInstance(getApplicationContext())
-                    .sendBroadcast(m);
+            updateProject();
         }
 
     }
@@ -143,6 +139,47 @@ public class PhotoUploadService extends IntentService {
 
     }
 
+    private void updateProject() {
+        if (uploadedList.isEmpty()) {
+            return;
+        }
+        if (uploadedList.get(0).getProjectID() != null) {
+            Snappy.getProject((MonApp) getApplication(),
+                    uploadedList.get(0).getProjectID(),
+                    new Snappy.SnappyProjectListener() {
+                @Override
+                public void onProjectFound(ProjectDTO project) {
+                    project.getPhotoUploadList().addAll(0,uploadedList);
+                    project.setPhotoCount(project.getPhotoUploadList().size());
+
+                    List<ProjectDTO> list = new ArrayList<>();
+                    list.add(project);
+                    Snappy.writeProjectList((MonApp) getApplication(), list, new Snappy.SnappyWriteListener() {
+                        @Override
+                        public void onDataWritten() {
+                            Log.w(LOG,"******* PhotoUploadService complete, photos uploaded: " +
+                                    uploadedList.size() + " - Broadcasting successful upload ...");
+
+                            Intent m = new Intent(BROADCAST_ACTION);
+                            m.putExtra(PHOTO_UPLOADED,true);
+                            LocalBroadcastManager.getInstance(getApplicationContext())
+                                    .sendBroadcast(m);
+                        }
+
+                        @Override
+                        public void onError(String message) {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
+        }
+    }
 
     List<PhotoUploadDTO> failedUploads = new ArrayList<>();
     static final String LOG = PhotoUploadService.class.getSimpleName();

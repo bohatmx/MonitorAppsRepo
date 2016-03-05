@@ -10,6 +10,7 @@ import android.util.Log;
 import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.CreditCardDTO;
 import com.boha.monitor.library.dto.GcmDeviceDTO;
+import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.StaffDTO;
@@ -38,6 +39,7 @@ public class SharedUtil {
             DRAWER = "drawer",
             THEME = "theme",
             CREDIT_CARD = "credCard",
+            TRACK = "track",
             PHOTO = "photo",
             LOG = "SharedUtil",
             REMINDER_TIME = "reminderTime",
@@ -394,5 +396,27 @@ public class SharedUtil {
                 .getDefaultSharedPreferences(ctx);
         int id = sp.getInt(LAST_MONITOR_ID, 0);
         return id;
+    }
+
+    public static void saveLastTrack(Context ctx,LocationTrackerDTO track) {
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor ed = sp.edit();
+        String json = gson.toJson(track);
+
+        ed.putString(TRACK, json);
+        ed.commit();
+        Log.e("SharedUtil", "%%%%% track saved in SharedPreferences");
+    }
+    public static LocationTrackerDTO getLastTrack(Context ctx) {
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        String json = sp.getString(TRACK, null);
+        LocationTrackerDTO track = null;
+        if (json != null) {
+            track = gson.fromJson(json, LocationTrackerDTO.class);
+        }
+
+        return track;
     }
 }

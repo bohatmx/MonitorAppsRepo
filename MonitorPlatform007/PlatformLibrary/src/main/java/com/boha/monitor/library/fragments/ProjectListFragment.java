@@ -3,6 +3,7 @@ package com.boha.monitor.library.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +23,7 @@ import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.ProjectMapActivity;
 import com.boha.monitor.library.activities.ProjectTaskActivity;
 import com.boha.monitor.library.adapters.ProjectAdapter;
+import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.SharedUtil;
@@ -110,10 +112,17 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     List<String> projectNameList;
     ProjectDTO selectedProject;
     TextView txtCount;
+    double latitude, longitude;
 
-    public void openSearch() {
-        searchView.setVisibility(View.VISIBLE);
+    public void setLocation(Location location) {
+        Log.d(LOG,"setLocation: " + location.toString());
+        this.latitude = location.getLatitude();
+        this.longitude = location.getLongitude();
+        if (mRecyclerView != null) {
+            setList();
+        }
     }
+
 
     @Override
     public void onResume() {
@@ -199,7 +208,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         }
 
         projectAdapter = new ProjectAdapter(projectList, getActivity(),
-                darkColor, new ProjectListFragmentListener() {
+                darkColor, latitude,longitude,new ProjectListFragmentListener() {
             @Override
             public void onCameraRequired(ProjectDTO project) {
                 Log.d(LOG, "### onCameraRequired");
@@ -230,6 +239,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
             @Override
             public void onProjectTasksRequired(ProjectDTO project) {
+                selectedProject = project;
                 mListener.onProjectTasksRequired(project);
             }
 
@@ -265,6 +275,8 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                 w.putExtra("projects", responseDTO);
                 startActivity(w);
             }
+
+
         });
         mRecyclerView.setAdapter(projectAdapter);
         Integer pID = SharedUtil.getLastProjectID(getActivity());
@@ -352,6 +364,15 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         if (isFound) {
             mRecyclerView.smoothScrollToPosition(index);
         }
+    }
+
+    public void addPhotosTaken(final List<PhotoUploadDTO> photoList) {
+        if (photoList.isEmpty()) {
+            return;
+        }
+        selectedProject.getPhotoUploadList().addAll(0, photoList);
+        selectedProject.setPhotoCount(selectedProject.getPhotoCount() + photoList.size());
+        setList();
     }
 
     @Override

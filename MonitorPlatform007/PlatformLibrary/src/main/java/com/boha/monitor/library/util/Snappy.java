@@ -86,6 +86,9 @@ public class Snappy {
                     ProjectDTO d = new ProjectDTO();
                     d.setProjectID(p.getProjectID());
                     d.setProjectName(p.getProjectName());
+                    d.setCityName(p.getCityName());
+                    d.setMunicipalityName(p.getMunicipalityName());
+                    d.setProgrammeName(p.getProgrammeName());
                     d.setLatitude(p.getLatitude());
                     d.setLongitude(p.getLongitude());
                     d.setLocationConfirmed(p.getLocationConfirmed());
@@ -96,8 +99,8 @@ public class Snappy {
                     d.setProjectTaskCount(p.getProjectTaskCount());
                     d.setLastStatus(p.getLastStatus());
                     snappydb.put(PROJECT_LITE + p.getProjectID(), d);
-                    android.util.Log.w(LOG, "Project written: " + p.getProjectName()
-                            + " tasks: " + p.getProjectTaskList().size());
+//                    android.util.Log.w(LOG, "Project written: " + p.getProjectName()
+//                            + " tasks: " + p.getProjectTaskList().size());
                 }
                 android.util.Log.d(LOG, "Projects written: " + list.size());
 

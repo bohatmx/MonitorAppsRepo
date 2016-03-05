@@ -12,6 +12,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.boha.monitor.library.activities.MonitorMapActivity;
@@ -48,7 +49,7 @@ public class MonitorGCMListenerService extends GcmListenerService {
     // [START receive_message]
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        Log.i(TAG,"######onMessageReceived, data: " + data.toString());
+        Log.i(TAG, "######onMessageReceived, data: " + data.toString());
         String message = data.getString("message");
         if (message != null) {
             Log.d(TAG, "** GCM message From: " + from);
@@ -79,20 +80,29 @@ public class MonitorGCMListenerService extends GcmListenerService {
 
     }
 
+    public static final String LOCATION_REQUESTED = "locationRequested";
+    public static final String BROADCAST_ACTION =
+            "com.boha.monitor.LOCATION.REQUESTED";
+
     /**
      * Cache incoming SimpleMessageDTO on the device and send
      * notification when done.
+     *
      * @param message
      */
     private void cacheMessage(final SimpleMessageDTO message) {
         if (message.getLocationRequest().equals(Boolean.TRUE)) {
-            Log.d(TAG, "*** is location request received, calling GPSService: " + message.getStaffName());
-            Intent w = new Intent(getApplicationContext(), GPSLocationService.class);
-            w.putExtra("simpleMessage", message);
-            getApplicationContext().startService(w);
+            //todo use broadcast service to ask for location from MonitormainActivity
+            Log.w(TAG, "@@@@ MonGCMListenerService responding to loc request. Broadcasting Request! ");
+
+            Intent m = new Intent(BROADCAST_ACTION);
+            m.putExtra(LOCATION_REQUESTED, true);
+            m.putExtra("simpleMessage",message);
+            LocalBroadcastManager.getInstance(getApplicationContext())
+                    .sendBroadcast(m);
             return;
         }
-            CacheUtil.getCachedMessages(getApplicationContext(), new CacheUtil.CacheUtilListener() {
+        CacheUtil.getCachedMessages(getApplicationContext(), new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
                 response.getSimpleMessageList().add(message);
@@ -105,7 +115,7 @@ public class MonitorGCMListenerService extends GcmListenerService {
                     @Override
                     public void onDataCached() {
 
-                            sendNotification(message);
+                        sendNotification(message);
 
                     }
 
@@ -130,12 +140,13 @@ public class MonitorGCMListenerService extends GcmListenerService {
 
     /**
      * Build and send SimpleMessageDTO notification
-     * @see SimpleMessagingActivity
+     *
      * @param simpleMessage
+     * @see SimpleMessagingActivity
      */
     private void sendNotification(SimpleMessageDTO simpleMessage) {
         Intent intent = new Intent(this, SimpleMessagingActivity.class);
-        intent.putExtra("simpleMessage",simpleMessage);
+        intent.putExtra("simpleMessage", simpleMessage);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 LOCATION_REQUEST_CODE, intent,
@@ -148,7 +159,7 @@ public class MonitorGCMListenerService extends GcmListenerService {
         if (simpleMessage.getStaffName() != null) {
             name = simpleMessage.getStaffName();
         }
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.glasses)
                 .setContentTitle(name + " - " + "Message received")
@@ -168,12 +179,13 @@ public class MonitorGCMListenerService extends GcmListenerService {
     /**
      * Build and send LocationTrackerDTO notification
      * This notification will display map when clicked
-     * @see MonitorMapActivity
+     *
      * @param track
+     * @see MonitorMapActivity
      */
     private void sendNotification(LocationTrackerDTO track) {
         Intent intent = new Intent(this, MonitorMapActivity.class);
-        intent.putExtra("track",track);
+        intent.putExtra("track", track);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 LOCATION_REQUEST_CODE, intent,
@@ -186,7 +198,7 @@ public class MonitorGCMListenerService extends GcmListenerService {
         if (track.getStaffName() != null) {
             name = track.getStaffName();
         }
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.glasses)
                 .setContentTitle(name + " - " + "Current Location")
@@ -200,6 +212,7 @@ public class MonitorGCMListenerService extends GcmListenerService {
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
+
     /**
      * Create and show a simple notification containing the received GCM message.
      *
@@ -211,7 +224,7 @@ public class MonitorGCMListenerService extends GcmListenerService {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.glasses)
                 .setContentTitle(getString(R.string.welcome_msg))

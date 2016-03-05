@@ -68,4 +68,5 @@ dependencies {
     compile 'commons-io:commons-io:2.4'
     compile 'com.snappydb:snappydb-lib:0.4.0'
     compile 'com.esotericsoftware.kryo:kryo:2.24.0'
+//    compile 'io.nlopez.smartlocation:library:3.2.1'
 }

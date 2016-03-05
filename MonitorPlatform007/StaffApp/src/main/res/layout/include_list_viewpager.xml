@@ -17,10 +17,7 @@
             style="@style/PagerSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:paddingBottom="@dimen/mon_padding"
-
-            android:paddingTop="@dimen/mon_padding" />
+            android:layout_gravity="top" />
         </android.support.v4.view.ViewPager>
 
     <android.support.design.widget.FloatingActionButton

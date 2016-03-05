@@ -5,46 +5,63 @@
     android:background="@color/grey"
     tools:context="com.boha.monitor.library.fragments.ProjectListFragment">
 
-    <TextView
-        android:id="@+id/count"
-        style="@style/Title1TextStyleBlack"
-        android:text="0"
-        android:textSize="48dp"
-        android:textStyle="normal"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/mon_margin"
-        android:layout_marginTop="@dimen/mon_margin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
     <RelativeLayout
-        android:id="@+id/top"
-        android:background="@color/white"
-        android:layout_margin="@dimen/mon_padding"
-        android:padding="@dimen/mon_padding"
-        android:layout_toLeftOf="@id/count"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:id="@+id/topBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true">
 
-        <ImageView
-            android:id="@+id/icon"
-            android:src="@android:drawable/ic_menu_search"
-            android:tint="?attr/colorPrimaryDark"
+        <TextView
+            android:id="@+id/count"
+            style="@style/Title1TextStyleBlack"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/mon_wide"
+            android:layout_marginRight="@dimen/mon_margin"
+            android:layout_marginTop="@dimen/mon_margin"
+            android:alpha="0.5"
+            android:text="0"
+            android:background="@color/blue_200"
+            android:paddingTop="@dimen/mon_padding"
+            android:paddingBottom="@dimen/mon_padding"
+            android:paddingLeft="@dimen/mon_wide"
+            android:paddingRight="@dimen/mon_wide"
+            android:textSize="32dp"
+            android:textStyle="normal" />
 
-        <AutoCompleteTextView
-            android:id="@+id/autocomplete_project"
-            android:layout_toRightOf="@id/icon"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+        <RelativeLayout
+            android:id="@+id/top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/mon_padding"
+            android:layout_toLeftOf="@id/count"
+            android:padding="@dimen/mon_padding">
+
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_menu_search"
+                android:tint="?attr/colorPrimaryDark" />
+
+            <AutoCompleteTextView
+                android:id="@+id/autocomplete_project"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/icon" />
+        </RelativeLayout>
+
     </RelativeLayout>
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler"
-        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/top"
+        android:layout_below="@id/topBox"
+        android:background="@color/white"
         android:scrollbars="vertical" />
 
 </RelativeLayout>

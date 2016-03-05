@@ -187,8 +187,8 @@ public class MonApp extends Application implements Application.ActivityLifecycle
 
         startDataRefreshAlarm();
         startRequestCacheAlarm();
-        startLocationAlarm();
         startPhotoUploadAlarm();
+        startLocationAlarm();
 
     }
 
@@ -198,7 +198,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         alarmIntent1 = PendingIntent.getBroadcast(getApplicationContext(), 123, m, 0);
 
         alarmMgr1.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), HALF_HOUR, alarmIntent1);
+                SystemClock.elapsedRealtime(), HOUR, alarmIntent1);
 
         Log.d(LOG, "###### Location AlarmManager: alarm set to pull the device tracker trigger every: HALF_HOUR");
     }
@@ -208,7 +208,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         alarmIntent2 = PendingIntent.getBroadcast(getApplicationContext(), 124, m, 0);
 
         alarmMgr2.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), FIVE_MINUTES, alarmIntent2);
+                SystemClock.elapsedRealtime(), HALF_HOUR, alarmIntent2);
 
         Log.d(LOG, "###### Request Cache AlarmManager: alarm set to send cached requests every: FIVE_MINUTES");
     }
@@ -228,7 +228,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         alarmIntent4 = PendingIntent.getBroadcast(getApplicationContext(), 126, m, 0);
 
         alarmMgr4.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), FIVE_MINUTES, alarmIntent4);
+                SystemClock.elapsedRealtime(), HALF_HOUR, alarmIntent4);
 
         Log.w(LOG, "###### Photo Upload AlarmManager: alarm set to refresh data every: FIVE_MINUTES");
     }

@@ -2,6 +2,7 @@ package com.boha.monitor.library.adapters;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.location.Location;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,14 +41,19 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
     private List<ProjectDTO> projectList;
     private Context ctx;
     private int darkColor;
+    private double latitude, longitude;
     static final int HEADER = 1, ITEM = 2;
 
     public ProjectAdapter(List<ProjectDTO> projectList,
-                          Context context, int darkColor, ProjectListFragment.ProjectListFragmentListener listener) {
+                          Context context, int darkColor,
+                          double latitude, double longitude,
+                          ProjectListFragment.ProjectListFragmentListener listener) {
         this.projectList = projectList;
         this.ctx = context;
         this.listener = listener;
         this.darkColor = darkColor;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
 
@@ -91,6 +97,12 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
         pvh.image.setVisibility(View.GONE);
 
         pvh.txtProjectName.setText(project.getProjectName());
+        if (project.getCityName() != null) {
+            pvh.txtCity.setText(project.getCityName());
+        }
+        if (project.getMunicipalityName() != null) {
+            pvh.txtMuni.setText(project.getMunicipalityName());
+        }
         pvh.txtNumber.setText("" + (position));
         if (project.getLastStatus() != null) {
             pvh.txtLastDate.setText(sdf.format(new Date(project.getLastStatus().getStatusDate())));
@@ -173,6 +185,13 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
             pvh.iconCamera.setAlpha(1.0f);
             pvh.iconDirections.setAlpha(1.0f);
             pvh.iconDoStatus.setAlpha(1.0f);
+            boolean isNear = amNearProject(project);
+            if (!isNear) {
+                pvh.iconCamera.setEnabled(false);
+                pvh.iconDoStatus.setEnabled(false);
+                pvh.iconDoStatus.setAlpha(0.2f);
+                pvh.iconCamera.setAlpha(0.2f);
+            }
         }
         if (SharedUtil.getMonitor(ctx) != null) {
             pvh.iconAddTasks.setVisibility(View.GONE);
@@ -181,6 +200,29 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
 
     }
 
+    public static final double RADIUS_IN_METRES = 500;
+    private boolean amNearProject(ProjectDTO p) {
+        if (p.getLatitude() == null) {
+            return false;
+        }
+        boolean amNear = false;
+        Location here = new Location("");
+        here.setLatitude(latitude);
+        here.setLongitude(longitude);
+
+        Location there = new Location("");
+        there.setLatitude(p.getLatitude());
+        there.setLongitude(p.getLongitude());
+
+        double dist = here.distanceTo(there);
+        if (dist <= RADIUS_IN_METRES) {
+            amNear = true;
+        }
+
+        Log.d("ProjectAdapter","Distance away from project, as the crow flies: " + dist + " metres");
+
+        return amNear;
+    }
     private void setPlaceNames(ProjectDTO project, ProjectViewHolder pvh) {
         pvh.txtMuni.setVisibility(View.GONE);
         pvh.txtCity.setVisibility(View.GONE);

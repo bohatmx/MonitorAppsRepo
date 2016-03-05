@@ -7,6 +7,7 @@
 package com.boha.monitor.library.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -67,6 +68,9 @@ public class LocationTrackerDTO implements Serializable {
     }
 
     public List<Integer> getMonitorList() {
+        if (monitorList == null) {
+            monitorList = new ArrayList<>();
+        }
         return monitorList;
     }
 
@@ -75,6 +79,9 @@ public class LocationTrackerDTO implements Serializable {
     }
 
     public List<Integer> getStaffList() {
+        if (staffList == null) {
+            staffList = new ArrayList<>();
+        }
         return staffList;
     }
 
