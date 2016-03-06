@@ -64,7 +64,7 @@ public class MonitorListAdapter extends RecyclerView.Adapter<MonitorListAdapter.
         holder.photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (p.getPhotoUploadList() != null && !p.getPhotoUploadList().isEmpty()) {
+                if (!p.getPhotoUploadList().isEmpty()) {
                     mListener.onHighDefPhoto(p.getPhotoUploadList().get(0),p.getMonitorID());
                 }
             }

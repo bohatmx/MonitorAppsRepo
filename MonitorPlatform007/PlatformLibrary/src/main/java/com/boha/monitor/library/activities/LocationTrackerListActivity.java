@@ -16,8 +16,10 @@ import android.view.MenuItem;
 import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.GcmDeviceDTO;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
+import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.fragments.GcmDeviceFragment;
 import com.boha.monitor.library.fragments.LocationTrackerListFragment;
 import com.boha.monitor.library.util.NetUtil;
@@ -96,6 +98,7 @@ public class LocationTrackerListActivity extends AppCompatActivity
                         setBusyIndicator(false);
                         locationTrackerList = response.getLocationTrackerList();
                         Collections.sort(locationTrackerList);
+                        setPhotos();
                         Snappy.saveCompanyTrackerList((MonApp) getApplication(), locationTrackerList, new Snappy.SnappyWriteListener() {
                             @Override
                             public void onDataWritten() {
@@ -132,6 +135,61 @@ public class LocationTrackerListActivity extends AppCompatActivity
         });
     }
 
+    private void setPhotos() {
+        Snappy.getMonitorList((MonApp) getApplication(), new Snappy.SnappyReadListener() {
+            @Override
+            public void onDataRead(ResponseDTO response) {
+                for (MonitorDTO m: response.getMonitorList()) {
+                    if (m.getPhotoUploadList().isEmpty()) {
+                        continue;
+                    }
+                    for (LocationTrackerDTO k: locationTrackerList) {
+                        if (k.getMonitorID() == null) {
+                            continue;
+                        }
+                        if (k.getMonitorID().intValue() == m.getMonitorID().intValue()) {
+                            k.setPhoto(m.getPhotoUploadList().get(0));
+                            break;
+                        }
+                    }
+                }
+                setStaffPhotos();
+
+            }
+
+            @Override
+            public void onError(String message) {
+
+            }
+        });
+    }
+    private void setStaffPhotos() {
+        Snappy.getStaffList((MonApp) getApplication(), new Snappy.SnappyReadListener() {
+            @Override
+            public void onDataRead(ResponseDTO response) {
+                for (StaffDTO m: response.getStaffList()) {
+                    if (m.getPhotoUploadList().isEmpty()) {
+                        continue;
+                    }
+                    for (LocationTrackerDTO k : locationTrackerList) {
+                        if (k.getStaffID() == null) {
+                            continue;
+                        }
+                        if (k.getStaffID().intValue() == m.getStaffID().intValue()) {
+                            k.setPhoto(m.getPhotoUploadList().get(0));
+                            break;
+                        }
+                    }
+                }
+                Log.d(LOG,"Done getting staff photos");
+            }
+
+                @Override
+                public void onError(String message) {
+
+                }
+            });
+    }
     private void setDeviceFragment(ResponseDTO response) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
