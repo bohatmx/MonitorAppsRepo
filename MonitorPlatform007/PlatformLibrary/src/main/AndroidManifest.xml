@@ -39,13 +39,10 @@
         </receiver>
 
         <activity
-            android:name="com.boha.monitor.library.activities.SimpleMessagingActivity"
-            android:label="@string/title_activity_messaging" />
-        <activity
             android:name="com.boha.monitor.library.activities.PhotoScrollerActivity"
             android:label="@string/title_activity_photo_scroller" />
         <activity
-            android:name="com.boha.monitor.library.activities.DeviceListActivity"
+            android:name="com.boha.monitor.library.activities.LocationTrackerListActivity"
             android:label="@string/title_activity_location_tracker" />
 
         <service

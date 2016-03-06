@@ -4,6 +4,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.boha.monitor.library.activities.MonApp;
+import com.boha.monitor.library.dto.GcmDeviceDTO;
+import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
@@ -479,7 +481,6 @@ public class Snappy {
                 ResponseDTO r = new ResponseDTO();
                 r.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
                 try {
-                    //DB snappydb = getDatabase(ctx);
                     String[] keys = snappydb.findKeys("monitor");
                     for (String key : keys) {
                         String json = snappydb.get(key);
@@ -491,7 +492,6 @@ public class Snappy {
                         }
 
                     }
-//                    snappydb.close();
                     android.util.Log.d(LOG, "Photos read: " + r.getPhotoUploadList().size());
                     listener.onPhotosFound(r.getPhotoUploadList());
 
@@ -1060,6 +1060,72 @@ public class Snappy {
             }
         } catch (SnappydbException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void saveCompanyTrackerList(MonApp app, List<LocationTrackerDTO> list,
+                                              SnappyWriteListener listener) {
+        writeListener = listener;
+        getDatabase(app);
+
+        new SaveLocationTrackerTask().execute(list);
+
+
+    }
+    public static void getCompanyTrackerList(MonApp app,SnappyReadListener listener) {
+        readListener = listener;
+        getDatabase(app);
+
+        new GetLocationTrackerTask().execute();
+    }
+
+
+    static class GetLocationTrackerTask extends AsyncTask<Void,Void,List<LocationTrackerDTO>> {
+
+        @Override
+        protected List<LocationTrackerDTO> doInBackground(Void... params) {
+            List<LocationTrackerDTO> list = new ArrayList<>();
+
+            try {
+                ResponseDTO w = snappydb.getObject(LOCATION_TRACK,ResponseDTO.class);
+                list = w.getLocationTrackerList();
+            } catch (SnappydbException e) {
+                Log.e(LOG,e.getMessage());
+            }
+            Log.w(LOG,"--- trackers found in cache: " + list.size());
+            return list;
+        }
+        @Override
+        protected void onPostExecute(List<LocationTrackerDTO> list) {
+            ResponseDTO w = new ResponseDTO();
+            w.setLocationTrackerList(list);
+            readListener.onDataRead(w);
+        }
+    }
+    static final String LOCATION_TRACK = "LOCATION_TRACK";
+    static class SaveLocationTrackerTask extends AsyncTask<List<LocationTrackerDTO>, Void,Integer> {
+
+        @Override
+        protected Integer doInBackground(List<LocationTrackerDTO>... params) {
+            List<LocationTrackerDTO> list = params[0];
+            ResponseDTO w = new ResponseDTO();
+            w.setLocationTrackerList(list);
+            try {
+                snappydb.put(LOCATION_TRACK,w);
+                Log.w(LOG,"--- trackers saved in cache: " + list.size());
+            } catch (SnappydbException e) {
+                Log.e(LOG,e.getMessage(),e);
+                return 9;
+            }
+            return 0;
+        }
+        @Override
+        protected void onPostExecute(Integer result) {
+            if (result == 0) {
+                writeListener.onDataWritten();
+            } else {
+                writeListener.onError("Unable to write LocationTrackers");
+            }
         }
     }
 }

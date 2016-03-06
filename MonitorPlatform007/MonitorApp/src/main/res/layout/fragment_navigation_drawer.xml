@@ -6,8 +6,7 @@
     android:choiceMode="singleChoice"
     android:divider="@android:color/transparent"
     android:dividerHeight="0dp"
-    android:background="@color/white"
-    tools:context="com.boha.staff.activities.NavigationDrawerFragment" >
+    android:background="@color/white" >
 
     <RelativeLayout
         android:id="@+id/NAV_topLayout"
@@ -25,7 +24,7 @@
             android:id="@+id/NAV_subtitle"
             android:text="SubTitleHere"
             style="@style/Title3TextStyleWhite"
-            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="160dp"
             android:textColor="@color/white"
             android:layout_width="wrap_content"
@@ -33,11 +32,11 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/NAV_personImage"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
             android:src="@drawable/black_woman"
-            android:layout_alignParentRight="true"
-            android:layout_margin="@dimen/mon_wide"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/mon_margin"
             android:scaleType="centerCrop" />
 
     </RelativeLayout>
@@ -56,11 +55,12 @@
     <ListView android:id="@+id/NAV_list"
         android:layout_below="@id/NAV_topLayout"
         android:layout_marginTop="@dimen/mon_wide"
+        android:layout_marginLeft="@dimen/mon_margin"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:choiceMode="singleChoice"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="4dp"
+        android:divider="@color/grey_100"
+        android:dividerHeight="2dp"
         tools:context="com.boha.platform.worker.fragments.NavigationDrawerFragment" />
 
 

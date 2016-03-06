@@ -126,7 +126,8 @@ public class RequestDTO implements Serializable, Comparable<RequestDTO> {
             GET_PROJECT_TASKS = 138,
             GET_PROJECTS_FOR_MONITOR_ASSIGNMENTS = 139,
             GET_PROJECTS_FOR_STAFF_ASSIGNMENTS = 140,
-            GET_LOOKUPS = 141;
+            GET_LOOKUPS = 141,
+            GET_COMPANY_DEVICE_LOCATIONS_LATEST = 142;
 
     //
     public static final int

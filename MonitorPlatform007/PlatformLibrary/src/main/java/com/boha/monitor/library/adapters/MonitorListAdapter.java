@@ -29,7 +29,7 @@ public class MonitorListAdapter extends RecyclerView.Adapter<MonitorListAdapter.
 
     public interface MonitorListener {
         void onMonitorNameClicked(MonitorDTO monitor);
-        void onHighDefPhoto(PhotoUploadDTO photo);
+        void onHighDefPhoto(PhotoUploadDTO photo, Integer monitorID);
     }
 
     private MonitorListener mListener;
@@ -65,7 +65,7 @@ public class MonitorListAdapter extends RecyclerView.Adapter<MonitorListAdapter.
             @Override
             public void onClick(View v) {
                 if (p.getPhotoUploadList() != null && !p.getPhotoUploadList().isEmpty()) {
-                    mListener.onHighDefPhoto(p.getPhotoUploadList().get(0));
+                    mListener.onHighDefPhoto(p.getPhotoUploadList().get(0),p.getMonitorID());
                 }
             }
         });
@@ -77,13 +77,13 @@ public class MonitorListAdapter extends RecyclerView.Adapter<MonitorListAdapter.
         });
         Statics.setRobotoFontLight(ctx, holder.txtName);
 
-        if (p.getPhotoUploadList() == null || p.getPhotoUploadList().isEmpty()) {
+        if (p.getPhotoUploadList().isEmpty()) {
             holder.photo.setImageDrawable(ContextCompat.getDrawable(ctx,R.drawable.boy));
-            holder.photo.setAlpha(0.4f);
+            holder.photo.setAlpha(0.3f);
         } else {
             holder.photo.setAlpha(1.0f);
             Picasso.with(ctx)
-                    .load(p.getPhotoUploadList().get(0).getUri())
+                    .load(p.getPhotoUploadList().get(0).getSecureUrl())
                     .into(holder.photo);
         }
 

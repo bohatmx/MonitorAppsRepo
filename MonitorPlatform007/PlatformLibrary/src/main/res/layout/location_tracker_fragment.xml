@@ -1,11 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:padding="@dimen/mon_margin"
+    android:orientation="vertical"
     android:layout_height="match_parent">
+    <RelativeLayout
+        android:id="@+id/topBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true">
 
+        <TextView
+            android:id="@+id/count"
+            style="@style/Title2TextStyleBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/mon_wide"
+            android:layout_marginRight="@dimen/mon_margin"
+            android:layout_marginTop="@dimen/mon_margin"
+            android:alpha="0.5"
+            android:text="0"
+            android:background="@color/blue_200"
+            android:paddingTop="@dimen/mon_padding"
+            android:paddingBottom="@dimen/mon_padding"
+            android:paddingLeft="@dimen/mon_wide"
+            android:paddingRight="@dimen/mon_wide"
+            android:textStyle="normal" />
+
+        <RelativeLayout
+            android:id="@+id/top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/mon_padding"
+            android:layout_toLeftOf="@id/count"
+            android:padding="@dimen/mon_padding">
+
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_menu_search"
+                android:tint="?attr/colorPrimaryDark" />
+
+            <AutoCompleteTextView
+                android:id="@+id/autocomplete_project"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/icon" />
+        </RelativeLayout>
+
+    </RelativeLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-</FrameLayout>
+</LinearLayout>

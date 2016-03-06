@@ -2,16 +2,34 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:padding="@dimen/mon_margin"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/LT_image"
-        android:layout_width="@dimen/mon_wider"
-        android:layout_height="@dimen/mon_wider"
-        android:src="@drawable/common_full_open_on_phone" />
+    android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:layout_toRightOf="@id/LT_image"
+        android:id="@+id/LT_imgLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/LT_image"
+            android:layout_centerHorizontal="true"
+            android:layout_width="@dimen/mon_widest"
+            android:layout_height="@dimen/mon_widest"
+            android:src="@drawable/black_woman" />
+
+        <TextView
+            android:id="@+id/LT_type"
+            android:text="@string/monitor"
+            style="@style/TextStyleBoldSmall"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/LT_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_toRightOf="@id/LT_imgLayout"
+        android:layout_margin="@dimen/mon_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

@@ -27,6 +27,7 @@ import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.NetUtil;
+import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
@@ -109,6 +110,14 @@ public class MonitorMapActivity extends AppCompatActivity
 
 
         index = getIntent().getIntExtra("index", 0);
+        setFields();
+        Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
+                SharedUtil.getCompany(ctx).getCompanyName(), "Device Map",
+                ContextCompat.getDrawable(getApplicationContext(), com.boha.platform.library.R.drawable.glasses));
+
+    }
+
+    private void setFields() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         text = (TextView) findViewById(R.id.text);
@@ -132,7 +141,11 @@ public class MonitorMapActivity extends AppCompatActivity
         }
         setGoogleMap();
         if (track != null) {
-            getPersonPhotos();
+            if (track.getPhoto() != null) {
+                Picasso.with(ctx).load(track.getPhoto().getSecureUrl()).fit().into(image);
+            } else {
+                image.setVisibility(View.GONE);
+            }
             setPersonMarker();
             String name = "";
             if (track.getStaffName() != null) {
@@ -164,7 +177,6 @@ public class MonitorMapActivity extends AppCompatActivity
             setLocationMarkers();
         }
     }
-
     Activity activity;
     static final SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy HH:mm");
 
@@ -290,10 +302,11 @@ public class MonitorMapActivity extends AppCompatActivity
 
         Bitmap bmBitmap = Util.createBitmapFromView(ctx, view, displayMetrics);
         BitmapDescriptor desc = BitmapDescriptorFactory.fromBitmap(bmBitmap);
+        BitmapDescriptor desc2 = BitmapDescriptorFactory.fromResource(R.drawable.ic_star);
         Marker m =
                 googleMap.addMarker(new MarkerOptions()
                         .title(name.getText().toString())
-                        .icon(desc)
+                        .icon(desc2)
                         .snippet(name.getText().toString())
                         .position(pnt));
         markers.add(m);
@@ -500,45 +513,5 @@ public class MonitorMapActivity extends AppCompatActivity
         super.onPause();
     }
 
-    private void getPersonPhotos() {
-
-        RequestDTO w = new RequestDTO();
-        if (track.getMonitorID() != null) {
-            w.setRequestType(RequestDTO.GET_MONITOR_PHOTOS);
-            w.setMonitorID(track.getMonitorID());
-            Log.d(LOG, ".............getPersonPhotos for Monitor");
-        }
-        if (track.getStaffID() != null) {
-            w.setRequestType(RequestDTO.GET_STAFF_PHOTOS);
-            w.setStaffID(track.getStaffID());
-            Log.d(LOG, ".............getPersonPhotos for Staff");
-        }
-
-
-        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
-            @Override
-            public void onResponse(final ResponseDTO response) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (response.getStatusCode() == 0) {
-                            if (!response.getPhotoUploadList().isEmpty()) {
-                                String url = response.getPhotoUploadList().get(0).getUri();
-                                Picasso.with(ctx).load(url).fit().into(image);
-                            }
-                        }
-                    }
-                });
-
-            }
-
-            @Override
-            public void onError(String message) {
-                Log.e("MonitorMapActivity", message);
-            }
-
-
-        });
-    }
 
 }

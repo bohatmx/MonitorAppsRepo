@@ -1,14 +1,11 @@
 package com.boha.monitor.library.activities;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -24,26 +21,17 @@ import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
-import com.boha.monitor.library.dto.RequestDTO;
-import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.fragments.MediaDialogFragment;
 import com.boha.monitor.library.fragments.ProjectTaskListFragment;
 import com.boha.monitor.library.fragments.TaskStatusUpdateFragment;
 import com.boha.monitor.library.fragments.TaskListFragment;
-import com.boha.monitor.library.services.DataRefreshService;
-import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.services.RequestIntentService;
-import com.boha.monitor.library.util.CacheUtil;
-import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
-import com.boha.monitor.library.util.WebCheck;
 import com.boha.platform.library.R;
-
-import java.util.List;
 
 /**
  * This class manages the task status update process
@@ -308,52 +296,6 @@ public class UpdateActivity extends AppCompatActivity
     StaffDTO staff;
     MonitorDTO monitor;
     boolean cachingBusy;
-
-    private void refreshData(final Integer projectID) {
-        Log.w(LOG, "###### refreshData projectID: " + projectID.intValue());
-
-
-        RequestDTO w = new RequestDTO();
-        w.setRequestType(RequestDTO.GET_PROJECT_TASKS);
-        w.setStaffID(staff.getStaffID());
-
-
-        if (WebCheck.checkNetworkAvailability(getApplicationContext()).isNetworkUnavailable()) {
-            return;
-        }
-        setBusy(true);
-        NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {
-            @Override
-            public void onResponse(final ResponseDTO response) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setBusy(false);
-                        if (response.getStatusCode() == 0) {
-                            project.setProjectTaskList(response.getProjectTaskList());
-                            projectTaskListFragment.setProject(project);
-                            CacheUtil.cacheProject(project, null);
-                        }
-
-                    }
-                });
-            }
-
-            @Override
-            public void onError(final String message) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setBusy(false);
-                        Util.showErrorToast(getApplicationContext(), message);
-                    }
-                });
-            }
-
-
-        });
-
-    }
 
 
     @Override

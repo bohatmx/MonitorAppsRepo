@@ -16,11 +16,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.boha.monitor.library.activities.MonitorMapActivity;
-import com.boha.monitor.library.activities.SimpleMessagingActivity;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
-import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
-import com.boha.monitor.library.util.CacheUtil;
 import com.boha.platform.library.MainActivity;
 import com.boha.platform.library.R;
 import com.google.android.gms.gcm.GcmListenerService;
@@ -101,76 +98,42 @@ public class MonitorGCMListenerService extends GcmListenerService {
                     .sendBroadcast(m);
             return;
         }
-        CacheUtil.getCachedMessages(getApplicationContext(), new CacheUtil.CacheUtilListener() {
-            @Override
-            public void onFileDataDeserialized(ResponseDTO response) {
-                response.getSimpleMessageList().add(message);
-                CacheUtil.cacheMessages(getApplicationContext(), response, new CacheUtil.CacheUtilListener() {
-                    @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
-
-                    }
-
-                    @Override
-                    public void onDataCached() {
-
-                        sendNotification(message);
-
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-            }
-
-            @Override
-            public void onDataCached() {
-
-            }
-
-            @Override
-            public void onError() {
-
-            }
-        });
+       sendNotification(message);
     }
 
     /**
      * Build and send SimpleMessageDTO notification
      *
      * @param simpleMessage
-     * @see SimpleMessagingActivity
      */
     private void sendNotification(SimpleMessageDTO simpleMessage) {
-        Intent intent = new Intent(this, SimpleMessagingActivity.class);
-        intent.putExtra("simpleMessage", simpleMessage);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,
-                LOCATION_REQUEST_CODE, intent,
-                PendingIntent.FLAG_ONE_SHOT);
-
-        String name = "unknown";
-        if (simpleMessage.getMonitorName() != null) {
-            name = simpleMessage.getMonitorName();
-        }
-        if (simpleMessage.getStaffName() != null) {
-            name = simpleMessage.getStaffName();
-        }
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.glasses)
-                .setContentTitle(name + " - " + "Message received")
-                .setContentText(simpleMessage.getMessage())
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+//        Intent intent = new Intent(this, SimpleMessagingActivity.class);
+//        intent.putExtra("simpleMessage", simpleMessage);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+//                LOCATION_REQUEST_CODE, intent,
+//                PendingIntent.FLAG_ONE_SHOT);
+//
+//        String name = "unknown";
+//        if (simpleMessage.getMonitorName() != null) {
+//            name = simpleMessage.getMonitorName();
+//        }
+//        if (simpleMessage.getStaffName() != null) {
+//            name = simpleMessage.getStaffName();
+//        }
+//        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+//                .setSmallIcon(R.drawable.glasses)
+//                .setContentTitle(name + " - " + "Message received")
+//                .setContentText(simpleMessage.getMessage())
+//                .setAutoCancel(true)
+//                .setSound(defaultSoundUri)
+//                .setContentIntent(pendingIntent);
+//
+//        NotificationManager notificationManager =
+//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//
+//        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 
     static final int LOCATION_REQUEST_CODE = 7763;

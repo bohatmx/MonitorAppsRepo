@@ -8,7 +8,6 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/DataSetupApp" />
             <option value="$PROJECT_DIR$/MonitorApp" />
             <option value="$PROJECT_DIR$/PlatformLibrary" />
             <option value="$PROJECT_DIR$/StaffApp" />
@@ -17,7 +16,6 @@
         <option name="myModules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/DataSetupApp" />
             <option value="$PROJECT_DIR$/MonitorApp" />
             <option value="$PROJECT_DIR$/PlatformLibrary" />
             <option value="$PROJECT_DIR$/StaffApp" />

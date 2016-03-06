@@ -562,7 +562,6 @@ public class Util {
         int width = displaymetrics.widthPixels;
         Double d = Double.valueOf("" + width);
         Double e = d / 1.5;
-        Log.w(LOG, "## popup width: " + e.intValue());
         return e.intValue();
     }
 
@@ -573,23 +572,7 @@ public class Util {
         int width = displaymetrics.widthPixels;
         Double d = Double.valueOf("" + width);
         Double e = d / 15;
-        Log.w(LOG, "## horizontalOffset: " + e.intValue());
         return e.intValue();
-    }
-
-    private static int getWindowWidth(Activity activity) {
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int height = displaymetrics.heightPixels;
-        int width = displaymetrics.widthPixels;
-        return width;
-    }
-
-    private static int getWindowHeight(Activity activity) {
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int height = displaymetrics.heightPixels;
-        return height;
     }
 
     public static void showPopupBasicWithHeroImage(Context ctx, Activity act,
@@ -1002,49 +985,7 @@ public class Util {
         return animator;
     }
 
-    public static void resizeHeight(final View view, final int height, final long duration, final UtilAnimationListener listener) {
-        Log.e(LOG, "##### view height is " + height);
 
-
-        ResizeAnimation a = new ResizeAnimation(view, 0);
-        a.setDuration(10);
-        a.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                ResizeAnimation an = new ResizeAnimation(view, height);
-                an.setDuration(duration);
-                an.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        if (listener != null)
-                            listener.onAnimationEnded();
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-                view.startAnimation(an);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        view.startAnimation(a);
-    }
 
     public static void flashOnce(View view, long duration, final UtilAnimationListener listener) {
         ObjectAnimator an = ObjectAnimator.ofFloat(view, "alpha", 0, 1);
@@ -1594,68 +1535,6 @@ public class Util {
     public static final long WEEK = 7 * DAY;
     public static final long WEEKS = 2 * WEEK;
     public static final long MONTH = 30 * DAY;
-
-    public interface ProjectDataRefreshListener {
-        public void onDataRefreshed(ProjectDTO project);
-
-        public void onError(String message);
-    }
-
-    public static void refreshProjectData(final Activity activity,
-                                          final Context ctx, final Integer projectID,
-                                          final ProjectDataRefreshListener listener) {
-        if (activity == null || ctx == null) {
-            Log.e(LOG, "## activity passed in is null, exit");
-            return;
-        }
-        Log.i(LOG, "######## refreshProjectData started ....");
-        RequestDTO w = new RequestDTO(RequestDTO.GET_PROJECT_DATA);
-        w.setProjectID(projectID);
-
-        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
-            @Override
-            public void onResponse(final ResponseDTO response) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (response.getStatusCode() > 0) {
-                            Util.showErrorToast(ctx, response.getMessage());
-                            return;
-                        }
-                        CacheUtil.cacheProjectData(ctx, response, projectID, new CacheUtil.CacheUtilListener() {
-                            @Override
-                            public void onFileDataDeserialized(ResponseDTO response) {
-
-                            }
-
-                            @Override
-                            public void onDataCached() {
-                                listener.onDataRefreshed(response.getProjectList().get(0));
-                            }
-
-                            @Override
-                            public void onError() {
-                                listener.onError("Failed to get Project data");
-                            }
-                        });
-                    }
-                });
-            }
-
-            @Override
-            public void onError(final String message) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onError(message);
-                    }
-                });
-            }
-
-
-        });
-
-    }
 
 
     public static String getTruncated(double num) {

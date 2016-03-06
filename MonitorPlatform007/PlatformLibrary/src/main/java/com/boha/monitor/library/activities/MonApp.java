@@ -71,7 +71,6 @@ public class MonApp extends Application implements Application.ActivityLifecycle
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
     private AlarmManager alarmMgr1, alarmMgr2, alarmMgr3,alarmMgr4;
     private PendingIntent alarmIntent1,alarmIntent2, alarmIntent3,alarmIntent4;
-    private ChatMessageListActivity chatMessageListActivity;
     private boolean messageActivityVisible;
     static final String LOG = MonApp.class.getSimpleName();
     public static Picasso picasso;
@@ -198,9 +197,10 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         alarmIntent1 = PendingIntent.getBroadcast(getApplicationContext(), 123, m, 0);
 
         alarmMgr1.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), HOUR, alarmIntent1);
+                SystemClock.elapsedRealtime(), HALF_HOUR, alarmIntent1);
 
-        Log.d(LOG, "###### Location AlarmManager: alarm set to pull the device tracker trigger every: HALF_HOUR");
+        Log.w(LOG, "###### Location AlarmManager: " +
+                "alarm set to pull the device tracker trigger every: HALF_HOUR");
     }
     public void startRequestCacheAlarm() {
         alarmMgr2 = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
@@ -210,7 +210,8 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         alarmMgr2.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
                 SystemClock.elapsedRealtime(), HALF_HOUR, alarmIntent2);
 
-        Log.d(LOG, "###### Request Cache AlarmManager: alarm set to send cached requests every: FIVE_MINUTES");
+        Log.w(LOG, "###### Request Cache AlarmManager: " +
+                "alarm set to send cached requests every: FIVE_MINUTES");
     }
     public void startDataRefreshAlarm() {
         alarmMgr3 = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
@@ -218,9 +219,10 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         alarmIntent3 = PendingIntent.getBroadcast(getApplicationContext(), 125, m, 0);
 
         alarmMgr3.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), HOUR, alarmIntent3);
+                SystemClock.elapsedRealtime(), THREE_HOURS, alarmIntent3);
 
-        Log.w(LOG, "###### Data Refresh AlarmManager: alarm set to refresh data every: HOUR");
+        Log.w(LOG, "###### Data Refresh AlarmManager: " +
+                "alarm set to refresh data every: THREE_HOURS");
     }
     public void startPhotoUploadAlarm() {
         alarmMgr4 = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
@@ -230,34 +232,24 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         alarmMgr4.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
                 SystemClock.elapsedRealtime(), HALF_HOUR, alarmIntent4);
 
-        Log.w(LOG, "###### Photo Upload AlarmManager: alarm set to refresh data every: FIVE_MINUTES");
+        Log.w(LOG, "###### Photo Upload AlarmManager: " +
+                "alarm set to refresh data every: HALF_HOUR");
     }
 
     static final int
             ONE_MINUTE = 60 * 1000,
+            TWO_MINUTES = ONE_MINUTE * 2,
             FIVE_MINUTES = ONE_MINUTE * 5,
             FIFTEEN_MINUTES = FIVE_MINUTES * 3,
             HALF_HOUR = FIFTEEN_MINUTES * 2,
-            HOUR = HALF_HOUR * 2;
+            HOUR = HALF_HOUR * 2,
+            THREE_HOURS = HOUR * 3;
 
 
-    public ChatMessageListActivity getChatMessageListActivity() {
-        return chatMessageListActivity;
-    }
-
-    public void refreshChatMessages() {
-        if (chatMessageListActivity != null) {
-            chatMessageListActivity.refreshMessages();
-        }
-    }
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        if (activity instanceof ChatMessageListActivity) {
-            chatMessageListActivity = (ChatMessageListActivity) activity;
-            messageActivityVisible = true;
-            Log.d(LOG, "ChatMessageListActivity onActivityCreated, messageActivityVisible: " + messageActivityVisible);
-        }
+
     }
 
     @Override
@@ -269,27 +261,17 @@ public class MonApp extends Application implements Application.ActivityLifecycle
 
     @Override
     public void onActivityResumed(Activity activity) {
-        if (activity instanceof ChatMessageListActivity) {
-            messageActivityVisible = true;
-            chatMessageListActivity = (ChatMessageListActivity) activity;
-            Log.d(LOG, "ChatMessageListActivity onActivityResumed, messageActivityVisible: " + messageActivityVisible);
-        }
+
     }
 
     @Override
     public void onActivityPaused(Activity activity) {
-        if (activity instanceof ChatMessageListActivity) {
-            messageActivityVisible = false;
-            Log.d(LOG, "ChatMessageListActivity onActivityPaused, messageActivityVisible: " + messageActivityVisible);
-        }
+
     }
 
     @Override
     public void onActivityStopped(Activity activity) {
-        if (activity instanceof ChatMessageListActivity) {
-            messageActivityVisible = false;
-            Log.d(LOG, "ChatMessageListActivity onActivityStopped, messageActivityVisible: " + messageActivityVisible);
-        }
+
     }
 
     @Override
@@ -299,15 +281,9 @@ public class MonApp extends Application implements Application.ActivityLifecycle
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-        if (activity instanceof ChatMessageListActivity) {
-            messageActivityVisible = false;
-            Log.d(LOG, "ChatMessageListActivity onActivityDestroyed, messageActivityVisible: " + messageActivityVisible);
-        }
+
     }
 
-    public boolean isMessageActivityVisible() {
-        return messageActivityVisible;
-    }
 
 
     public final static int THEME_BLUE = 20;

@@ -15,21 +15,23 @@
         android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <ImageView
+
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/NAVHEADER_logo"
-        android:src="@drawable/ic_action_globe"
+        android:src="@drawable/boy"
         android:tint="@color/white"
         android:scaleType="centerCrop"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="@dimen/mon_wide"
-        android:layout_width="32dp"
-        android:layout_height="32dp" />
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/mon_margin"
+        android:layout_width="120dp"
+        android:layout_height="120dp" />
 
     <TextView
         android:id="@+id/NAVHEADER_text"
-        style="@style/Title2TextStyleWhite"
-        android:layout_width="match_parent"
+        style="@style/Title3TextStyleWhite"
+        android:text="Text or Name Here"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/mon_margin"

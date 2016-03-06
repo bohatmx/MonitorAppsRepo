@@ -16,7 +16,8 @@ import java.util.List;
  */
 public class MonitorDTO implements Serializable, Person, Comparable<MonitorDTO> {
     private static final long serialVersionUID = 1L;
-    private Integer monitorID, activeFlag, statusCount, profilePhotoCount,photoCount,projectCount;
+    private Integer monitorID, activeFlag, statusCount = 0,
+            profilePhotoCount = 0,photoCount = 0,projectCount = 0;
     private String firstName;
     private String lastName;
     private String email, companyName, IDNumber, address;

@@ -11,22 +11,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
-import com.boha.monitor.library.dto.ProjectTaskDTO;
-import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.fragments.ProjectListFragment;
-import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.SharedUtil;
-import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Statics;
-import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -55,16 +47,6 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
         this.latitude = latitude;
         this.longitude = longitude;
     }
-
-
-//    @Override
-//    public int getItemViewType(int position) {
-//        if (position == 0) {
-//            return HEADER;
-//        } else {
-//            return ITEM;
-//        }
-//    }
 
     @Override
     public ProjectViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -103,7 +85,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
         if (project.getMunicipalityName() != null) {
             pvh.txtMuni.setText(project.getMunicipalityName());
         }
-        pvh.txtNumber.setText("" + (position));
+        pvh.txtNumber.setText("" + (position + 1));
         if (project.getLastStatus() != null) {
             pvh.txtLastDate.setText(sdf.format(new Date(project.getLastStatus().getStatusDate())));
         } else {

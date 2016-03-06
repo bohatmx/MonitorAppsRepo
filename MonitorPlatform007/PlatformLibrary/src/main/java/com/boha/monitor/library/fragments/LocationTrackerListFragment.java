@@ -10,7 +10,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.boha.monitor.library.adapters.LocationTrackerListAdapter;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
@@ -19,7 +24,10 @@ import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Fragment that manages a list of Monitors assigned to a project
@@ -32,14 +40,17 @@ import java.util.List;
 public class LocationTrackerListFragment extends Fragment implements PageFragment {
 
     private LocationTrackerListFragmentListener mListener;
-    private ResponseDTO response;
-    List<String> list;
-    List<LocationTrackerDTO> trackerDTOList;
-    RecyclerView recyclerView;
-    Context ctx;
-    LocationTrackerDTO locationTrackerDTO;
-    View view;
-    ImageView hero;
+
+    private List<LocationTrackerDTO> locationTrackerList;
+    private RecyclerView recyclerView;
+    private Context ctx;
+    private LocationTrackerDTO locationTrackerDTO;
+    private View view;
+    private ImageView hero;
+    private AutoCompleteTextView auto;
+    private TextView txtCount;
+    private LocationTrackerListAdapter locationTrackerListAdapter;
+    private List<String> nameList;
 
     static final String LOG = LocationTrackerListFragment.class.getSimpleName();
 
@@ -62,17 +73,17 @@ public class LocationTrackerListFragment extends Fragment implements PageFragmen
         super.onCreate(b);
         Log.d(LOG, "LocationTrackerListFragment onCreate");
         if (b != null) {
-            ResponseDTO w = (ResponseDTO) b.getSerializable("trackerDTOList");
+            ResponseDTO w = (ResponseDTO) b.getSerializable("locationTrackerList");
             if (w != null) {
-                trackerDTOList = w.getLocationTrackerList();
+                locationTrackerList = w.getLocationTrackerList();
                 return;
             }
         }
         Bundle bundle = getArguments();
         if (bundle != null) {
-            ResponseDTO w = (ResponseDTO) bundle.getSerializable("trackerDTOList");
+            ResponseDTO w = (ResponseDTO) bundle.getSerializable("locationTrackerList");
             if (w != null) {
-                trackerDTOList = w.getLocationTrackerList();
+                locationTrackerList = w.getLocationTrackerList();
                 return;
             }
         }
@@ -88,25 +99,83 @@ public class LocationTrackerListFragment extends Fragment implements PageFragmen
         view = inflater.inflate(R.layout.location_tracker_fragment, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
-
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL,false);
+        auto = (AutoCompleteTextView) view.findViewById(R.id.autocomplete_project);
+        txtCount = (TextView) view.findViewById(R.id.count);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
 
-
+        setList(locationTrackerList);
         return view;
     }
 
 
 
-       LocationTrackerListAdapter locationTrackerListAdapter;
-    public void setList(List<LocationTrackerDTO> list) {
-        Log.d(LOG, " setList: " + list.size());
-        trackerDTOList = list;
-        //Collections.sort(trackerDTOList);
 
-        locationTrackerListAdapter = new LocationTrackerListAdapter(trackerDTOList, darkColor, ctx, new LocationTrackerListAdapter.LocationTrackerListListener() {
+    private void setNameList() {
+        nameList = new ArrayList<>(locationTrackerList.size());
+        for (LocationTrackerDTO p: locationTrackerList) {
+            if (p.getStaffName() != null) {
+                nameList.add(p.getStaffName());
+            }
+            if (p.getMonitorName() != null) {
+                nameList.add(p.getMonitorName());
+            }
+        }
+    }
+
+    public void setList(List<LocationTrackerDTO> list) {
+        locationTrackerList = list;
+        Log.d(LOG, " setList: " + locationTrackerList.size());
+        txtCount.setText("" + locationTrackerList.size());
+        if (locationTrackerList.size() > 2) {
+            setNameList();
+            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                    R.layout.simple_spinner_item, nameList);
+            auto.setAdapter(adapter);
+            auto.setHint("Search Devices");
+            auto.setThreshold(1);
+            auto.setVisibility(View.VISIBLE);
+
+            auto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                    hideKeyboard();
+                    recyclerView.scrollToPosition(i);
+                    auto.setText("");
+
+                    int index = 0;
+                    String name = adapter.getItem(i);
+                    for (LocationTrackerDTO p : locationTrackerList) {
+                        if (p.getStaffName() != null) {
+                            if (p.getStaffName().equalsIgnoreCase(name)) {
+                                Log.d(LOG, "... scrolling to index " + index + " " + p.getStaffName());
+                                recyclerView.scrollToPosition(index);
+                                auto.setText("");
+                                break;
+                            }
+                            index++;
+                        }
+                        if (p.getMonitorName() != null) {
+                            if (p.getMonitorName().equalsIgnoreCase(name)) {
+                                Log.d(LOG, "... scrolling to index " + index + " " + p.getMonitorName());
+                                recyclerView.scrollToPosition(index);
+                                auto.setText("");
+                                break;
+                            }
+                            index++;
+                        }
+                    }
+                }
+            });
+
+        } else {
+            auto.setVisibility(View.GONE);
+        }
+
+        locationTrackerListAdapter = new LocationTrackerListAdapter(locationTrackerList, darkColor, ctx, new LocationTrackerListAdapter.LocationTrackerListListener() {
             @Override
             public void onClicked(LocationTrackerDTO tracker) {
                 locationTrackerDTO = tracker;
@@ -117,8 +186,16 @@ public class LocationTrackerListFragment extends Fragment implements PageFragmen
         recyclerView.setAdapter(locationTrackerListAdapter);
     }
 
+    private void hideKeyboard() {
 
+        InputMethodManager imm = (InputMethodManager) getContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(auto.getWindowToken(), 0);
+    }
 
+    public void setListener(LocationTrackerListFragmentListener mListener) {
+        this.mListener = mListener;
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -164,19 +241,7 @@ public class LocationTrackerListFragment extends Fragment implements PageFragmen
     public String getPageTitle() {
         return pageTitle;
     }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface LocationTrackerListFragmentListener {
-        void setBusy(boolean busy);
         void displayOnMap(LocationTrackerDTO tracker);
     }
 

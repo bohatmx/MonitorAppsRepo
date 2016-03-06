@@ -1,6 +1,7 @@
 package com.boha.monitor.library.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
+import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -53,18 +55,30 @@ public class LocationTrackerListAdapter extends RecyclerView.Adapter<LocationTra
 
         final LocationTrackerDTO p = locationTrackerList.get(position);
         StringBuilder sb = new StringBuilder();
-        sb.append(p.getGcmDevice().getManufacturer()).append(" ")
-                .append(p.getGcmDevice().getModel());
-        holder.txtDevice.setText(sb.toString());
+        if (p.getGcmDevice() != null) {
+            sb.append(p.getGcmDevice().getManufacturer()).append(" ")
+                    .append(p.getGcmDevice().getModel());
+            holder.txtDevice.setText(sb.toString());
+        } else {
+            holder.txtDevice.setText("No Device Info");
+        }
         if (p.getStaffName() != null) {
             holder.txtSubtitle.setText(p.getStaffName());
+            holder.txtType.setText("Supervisor");
         }
         if (p.getMonitorName() != null) {
             holder.txtSubtitle.setText(p.getMonitorName());
+            holder.txtType.setText("Monitor");
         }
         holder.txtDate.setText(sdf.format(new Date(p.getDateTracked())));
-//        holder.photo.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.boy));
-//        holder.photo.setAlpha(0.4f);
+        if (p.getPhoto() != null) {
+            holder.photo.setAlpha(1.0f);
+            Picasso.with(ctx).load(p.getPhoto().getSecureUrl()).into(holder.photo);
+
+        } else {
+            holder.photo.setImageDrawable(ContextCompat.getDrawable(ctx, R.drawable.boy));
+            holder.photo.setAlpha(0.3f);
+        }
 
         holder.txtDevice.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,17 +103,6 @@ public class LocationTrackerListAdapter extends RecyclerView.Adapter<LocationTra
         Statics.setRobotoFontLight(ctx, holder.txtDevice);
 
 
-//        if (p.getPhotoUploadList() == null || p.getPhotoUploadList().isEmpty()) {
-//            holder.photo.setImageDrawable(ContextCompat.getDrawable(ctx,R.drawable.boy));
-//            holder.photo.setAlpha(0.4f);
-//        } else {
-//            holder.photo.setAlpha(1.0f);
-//            Picasso.with(ctx)
-//                    .load(p.getPhotoUploadList().get(0).getUri())
-//                    .into(holder.photo);
-//        }
-
-
     }
 
     @Override
@@ -108,11 +111,11 @@ public class LocationTrackerListAdapter extends RecyclerView.Adapter<LocationTra
     }
 
     static final Locale loc = Locale.getDefault();
-    static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", loc);
+    static final SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd MMMM yyyy HH:mm", loc);
     static final DecimalFormat df = new DecimalFormat("###,###,###,###");
 
     public class LocationTrackerViewHolder extends RecyclerView.ViewHolder  {
-        protected TextView txtDevice;
+        protected TextView txtDevice, txtType;
         protected CircleImageView photo;
         protected TextView txtSubtitle, txtDate;
 
@@ -120,6 +123,8 @@ public class LocationTrackerListAdapter extends RecyclerView.Adapter<LocationTra
         public LocationTrackerViewHolder(View itemView) {
             super(itemView);
 
+            txtType = (TextView) itemView
+                    .findViewById(R.id.LT_type);
             txtDevice = (TextView) itemView
                     .findViewById(R.id.LT_txtDevice);
             txtSubtitle = (TextView) itemView

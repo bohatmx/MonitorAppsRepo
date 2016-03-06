@@ -3,19 +3,16 @@ package com.boha.platform.worker.activities;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -52,32 +49,27 @@ import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
-import com.boha.monitor.library.dto.SimpleMessageDestinationDTO;
 import com.boha.monitor.library.dto.StaffDTO;
-import com.boha.monitor.library.dto.VideoUploadDTO;
 import com.boha.monitor.library.fragments.MediaDialogFragment;
 import com.boha.monitor.library.fragments.MessagingFragment;
 import com.boha.monitor.library.fragments.MonitorListFragment;
 import com.boha.monitor.library.fragments.ProfileFragment;
 import com.boha.monitor.library.fragments.PageFragment;
 import com.boha.monitor.library.fragments.ProjectListFragment;
-import com.boha.monitor.library.fragments.SimpleMessageFragment;
 import com.boha.monitor.library.fragments.StaffListFragment;
+import com.boha.monitor.library.fragments.TaskListFragment;
 import com.boha.monitor.library.services.DataRefreshService;
 import com.boha.monitor.library.services.LocationTrackerReceiver;
 import com.boha.monitor.library.services.PhotoUploadService;
-import com.boha.monitor.library.services.VideoUploadService;
-import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.DepthPageTransformer;
+import com.boha.monitor.library.util.MonLog;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
-import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.worker.R;
 import com.boha.platform.worker.fragments.NavigationDrawerFragment;
 import com.boha.platform.worker.fragments.NoProjectsAssignedFragment;
-import com.boha.platform.worker.services.MonitorGCMListenerService;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -97,7 +89,6 @@ public class MonitorMainActivity extends AppCompatActivity
         LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        SimpleMessageFragment.SimpleMessageFragmentListener,
         NavigationDrawerFragment.NavigationDrawerListener,
         ProjectListFragment.ProjectListFragmentListener,
         MonitorListFragment.MonitorListListener,
@@ -117,8 +108,6 @@ public class MonitorMainActivity extends AppCompatActivity
     MonitorListFragment monitorListFragment;
     ProjectListFragment projectListFragment;
     StaffListFragment staffListFragment;
-    NoProjectsAssignedFragment noProjectsAssignedFragment;
-    SimpleMessageFragment simpleMessageFragment;
     List<PageFragment> pageFragmentList;
     ResponseDTO response;
     Context ctx;
@@ -184,7 +173,8 @@ public class MonitorMainActivity extends AppCompatActivity
         logo = R.drawable.ic_action_pin;
         //
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout), NavigationDrawerFragment.FROM_MAIN);
+                (DrawerLayout) findViewById(R.id.drawer_layout),
+                NavigationDrawerFragment.FROM_MAIN);
         mPager = (ViewPager) findViewById(R.id.pager);
         PagerTitleStrip strip = (PagerTitleStrip) findViewById(R.id.pager_title_strip);
         strip.setBackgroundColor(themeDarkColor);
@@ -218,7 +208,7 @@ public class MonitorMainActivity extends AppCompatActivity
         busyGettingRemoteData = true;
         Snackbar.make(mPager, "Refreshing your data. May take a minute or two ...", Snackbar.LENGTH_LONG).show();
 
-        Intent m = new Intent(ctx,DataRefreshService.class);
+        Intent m = new Intent(ctx, DataRefreshService.class);
         startService(m);
 
     }
@@ -347,18 +337,28 @@ public class MonitorMainActivity extends AppCompatActivity
                 + reqCode + " resCode: " + resCode);
         switch (reqCode) {
 
+            case REQUEST_STATUS_UPDATE:
+                if (resCode == RESULT_OK) {
+                    boolean statusCompleted =
+                            data.getBooleanExtra("statusCompleted", false);
+                    if (statusCompleted) {
+                        MonLog.e(ctx, LOG, "statusCompleted, projectListFragment.getProjectList();");
+                        projectListFragment.getProjectList();
+                    }
+                }
+                Log.i(LOG, "+++++++ onActivityResult, back from UpdateActivity. starting loc update");
+                startLocationUpdates();
+                break;
             case REQUEST_CAMERA_PHOTO:
                 if (resCode == RESULT_OK) {
                     ResponseDTO photos = (ResponseDTO) data.getSerializableExtra("photos");
-                    Log.w(LOG,"onActivityResult Photos taken: " + photos.getPhotoUploadList().size());
-                    projectListFragment.addPhotosTaken(photos.getPhotoUploadList());
+                    Log.w(LOG, "onActivityResult Photos taken: " + photos.getPhotoUploadList().size());
+                    startLocationUpdates();
                 } else {
-                    Log.e(LOG,"onActivityResult, no photo taken");
+                    Log.e(LOG, "onActivityResult, no photo taken");
                 }
                 break;
-            case REQUEST_STATUS_UPDATE:
 
-                break;
             case REQUEST_THEME_CHANGE:
                 finish();
                 Intent w = new Intent(this, MonitorMainActivity.class);
@@ -427,7 +427,7 @@ public class MonitorMainActivity extends AppCompatActivity
 
     @Override
     public void onMessagingRequested(MonitorDTO monitor) {
-        Log.e(LOG,"onMessagingRequested: " + monitor.getFullName());
+        Log.e(LOG, "onMessagingRequested: " + monitor.getFullName());
 //        List<MonitorDTO> list = new ArrayList<>();
 //        list.add(monitor);
 //        simpleMessageFragment.setMonitorList(list);
@@ -499,31 +499,11 @@ public class MonitorMainActivity extends AppCompatActivity
     public void onStatusUpdateRequired(final ProjectDTO project) {
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
 
-        CacheUtil.getCachedMonitorProjects(ctx, new CacheUtil.CacheUtilListener() {
-            @Override
-            public void onFileDataDeserialized(ResponseDTO response) {
-                int type = UpdateActivity.NO_TYPES;
-                if (!response.getTaskTypeList().isEmpty()) {
-                    type = UpdateActivity.TYPES;
-                }
-                Intent w = new Intent(getApplicationContext(),
-                        UpdateActivity.class);
-                w.putExtra("project", project);
-                w.putExtra("darkColor", themeDarkColor);
-                w.putExtra("type", type);
-                startActivityForResult(w, REQUEST_STATUS_UPDATE);
-            }
-
-            @Override
-            public void onDataCached() {
-
-            }
-
-            @Override
-            public void onError() {
-
-            }
-        });
+        Intent w = new Intent(this, UpdateActivity.class);
+        w.putExtra("project", project);
+        w.putExtra("darkColor", themeDarkColor);
+        w.putExtra("type", TaskListFragment.STAFF);
+        startActivityForResult(w, REQUEST_STATUS_UPDATE);
 
 
     }
@@ -628,9 +608,9 @@ public class MonitorMainActivity extends AppCompatActivity
                     + mLocation.getAccuracy());
         }
         mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(1000);
+        mLocationRequest.setInterval(2000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setFastestInterval(500);
+        mLocationRequest.setFastestInterval(1000);
         startLocationUpdates();
 
     }
@@ -641,39 +621,47 @@ public class MonitorMainActivity extends AppCompatActivity
     }
 
     protected void startLocationUpdates() {
-        Log.w(LOG, "###### startLocationUpdates: " + new Date().toString());
+
         if (mGoogleApiClient.isConnected()) {
             mRequestingLocationUpdates = true;
             LocationServices.FusedLocationApi.requestLocationUpdates(
                     mGoogleApiClient, mLocationRequest, this);
+            Log.w(LOG, "###### startLocationUpdates, requestLocationUpdates fired: "
+                    + new Date().toString());
+        } else {
+            Log.e(LOG, "********* mGoogleApiClient is NOT CONNECTED ... trying to connect again");
+            mGoogleApiClient.connect();
         }
     }
 
     protected void stopLocationUpdates() {
-        Log.w(LOG, "###### stopLocationUpdates - " + new Date().toString());
+
         if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(
                     mGoogleApiClient, this);
+            Log.w(LOG, "###### stopLocationUpdates - removeLocationUpdates fired: " + new Date().toString());
         }
     }
 
 
     @Override
     public void onLocationChanged(Location loc) {
-        Log.d(LOG, "## onLocationChanged accuracy = " + loc.getAccuracy()
+        Log.d(LOG, "##=====> onLocationChanged accuracy = " + loc.getAccuracy()
                 + " - " + new Date().toString());
 
         if (loc.getAccuracy() <= ACCURACY) {
             mLocation = loc;
             stopLocationUpdates();
             projectListFragment.setLocation(loc);
-            if (sendLocation) {
-                sendLocation = false;
-                submitTrack();
-                return;
-            }
+
             if (simpleMessage != null) {
                 submitLocation();
+                simpleMessage = null;
+                return;
+            }
+            if (sendLocation) {
+                sendLocation = false;
+                submitRegularTrack();
                 return;
             }
 
@@ -681,6 +669,7 @@ public class MonitorMainActivity extends AppCompatActivity
     }
 
     private void submitLocation() {
+        Log.w(LOG, "###### submitLocation");
         RequestDTO w = new RequestDTO(RequestDTO.SEND_LOCATION);
         LocationTrackerDTO dto = new LocationTrackerDTO();
         MonitorDTO monitor = SharedUtil.getMonitor(ctx);
@@ -729,8 +718,17 @@ public class MonitorMainActivity extends AppCompatActivity
         });
 
     }
-    private void submitTrack() {
-        RequestDTO w = new RequestDTO(RequestDTO.SEND_LOCATION);
+
+    boolean trackUploadBusy;
+
+    private void submitRegularTrack() {
+        if (trackUploadBusy) {
+            Log.d(LOG, "submitRegularTrack trackUploadBusy .............................");
+            return;
+        }
+        trackUploadBusy = true;
+        Log.w(LOG, "############## submitRegularTrack .......");
+        RequestDTO w = new RequestDTO(RequestDTO.ADD_LOCATION_TRACK);
         LocationTrackerDTO dto = new LocationTrackerDTO();
         MonitorDTO monitor = SharedUtil.getMonitor(ctx);
 
@@ -740,8 +738,7 @@ public class MonitorMainActivity extends AppCompatActivity
         dto.setLongitude(mLocation.getLongitude());
         dto.setAccuracy(mLocation.getAccuracy());
         dto.setMonitorName(monitor.getFullName());
-        dto.setMonitorList(monitorList);
-        dto.setStaffList(staffList);
+
         dto.setGcmDevice(SharedUtil.getGCMDevice(ctx));
         dto.getGcmDevice().setRegistrationID(null);
         w.setLocationTracker(dto);
@@ -754,7 +751,7 @@ public class MonitorMainActivity extends AppCompatActivity
                     @Override
                     public void run() {
                         setBusy(false);
-                        Util.showToast(ctx, "Location has been sent");
+                        trackUploadBusy = false;
                     }
                 });
             }
@@ -776,7 +773,7 @@ public class MonitorMainActivity extends AppCompatActivity
 
     List<Integer> monitorList, staffList;
 
-    static final int ACCURACY = 20, MONITOR_PICTURE_REQUESTED = 3412;
+    static final int ACCURACY = 50, MONITOR_PICTURE_REQUESTED = 3412;
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -866,6 +863,7 @@ public class MonitorMainActivity extends AppCompatActivity
         super.onStart();
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
+            MonLog.d(ctx, LOG, "------- onStart mGoogleApiClient connecting ...");
         }
     }
 
@@ -874,6 +872,7 @@ public class MonitorMainActivity extends AppCompatActivity
         super.onStop();
 
         mGoogleApiClient.disconnect();
+        MonLog.d(ctx, LOG, "------- onStop mGoogleApiClient disconnected");
     }
 
 
@@ -884,36 +883,39 @@ public class MonitorMainActivity extends AppCompatActivity
         @Override
         public void onReceive(Context context, Intent intent) {
             setRefreshActionButtonState(false);
-            Log.e(LOG, "+++++++DataRefreshDoneReceiver onReceive, data must have been refreshed: "
+            Log.e(LOG, "@@@@@@@@@@@@@@@@@@@@@@@@ DataRefreshDoneReceiver onReceive, data must have been refreshed: "
                     + intent.toString());
-            Log.d(LOG, "+++++++++++++++++ starting refreshes on all fragments .....");
             projectListFragment.getProjectList();
             monitorListFragment.getMonitorList();
         }
     }
+
     // Broadcast receiver for receiving location request
     private class LocationRequestedReceiver extends BroadcastReceiver {
 
         // Called when the BroadcastReceiver gets an Intent it's registered to receive
         @Override
         public void onReceive(Context context, Intent intent) {
-            simpleMessage = (SimpleMessageDTO)intent.getSerializableExtra("simpleMessage");
-            Log.e(LOG, "+++++++LocationRequestedReceiver onReceive, location requested: "
+            simpleMessage = (SimpleMessageDTO) intent.getSerializableExtra("simpleMessage");
+
+            Log.e(LOG, "+++++++++++++++++++++++ LocationRequestedReceiver onReceive, location requested: "
                     + intent.toString());
-            Log.d(LOG, "+++++++++++++++++ starting startLocationUpdates .....");
+            sendLocation = true;
+            trackUploadBusy = false;
             startLocationUpdates();
         }
     }
+
     // Broadcast receiver for receiving status updates from PhotoUploadService
     private class PhotoUploadedReceiver extends BroadcastReceiver {
 
         // Called when the BroadcastReceiver gets an Intent it's registered to receive
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e(LOG, "+++++++ PhotoUploadedReceiver onReceive, photo uploaded: "
+            Log.e(LOG, "*************************** PhotoUploadedReceiver onReceive, photo uploaded: "
                     + intent.toString());
             projectListFragment.getProjectList();
-           Log.e(LOG, "Photo has been uploaded OK");
+            Log.e(LOG, "Photo has been uploaded OK");
 
         }
     }

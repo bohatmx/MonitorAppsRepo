@@ -46,12 +46,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/top"
-            android:layout_marginRight="@dimen/mon_widest"
+            android:layout_marginRight="@dimen/mon_hero_height_medium"
             android:visibility="visible">
 
             <TextView
                 android:id="@+id/MON_txtCountStatus"
-                style="@style/GreenCircleSmall"
+                style="@style/Title1TextStyleGreen"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -75,13 +76,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/MON_layoutCount"
-            android:layout_marginRight="@dimen/mon_widest"
-            android:layout_marginTop="@dimen/mon_padding"
+            android:layout_marginRight="@dimen/mon_hero_height_medium_lite"
             android:visibility="visible">
 
             <TextView
                 android:id="@+id/MON_txtCountPhotos"
-                style="@style/RedCircleSmall"
+                style="@style/Title1TextStyleRed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -105,13 +105,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/MON_layoutCount2"
-            android:layout_marginRight="@dimen/mon_widest"
-            android:layout_marginTop="@dimen/mon_padding"
+            android:layout_marginRight="@dimen/mon_hero_height_small"
             android:visibility="visible">
 
             <TextView
                 android:id="@+id/MON_txtCountProjects"
-                style="@style/BlackCircleSmall"
+                style="@style/Title2TextStyleBlack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"

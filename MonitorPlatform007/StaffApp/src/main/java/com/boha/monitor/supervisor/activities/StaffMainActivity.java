@@ -40,7 +40,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.boha.monitor.library.activities.GPSActivity;
-import com.boha.monitor.library.activities.DeviceListActivity;
+import com.boha.monitor.library.activities.LocationTrackerListActivity;
 import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.activities.PictureActivity;
@@ -71,13 +71,13 @@ import com.boha.monitor.library.fragments.ProfileFragment;
 import com.boha.monitor.library.fragments.PageFragment;
 import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.fragments.ProjectTaskFragment;
-import com.boha.monitor.library.fragments.SimpleMessageFragment;
 import com.boha.monitor.library.fragments.StaffListFragment;
 import com.boha.monitor.library.fragments.TaskListFragment;
 import com.boha.monitor.library.services.DataRefreshService;
 import com.boha.monitor.library.services.LocationTrackerReceiver;
 import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.util.DepthPageTransformer;
+import com.boha.monitor.library.util.MonLog;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Snappy;
@@ -89,11 +89,13 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import hugo.weaving.DebugLog;
 
 /**
@@ -111,7 +113,6 @@ public class StaffMainActivity extends AppCompatActivity implements
         StaffListFragment.CompanyStaffListListener,
         ProjectListFragment.ProjectListFragmentListener,
         ProfileFragment.ProfileListener,
-        SimpleMessageFragment.SimpleMessageFragmentListener,
         LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
@@ -120,18 +121,17 @@ public class StaffMainActivity extends AppCompatActivity implements
     MonitorListFragment monitorListFragment;
     StaffListFragment staffListFragment;
     ProjectListFragment projectListFragment;
-    SimpleMessageFragment simpleMessageFragment;
     ActionBar actionBar;
     Location mLocation;
 
     @Override
     public void onResume() {
-        Log.w(LOG, "++++++++ ############## onResume ");
+        MonLog.w(ctx,LOG, "++++++++ ############## onResume ");
         super.onResume();
         if (navImage != null) {
             navImage.setImageDrawable(Util.getRandomBackgroundImage(ctx));
         } else {
-            Log.e(LOG, "navImage is null");
+            MonLog.e(ctx,LOG, "====================================navImage is null");
         }
         buildPages();
 
@@ -184,6 +184,8 @@ public class StaffMainActivity extends AppCompatActivity implements
 
     }
 
+    CircleImageView circleImage;
+    StaffDTO staff;
     private void setFields() {
         actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
@@ -194,10 +196,21 @@ public class StaffMainActivity extends AppCompatActivity implements
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) mDrawerLayout.findViewById(R.id.nav_view);
 
+        circleImage = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.NAVHEADER_logo);
         navImage = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.NAVHEADER_image);
         navText = (TextView) navigationView.getHeaderView(0).findViewById(R.id.NAVHEADER_text);
         if (navText != null) {
             navText.setText(SharedUtil.getCompanyStaff(ctx).getFullName());
+        }
+        if (circleImage != null) {
+            staff = SharedUtil.getCompanyStaff(getApplicationContext());
+            if (staff.getPhotoUploadList().isEmpty()) {
+                getRemotePhotos();
+            } else {
+                Picasso.with(ctx)
+                        .load(staff.getPhotoUploadList().get(0).getSecureUrl())
+                        .into(circleImage);
+            }
         }
 //        try {
 //            Statics.setRobotoFontLight(getApplicationContext(), navText);
@@ -218,9 +231,8 @@ public class StaffMainActivity extends AppCompatActivity implements
 //            navigationView.getMenu().getItem(3).getSubMenu().getItem(1).setIcon(face);
 //
 //        } catch (Exception e) {
-//            Log.e(LOG, "Problem colorizing menu items", e);
-//        }
-
+//            MonLog.e(ctx,LOG, "Problem colorizing menu items", e);
+//
 
         mPager = (ViewPager) findViewById(R.id.viewpager);
         mPager.setOffscreenPageLimit(4);
@@ -249,13 +261,13 @@ public class StaffMainActivity extends AppCompatActivity implements
                     mPager.setCurrentItem(0, true);
                     return true;
                 }
-                if (menuItem.getItemId() == R.id.nav_messaging) {
-                    mPager.setCurrentItem(3, true);
-                    return true;
-                }
+//                if (menuItem.getItemId() == R.id.nav_messaging) {
+//                    mPager.setCurrentItem(3, true);
+//                    return true;
+//                }
 
                 if (menuItem.getItemId() == R.id.nav_profile) {
-                    mPager.setCurrentItem(4, true);
+                    mPager.setCurrentItem(3, true);
                     return true;
                 }
                 if (menuItem.getItemId() == R.id.nav_staff_list) {
@@ -305,7 +317,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
                 }
                 if (menuItem.getItemId() == R.id.nav_devices) {
-                    Intent m = new Intent(ctx, DeviceListActivity.class);
+                    Intent m = new Intent(ctx, LocationTrackerListActivity.class);
                     startActivity(m);
                 }
 
@@ -314,6 +326,33 @@ public class StaffMainActivity extends AppCompatActivity implements
             }
         });
 
+    }
+
+    private void getRemotePhotos() {
+
+        RequestDTO w = new RequestDTO(RequestDTO.GET_MONITOR_PHOTOS);
+        if (staff != null) {
+            w.setStaffID(staff.getStaffID());
+            w.setRequestType(RequestDTO.GET_STAFF_PHOTOS);
+        }
+        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(ResponseDTO response) {
+                staff.setPhotoUploadList(response.getPhotoUploadList());
+                SharedUtil.saveCompanyStaff(ctx,staff);
+                    if (!response.getPhotoUploadList().isEmpty()) {
+                        Picasso.with(ctx)
+                                .load(staff.getPhotoUploadList().get(0).getSecureUrl())
+                                .into(circleImage);
+                    }
+            }
+
+            @Override
+            public void onError(String message) {
+
+            }
+
+        });
     }
 
     private List<ProjectDTO> getProjectsLocationConfirmed() {
@@ -346,7 +385,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 //                            @Override
 //                            public void onDataRead(ResponseDTO r) {
 //                                response.setTaskStatusTypeList(r.getTaskStatusTypeList());
-//                                Log.i(LOG, "Yebo!! we got da data");
+//                                MonLog.e(ctx,LOG, "Yebo!! we got da data");
 //                                buildPages();
 //                            }
 //
@@ -454,14 +493,14 @@ public class StaffMainActivity extends AppCompatActivity implements
 
     @DebugLog
     protected void startLocationUpdates() {
-        Log.d(LOG, "### startLocationUpdates ....");
+        MonLog.d(ctx,LOG, "### startLocationUpdates ....");
         if (googleApiClient.isConnected()) {
             mRequestingLocationUpdates = true;
             LocationServices.FusedLocationApi.requestLocationUpdates(
                     googleApiClient, mLocationRequest, this);
-            Log.d(LOG, "## GoogleApiClient connected, requesting location updates ...");
+            MonLog.d(ctx,LOG, "## GoogleApiClient connected, requesting location updates ...");
         } else {
-            Log.e(LOG, "------- GoogleApiClient is NOT connected, not sure where we are...");
+            MonLog.e(ctx,LOG, "------- GoogleApiClient is NOT connected, not sure where we are...");
             googleApiClient.connect();
 
         }
@@ -469,11 +508,14 @@ public class StaffMainActivity extends AppCompatActivity implements
 
     @DebugLog
     protected void stopLocationUpdates() {
-        Log.e(LOG, "### stopLocationUpdates ...");
+
         if (googleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(
                     googleApiClient, this);
             mRequestingLocationUpdates = false;
+            MonLog.w(ctx,LOG, "### stopLocationUpdates ...removeLocationUpdates fired");
+        } else {
+            MonLog.e(ctx,LOG, "##################### stopLocationUpdates googleApiClient is NULL ...");
         }
     }
 
@@ -544,14 +586,14 @@ public class StaffMainActivity extends AppCompatActivity implements
 
     @Override
     public void onSaveInstanceState(Bundle b) {
-        Log.w(LOG, "onSaveInstanceState");
+        MonLog.w(ctx,LOG, "onSaveInstanceState");
         b.putSerializable("selectedProject", selectedProject);
         super.onSaveInstanceState(b);
     }
 
     @Override
     public void onRestoreInstanceState(Bundle b) {
-        Log.w(LOG, "onRestoreInstanceState");
+        MonLog.w(ctx,LOG, "onRestoreInstanceState");
         selectedProject = (ProjectDTO) b.getSerializable("selectedProject");
         super.onRestoreInstanceState(b);
     }
@@ -559,7 +601,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     @Override
     @DebugLog
     public void onStart() {
-        Log.d(LOG,
+        MonLog.d(ctx,LOG,
                 "## onStart - GoogleApiClient connecting ... ");
         if (googleApiClient != null) {
             googleApiClient.connect();
@@ -574,7 +616,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         super.onStop();
         if (googleApiClient != null) {
             googleApiClient.disconnect();
-            Log.e(LOG, "### onStop - locationClient disconnecting ");
+            MonLog.e(ctx,LOG, "### onStop - locationClient disconnecting ");
         }
 
     }
@@ -582,7 +624,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     @Override
     @DebugLog
     public void onConnected(Bundle bundle) {
-        Log.i(LOG,
+        MonLog.e(ctx,LOG,
                 "+++  GoogleApiClient onConnected() ...");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -598,9 +640,9 @@ public class StaffMainActivity extends AppCompatActivity implements
                 googleApiClient);
 
         mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(1000);
+        mLocationRequest.setInterval(2000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setFastestInterval(500);
+        mLocationRequest.setFastestInterval(1000);
         startLocationUpdates();
     }
 
@@ -611,7 +653,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d(LOG, "onLocationChanged " + location.getLatitude()
+        MonLog.d(ctx,LOG, "onLocationChanged " + location.getLatitude()
                 + " " + location.getLongitude() + " " + location.getAccuracy());
 
         if (location.getAccuracy() <= ACCURACY_THRESHOLD) {
@@ -622,7 +664,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
             if (directionRequired) {
                 directionRequired = false;
-                Log.i(LOG, "startDirectionsMap ..........");
+                MonLog.e(ctx,LOG, "startDirectionsMap ..........");
                 String url = "http://maps.google.com/maps?saddr="
                         + mLocation.getLatitude() + "," + mLocation.getLongitude()
                         + "&daddr=" + selectedProject.getLatitude() + "," + selectedProject.getLongitude() + "&mode=driving";
@@ -697,6 +739,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     }
 
     private void submitTrack() {
+        MonLog.e(ctx,LOG,"&&&&&&&&&&&&&&&&&&&&& submitTrack ................");
         RequestDTO w = new RequestDTO(RequestDTO.SEND_LOCATION);
         LocationTrackerDTO dto = new LocationTrackerDTO();
         StaffDTO staff = SharedUtil.getCompanyStaff(ctx);
@@ -740,8 +783,14 @@ public class StaffMainActivity extends AppCompatActivity implements
         });
 
     }
-
+    boolean trackUploadBusy;
     private void submitRegularTrack() {
+        if (trackUploadBusy) {
+            MonLog.e(ctx,LOG,"Tracker upload is busy ........");
+            return;
+        }
+        trackUploadBusy = true;
+        MonLog.w(ctx,LOG,"$$$$$$$$$$$$$$$$$$$$$ submitRegularTrack ........");
         RequestDTO w = new RequestDTO(RequestDTO.ADD_LOCATION_TRACK);
         LocationTrackerDTO dto = new LocationTrackerDTO();
         StaffDTO staff = SharedUtil.getCompanyStaff(ctx);
@@ -764,6 +813,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                     @Override
                     public void run() {
                         setBusy(false);
+                        trackUploadBusy = false;
                     }
                 });
             }
@@ -791,7 +841,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     @Override
     @DebugLog
     public void onActivityResult(int reqCode, final int resCode, Intent data) {
-        Log.d(LOG, "onActivityResult reqCode " + reqCode + " resCode " + resCode);
+        MonLog.d(ctx,LOG, "onActivityResult reqCode " + reqCode + " resCode " + resCode);
         switch (reqCode) {
             case ADD_PROJECT_TASKS_REQUIRED:
                 if (resCode ==  RESULT_OK) {
@@ -819,7 +869,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                                     Snappy.writeStaffList((MonApp) getApplication(), response.getStaffList(), new Snappy.SnappyWriteListener() {
                                         @Override
                                         public void onDataWritten() {
-                                            Log.e(LOG,"onActivityResult onDataWritten: staffList updated");
+                                            MonLog.e(ctx,LOG,"onActivityResult onDataWritten: staffList updated");
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -866,7 +916,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                                     Snappy.writeMonitorList((MonApp) getApplication(), response.getMonitorList(), new Snappy.SnappyWriteListener() {
                                         @Override
                                         public void onDataWritten() {
-                                            Log.e(LOG,"onActivityResult onDataWritten: monitorList updated");
+                                            MonLog.e(ctx,LOG,"onActivityResult onDataWritten: monitorList updated");
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -906,27 +956,30 @@ public class StaffMainActivity extends AppCompatActivity implements
             case REQUEST_CAMERA:
                 if (resCode == RESULT_OK) {
                     ResponseDTO photos = (ResponseDTO) data.getSerializableExtra("photos");
-                    Log.w(LOG,"onActivityResult Photos taken: " + photos.getPhotoUploadList().size());
-                    projectListFragment.addPhotosTaken(photos.getPhotoUploadList());
+                    MonLog.w(ctx,LOG,"onActivityResult Photos taken: " + photos.getPhotoUploadList().size());
+                    startLocationUpdates();
                 } else {
-                    Log.e(LOG,"onActivityResult, no photo taken");
+                    MonLog.e(ctx,LOG,"onActivityResult, no photo taken");
                 }
                 break;
+            //REQUEST_STATUS_UPDATE
             case REQUEST_STATUS_UPDATE:
                 if (resCode == RESULT_OK) {
                     boolean statusCompleted =
                             data.getBooleanExtra("statusCompleted", false);
                     if (statusCompleted) {
-                        Log.e(LOG, "statusCompleted, projectListFragment.getProjectList();");
+                        MonLog.e(ctx,LOG, "statusCompleted, projectListFragment.getProjectList();");
                         projectListFragment.getProjectList();
                     }
                 }
+                Log.i(LOG,"+++++++ onActivityResult, back from UpdateActivity. starting loc update");
+                startLocationUpdates();
                 break;
             case STAFF_PICTURE_REQUESTED:
                 if (resCode == RESULT_OK) {
                     PhotoUploadDTO x = (PhotoUploadDTO) data.getSerializableExtra("photo");
                     SharedUtil.savePhoto(getApplicationContext(), x);
-                    Log.e(LOG, "photo returned uri: " + x.getUri());
+                    MonLog.e(ctx,LOG, "photo returned uri: " + x.getUri());
                     profileFragment.setPicture(x);
                 }
                 break;
@@ -1228,12 +1281,13 @@ public class StaffMainActivity extends AppCompatActivity implements
         @Override
         public void onReceive(Context context, Intent intent) {
             setRefreshActionButtonState(false);
-            Log.e(LOG,"+++++++DataRefreshDoneReceiver onReceive, data must have been refreshed: "
+            MonLog.e(ctx,LOG,"+++++++DataRefreshDoneReceiver onReceive, data must have been refreshed: "
                     + intent.toString());
-            Log.d(LOG,"+++++++++++++++++ starting refreshes on all fragments .....");
+            MonLog.d(ctx,LOG,"+++++++++++++++++ starting refreshes on all fragments .....");
             projectListFragment.getProjectList();
             staffListFragment.getStaffList();
             monitorListFragment.getMonitorList();
+            startLocationUpdates();
 
         }
     }
@@ -1244,9 +1298,9 @@ public class StaffMainActivity extends AppCompatActivity implements
         @Override
         public void onReceive(Context context, Intent intent) {
             simpleMessage = (SimpleMessageDTO)intent.getSerializableExtra("simpleMessage");
-            Log.e(LOG, "+++++++LocationRequestedReceiver onReceive, location requested: "
+            MonLog.e(ctx,LOG, "+++++++LocationRequestedReceiver onReceive, location requested: "
                     + intent.toString());
-            Log.d(LOG, "+++++++++++++++++ starting startLocationUpdates .....");
+            MonLog.d(ctx,LOG, "+++++++++++++++++ starting startLocationUpdates .....");
             isRegularTrack = true;
             sendLocation = false;
             startLocationUpdates();
@@ -1258,17 +1312,17 @@ public class StaffMainActivity extends AppCompatActivity implements
         // Called when the BroadcastReceiver gets an Intent it's registered to receive
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e(LOG, "+++++++ PhotoUploadedReceiver onReceive, photo uploaded: "
+            MonLog.e(ctx,LOG, "+++++++ PhotoUploadedReceiver onReceive, photo uploaded: "
                     + intent.toString());
             projectListFragment.getProjectList();
-            Log.w(LOG,
+            MonLog.w(ctx,LOG,
                     "Photo has been uploaded OK");
 
         }
     }
     SimpleMessageDTO simpleMessage;
     static final String LOG = StaffMainActivity.class.getSimpleName();
-    static final int ACCURACY_THRESHOLD = 20;
+    static final int ACCURACY_THRESHOLD = 50;
     private DrawerLayout mDrawerLayout;
     StaffPagerAdapter adapter;
     Context ctx;

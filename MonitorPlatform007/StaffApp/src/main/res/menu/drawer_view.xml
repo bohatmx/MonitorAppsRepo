@@ -10,6 +10,7 @@
         <item
             android:id="@+id/nav_messaging"
             android:icon="@drawable/ic_action_email"
+            android:visible="false"
             android:title="@string/messaging" />
 
         <item

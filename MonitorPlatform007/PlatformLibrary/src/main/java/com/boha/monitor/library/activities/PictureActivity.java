@@ -32,7 +32,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
@@ -40,30 +39,18 @@ import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
-import com.boha.monitor.library.dto.SimpleMessageDTO;
 import com.boha.monitor.library.dto.StaffDTO;
-import com.boha.monitor.library.services.DataRefreshService;
-import com.boha.monitor.library.services.GeofenceBroadcastReceiver;
-import com.boha.monitor.library.services.GeofenceController;
-import com.boha.monitor.library.services.GeofenceIntentService;
-import com.boha.monitor.library.services.NamedGeofence;
 import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.util.ImageUtil;
 import com.boha.monitor.library.util.PMException;
-import com.boha.monitor.library.util.PhotoCacheUtil;
 import com.boha.monitor.library.util.ScalingUtilities;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Snappy;
-import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -86,7 +73,8 @@ import java.util.List;
  * Created by aubreyM on 2014/04/21.
  */
 public class PictureActivity extends AppCompatActivity implements LocationListener,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status> {
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
     LocationRequest mLocationRequest;
     GoogleApiClient googleApiClient;
     LayoutInflater inflater;
@@ -106,8 +94,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     Context ctx;
     FloatingActionButton fab;
     public static final int CAPTURE_IMAGE = 9908;
-    GeofenceController geofenceController;
-    NamedGeofence geofence;
+
     static final String LOG = PictureActivity.class.getSimpleName();
 
     public void onCreate(Bundle savedInstanceState) {
@@ -184,12 +171,6 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
         checkPermissions();
 
-        //receive notification when GeofenceIntentService has detected geofence event
-        IntentFilter mStatusIntentFilterx = new IntentFilter(
-                GeofenceIntentService.BROADCAST_ACTION);
-        GeofenceEventReceiver receiverx = new GeofenceEventReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiverx, mStatusIntentFilterx);
-
         //receive notification when PhotoUploadService has uploaded photos
         IntentFilter mStatusIntentFilter3 = new IntentFilter(
                 PhotoUploadService.BROADCAST_ACTION);
@@ -207,9 +188,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
             Log.w(LOG, "onResume currentThumbFile size: " + currentThumbFile.length());
             Picasso.with(ctx).load(currentThumbFile).into(imageView);
         }
-        if (project != null) {
-            addFence();
-        }
+
 
     }
 
@@ -346,9 +325,6 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         if (googleApiClient != null) {
             googleApiClient.connect();
         }
-//        Log.i(LOG, "## onStart Bind to PhotoUploadService");
-//        Intent intent = new Intent(this, PhotoUploadService.class);
-//        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         super.onStart();
     }
 
@@ -362,22 +338,6 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     public void onStop() {
         super.onStop();
         stopLocationUpdates();
-
-        Log.d(LOG,"onStop removeGeofences .....................");
-        LocationServices.GeofencingApi.removeGeofences(
-                googleApiClient,
-                getGeofencePendingIntent()
-        ).setResultCallback(new ResultCallback<Status>() {
-            @Override
-            public void onResult(@NonNull Status status) {
-                Log.d(LOG,"onStop ResultCallback onResult - fences removed");
-                if (googleApiClient != null) {
-                    googleApiClient.disconnect();
-                    Log.e(LOG, "### onStop - GoogleApiClient disconnecting ");
-                }
-            }
-        });
-
 
     }
 
@@ -410,9 +370,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 googleApiClient, mLocationRequest, this);
 
-        if (project != null) {
-            addFence();
-        }
+
 
     }
 
@@ -618,14 +576,14 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
     @Override
     public void onBackPressed() {
         Intent i = new Intent();
-        i.putExtra("amIinTheFence", amIinTheFence);
+        i.putExtra("pictureTakenOK", pictureTakenOK);
 
         if (pictureTakenOK) {
             Log.d(LOG, "onBackPressed ... picture cached and scheduled for upload");
             ResponseDTO resp = new ResponseDTO();
             resp.setPhotoUploadList(photoUploadList);
             i.putExtra("photos", resp);
-            i.putExtra("pictureTakenOK", pictureTakenOK);
+
             i.putExtra("file", currentThumbFile.getAbsolutePath());
             setResult(RESULT_OK, i);
         } else {
@@ -939,99 +897,99 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
 
     //**************** GEOFENCE
-
-    PendingIntent mGeofencePendingIntent;
-    List<Geofence> mGeofenceList = new ArrayList<>();
-
-    @Override
-    public void onResult(@NonNull Status status) {
-        Log.w(LOG, "... onResult: status: " + status.toString());
-        if (status.isSuccess()) {
-            Log.e(LOG, "### Methinks a Geofence has been created OK, fences: "
-            + mGeofenceList.size());
-        }
-
-
-    }
-
-    static final float RADIUS = 300;
-    static final int GEOFENCE_EXPIRATION = 3000;
-
-    private void addFence() {
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        if (!googleApiClient.isConnected()) {
-            return;
-        }
-        Log.w(LOG, ".... add project geoFence ....: " + project.getProjectName());
-        mGeofenceList.add(new Geofence.Builder()
-                .setRequestId(project.getProjectName())
-                .setCircularRegion(
-                        project.getLatitude(),
-                        project.getLongitude(),
-                        RADIUS
-                )
-                .setExpirationDuration(GEOFENCE_EXPIRATION)
-                .setTransitionTypes(
-                                Geofence.GEOFENCE_TRANSITION_ENTER |
-                                Geofence.GEOFENCE_TRANSITION_EXIT)
-                .build());
-
-        LocationServices.GeofencingApi.addGeofences(
-                googleApiClient,
-                getGeofencingRequest(),
-                getGeofencePendingIntent()
-        ).setResultCallback(this);
-    }
-
-    private PendingIntent getGeofencePendingIntent() {
-        if (mGeofencePendingIntent != null) {
-            return mGeofencePendingIntent;
-        }
-        Log.w(LOG, "... getGeofencePendingIntent");
-        Intent intent = new Intent(this, GeofenceIntentService.class);
-        return PendingIntent.getService(this, 0, intent, PendingIntent.
-                FLAG_UPDATE_CURRENT);
-    }
-
-    private GeofencingRequest getGeofencingRequest() {
-        Log.w(LOG, "... getGeofencingRequest");
-        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER
-                | GeofencingRequest.INITIAL_TRIGGER_DWELL
-                | GeofencingRequest.INITIAL_TRIGGER_EXIT);
-        builder.addGeofences(mGeofenceList);
-        return builder.build();
-    }
-
-    // Broadcast receiver for receiving location request
-    private class GeofenceEventReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String event = intent.getStringExtra("event");
-            Log.e(LOG, "+++++++GeofenceEventReceiver onReceive, location requested: "
-                    + intent.toString());
-            Statics.setRobotoFontLight(context,txtMessage);
-            if (event.equalsIgnoreCase("ENTER")) {
-                Log.w(LOG, "the device is INSIDE the project geofence");
-                amIinTheFence = true;
-                txtMessage.setVisibility(View.GONE);
-                Util.expand(fab, 1000, null);
-            }
-            if (event.equalsIgnoreCase("EXIT")) {
-                Log.w(LOG, "the device is OUTSIDE the project geofence");
-                amIinTheFence = false;
-                txtMessage.setVisibility(View.VISIBLE);
-                Util.collapse(fab, 1000, null);
-
-            }
-
-        }
-    }
-
-    boolean amIinTheFence;
+//
+//    PendingIntent mGeofencePendingIntent;
+//    List<Geofence> mGeofenceList = new ArrayList<>();
+//
+//    @Override
+//    public void onResult(@NonNull Status status) {
+//        Log.w(LOG, "... onResult: status: " + status.toString());
+//        if (status.isSuccess()) {
+//            Log.e(LOG, "### Methinks a Geofence has been created OK, fences: "
+//            + mGeofenceList.size());
+//        }
+//
+//
+//    }
+//
+//    static final float RADIUS = 300;
+//    static final int GEOFENCE_EXPIRATION = 3000;
+//
+//    private void addFence() {
+//        if (ActivityCompat.checkSelfPermission(this,
+//                Manifest.permission.ACCESS_FINE_LOCATION) !=
+//                PackageManager.PERMISSION_GRANTED) {
+//            return;
+//        }
+//        if (!googleApiClient.isConnected()) {
+//            return;
+//        }
+//        Log.w(LOG, ".... add project geoFence ....: " + project.getProjectName());
+//        mGeofenceList.add(new Geofence.Builder()
+//                .setRequestId(project.getProjectName())
+//                .setCircularRegion(
+//                        project.getLatitude(),
+//                        project.getLongitude(),
+//                        RADIUS
+//                )
+//                .setExpirationDuration(GEOFENCE_EXPIRATION)
+//                .setTransitionTypes(
+//                                Geofence.GEOFENCE_TRANSITION_ENTER |
+//                                Geofence.GEOFENCE_TRANSITION_EXIT)
+//                .build());
+//
+//        LocationServices.GeofencingApi.addGeofences(
+//                googleApiClient,
+//                getGeofencingRequest(),
+//                getGeofencePendingIntent()
+//        ).setResultCallback(this);
+//    }
+//
+//    private PendingIntent getGeofencePendingIntent() {
+//        if (mGeofencePendingIntent != null) {
+//            return mGeofencePendingIntent;
+//        }
+//        Log.w(LOG, "... getGeofencePendingIntent");
+//        Intent intent = new Intent(this, GeofenceIntentService.class);
+//        return PendingIntent.getService(this, 0, intent, PendingIntent.
+//                FLAG_UPDATE_CURRENT);
+//    }
+//
+//    private GeofencingRequest getGeofencingRequest() {
+//        Log.w(LOG, "... getGeofencingRequest");
+//        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+//        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER
+//                | GeofencingRequest.INITIAL_TRIGGER_DWELL
+//                | GeofencingRequest.INITIAL_TRIGGER_EXIT);
+//        builder.addGeofences(mGeofenceList);
+//        return builder.build();
+//    }
+//
+//    // Broadcast receiver for receiving location request
+//    private class GeofenceEventReceiver extends BroadcastReceiver {
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String event = intent.getStringExtra("event");
+//            Log.e(LOG, "+++++++GeofenceEventReceiver onReceive, location requested: "
+//                    + intent.toString());
+//            Statics.setRobotoFontLight(context,txtMessage);
+//            if (event.equalsIgnoreCase("ENTER")) {
+//                Log.w(LOG, "the device is INSIDE the project geofence");
+//                amIinTheFence = true;
+//                txtMessage.setVisibility(View.GONE);
+//                Util.expand(fab, 1000, null);
+//            }
+//            if (event.equalsIgnoreCase("EXIT")) {
+//                Log.w(LOG, "the device is OUTSIDE the project geofence");
+//                amIinTheFence = false;
+//                txtMessage.setVisibility(View.VISIBLE);
+//                Util.collapse(fab, 1000, null);
+//
+//            }
+//
+//        }
+//    }
+//
+//    boolean amIinTheFence;
 }

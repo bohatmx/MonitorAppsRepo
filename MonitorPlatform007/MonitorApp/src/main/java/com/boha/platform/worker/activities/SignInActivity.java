@@ -186,14 +186,12 @@ public class SignInActivity extends AppCompatActivity {
                 .setAction("CLOSE", null)
                 .show();
         boolean ok = checkPlayServices();
-        setBusyIndicator(true);
         if (ok) {
             Log.e(LOG, "############# Starting Google Cloud Messaging registration");
             GCMUtil.startGCMRegistration(getApplicationContext(), new GCMUtil.GCMUtilListener() {
                 @Override
                 public void onDeviceRegistered(String id) {
                     Log.i(LOG, "############# GCM - we cool, GcmDeviceDTO waiting to be sent with signin .....: " + id);
-                    setBusyIndicator(false);
                     if (gcmOnly) {
                         RequestDTO w = new RequestDTO(RequestDTO.UPDATE_MONITOR_DEVICE);
                         MonitorDTO mon = SharedUtil.getMonitor(ctx);

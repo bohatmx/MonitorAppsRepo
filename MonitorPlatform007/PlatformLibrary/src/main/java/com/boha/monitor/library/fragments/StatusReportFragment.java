@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.PhotoListActivity;
 import com.boha.monitor.library.adapters.StatusReportAdapter;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
@@ -27,7 +26,6 @@ import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
-import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.Util;
@@ -202,22 +200,7 @@ public class StatusReportFragment extends Fragment implements PageFragment {
                                 setList();
                                 response.setStartDate(startDate.getTime());
                                 response.setEndDate(endDate.getTime());
-                                CacheUtil.cacheProjectStatus(ctx, response, project.getProjectID(), new CacheUtil.CacheUtilListener() {
-                                    @Override
-                                    public void onFileDataDeserialized(ResponseDTO response) {
 
-                                    }
-
-                                    @Override
-                                    public void onDataCached() {
-
-                                    }
-
-                                    @Override
-                                    public void onError() {
-
-                                    }
-                                });
                             } else {
                                 getProjectStatus();
                             }
@@ -247,38 +230,7 @@ public class StatusReportFragment extends Fragment implements PageFragment {
 
     public void getCachedStatus() {
 
-        CacheUtil.getCachedProjectStatus(ctx, project.getProjectID(), new CacheUtil.CacheUtilListener() {
-            @Override
-            public void onFileDataDeserialized(ResponseDTO response) {
-                if (response != null) {
-                    if (!response.getProjectList().isEmpty()) {
-                        project = response.getProjectList().get(0);
-                        projectTaskList = project.getProjectTaskList();
-                        photoUploadList = project.getPhotoUploadList();
-                        if (response.getStartDate() != null) {
-                            btnStart.setText(sdf.format(response.getStartDate()));
-                            btnEnd.setText(sdf.format(response.getEndDate()));
-                            startDate = new Date(response.getStartDate());
-                            endDate = new Date(response.getEndDate());
-                        }
-                        setList();
-                        animateHeroHeight();
-                    }
-                }
-                getProjectStatus();
-
-            }
-
-            @Override
-            public void onDataCached() {
-
-            }
-
-            @Override
-            public void onError() {
-
-            }
-        });
+        getProjectStatus();
     }
 
     private void setList() {

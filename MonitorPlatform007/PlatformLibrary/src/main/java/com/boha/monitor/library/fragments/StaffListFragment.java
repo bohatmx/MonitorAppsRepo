@@ -27,16 +27,17 @@ import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.MonitorMapActivity;
 import com.boha.monitor.library.adapters.PopupListIconAdapter;
 import com.boha.monitor.library.adapters.StaffListAdapter;
+import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
 import com.boha.monitor.library.dto.SimpleMessageDestinationDTO;
 import com.boha.monitor.library.dto.StaffDTO;
-import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.PopupItem;
 import com.boha.monitor.library.util.SharedUtil;
+import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
@@ -136,23 +137,11 @@ public class StaffListFragment extends Fragment
             }
         });
 
+        monApp = (MonApp)getActivity().getApplication();
         pageTitle = getString(R.string.staff);
         getStaffList();
 
         return view;
-    }
-
-    public void updateStaffList(List<StaffDTO> list) {
-        staffList = list;
-        if (getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    setList();
-                }
-            });
-        }
-
     }
 
     /**
@@ -183,26 +172,35 @@ public class StaffListFragment extends Fragment
     }
 
     private void sendMessageToSelectedStaffMember() {
-        StaffDTO from = SharedUtil.getCompanyStaff(getActivity());
         if (editMessage.getText().toString().isEmpty()) {
             Util.showToast(getActivity(), "Please enter message");
             return;
         }
-        SimpleMessageDTO z = new SimpleMessageDTO();
-        z.setSimpleMessageDestinationList(new ArrayList<SimpleMessageDestinationDTO>());
-        z.setMessage(editMessage.getText().toString());
-        z.setStaffID(from.getStaffID());
-        z.setStaffName(from.getFullName());
-        SimpleMessageDestinationDTO dest = new SimpleMessageDestinationDTO();
-        dest.setStaffID(staff.getStaffID());
-        z.getSimpleMessageDestinationList().add(dest);
-        Collections.sort(from.getPhotoUploadList());
-        if (!from.getPhotoUploadList().isEmpty()) {
-            z.setUrl(from.getPhotoUploadList().get(0).getUri());
+        MonitorDTO localMon = SharedUtil.getMonitor(getContext());
+        StaffDTO localStaff = SharedUtil.getCompanyStaff(getContext());
+        SimpleMessageDTO simpleMsg = new SimpleMessageDTO();
+        simpleMsg.setSimpleMessageDestinationList(new ArrayList<SimpleMessageDestinationDTO>());
+        simpleMsg.setMessage(editMessage.getText().toString());
+        if (localStaff != null) {
+            simpleMsg.setStaffID(localStaff.getStaffID());
+            simpleMsg.setStaffName(localStaff.getFullName());
+        }
+        if (localMon != null) {
+            simpleMsg.setMonitorID(localMon.getMonitorID());
+            simpleMsg.setMonitorName(localMon.getFullName());
         }
 
+        SimpleMessageDestinationDTO dest = new SimpleMessageDestinationDTO();
+        dest.setStaffID(this.staff.getStaffID());
+        simpleMsg.getSimpleMessageDestinationList().add(dest);
+        Collections.sort(staff.getPhotoUploadList());
+        if (!staff.getPhotoUploadList().isEmpty()) {
+            simpleMsg.setUrl(staff.getPhotoUploadList().get(0).getSecureUrl());
+        }
+
+
         RequestDTO w = new RequestDTO(RequestDTO.SEND_SIMPLE_MESSAGE);
-        w.setSimpleMessage(z);
+        w.setSimpleMessage(simpleMsg);
 
         mListener.setBusy(true);
         hideKeyboard();
@@ -327,8 +325,8 @@ public class StaffListFragment extends Fragment
                 showPopup(staff);
             }
             @Override
-            public void onHighDefPhoto(PhotoUploadDTO photo) {
-//                SharedUtil.saveLastStaffID(getActivity(),staff.getStaffID());
+            public void onHighDefPhoto(PhotoUploadDTO photo, Integer staffID) {
+                SharedUtil.saveLastStaffID(getActivity(),staffID);
                 Intent w = new Intent(getContext(), HighDefActivity.class);
                 w.putExtra("photo",photo);
                 startActivity(w);
@@ -340,6 +338,8 @@ public class StaffListFragment extends Fragment
                 new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecycler.setHasFixedSize(true);
         mRecycler.setLayoutManager(llm);
+        mRecycler.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+
         mRecycler.setAdapter(staffAdapter);
 
         int index = getIndex();

@@ -29,12 +29,17 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
+import com.boha.monitor.library.dto.RequestDTO;
+import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.util.ImageUtil;
+import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
+import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.worker.R;
 import com.boha.platform.worker.adapters.DrawerMonitorAdapter;
@@ -101,7 +106,7 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(LOG, "## onCreate");
+        Log.d(LOG, "## onCreate.............................");
         ctx = getActivity();
 
         Resources.Theme theme = getActivity().getTheme();
@@ -111,7 +116,6 @@ public class NavigationDrawerFragment extends Fragment {
         theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
         primaryColor = typedValue.data;
 
-        Log.w(LOG, "##Theme themeDarkColor: " + primaryDarkColor + " themePrimaryColor: " + primaryColor);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
 
@@ -143,12 +147,16 @@ public class NavigationDrawerFragment extends Fragment {
                 R.layout.drawer_item, destinationList, primaryDarkColor);
         mDrawerListView.setAdapter(drawerListAdapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+
+        app = (MonApp) getActivity().getApplication();
+        findCachedPicture();
         return view;
     }
 
     public void openDrawer() {
         mDrawerLayout.openDrawer(GravityCompat.START);
     }
+
     public boolean isDrawerOpen() {
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
     }
@@ -239,7 +247,6 @@ public class NavigationDrawerFragment extends Fragment {
             txtSubTitle.setText(monitor.getFirstName() + " " + monitor.getLastName());
         }
 
-        mDrawerListView.setDividerHeight(1);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -247,10 +254,51 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
 
-        setPicture(null);
+    }
+
+    MonApp app;
+
+    private void findCachedPicture() {
+        if (monitor.getPhotoUploadList().isEmpty()) {
+            getRemotePhotos();
+        } else {
+            setPicture(monitor.getPhotoUploadList().get(0));
+        }
+    }
+
+    private void getRemotePhotos() {
+
+        RequestDTO w = new RequestDTO(RequestDTO.GET_MONITOR_PHOTOS);
+        if (monitor != null) {
+            w.setMonitorID(monitor.getMonitorID());
+        }
+
+        if (getActivity() == null) return;
+        NetUtil.sendRequest(getActivity(), w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(ResponseDTO response) {
+                if (!response.getPhotoUploadList().isEmpty()) {
+                    monitor.setPhotoUploadList(response.getPhotoUploadList());
+                    SharedUtil.saveMonitor(getActivity(),monitor);
+                    if (!monitor.getPhotoUploadList().isEmpty()) {
+                        setPicture(monitor.getPhotoUploadList().get(0));
+
+
+                    }
+                }
+            }
+
+
+            @Override
+            public void onError(String message) {
+
+            }
+
+        });
     }
 
     public void setPicture(PhotoUploadDTO p) {
+
         PhotoUploadDTO photo = null;
         if (p == null) {
             MonitorDTO mon = SharedUtil.getMonitor(getActivity());
@@ -274,7 +322,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         if (photo.getThumbFilePath() == null) {
             if (photo.getUri() != null) {
-                Picasso.with(ctx).load(photo.getUri()).fit().into(personImage);
+                Picasso.with(ctx).load(photo.getSecureUrl()).fit().into(personImage);
             }
 
         } else {

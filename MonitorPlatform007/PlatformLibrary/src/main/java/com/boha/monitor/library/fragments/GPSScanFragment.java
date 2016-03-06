@@ -18,12 +18,12 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.RequestDTO;
-import com.boha.monitor.library.dto.RequestList;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.NetUtil;
-import com.boha.monitor.library.util.RequestCacheUtil;
+import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
@@ -99,6 +99,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
     Context ctx;
     Chronometer chronometer;
     Button btnScan;
+    MonApp monApp;
 
     @Override
     public View onCreateView( LayoutInflater inflater, ViewGroup container,
@@ -106,6 +107,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         Log.w(LOG,"###### onCreateView");
         view = inflater.inflate(R.layout.fragment_gps, container, false);
         ctx = getActivity();
+        monApp = (MonApp) getActivity().getApplication();
         setFields();
 
 
@@ -262,14 +264,10 @@ public class GPSScanFragment extends Fragment implements PageFragment {
     }
 
     private void addRequestToCache(RequestDTO request) {
-        RequestCacheUtil.addRequest(ctx, request, new RequestCacheUtil.RequestCacheListener() {
-            @Override
-            public void onError(String message) {
 
-            }
-
+        Snappy.cacheRequest(monApp, request, new Snappy.SnappyWriteListener() {
             @Override
-            public void onRequestAdded() {
+            public void onDataWritten() {
                 if (project == null) return;
                 project.setLocationConfirmed(true);
                 Log.e(LOG, "----onDataCached, onEndScanRequested - please stop scanning");
@@ -278,7 +276,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
             }
 
             @Override
-            public void onRequestsRetrieved(RequestList requestList) {
+            public void onError(String message) {
 
             }
         });

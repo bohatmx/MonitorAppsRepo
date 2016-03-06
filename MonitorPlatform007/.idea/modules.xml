@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DataSetupApp/DataSetupApp.iml" filepath="$PROJECT_DIR$/DataSetupApp/DataSetupApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/MonitorApp/MonitorApp.iml" filepath="$PROJECT_DIR$/MonitorApp/MonitorApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/MonitorPlatform007.iml" filepath="$PROJECT_DIR$/MonitorPlatform007.iml" />
       <module fileurl="file://$PROJECT_DIR$/PlatformLibrary/PlatformLibrary.iml" filepath="$PROJECT_DIR$/PlatformLibrary/PlatformLibrary.iml" />

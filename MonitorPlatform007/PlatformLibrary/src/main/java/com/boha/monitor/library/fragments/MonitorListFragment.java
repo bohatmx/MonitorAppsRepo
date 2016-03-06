@@ -34,7 +34,6 @@ import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
 import com.boha.monitor.library.dto.SimpleMessageDestinationDTO;
 import com.boha.monitor.library.dto.StaffDTO;
-import com.boha.monitor.library.util.CacheUtil;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.PopupItem;
 import com.boha.monitor.library.util.SharedUtil;
@@ -198,6 +197,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
             }
         });
 
+        monApp = (MonApp)getActivity().getApplication();
         getMonitorList();
         return view;
     }
@@ -349,7 +349,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         Log.i(LOG, "## onSaveInstanceState");
         ResponseDTO w = new ResponseDTO();
         w.setMonitorList(monitorList);
-        b.putSerializable("trackerDTOList", w);
+        b.putSerializable("locationTrackerList", w);
         super.onSaveInstanceState(b);
     }
 
@@ -363,8 +363,8 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         txtTotal.setText("" + monitorList.size());
         monitorListAdapter = new MonitorListAdapter(monitorList, darkColor, getActivity(), new MonitorListAdapter.MonitorListener() {
             @Override
-            public void onHighDefPhoto(PhotoUploadDTO photo) {
-//                SharedUtil.saveLastMonitorID(getActivity(),monitor.getMonitorID());
+            public void onHighDefPhoto(PhotoUploadDTO photo, Integer monitorID) {
+                SharedUtil.saveLastMonitorID(getActivity(),monitorID);
                 Intent w = new Intent(getContext(), HighDefActivity.class);
                 w.putExtra("photo",photo);
                 startActivity(w);
@@ -595,10 +595,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
 
     @Override
     public void animateHeroHeight() {
-
-
         if (hero != null) {
-            Log.w(LOG,"animateHeroHeight, hero not null");
             hero.setImageDrawable(Util.getRandomBackgroundImage(getActivity()));
             Util.expand(hero, 500, null);
         } else {

@@ -87,7 +87,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(LOG, "onCreateView .......");
         view = inflater.inflate(R.layout.fragment_project_list, container, false);
         searchView = view.findViewById(R.id.top);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
@@ -115,7 +114,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     double latitude, longitude;
 
     public void setLocation(Location location) {
-        Log.d(LOG,"setLocation: " + location.toString());
         this.latitude = location.getLatitude();
         this.longitude = location.getLongitude();
         if (mRecyclerView != null) {
@@ -154,8 +152,13 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                 Log.e(LOG, "Failed to get projects: " + message);
             }
         };
-        monApp.getSnappyDB();
-        Snappy.getProjectList(monApp, listener);
+        try {
+            monApp = (MonApp) getActivity().getApplication();
+            monApp.getSnappyDB();
+            Snappy.getProjectList(monApp, listener);
+        } catch (Exception e) {
+            Log.d(LOG, "#### ACTION IGNORED, why is this happening?\n" + e.getMessage(),e);
+        }
     }
 
     private void setList() {
@@ -366,14 +369,14 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         }
     }
 
-    public void addPhotosTaken(final List<PhotoUploadDTO> photoList) {
-        if (photoList.isEmpty()) {
-            return;
-        }
-        selectedProject.getPhotoUploadList().addAll(0, photoList);
-        selectedProject.setPhotoCount(selectedProject.getPhotoCount() + photoList.size());
-        setList();
-    }
+//    public void addPhotosTaken(final List<PhotoUploadDTO> photoList) {
+//        if (photoList.isEmpty()) {
+//            return;
+//        }
+//        selectedProject.getPhotoUploadList().addAll(0, photoList);
+//        selectedProject.setPhotoCount(selectedProject.getPhotoCount() + photoList.size());
+//        setList();
+//    }
 
     @Override
     public String getPageTitle() {

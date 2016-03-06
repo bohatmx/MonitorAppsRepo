@@ -29,7 +29,7 @@ public class StaffListAdapter extends RecyclerView.Adapter<StaffListAdapter.Moni
 
     public interface StaffListListener {
         void onStaffNameClicked(StaffDTO staff);
-        void onHighDefPhoto(PhotoUploadDTO photo);
+        void onHighDefPhoto(PhotoUploadDTO photo, Integer staffID);
     }
 
     private StaffListListener mListener;
@@ -72,7 +72,7 @@ public class StaffListAdapter extends RecyclerView.Adapter<StaffListAdapter.Moni
             @Override
             public void onClick(View v) {
                 if (p.getPhotoUploadList() != null && !p.getPhotoUploadList().isEmpty()) {
-                    mListener.onHighDefPhoto(p.getPhotoUploadList().get(0));
+                    mListener.onHighDefPhoto(p.getPhotoUploadList().get(0),p.getStaffID());
                 }
             }
         });
@@ -80,11 +80,11 @@ public class StaffListAdapter extends RecyclerView.Adapter<StaffListAdapter.Moni
 
         if (p.getPhotoUploadList() == null || p.getPhotoUploadList().isEmpty()) {
             holder.photo.setImageDrawable(ContextCompat.getDrawable(ctx,R.drawable.boy));
-            holder.photo.setAlpha(0.4f);
+            holder.photo.setAlpha(0.3f);
         } else {
             holder.photo.setAlpha(1.0f);
             Picasso.with(ctx)
-                    .load(p.getPhotoUploadList().get(0).getUri())
+                    .load(p.getPhotoUploadList().get(0).getSecureUrl())
                     .into(holder.photo);
         }
 

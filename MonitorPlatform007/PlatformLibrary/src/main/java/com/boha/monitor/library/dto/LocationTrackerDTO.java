@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author aubreyM
  */
-public class LocationTrackerDTO implements Serializable {
+public class LocationTrackerDTO implements Serializable, Comparable<LocationTrackerDTO> {
 
     private static final long serialVersionUID = 1L;
     private Integer locationTrackerID;
@@ -27,8 +27,17 @@ public class LocationTrackerDTO implements Serializable {
     private Long dateAdded;
     private List<Integer> monitorList, staffList;
     private GcmDeviceDTO gcmDevice;
+    private PhotoUploadDTO photo;
 
     public LocationTrackerDTO() {
+    }
+
+    public PhotoUploadDTO getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(PhotoUploadDTO photo) {
+        this.photo = photo;
     }
 
     public Integer getCompanyID() {
@@ -176,5 +185,15 @@ public class LocationTrackerDTO implements Serializable {
     public void setDateAdded(Long dateAdded) {
         this.dateAdded = dateAdded;
     }
-    
+
+    @Override
+    public int compareTo(LocationTrackerDTO another) {
+        if (this.getDateTracked().intValue() < another.getDateTracked().intValue()) {
+            return 1;
+        }
+        if (this.getDateTracked().intValue() > another.getDateTracked().intValue()) {
+            return -1;
+        }
+        return 0;
+    }
 }

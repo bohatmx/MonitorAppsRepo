@@ -72,7 +72,7 @@ public class OKUtil {
         boolean isDebuggable = 0 != (ctx.getApplicationInfo().flags
                 &= ApplicationInfo.FLAG_DEBUGGABLE);
         if (isDebuggable) {
-            return DEV_URL;
+            return PROD_URL;
         } else {
             return PROD_URL;
         }
@@ -81,7 +81,7 @@ public class OKUtil {
         boolean isDebuggable = 0 != (ctx.getApplicationInfo().flags
                 &= ApplicationInfo.FLAG_DEBUGGABLE);
         if (isDebuggable) {
-            return DEV_URL_CACHED;
+            return PROD_URL_CACHED;
         } else {
             return PROD_URL_CACHED;
         }
@@ -173,7 +173,7 @@ public class OKUtil {
 
             @Override
             public void onResponse(Response response) throws IOException {
-                long end = System.currentTimeMillis();
+
                 if (!response.isSuccessful()) {
                     Log.e(LOG,"%%%%%% ERROR from OKHttp "
                             + response.networkResponse().toString()
@@ -190,13 +190,6 @@ public class OKUtil {
                         InputStream is = response.body().byteStream();
                         OutputStream os = new FileOutputStream(file);
                         IOUtils.copy(is,os);
-
-//                        BufferedSink sink = Okio.buffer(Okio.sink(file));
-//                        Log.i(LOG, "we have a sink .............");
-//                        sink.writeAll(response.body().source());
-//                        sink.close();
-                        Log.i(LOG, "file downloaded, length: " + file.length());
-
                         String aa = ZipUtil.unpack(file, uFile);
                         Log.i(LOG, "### Data received size: " + getLength(file.length())
                                 + " ==> unpacked: " + getLength(uFile.length()));
@@ -241,6 +234,7 @@ public class OKUtil {
 
                 }
                 response.body().close();
+                long end = System.currentTimeMillis();
                 Log.e(LOG, "### Server responded, "+ req.urlString()+"\nround trip elapsed: " + getElapsed(start, end)
                         + ", server elapsed: " + serverResponse.getElapsedRequestTimeInSeconds()
                         + ", statusCode: " + serverResponse.getStatusCode()

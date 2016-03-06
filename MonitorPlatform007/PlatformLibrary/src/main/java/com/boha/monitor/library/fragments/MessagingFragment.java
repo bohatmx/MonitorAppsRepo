@@ -52,7 +52,7 @@ public class MessagingFragment extends Fragment implements PageFragment {
         ResponseDTO w = new ResponseDTO();
         Bundle args = new Bundle();
         w.setMonitorList(list);
-        args.putSerializable("trackerDTOList", w);
+        args.putSerializable("locationTrackerList", w);
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,7 +64,7 @@ public class MessagingFragment extends Fragment implements PageFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            response = (ResponseDTO) getArguments().getSerializable("trackerDTOList");
+            response = (ResponseDTO) getArguments().getSerializable("locationTrackerList");
             monitorList = response.getMonitorList();
             Collections.sort(monitorList);
         }
