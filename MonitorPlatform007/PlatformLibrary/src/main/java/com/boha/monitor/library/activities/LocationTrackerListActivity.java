@@ -122,6 +122,7 @@ public class LocationTrackerListActivity extends AppCompatActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        setBusyIndicator(false);
                         Util.showErrorToast(getApplicationContext(),message);
                     }
                 });

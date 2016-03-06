@@ -38,6 +38,8 @@ import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.util.ImageUtil;
 import com.boha.monitor.library.util.NetUtil;
+import com.boha.monitor.library.util.OKHttpException;
+import com.boha.monitor.library.util.OKUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
@@ -269,32 +271,38 @@ public class NavigationDrawerFragment extends Fragment {
     private void getRemotePhotos() {
 
         RequestDTO w = new RequestDTO(RequestDTO.GET_MONITOR_PHOTOS);
+        w.setZipResponse(true);
         if (monitor != null) {
             w.setMonitorID(monitor.getMonitorID());
         }
 
         if (getActivity() == null) return;
-        NetUtil.sendRequest(getActivity(), w, new NetUtil.NetUtilListener() {
-            @Override
-            public void onResponse(ResponseDTO response) {
-                if (!response.getPhotoUploadList().isEmpty()) {
-                    monitor.setPhotoUploadList(response.getPhotoUploadList());
-                    SharedUtil.saveMonitor(getActivity(),monitor);
-                    if (!monitor.getPhotoUploadList().isEmpty()) {
-                        setPicture(monitor.getPhotoUploadList().get(0));
-
-
-                    }
+        OKUtil okUtil = new OKUtil();
+        try {
+            okUtil.sendGETRequest(getContext(), w, new OKUtil.OKListener() {
+                @Override
+                public void onResponse(final ResponseDTO response) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!response.getPhotoUploadList().isEmpty()) {
+                                monitor.setPhotoUploadList(response.getPhotoUploadList());
+                                SharedUtil.saveMonitor(getActivity(), monitor);
+                                setPicture(monitor.getPhotoUploadList().get(0));
+                            }
+                        }
+                    });
                 }
-            }
 
-
-            @Override
-            public void onError(String message) {
-
-            }
-
-        });
+                @Override
+                public void onError(String message) {
+                    Log.e(LOG, message);
+                    Util.showErrorToast(getContext(), message);
+                }
+            });
+        } catch (OKHttpException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setPicture(PhotoUploadDTO p) {
