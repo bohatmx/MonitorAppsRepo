@@ -44,6 +44,11 @@ import java.util.ArrayList;
 import static com.boha.monitor.library.util.Util.showErrorToast;
 import static com.boha.monitor.library.util.Util.showToast;
 
+/**
+ * This activity is the entry point to the Monitor app.
+ * When signed in, the activity starts MonitorMainActivity
+ * @see MonitorMainActivity
+ */
 public class SignInActivity extends AppCompatActivity {
 
     Spinner spinnerEmail;
@@ -69,7 +74,6 @@ public class SignInActivity extends AppCompatActivity {
 
         setFields();
         banner.setImageDrawable(Util.getRandomBackgroundImage(ctx));
-        getEmail();
     }
     @Override
     public void onResume() {
@@ -78,6 +82,10 @@ public class SignInActivity extends AppCompatActivity {
         checkPermission();
         checkVirgin();
     }
+
+    /**
+     * Check that necessary permissions are granted
+     */
     private void checkPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -142,19 +150,23 @@ public class SignInActivity extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.w(LOG,"GET_ACCOUNTS permission granted");
-                    getEmail();
 
                 } else {
                     Log.e(LOG,"GET_ACCOUNTS permission denied");
 
                 }
-                return;
             }
 
             // other 'case' lines to check for other
             // permissions this app might request
         }
     }
+
+    /**
+     * Check whether the Monitor has signed in before by accessing the
+     * Monitor object that is saved in SharedPreferences. A null object
+     * returned by ShareUtil indicates the first time the app is used.
+     */
     private void checkVirgin() {
         boolean force = getIntent().getBooleanExtra("force",false);
         if (force) {
@@ -180,6 +192,12 @@ public class SignInActivity extends AppCompatActivity {
         registerGCMDevice();
     }
     String registrationID;
+
+    /**
+     * This device registers itself on Google Cloud Messaging. GCM server
+     * sends back a registration id string that has to be stored in GcmDevice on the
+     * back end server
+     */
     private void registerGCMDevice() {
 
         Snackbar.make(btnSave, "Just a second, checking services ...",Snackbar.LENGTH_LONG)
@@ -231,6 +249,11 @@ public class SignInActivity extends AppCompatActivity {
             });
         }
     }
+
+    /**
+     * Send the email address and pin to the back-end server.
+     * Return company,project, monitor, device  and other data in responseDTO
+     */
     private void sendSignIn() {
         if (ePin.getText().toString().isEmpty()) {
             showErrorToast(ctx, "Enter PIN");
@@ -326,6 +349,10 @@ public class SignInActivity extends AppCompatActivity {
 
 
     }
+
+    /**
+     * Instantiate the UI objects and click listeners
+     */
     private void setFields() {
         ePin = (EditText) findViewById(R.id.SI_pin);
         editEmail = (EditText) findViewById(R.id.SI_editEmail);
@@ -377,6 +404,10 @@ public class SignInActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Check whether Google PlayServices is installed on the device.
+     * @return
+     */
     private boolean checkPlayServices() {
         Log.w(LOG, "checking GooglePlayServices .................");
         int resultCode = GooglePlayServicesUtil
@@ -410,29 +441,29 @@ public class SignInActivity extends AppCompatActivity {
     }
 
 
-    public void getEmail() {
-        Log.d(LOG,"getEmail accounts");
-        if (ContextCompat.checkSelfPermission(this,Manifest.permission.GET_ACCOUNTS)
-                != PackageManager.PERMISSION_GRANTED) {
-            checkPermission();
-            return;
-        }
-        AccountManager am = AccountManager.get(getApplicationContext());
-        Account[] accts = am.getAccounts();
-//        if (accts.length == 0) {
-//            showErrorToast(ctx, getString(R.string.no_accounts));
-//            finish();
+//    private void getEmail() {
+//        Log.d(LOG,"getEmail accounts");
+//        if (ContextCompat.checkSelfPermission(this,Manifest.permission.GET_ACCOUNTS)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            checkPermission();
 //            return;
 //        }
-        if (accts != null) {
-            tarList.add(ctx.getResources().getString(R.string.select_email));
-            for (int i = 0; i < accts.length; i++) {
-                tarList.add(accts[i].name);
+//        AccountManager am = AccountManager.get(getApplicationContext());
+//        Account[] accts = am.getAccounts();
+////        if (accts.length == 0) {
+////            showErrorToast(ctx, getString(R.string.no_accounts));
+////            finish();
+////            return;
+////        }
+//        if (accts != null) {
+//            tarList.add(ctx.getResources().getString(R.string.select_email));
+//            for (int i = 0; i < accts.length; i++) {
+//                tarList.add(accts[i].name);
+//
+//            }
+//        }
 
-            }
-        }
-
-    }
+//    }
     ArrayList<String> tarList = new ArrayList<String>();
     Menu mMenu;
     public void setBusyIndicator(final boolean refreshing) {

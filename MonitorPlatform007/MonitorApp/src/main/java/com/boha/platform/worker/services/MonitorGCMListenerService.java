@@ -70,7 +70,7 @@ public class MonitorGCMListenerService extends GcmListenerService {
             }
             Log.d(TAG, "** GCM simpleMessage From: " + from);
             Log.d(TAG, "SimpleMessage: " + m.getMessage());
-            cacheMessage(m);
+            broadcastMessage(m);
             return;
         }
 
@@ -86,7 +86,7 @@ public class MonitorGCMListenerService extends GcmListenerService {
      *
      * @param message
      */
-    private void cacheMessage(final SimpleMessageDTO message) {
+    private void broadcastMessage(final SimpleMessageDTO message) {
         if (message.getLocationRequest().equals(Boolean.TRUE)) {
             //todo use broadcast service to ask for location from MonitormainActivity
             Log.w(TAG, "@@@@ MonGCMListenerService responding to loc request. Broadcasting Request! ");
@@ -113,27 +113,27 @@ public class MonitorGCMListenerService extends GcmListenerService {
 //        PendingIntent pendingIntent = PendingIntent.getActivity(this,
 //                LOCATION_REQUEST_CODE, intent,
 //                PendingIntent.FLAG_ONE_SHOT);
-//
-//        String name = "unknown";
-//        if (simpleMessage.getMonitorName() != null) {
-//            name = simpleMessage.getMonitorName();
-//        }
-//        if (simpleMessage.getStaffName() != null) {
-//            name = simpleMessage.getStaffName();
-//        }
-//        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-//                .setSmallIcon(R.drawable.glasses)
-//                .setContentTitle(name + " - " + "Message received")
-//                .setContentText(simpleMessage.getMessage())
-//                .setAutoCancel(true)
-//                .setSound(defaultSoundUri)
+
+        String name = "unknown";
+        if (simpleMessage.getMonitorName() != null) {
+            name = simpleMessage.getMonitorName();
+        }
+        if (simpleMessage.getStaffName() != null) {
+            name = simpleMessage.getStaffName();
+        }
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.glasses)
+                .setContentTitle(name + " - " + "Message received")
+                .setContentText(simpleMessage.getMessage())
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri);
 //                .setContentIntent(pendingIntent);
-//
-//        NotificationManager notificationManager =
-//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//
-//        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 
     static final int LOCATION_REQUEST_CODE = 7763;

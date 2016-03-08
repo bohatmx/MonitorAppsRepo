@@ -428,19 +428,15 @@ public class MonitorMainActivity extends AppCompatActivity
     @Override
     public void onMessagingRequested(MonitorDTO monitor) {
         Log.e(LOG, "onMessagingRequested: " + monitor.getFullName());
-//        List<MonitorDTO> list = new ArrayList<>();
-//        list.add(monitor);
-//        simpleMessageFragment.setMonitorList(list);
-//        simpleMessageFragment.openMessageToMonitors(list);
-//        mPager.setCurrentItem(3, true);
     }
 
-    boolean sendLocation;
+    boolean sendLocation, locationSendRequested;
 
     @Override
     public void onLocationSendRequired(List<Integer> monitorList,
                                        List<Integer> staffList) {
-        sendLocation = true;
+        MonLog.w(ctx,LOG,"..... onLocationSendRequired");
+        locationSendRequested = true;
         this.monitorList = monitorList;
         this.staffList = staffList;
 
@@ -655,6 +651,8 @@ public class MonitorMainActivity extends AppCompatActivity
             projectListFragment.setLocation(loc);
 
             if (simpleMessage != null) {
+                staffList.clear();
+                monitorList.clear();
                 submitLocation();
                 simpleMessage = null;
                 return;
@@ -663,6 +661,10 @@ public class MonitorMainActivity extends AppCompatActivity
                 sendLocation = false;
                 submitRegularTrack();
                 return;
+            }
+            if (locationSendRequested) {
+                locationSendRequested = false;
+                submitLocation();
             }
 
         }
@@ -680,11 +682,16 @@ public class MonitorMainActivity extends AppCompatActivity
         dto.setLongitude(mLocation.getLongitude());
         dto.setAccuracy(mLocation.getAccuracy());
         dto.setMonitorName(monitor.getFullName());
-        if (simpleMessage.getMonitorID() != null) {
-            dto.getMonitorList().add(simpleMessage.getMonitorID());
-        }
-        if (simpleMessage.getStaffID() != null) {
-            dto.getStaffList().add(simpleMessage.getStaffID());
+        if (simpleMessage != null) {
+            if (simpleMessage.getMonitorID() != null) {
+                dto.getMonitorList().add(simpleMessage.getMonitorID());
+            }
+            if (simpleMessage.getStaffID() != null) {
+                dto.getStaffList().add(simpleMessage.getStaffID());
+            }
+        } else {
+            dto.setMonitorList(monitorList);
+            dto.setStaffList(staffList);
         }
         dto.setGcmDevice(SharedUtil.getGCMDevice(ctx));
         dto.getGcmDevice().setRegistrationID(null);

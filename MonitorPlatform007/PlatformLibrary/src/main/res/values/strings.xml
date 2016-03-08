@@ -78,5 +78,6 @@
     <string name="title_activity_project_task">ProjectTaskActivity</string>
     <string name="staff">Staff</string>
     <string name="refresh">Refresh</string>
+    <string name="proj_not_located">Projects have not been located via GPS</string>
 
 </resources>

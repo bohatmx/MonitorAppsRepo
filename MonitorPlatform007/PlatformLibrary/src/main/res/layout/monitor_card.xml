@@ -21,8 +21,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/MON_imagex"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
                 android:layout_centerVertical="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/black_woman" />
@@ -30,7 +30,7 @@
 
             <TextView
                 android:id="@+id/MON_txtName"
-                style="@style/Title2TextStyleBlack"
+                style="@style/Title3TextStyleBlack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -51,7 +51,7 @@
 
             <TextView
                 android:id="@+id/MON_txtCountStatus"
-                style="@style/Title1TextStyleGreen"
+                style="@style/Title3TextStyleGreen"
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
 
             <TextView
                 android:id="@+id/MON_txtCountPhotos"
-                style="@style/Title1TextStyleRed"
+                style="@style/Title3TextStyleRed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -110,7 +110,7 @@
 
             <TextView
                 android:id="@+id/MON_txtCountProjects"
-                style="@style/Title2TextStyleBlack"
+                style="@style/Title3TextStyleBlack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"

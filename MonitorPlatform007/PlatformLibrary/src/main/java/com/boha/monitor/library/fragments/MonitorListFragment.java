@@ -34,6 +34,7 @@ import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
 import com.boha.monitor.library.dto.SimpleMessageDestinationDTO;
 import com.boha.monitor.library.dto.StaffDTO;
+import com.boha.monitor.library.util.MonLog;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.PopupItem;
 import com.boha.monitor.library.util.SharedUtil;
@@ -130,7 +131,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         fab2 = (FloatingActionButton) view.findViewById(R.id.fab2);
         recyclerView = (RecyclerView) view.findViewById(R.id.MONITOR_LIST_list);
 
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
@@ -461,7 +462,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
                     mListener.onLocationSendRequired(mList, sList);
                 }
                 if (item.getText().equalsIgnoreCase(ctx.getString(R.string.get_location))) {
-                    getMonitorLocationTracks(monitor.getMonitorID());
+                    requestCurrentMonitorLocation(monitor.getMonitorID());
                 }
                 if (item.getText().equalsIgnoreCase(ctx.getString(R.string.get_updates))) {
 
@@ -524,17 +525,14 @@ public class MonitorListFragment extends Fragment implements PageFragment {
             }
         });
     }
-    private void getMonitorLocationTracks(Integer monitorID) {
+    private void requestCurrentMonitorLocation(final Integer monitorID) {
         SimpleMessageDTO msg = new SimpleMessageDTO();
-        msg.setSimpleMessageDestinationList(new ArrayList<SimpleMessageDestinationDTO>());
-        StaffDTO s = SharedUtil.getCompanyStaff(
-                getActivity());
+        StaffDTO s = SharedUtil.getCompanyStaff(getActivity());
         if (s != null) {
             msg.setStaffID(s.getStaffID());
             msg.setStaffName(s.getFullName());
         }
-        MonitorDTO m = SharedUtil.getMonitor(
-                getActivity());
+        MonitorDTO m = SharedUtil.getMonitor(getActivity());
         if (m != null) {
             msg.setMonitorID(m.getMonitorID());
             msg.setMonitorName(m.getFullName());
@@ -546,11 +544,19 @@ public class MonitorListFragment extends Fragment implements PageFragment {
 
         RequestDTO w = new RequestDTO(RequestDTO.SEND_SIMPLE_MESSAGE);
         w.setSimpleMessage(msg);
-
+        mListener.setBusy(true);
         NetUtil.sendRequest(getActivity(), w, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(ResponseDTO response) {
                 Log.i(LOG, "request for location sent");
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mListener.setBusy(false);
+                        MonLog.w(getContext(),LOG,"#### location request sent to monitorID: " + monitorID);
+                        Util.showToast(getContext(),"Location request has been sent");
+                    }
+                });
             }
 
             @Override

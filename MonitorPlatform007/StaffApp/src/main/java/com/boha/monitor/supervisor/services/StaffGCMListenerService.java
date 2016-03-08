@@ -18,6 +18,7 @@ import android.util.Log;
 import com.boha.monitor.library.activities.MonitorMapActivity;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
+import com.boha.monitor.library.services.LocationTrackerReceiver;
 import com.boha.platform.library.MainActivity;
 import com.boha.platform.library.R;
 import com.google.android.gms.gcm.GcmListenerService;
@@ -68,7 +69,7 @@ public class StaffGCMListenerService extends GcmListenerService {
             }
             Log.d(TAG, "** GCM simpleMessage From: " + from);
             Log.d(TAG, "SimpleMessage: " + m.getMessage());
-            cacheMessage(m);
+            broadcastMessage(m);
             return;
         }
 
@@ -80,12 +81,12 @@ public class StaffGCMListenerService extends GcmListenerService {
      * Cache the received SimpleMessageDTO on the device
      * @param message
      */
-    private void cacheMessage(final SimpleMessageDTO message) {
+    private void broadcastMessage(final SimpleMessageDTO message) {
         if (message.getLocationRequest().equals(Boolean.TRUE)) {
             //todo use broadcast service to ask for location from StaffmainActivity
             Log.w(TAG, "@@@@ StaffGCMListenerService responding to loc request. Broadcasting Request! ");
 
-            Intent m = new Intent(BROADCAST_ACTION);
+            Intent m = new Intent(LocationTrackerReceiver.BROADCAST_ACTION);
             m.putExtra(LOCATION_REQUESTED, true);
             m.putExtra("simpleMessage",message);
             LocalBroadcastManager.getInstance(getApplicationContext())
@@ -110,27 +111,27 @@ public class StaffGCMListenerService extends GcmListenerService {
 //        PendingIntent pendingIntent = PendingIntent.getActivity(this,
 //                LOCATION_REQUEST_CODE, intent,
 //                PendingIntent.FLAG_ONE_SHOT);
-//
-//        String name = "unknown";
-//        if (simpleMessage.getMonitorName() != null) {
-//            name = simpleMessage.getMonitorName();
-//        }
-//        if (simpleMessage.getStaffName() != null) {
-//            name = simpleMessage.getStaffName();
-//        }
-//        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-//                .setSmallIcon(R.drawable.glasses)
-//                .setContentTitle(name + " - " + "Message received")
-//                .setContentText(simpleMessage.getMessage())
-//                .setAutoCancel(true)
-//                .setSound(defaultSoundUri)
+
+        String name = "unknown";
+        if (simpleMessage.getMonitorName() != null) {
+            name = simpleMessage.getMonitorName();
+        }
+        if (simpleMessage.getStaffName() != null) {
+            name = simpleMessage.getStaffName();
+        }
+        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.glasses)
+                .setContentTitle(name + " - " + "Message received")
+                .setContentText(simpleMessage.getMessage())
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri);
 //                .setContentIntent(pendingIntent);
-//
-//        NotificationManager notificationManager =
-//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//
-//        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 
     static final int LOCATION_REQUEST_CODE = 7763;

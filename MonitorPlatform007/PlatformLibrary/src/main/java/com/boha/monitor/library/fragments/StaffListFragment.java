@@ -24,7 +24,6 @@ import android.widget.TextView;
 
 import com.boha.monitor.library.activities.HighDefActivity;
 import com.boha.monitor.library.activities.MonApp;
-import com.boha.monitor.library.activities.MonitorMapActivity;
 import com.boha.monitor.library.adapters.PopupListIconAdapter;
 import com.boha.monitor.library.adapters.StaffListAdapter;
 import com.boha.monitor.library.dto.MonitorDTO;
@@ -34,6 +33,7 @@ import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
 import com.boha.monitor.library.dto.SimpleMessageDestinationDTO;
 import com.boha.monitor.library.dto.StaffDTO;
+import com.boha.monitor.library.util.MonLog;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.PopupItem;
 import com.boha.monitor.library.util.SharedUtil;
@@ -338,7 +338,7 @@ public class StaffListFragment extends Fragment
                 new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecycler.setHasFixedSize(true);
         mRecycler.setLayoutManager(llm);
-        mRecycler.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+        mRecycler.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
 
         mRecycler.setAdapter(staffAdapter);
 
@@ -419,7 +419,7 @@ public class StaffListFragment extends Fragment
                     mListener.onLocationSendRequired(mList, sList);
                 }
                 if (item.getText().equalsIgnoreCase(ctx.getString(R.string.get_location))) {
-                    getStaffLocationTracks(StaffListFragment.this.staff.getStaffID());
+                    requestCurrentStaffLocation(staff.getStaffID());
                 }
                 if (item.getText().equalsIgnoreCase(ctx.getString(R.string.proj_assgn))) {
                     mListener.onProjectAssigmentWanted(staff);
@@ -474,10 +474,20 @@ public class StaffListFragment extends Fragment
         });
     }
 
-    private void getStaffLocationTracks(Integer staffID) {
-        RequestDTO w = new RequestDTO(RequestDTO.GET_LOCATION_TRACK_BY_STAFF_IN_PERIOD);
-        w.setStaffID(staffID);
-
+    /**
+     * Send message to staff requesting current location
+     * @param staffID
+     */
+    private void requestCurrentStaffLocation(final Integer staffID) {
+        RequestDTO w = new RequestDTO(RequestDTO.SEND_SIMPLE_MESSAGE);
+        SimpleMessageDTO s = new SimpleMessageDTO();
+        s.setStaffID(SharedUtil.getCompanyStaff(getActivity()).getStaffID());
+        s.setStaffName(SharedUtil.getCompanyStaff(getContext()).getFullName());
+        s.setLocationRequest(Boolean.TRUE);
+        SimpleMessageDestinationDTO dest = new SimpleMessageDestinationDTO();
+        dest.setStaffID(staffID);
+        s.getSimpleMessageDestinationList().add(dest);
+        w.setSimpleMessage(s);
         mListener.setBusy(true);
         NetUtil.sendRequest(getActivity(), w, new NetUtil.NetUtilListener() {
             @Override
@@ -485,14 +495,9 @@ public class StaffListFragment extends Fragment
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (response.getLocationTrackerList() != null
-                                && !response.getLocationTrackerList().isEmpty()) {
-                            Intent w = new Intent(getActivity(), MonitorMapActivity.class);
-                            w.putExtra("response", response);
-                            startActivity(w);
-                        } else {
-                            Util.showToast(getActivity(), "Location not available");
-                        }
+                        mListener.setBusy(false);
+                        MonLog.w(getContext(),LOG,"#### location request sent to staffID: " + staffID);
+                        Util.showToast(getContext(),"Location request has been sent");
                     }
                 });
 

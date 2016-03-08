@@ -261,10 +261,6 @@ public class StaffMainActivity extends AppCompatActivity implements
                     mPager.setCurrentItem(0, true);
                     return true;
                 }
-//                if (menuItem.getItemId() == R.id.nav_messaging) {
-//                    mPager.setCurrentItem(3, true);
-//                    return true;
-//                }
 
                 if (menuItem.getItemId() == R.id.nav_profile) {
                     mPager.setCurrentItem(3, true);
@@ -300,7 +296,7 @@ public class StaffMainActivity extends AppCompatActivity implements
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Util.showToast(getApplicationContext(), "Projects have not been located via GPS");
+                                        Util.showToast(getApplicationContext(), getString(R.string.proj_not_located));
                                     }
                                 });
 
@@ -676,6 +672,17 @@ public class StaffMainActivity extends AppCompatActivity implements
             }
             if (sendLocation) {
                 sendLocation = false;
+
+                if (simpleMessage != null) {
+                    staffList = new ArrayList<>();
+                    monitorList = new ArrayList<>();
+                    if (simpleMessage.getStaffID() != null) {
+                        staffList.add(simpleMessage.getStaffID());
+                    }
+                    if (simpleMessage.getMonitorID() != null) {
+                        monitorList.add(simpleMessage.getMonitorID());
+                    }
+                }
                 submitTrack();
                 return;
             }
@@ -741,20 +748,20 @@ public class StaffMainActivity extends AppCompatActivity implements
     private void submitTrack() {
         MonLog.e(ctx,LOG,"&&&&&&&&&&&&&&&&&&&&& submitTrack ................");
         RequestDTO w = new RequestDTO(RequestDTO.SEND_LOCATION);
-        LocationTrackerDTO dto = new LocationTrackerDTO();
+        LocationTrackerDTO tracker = new LocationTrackerDTO();
         StaffDTO staff = SharedUtil.getCompanyStaff(ctx);
 
-        dto.setStaffID(staff.getStaffID());
-        dto.setDateTracked(new Date().getTime());
-        dto.setLatitude(mLocation.getLatitude());
-        dto.setLongitude(mLocation.getLongitude());
-        dto.setAccuracy(mLocation.getAccuracy());
-        dto.setStaffName(staff.getFullName());
-        dto.setMonitorList(monitorList);
-        dto.setStaffList(staffList);
-        dto.setGcmDevice(SharedUtil.getGCMDevice(ctx));
-        dto.getGcmDevice().setRegistrationID(null);
-        w.setLocationTracker(dto);
+        tracker.setStaffID(staff.getStaffID());
+        tracker.setDateTracked(new Date().getTime());
+        tracker.setLatitude(mLocation.getLatitude());
+        tracker.setLongitude(mLocation.getLongitude());
+        tracker.setAccuracy(mLocation.getAccuracy());
+        tracker.setStaffName(staff.getFullName());
+        tracker.setMonitorList(monitorList);
+        tracker.setStaffList(staffList);
+        tracker.setGcmDevice(SharedUtil.getGCMDevice(ctx));
+        tracker.getGcmDevice().setRegistrationID(null);
+        w.setLocationTracker(tracker);
 
         setBusy(true);
         NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
@@ -1301,8 +1308,13 @@ public class StaffMainActivity extends AppCompatActivity implements
             MonLog.e(ctx,LOG, "+++++++LocationRequestedReceiver onReceive, location requested: "
                     + intent.toString());
             MonLog.d(ctx,LOG, "+++++++++++++++++ starting startLocationUpdates .....");
-            isRegularTrack = true;
-            sendLocation = false;
+           if (simpleMessage != null) {
+               isRegularTrack = false;
+               sendLocation = true;
+           } else {
+               isRegularTrack = true;
+               sendLocation = false;
+           }
             startLocationUpdates();
         }
     }
