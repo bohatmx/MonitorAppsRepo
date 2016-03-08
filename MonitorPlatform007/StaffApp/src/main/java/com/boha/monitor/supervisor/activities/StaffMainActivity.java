@@ -1377,7 +1377,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     }
     SimpleMessageDTO simpleMessage;
     static final String LOG = StaffMainActivity.class.getSimpleName();
-    static final int ACCURACY_THRESHOLD = 50;
+    static final int ACCURACY_THRESHOLD = 300;
     private DrawerLayout mDrawerLayout;
     StaffPagerAdapter adapter;
     Context ctx;

@@ -826,7 +826,7 @@ public class MonitorMainActivity extends AppCompatActivity
 
     List<Integer> monitorList, staffList;
 
-    static final int ACCURACY = 50, MONITOR_PICTURE_REQUESTED = 3412;
+    static final int ACCURACY = 300, MONITOR_PICTURE_REQUESTED = 3412;
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
