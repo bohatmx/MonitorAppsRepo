@@ -121,7 +121,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/MONITOR_LIST_layoutx"
-        android:background="@color/grey"
         android:paddingTop="0dp"
         android:paddingRight="@dimen/mon_padding"
         android:paddingBottom="@dimen/mon_padding"

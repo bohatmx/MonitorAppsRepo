@@ -79,5 +79,6 @@
     <string name="staff">Staff</string>
     <string name="refresh">Refresh</string>
     <string name="proj_not_located">Projects have not been located via GPS</string>
+    <string name="airplane">The device is in Airplane mode. Please reset if appropriate</string>
 
 </resources>

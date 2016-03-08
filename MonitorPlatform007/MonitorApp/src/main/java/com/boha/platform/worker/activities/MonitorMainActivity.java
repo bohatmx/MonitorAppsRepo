@@ -67,6 +67,7 @@ import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
+import com.boha.monitor.library.util.WebCheck;
 import com.boha.platform.worker.R;
 import com.boha.platform.worker.fragments.NavigationDrawerFragment;
 import com.boha.platform.worker.fragments.NoProjectsAssignedFragment;
@@ -140,12 +141,18 @@ public class MonitorMainActivity extends AppCompatActivity
 
         setFields();
         buildPages();
+        setBroadcastReceivers();
+        checkAirplane();
 
+
+    }
+    static final int AIRPLANE_MODE_SETTINGS = 253;
+    private void setBroadcastReceivers() {
         //receive notification when DataRefreshService has completed work
         IntentFilter mStatusIntentFilter = new IntentFilter(
                 DataRefreshService.BROADCAST_ACTION);
         DataRefreshDoneReceiver receiver = new DataRefreshDoneReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, mStatusIntentFilter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver,mStatusIntentFilter);
 
         //receive notification when LocationTrackerReceiver has received location request
         IntentFilter mStatusIntentFilter2 = new IntentFilter(
@@ -159,8 +166,41 @@ public class MonitorMainActivity extends AppCompatActivity
         PhotoUploadedReceiver receiver3 = new PhotoUploadedReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver3,
                 mStatusIntentFilter3);
-    }
 
+        //receive notification of Airplane Mode
+        IntentFilter intentFilter = new IntentFilter(
+                "android.intent.action.AIRPLANE_MODE");
+        BroadcastReceiver receiver4 = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.e(LOG, "####### Airplane Mode state changed, intent: " + intent.toString());
+                checkAirplane();
+            }
+        };
+        registerReceiver(receiver4, intentFilter);
+    }
+    private void checkAirplane() {
+        if (WebCheck.isAirplaneModeOn(ctx)) {
+            AlertDialog.Builder dg = new AlertDialog.Builder(this);
+            dg.setTitle("Airplane Mode")
+                    .setMessage("The device is in Airplane mode. Do you want to go to Settings to change this?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startActivityForResult(
+                                    new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS), AIRPLANE_MODE_SETTINGS);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .show();
+
+        }
+    }
     private void setFields() {
         final ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
@@ -337,6 +377,12 @@ public class MonitorMainActivity extends AppCompatActivity
                 + reqCode + " resCode: " + resCode);
         switch (reqCode) {
 
+            case AIRPLANE_MODE_SETTINGS:
+                if (WebCheck.isAirplaneModeOn(ctx)) {
+                    startActivityForResult(
+                            new Intent(android.provider.Settings.ACTION_SETTINGS), AIRPLANE_MODE_SETTINGS);
+                }
+                break;
             case REQUEST_STATUS_UPDATE:
                 if (resCode == RESULT_OK) {
                     boolean statusCompleted =

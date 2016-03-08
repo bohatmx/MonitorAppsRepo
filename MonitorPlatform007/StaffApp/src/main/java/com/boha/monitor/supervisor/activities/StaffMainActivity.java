@@ -14,6 +14,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -35,6 +36,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -83,6 +85,7 @@ import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
+import com.boha.monitor.library.util.WebCheck;
 import com.boha.monitor.supervisor.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -163,6 +166,35 @@ public class StaffMainActivity extends AppCompatActivity implements
         setMenuDestinations();
         mDrawerLayout.openDrawer(GravityCompat.START);
 
+        setBroadcastReceivers();
+        checkAirplane();
+
+
+    }
+    private void checkAirplane() {
+        if (WebCheck.isAirplaneModeOn(ctx)) {
+            AlertDialog.Builder dg = new AlertDialog.Builder(this);
+            dg.setTitle("Airplane Mode")
+                    .setMessage("The device is in Airplane mode. Do you want to go to Settings to change this?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startActivityForResult(
+                                    new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS), AIRPLANE_MODE_SETTINGS);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .show();
+
+        }
+    }
+    static final int AIRPLANE_MODE_SETTINGS = 253;
+    private void setBroadcastReceivers() {
         //receive notification when DataRefreshService has completed work
         IntentFilter mStatusIntentFilter = new IntentFilter(
                 DataRefreshService.BROADCAST_ACTION);
@@ -182,6 +214,17 @@ public class StaffMainActivity extends AppCompatActivity implements
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver3,
                 mStatusIntentFilter3);
 
+        //receive notification of Airplane Mode
+        IntentFilter intentFilter = new IntentFilter(
+                "android.intent.action.AIRPLANE_MODE");
+        BroadcastReceiver receiver4 = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.e(LOG, "####### Airplane Mode state changed, intent: " + intent.toString());
+                checkAirplane();
+            }
+        };
+        registerReceiver(receiver4, intentFilter);
     }
 
     CircleImageView circleImage;

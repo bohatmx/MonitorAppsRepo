@@ -70,6 +70,7 @@ public class StaffListFragment extends Fragment
     public void setMonApp(MonApp monApp) {
         this.monApp = monApp;
     }
+
     /**
      * The fragment's ListView/GridView.
      */
@@ -137,7 +138,7 @@ public class StaffListFragment extends Fragment
             }
         });
 
-        monApp = (MonApp)getActivity().getApplication();
+        monApp = (MonApp) getActivity().getApplication();
         pageTitle = getString(R.string.staff);
         getStaffList();
 
@@ -321,14 +322,15 @@ public class StaffListFragment extends Fragment
             @Override
             public void onStaffNameClicked(StaffDTO s) {
                 staff = s;
-                SharedUtil.saveLastStaffID(getActivity(),staff.getStaffID());
+                SharedUtil.saveLastStaffID(getActivity(), staff.getStaffID());
                 showPopup(staff);
             }
+
             @Override
             public void onHighDefPhoto(PhotoUploadDTO photo, Integer staffID) {
-                SharedUtil.saveLastStaffID(getActivity(),staffID);
+                SharedUtil.saveLastStaffID(getActivity(), staffID);
                 Intent w = new Intent(getContext(), HighDefActivity.class);
-                w.putExtra("photo",photo);
+                w.putExtra("photo", photo);
                 startActivity(w);
             }
         });
@@ -338,7 +340,8 @@ public class StaffListFragment extends Fragment
                 new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecycler.setHasFixedSize(true);
         mRecycler.setLayoutManager(llm);
-        mRecycler.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
+        if (getContext() != null)
+            mRecycler.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
 
         mRecycler.setAdapter(staffAdapter);
 
@@ -348,11 +351,12 @@ public class StaffListFragment extends Fragment
         }
 
     }
+
     private int getIndex() {
         if (getActivity() == null) return 0;
         Integer x = SharedUtil.getLastStaffID(getActivity());
         int index = 0;
-        for (StaffDTO m: staffList) {
+        for (StaffDTO m : staffList) {
             if (m.getStaffID().intValue() == x.intValue()) {
                 return index;
             }
@@ -360,6 +364,7 @@ public class StaffListFragment extends Fragment
         }
         return 0;
     }
+
     private void showPopup(final StaffDTO staff) {
         popupItemList = new ArrayList<>();
         PopupItem item1 = new PopupItem(R.drawable.ic_action_location_on, ctx.getString(R.string.send_my_location));
@@ -476,6 +481,7 @@ public class StaffListFragment extends Fragment
 
     /**
      * Send message to staff requesting current location
+     *
      * @param staffID
      */
     private void requestCurrentStaffLocation(final Integer staffID) {
@@ -496,8 +502,8 @@ public class StaffListFragment extends Fragment
                     @Override
                     public void run() {
                         mListener.setBusy(false);
-                        MonLog.w(getContext(),LOG,"#### location request sent to staffID: " + staffID);
-                        Util.showToast(getContext(),"Location request has been sent");
+                        MonLog.w(getContext(), LOG, "#### location request sent to staffID: " + staffID);
+                        Util.showToast(getContext(), "Location request has been sent");
                     }
                 });
 
@@ -523,11 +529,10 @@ public class StaffListFragment extends Fragment
     @Override
     public void animateHeroHeight() {
         if (hero != null) {
-            Log.w(LOG,"animateHeroHeight, hero not null");
             hero.setImageDrawable(Util.getRandomBackgroundImage(getActivity()));
             Util.expand(hero, 500, null);
         } else {
-            Log.e(LOG,"animateHeroHeight, hero is NULL");
+            Log.e(LOG, "animateHeroHeight, hero is NULL");
         }
 
 

@@ -81,6 +81,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
     public void setMonApp(MonApp monApp) {
         this.monApp = monApp;
     }
+
     ImageView iconClose, iconCloseActions;
     TextView txtPerson, txtFromMsg, txtTotal;
     EditText editMessage;
@@ -134,7 +135,8 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         LinearLayoutManager llm = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
         recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+        if (getContext() != null)
+            recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
 
         actionsView.setVisibility(View.GONE);
         txtSelected.setText("");
@@ -198,7 +200,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
             }
         });
 
-        monApp = (MonApp)getActivity().getApplication();
+        monApp = (MonApp) getActivity().getApplication();
         getMonitorList();
         return view;
     }
@@ -365,14 +367,15 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         monitorListAdapter = new MonitorListAdapter(monitorList, darkColor, getActivity(), new MonitorListAdapter.MonitorListener() {
             @Override
             public void onHighDefPhoto(PhotoUploadDTO photo, Integer monitorID) {
-                SharedUtil.saveLastMonitorID(getActivity(),monitorID);
+                SharedUtil.saveLastMonitorID(getActivity(), monitorID);
                 Intent w = new Intent(getContext(), HighDefActivity.class);
-                w.putExtra("photo",photo);
+                w.putExtra("photo", photo);
                 startActivity(w);
             }
+
             @Override
             public void onMonitorNameClicked(MonitorDTO monitor) {
-                SharedUtil.saveLastMonitorID(getActivity(),monitor.getMonitorID());
+                SharedUtil.saveLastMonitorID(getActivity(), monitor.getMonitorID());
                 showPopup(monitor);
             }
         });
@@ -388,7 +391,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
     private int getIndex() {
         Integer x = SharedUtil.getLastMonitorID(getActivity());
         int index = 0;
-        for (MonitorDTO m: monitorList) {
+        for (MonitorDTO m : monitorList) {
             if (m.getMonitorID().intValue() == x.intValue()) {
                 return index;
             }
@@ -396,6 +399,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         }
         return 0;
     }
+
     private void showPopup(final MonitorDTO monitor) {
         final ListPopupWindow pop = new ListPopupWindow(getActivity());
         LayoutInflater inf = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -492,6 +496,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
             Log.e(LOG, "-- popup failed, probably nullpointer", e);
         }
     }
+
     private void generatePIN(MonitorDTO monitor) {
         RequestDTO w = new RequestDTO(RequestDTO.GENERATE_MONITOR_PIN);
         w.setMonitorID(monitor.getMonitorID());
@@ -525,6 +530,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
             }
         });
     }
+
     private void requestCurrentMonitorLocation(final Integer monitorID) {
         SimpleMessageDTO msg = new SimpleMessageDTO();
         StaffDTO s = SharedUtil.getCompanyStaff(getActivity());
@@ -553,8 +559,8 @@ public class MonitorListFragment extends Fragment implements PageFragment {
                     @Override
                     public void run() {
                         mListener.setBusy(false);
-                        MonLog.w(getContext(),LOG,"#### location request sent to monitorID: " + monitorID);
-                        Util.showToast(getContext(),"Location request has been sent");
+                        MonLog.w(getContext(), LOG, "#### location request sent to monitorID: " + monitorID);
+                        Util.showToast(getContext(), "Location request has been sent");
                     }
                 });
             }
@@ -605,7 +611,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
             hero.setImageDrawable(Util.getRandomBackgroundImage(getActivity()));
             Util.expand(hero, 500, null);
         } else {
-            Log.e(LOG,"animateHeroHeight, hero is NULL");
+            Log.e(LOG, "animateHeroHeight, hero is NULL");
         }
     }
 

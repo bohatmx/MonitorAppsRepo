@@ -71,6 +71,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
         pvh.txtStatusCount.setText("");
         final ProjectDTO project = projectList.get(position);
         pvh.txtProjectName.setText(project.getProjectName());
+        Statics.setRobotoFontLight(ctx,pvh.txtProjectName);
         Log.w("ProjectAdapter", "... laying out project: " + project.getProjectName()
         + " photos: " + project.getPhotoCount() + " statusCount: "
                 + project.getStatusCount() + " projectID: " + project.getProjectID());

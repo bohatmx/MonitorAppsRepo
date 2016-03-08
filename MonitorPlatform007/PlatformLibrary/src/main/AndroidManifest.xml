@@ -3,6 +3,7 @@
     package="com.boha.platform.library">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:allowBackup="true"
@@ -22,7 +23,12 @@
         <receiver android:name="com.boha.monitor.library.services.LocationTrackerReceiver" />
         <receiver android:name="com.boha.monitor.library.services.RequestAlarmReceiver" />
         <receiver android:name="com.boha.monitor.library.services.DataRefreshReceiver" />
-        <receiver android:name="com.boha.monitor.library.services.BootReceiver" />
+        <receiver android:name="com.boha.monitor.library.services.BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.HOME" />
+            </intent-filter>
+            </receiver>
         <receiver
             android:name="com.google.android.gms.analytics.AnalyticsReceiver"
             android:enabled="true">

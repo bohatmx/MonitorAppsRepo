@@ -4,6 +4,7 @@ package com.boha.monitor.library.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.provider.Settings;
 import android.util.Log;
 
 
@@ -22,7 +23,18 @@ public class WebCheck {
         String res = sb.toString();
         System.out.println(res);
     }
+    /**
+     * Gets the state of Airplane Mode.
+     *
+     * @param context
+     * @return true if enabled.
+     */
+    public static boolean isAirplaneModeOn(Context context) {
 
+        return Settings.Global.getInt(context.getContentResolver(),
+                Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
+
+    }
     /**
      * Check availability and connectedness of the network
      * @param ctx
@@ -35,6 +47,11 @@ public class WebCheck {
 
         NetworkInfo activeNetworkInfo = connectivity.getActiveNetworkInfo();
         WebCheckResult result = new WebCheckResult();
+        if (isAirplaneModeOn(ctx)) {
+            result.setNetworkUnavailable(true);
+            Log.e(TAG, "Network unavailable, is in flight mode");
+            return result;
+        }
         if (activeNetworkInfo ==  null) {
             result.setNetworkUnavailable(true);
             Log.e(TAG, "Network unavailable, could be in flight mode");
