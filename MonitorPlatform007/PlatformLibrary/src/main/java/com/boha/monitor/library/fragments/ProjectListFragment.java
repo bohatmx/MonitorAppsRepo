@@ -86,7 +86,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        MonLog.i(getActivity(),LOG,"#################### onCreateView");
+        MonLog.i(getActivity(), LOG, "#################### onCreateView");
         view = inflater.inflate(R.layout.fragment_project_list, container, false);
         searchView = view.findViewById(R.id.top);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
@@ -102,12 +102,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         if (auto != null) {
             hideKeyboard();
         }
-        if (savedInstanceState != null) {
-            mResponse = (ResponseDTO)savedInstanceState.getSerializable("response");
-            projectList = mResponse.getProjectList();
-            setList();
-            listHasBeenSet = true;
-        }
 
         return view;
     }
@@ -117,7 +111,6 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     ProjectDTO selectedProject;
     TextView txtCount;
     double latitude, longitude;
-    boolean listHasBeenSet;
 
     public void setLocation(Location location) {
         this.latitude = location.getLatitude();
@@ -131,52 +124,20 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public void onResume() {
         Log.e(LOG, "------------------ onResume, getting projects ............");
-        if (!listHasBeenSet) {
-            getProjectList();
-        }
+        setList();
+
         super.onResume();
     }
 
-    public void getProjectList() {
-        Log.w(LOG, "..... getProjectList .....from Snappy");
-
-        Snappy.SnappyReadListener listener = new Snappy.SnappyReadListener() {
-            @Override
-            public void onDataRead(ResponseDTO response) {
-                mResponse = response;
-                projectList = mResponse.getProjectList();
-                Log.e(LOG, "onDataRead: projectList: " + projectList.size());
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            setList();
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onError(String message) {
-                Log.e(LOG, "Failed to get projects: " + message);
-            }
-        };
-        try {
-            monApp = (MonApp) getActivity().getApplication();
-            monApp.getSnappyDB();
-            Snappy.getProjectList(monApp, listener);
-        } catch (Exception e) {
-            Log.d(LOG, "#### ACTION IGNORED, why is this happening?\n" + e.getMessage(),e);
+    public void setProjectList(List<ProjectDTO> projectList) {
+        this.projectList = projectList;
+        if (mRecyclerView != null) {
+            setList();
         }
     }
 
-    private void setList() {
+       private void setList() {
 
-        if (projectList == null || projectList.isEmpty()) {
-            Log.e(LOG, "--- projectList is NULL");
-            getProjectList();
-            return;
-        }
         if (getContext() == null) {
             return;
         }
@@ -221,7 +182,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         }
 
         projectAdapter = new ProjectAdapter(projectList, getActivity(),
-                darkColor, latitude,longitude,new ProjectListFragmentListener() {
+                darkColor, latitude, longitude, new ProjectListFragmentListener() {
             @Override
             public void onCameraRequired(ProjectDTO project) {
                 Log.d(LOG, "### onCameraRequired");

@@ -73,10 +73,10 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
         final ProjectDTO project = projectList.get(position);
         pvh.txtProjectName.setText(project.getProjectName());
         Statics.setRobotoFontLight(ctx,pvh.txtProjectName);
-        Log.w("ProjectAdapter", "... laying out project: " + project.getProjectName()
-        + " photos: " + project.getPhotoCount() + " statusCount: "
-                + project.getStatusCount() + " videoCount: " + project.getVideoCount()
-                + " projectID: " + project.getProjectID());
+//        Log.d("ProjectAdapter", "project: " + project.getProjectName()
+//        + " photos: " + project.getPhotoCount() + " statusCount: "
+//                + project.getStatusCount() + " videoCount: " + project.getVideoCount()
+//                + " projectID: " + project.getProjectID());
 
         pvh.imageLayout.setVisibility(View.GONE);
         pvh.image.setVisibility(View.GONE);

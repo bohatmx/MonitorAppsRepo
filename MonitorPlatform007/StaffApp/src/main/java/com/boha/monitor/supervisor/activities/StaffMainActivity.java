@@ -126,6 +126,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     ProjectListFragment projectListFragment;
     ActionBar actionBar;
     Location mLocation;
+
 static final String TASK_TAG_WIFI = "taskTagWIFI";
 
     @Override
@@ -137,7 +138,7 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
         } else {
             MonLog.e(ctx,LOG, "====================================navImage is null");
         }
-        buildPages();
+        getCachedData();
 
     }
     GcmNetworkManager mGcmNetworkManager;
@@ -436,10 +437,13 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
 
                 monitorListFragment = new MonitorListFragment();
                 monitorListFragment.setMonApp(app);
+                monitorListFragment.setMonitorList(response.getMonitorList());
                 staffListFragment = new StaffListFragment();
                 staffListFragment.setMonApp(app);
+                staffListFragment.setStaffList(response.getStaffList());
                 projectListFragment = new ProjectListFragment();
                 projectListFragment.setMonApp(app);
+                projectListFragment.setProjectList(response.getProjectList());
 
 
                 profileFragment.setThemeColors(themePrimaryColor, themeDarkColor);
@@ -467,6 +471,9 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
                     public void onPageSelected(int position) {
                         currentPageIndex = position;
                         pageFragmentList.get(position).animateHeroHeight();
+                        PageFragment pf = pageFragmentList.get(position);
+
+
                     }
 
                     @Override
@@ -576,7 +583,7 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
     @Override
     public void onSaveInstanceState(Bundle b) {
         MonLog.w(ctx,LOG, "onSaveInstanceState");
-        b.putSerializable("selectedProject", selectedProject);
+        b.putSerializable("response", response);
         super.onSaveInstanceState(b);
     }
 
@@ -930,7 +937,7 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    monitorListFragment.getMonitorList();
+                                                    getCachedData();
                                                 }
                                             });
                                         }
@@ -954,7 +961,6 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
                 break;
             case MONITOR_PROFILE_EDITED:
                 if (resCode == RESULT_OK) {
-                    monitorListFragment.getMonitorList();
                 }
 
                 break;
@@ -988,7 +994,7 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
                             data.getBooleanExtra("statusCompleted", false);
                     if (statusCompleted) {
                         MonLog.e(ctx,LOG, "statusCompleted, projectListFragment.getProjectList();");
-                        projectListFragment.getProjectList();
+                        getCachedData();
                     }
                 }
                 Log.i(LOG,"+++++++ onActivityResult, back from UpdateActivity. starting loc update");
@@ -1308,9 +1314,7 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
             MonLog.e(ctx,LOG,"+++++++DataRefreshDoneReceiver onReceive, data must have been refreshed: "
                     + intent.toString());
             MonLog.d(ctx,LOG,"+++++++++++++++++ starting refreshes on all fragments .....");
-            projectListFragment.getProjectList();
-            staffListFragment.getStaffList();
-            monitorListFragment.getMonitorList();
+            getCachedData();
             setRefreshActionButtonState(false);
             startLocationUpdates();
 
@@ -1344,7 +1348,7 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
         public void onReceive(Context context, Intent intent) {
             MonLog.e(ctx,LOG, "+++++++ PhotoUploadedReceiver onReceive, photo uploaded: "
                     + intent.toString());
-            projectListFragment.getProjectList();
+            getCachedData();
             MonLog.w(ctx,LOG,
                     "Photo has been uploaded OK");
 
@@ -1392,4 +1396,43 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
     NavigationView navigationView;
     Menu mMenu;
     CompanyDTO company;
+    MonApp app;
+    private void getCachedData() {
+        app = (MonApp)getApplicationContext();
+        response = new ResponseDTO();
+        Snappy.getProjectList(app, new Snappy.SnappyReadListener() {
+            @Override
+            public void onDataRead(ResponseDTO r) {
+                response.setProjectList(r.getProjectList());
+                Snappy.getStaffList(app, new Snappy.SnappyReadListener() {
+                    @Override
+                    public void onDataRead(ResponseDTO r) {
+                        response.setStaffList(r.getStaffList());
+                        Snappy.getMonitorList(app, new Snappy.SnappyReadListener() {
+                            @Override
+                            public void onDataRead(ResponseDTO r) {
+                                response.setMonitorList(r.getMonitorList());
+                                buildPages();
+                            }
+
+                            @Override
+                            public void onError(String message) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String message) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String message) {
+
+            }
+        });
+    }
 }

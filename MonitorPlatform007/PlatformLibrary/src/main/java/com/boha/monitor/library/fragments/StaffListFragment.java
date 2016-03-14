@@ -139,15 +139,21 @@ public class StaffListFragment extends Fragment
 
         monApp = (MonApp) getActivity().getApplication();
         pageTitle = getString(R.string.staff);
-        getStaffList();
 
         return view;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MonLog.i(getActivity(),LOG,"+++++++++++++ onResume");
+        setList();
     }
 
     /**
      * Get list of Staff from cache and set the RecyclerView
      */
     public void getStaffList() {
+
         Snappy.getStaffList(monApp, new Snappy.SnappyReadListener() {
             @Override
             public void onDataRead(final ResponseDTO response) {
@@ -283,7 +289,9 @@ public class StaffListFragment extends Fragment
 
     public void setStaffList(List<StaffDTO> staffList) {
         this.staffList = staffList;
-        setList();
+        if (mRecycler != null) {
+            setList();
+        }
     }
 
     @Override
@@ -315,7 +323,7 @@ public class StaffListFragment extends Fragment
 
 
     private void setList() {
-        Log.d(LOG, "##### setList");
+        Log.d(LOG, "##### setStaffList " + staffList.size());
         staffAdapter = new StaffListAdapter(staffList, darkColor,
                 getActivity(), new StaffListAdapter.StaffListListener() {
             @Override

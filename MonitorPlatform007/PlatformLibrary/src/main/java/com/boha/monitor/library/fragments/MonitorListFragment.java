@@ -38,7 +38,6 @@ import com.boha.monitor.library.util.MonLog;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.PopupItem;
 import com.boha.monitor.library.util.SharedUtil;
-import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -197,37 +196,24 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         });
 
         monApp = (MonApp) getActivity().getApplication();
-        getMonitorList();
         return view;
     }
 
-    public void getMonitorList() {
-        Snappy.getMonitorList(monApp, new Snappy.SnappyReadListener() {
-            @Override
-            public void onDataRead(final ResponseDTO response) {
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (response.getMonitorList() != null) {
-                                monitorList = response.getMonitorList();
-                                setList();
-                            }
-                        }
-                    });
-
-                }
-            }
-
-            @Override
-            public void onError(String message) {
-
-            }
-        });
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        MonLog.e(getActivity(),LOG,"%%%%%%%%%%%%%%%%%%%%% onResume");
+        setList();
     }
 
-    private void showDialog() {
+    public void setMonitorList(List<MonitorDTO> monitorList) {
+        this.monitorList = monitorList;
+        if (recyclerView != null) {
+            setList();
+        }
+    }
+
+   private void showDialog() {
         final AlertDialog.Builder x = new AlertDialog.Builder(getActivity());
         x.setTitle("Broadcast Your Location")
                 .setMessage("Do you want to broadcast your current location to the Monitors in the list?")
@@ -356,6 +342,7 @@ public class MonitorListFragment extends Fragment implements PageFragment {
     MonitorListAdapter monitorListAdapter;
 
     private void setList() {
+
         Log.d(LOG, "MonitorListFragment setList: " + monitorList.size());
         Collections.sort(monitorList);
 
