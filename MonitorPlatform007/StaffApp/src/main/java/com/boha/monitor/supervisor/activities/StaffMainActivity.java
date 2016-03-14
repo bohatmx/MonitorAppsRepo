@@ -659,7 +659,7 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
 
     @Override
     public void onLocationChanged(Location location) {
-        MonLog.d(ctx,LOG, "onLocationChanged " + location.getLatitude()
+        MonLog.d(ctx,LOG, "------ onLocationChanged " + location.getLatitude()
                 + " " + location.getLongitude() + " " + location.getAccuracy());
 
         if (location.getAccuracy() <= ACCURACY_THRESHOLD) {
