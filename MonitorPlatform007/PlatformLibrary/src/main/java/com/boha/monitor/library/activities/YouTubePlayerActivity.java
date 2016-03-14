@@ -3,12 +3,6 @@ package com.boha.monitor.library.activities;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
-import android.app.Activity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,31 +12,28 @@ import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.dto.VideoUploadDTO;
-import com.boha.monitor.library.fragments.ProjectTaskListFragment;
 import com.boha.monitor.library.util.MonLog;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.monitor.library.util.ThemeChooser;
-import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class YouTubePlayerActivity extends YouTubeBaseActivity
     implements YouTubePlayer.OnInitializedListener{
 
-    YouTubePlayerFragment youTubePlayerFragment;
-    YouTubePlayer youTubePlayer;
-    Context ctx;
-    List<VideoUploadDTO> videoList;
-    List<String> stringList = new ArrayList<>();
-    RecyclerView recycler;
-    VideoAdapter adapter;
+    private YouTubePlayerFragment youTubePlayerFragment;
+    private YouTubePlayer youTubePlayer;
+    private Context ctx;
+    private List<VideoUploadDTO> videoList;
+    private RecyclerView recycler;
+    private VideoAdapter adapter;
+    private int position;
 
     static final String LOG = YouTubePlayerActivity.class.getSimpleName();
     public static final String
@@ -81,7 +72,6 @@ public class YouTubePlayerActivity extends YouTubeBaseActivity
             videoList = r.getVideoUploadList();
             position = savedInstanceState.getInt("position",0);
         }
-
     }
 
     private void setList() {
@@ -99,7 +89,7 @@ public class YouTubePlayerActivity extends YouTubeBaseActivity
         youTubePlayer.cueVideo(videoList.get(position).getYouTubeID());
     }
 
-    int position;
+
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer ytPlayer, boolean wasRestored) {
         MonLog.w(ctx,LOG, "onInitializationSuccess, wasRestored:  " + wasRestored);
