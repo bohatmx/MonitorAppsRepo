@@ -19,6 +19,7 @@ import com.boha.monitor.library.services.DataRefreshReceiver;
 import com.boha.monitor.library.services.LocationTrackerReceiver;
 import com.boha.monitor.library.services.PhotoUploadBroadcastReceiver;
 import com.boha.monitor.library.services.RequestAlarmReceiver;
+import com.boha.monitor.library.services.YouTubeUploadReceiver;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
@@ -69,8 +70,8 @@ import java.util.HashMap;
 public class MonApp extends Application implements Application.ActivityLifecycleCallbacks {
     static final String PROPERTY_ID = "UA-53661372-2";
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
-    private AlarmManager alarmMgr1, alarmMgr2, alarmMgr3,alarmMgr4;
-    private PendingIntent alarmIntent1,alarmIntent2, alarmIntent3,alarmIntent4;
+    private AlarmManager alarmMgr1, alarmMgr2, alarmMgr3,alarmMgr4, alarmMgr5;
+    private PendingIntent alarmIntent1,alarmIntent2, alarmIntent3,alarmIntent4, alarmIntent5;
     private boolean messageActivityVisible;
     static final String LOG = MonApp.class.getSimpleName();
     public static Picasso picasso;
@@ -93,13 +94,6 @@ public class MonApp extends Application implements Application.ActivityLifecycle
 
 
     static final long MAX_CACHE_SIZE = 1024 * 1024 * 1024; // 1 GB cache on device
-//
-//    public static RefWatcher getRefWatcher(Context context) {
-//        MonApp application = (MonApp) context.getApplicationContext();
-//        return application.refWatcher;
-//    }
-//
-//    private RefWatcher refWatcher;
 
     public enum TrackerName {
         APP_TRACKER, // Tracker used only in this app.
@@ -184,13 +178,25 @@ public class MonApp extends Application implements Application.ActivityLifecycle
             Log.d(LOG, "###### ACRA Crash Reporting has NOT been initiated, in DEBUG mode");
         }
 
-        startDataRefreshAlarm();
-        startRequestCacheAlarm();
-        startPhotoUploadAlarm();
-        startLocationAlarm();
+//        startDataRefreshAlarm();
+//        startRequestCacheAlarm();
+//        startPhotoUploadAlarm();
+//        startLocationAlarm();
+//        startVideoUploadAlarm();
 
     }
 
+    public void startVideoUploadAlarm() {
+        alarmMgr5 = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        Intent m = new Intent(getApplicationContext(), YouTubeUploadReceiver.class);
+        alarmIntent5 = PendingIntent.getBroadcast(getApplicationContext(), 129, m, 0);
+
+        alarmMgr5.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime(), HALF_HOUR, alarmIntent5);
+
+        Log.w(LOG, "###### YouTubeUpload AlarmManager: " +
+                "alarm set to pull the YouTube upload trigger every: HALF_HOUR");
+    }
     public void startLocationAlarm() {
         alarmMgr1 = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         Intent m = new Intent(getApplicationContext(), LocationTrackerReceiver.class);

@@ -144,6 +144,10 @@ public class PhotoScrollerFragment extends Fragment implements View.OnTouchListe
 
     }
 
+    public PhotoUploadDTO getPhoto() {
+        return photo;
+    }
+
     private void setTxtName() {
         txtName.setVisibility(View.GONE);
         if (photo.getStaffName() != null) {

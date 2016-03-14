@@ -64,8 +64,6 @@ public class CDNVideoUploader {
                     dto.setBytes((int) map.get("bytes"));
                     dto.setDateUploaded(new Date().getTime());
 
-                    //dto.setAudioCodec((String) map.get("audioCodec"));
-
                     RequestDTO w = new RequestDTO(RequestDTO.ADD_VIDEO);
                     w.setVideoUpload(dto);
 
@@ -86,7 +84,7 @@ public class CDNVideoUploader {
 
                     });
                 } catch (Exception e) {
-                    Log.e(LOG, "CDN upload Failed", e);
+                    Log.e(LOG, "CDN uploadToYouTube Failed", e);
                     mListener.onError("CDN Error uploading video");
 
                 }

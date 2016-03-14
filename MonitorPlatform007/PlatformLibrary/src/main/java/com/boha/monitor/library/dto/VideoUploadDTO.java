@@ -1,15 +1,17 @@
 package com.boha.monitor.library.dto;
 
+import java.io.Serializable;
+
 /**
  * Created by aubreyM on 15/07/30.
  */
-public class VideoUploadDTO {
+public class VideoUploadDTO implements Serializable{
     private Integer videoUploadID;
     private Long dateTaken;
     private Double latitude;
     private Double longitude;
     private Float accuracy;
-    private String url, filePath;
+    private String url, filePath, projectName, youTubeID, localUri;
     private Long dateUploaded;
     private String secureUrl;
     private String eTag;
@@ -23,6 +25,42 @@ public class VideoUploadDTO {
     private Integer bitRate;
     private Double duration;
     private Integer staffID, monitorID,  projectID,  projectTaskID;
+    private boolean downLoaded;
+
+    public String getLocalUri() {
+        return localUri;
+    }
+
+    public void setLocalUri(String localUri) {
+        this.localUri = localUri;
+    }
+
+    public boolean isDownLoaded() {
+        return downLoaded;
+    }
+
+    public void setDownLoaded(boolean downLoaded) {
+        this.downLoaded = downLoaded;
+    }
+
+    public String getProjectName() {
+        if (projectName == null) {
+            projectName = "";
+        }
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public String getYouTubeID() {
+        return youTubeID;
+    }
+
+    public void setYouTubeID(String youTubeID) {
+        this.youTubeID = youTubeID;
+    }
 
     public String getVideoUri() {
         return videoUri;

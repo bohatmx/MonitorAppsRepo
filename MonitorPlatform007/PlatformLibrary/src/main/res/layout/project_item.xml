@@ -134,11 +134,39 @@
 
         </RelativeLayout>
         <RelativeLayout
-            android:id="@+id/PI_middle2a"
+            android:id="@+id/PI_middle2x"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:layout_below="@id/PI_middle2">
+
+            <TextView
+                android:id="@+id/PI_videoCount"
+                style="@style/BlueCircle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_alignParentLeft="true"
+                android:text="00" />
+            <TextView
+                android:id="@+id/PI_label2x"
+                style="@style/TextStyleSmall"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/PI_videoCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/mon_margin"
+                android:text="Videos" />
+
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/PI_middle2a"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:layout_below="@id/PI_middle2x">
 
             <TextView
                 android:id="@+id/PI_staffCount"
@@ -166,7 +194,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:layout_alignParentLeft="true"
             android:layout_below="@id/PI_middle2a">
 
             <TextView
@@ -176,7 +203,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/mon_margin"
                 android:layout_centerVertical="true"
-                android:layout_alignParentLeft="true"
                 android:text="00" />
             <TextView
                 android:id="@+id/PI_label2b"

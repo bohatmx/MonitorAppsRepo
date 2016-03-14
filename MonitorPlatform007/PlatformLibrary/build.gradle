@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.jakewharton.hugo'
 
 android {
     compileSdkVersion 23
@@ -68,5 +67,14 @@ dependencies {
     compile 'commons-io:commons-io:2.4'
     compile 'com.snappydb:snappydb-lib:0.4.0'
     compile 'com.esotericsoftware.kryo:kryo:2.24.0'
-//    compile 'io.nlopez.smartlocation:library:3.2.1'
+
+    compile ('com.google.apis:google-api-services-youtube:v3-rev163-1.21.0') {
+        exclude group: 'com.google.code.findbugs', module: 'jsr305' }
+//    compile ('com.google.http-client:google-http-client-android:+') {
+//        exclude group: 'com.google.code.findbugs', module: 'jsr305' }
+//    compile ('com.google.api-client:google-api-client-android:+') {
+//        exclude group: 'com.google.code.findbugs', module: 'jsr305' }
+//    compile ('com.google.api-client:google-api-client-gson:+') {
+//        exclude group: 'com.google.code.findbugs', module: 'jsr305' }
+    //compile files('libs/YouTubeAndroidPlayerApi.jar')
 }

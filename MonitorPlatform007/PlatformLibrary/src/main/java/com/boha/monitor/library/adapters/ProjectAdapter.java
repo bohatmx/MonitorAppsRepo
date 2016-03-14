@@ -64,17 +64,19 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
 
 
         pvh.txtNumber.setText("" + (position));
-        pvh.txtTasks.setText("");
+        pvh.txtTasks.setText("0");
         pvh.txtLastDate.setText("");
-        pvh.txtPhotos.setText("");
+        pvh.txtPhotos.setText("0");
         pvh.txtMuni.setText("");
-        pvh.txtStatusCount.setText("");
+        pvh.txtStatusCount.setText("0");
+        pvh.txtVideos.setText("0");
         final ProjectDTO project = projectList.get(position);
         pvh.txtProjectName.setText(project.getProjectName());
         Statics.setRobotoFontLight(ctx,pvh.txtProjectName);
         Log.w("ProjectAdapter", "... laying out project: " + project.getProjectName()
         + " photos: " + project.getPhotoCount() + " statusCount: "
-                + project.getStatusCount() + " projectID: " + project.getProjectID());
+                + project.getStatusCount() + " videoCount: " + project.getVideoCount()
+                + " projectID: " + project.getProjectID());
 
         pvh.imageLayout.setVisibility(View.GONE);
         pvh.image.setVisibility(View.GONE);
@@ -98,9 +100,15 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
 
         pvh.txtStaff.setText(df.format(project.getStaffCount()));
         pvh.txtMonitors.setText(df.format(project.getMonitorCount()));
-
+        pvh.txtVideos.setText(df.format(project.getVideoCount()));
         setPlaceNames(project, pvh);
 
+        pvh.txtVideos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onVideoPlayListRequired(project);
+            }
+        });
         pvh.txtStatusCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -234,7 +242,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
     public class ProjectViewHolder extends RecyclerView.ViewHolder {
         protected ImageView image;
         protected TextView txtProjectName, txtStatusCount, txtLastDate,
-                txtStaff, txtMonitors,
+                txtStaff, txtMonitors, txtVideos,
                 txtPhotos, txtTasks, txtCity, txtMuni, txtNumber, txtCaption;
         protected ImageView
                 iconCamera, iconDirections, iconDoStatus,
@@ -259,6 +267,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
             txtCaption = (TextView) itemView.findViewById(R.id.PI_caption);
             txtStaff = (TextView) itemView.findViewById(R.id.PI_staffCount);
             txtMonitors = (TextView) itemView.findViewById(R.id.PI_monitorCount);
+            txtVideos = (TextView) itemView.findViewById(R.id.PI_videoCount);
 
             iconCamera = (ImageView) itemView.findViewById(R.id.PA_camera);
             iconDirections = (ImageView) itemView.findViewById(R.id.PA_directions);

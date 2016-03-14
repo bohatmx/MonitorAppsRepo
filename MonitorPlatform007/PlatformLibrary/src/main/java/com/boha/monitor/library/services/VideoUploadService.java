@@ -2,17 +2,24 @@ package com.boha.monitor.library.services;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.boha.monitor.library.activities.MonApp;
+import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.VideoUploadDTO;
 import com.boha.monitor.library.util.CDNVideoUploader;
-import com.boha.monitor.library.util.CacheVideoUtil;
+import com.boha.monitor.library.util.MonLog;
+import com.boha.monitor.library.util.OKHttpException;
+import com.boha.monitor.library.util.OKUtil;
+import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.WebCheck;
+import com.google.android.gms.common.Scopes;
+import com.google.api.services.youtube.YouTubeScopes;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,100 +37,51 @@ public class VideoUploadService extends IntentService {
     public VideoUploadService() {
         super("VideoUploadService");
     }
+    private List<VideoUploadDTO> uploadedList = new ArrayList<>();
 
-    public interface UploadListener {
-        void onUploadsComplete(List<VideoUploadDTO> list);
-        void onUploadStarted();
-    }
+    public static final String BROADCAST_AUTH_TOKEN_MISSING = "com.boha.AUTH_TOKEN_MISSING",
+            BROADCAST_VIDEO_UPLOADED = "com.boha.VIDEO.UPLOADED";
+    public static final String[] SCOPES = {Scopes.PROFILE, YouTubeScopes.YOUTUBE};
+    private static List<VideoUploadDTO> list;
+    private int index;
+    private List<VideoUploadDTO> failedUploads = new ArrayList<>();
+    static final String LOG = VideoUploadService.class.getSimpleName();
 
-    UploadListener uploadListener;
 
-    public void uploadCachedVideos(UploadListener listener) {
-        uploadListener = listener;
-        Log.d(LOG, "#### uploadCachedVideos, getting cached videos - will start uploads if wifi is up");
-        if (!WebCheck.checkNetworkAvailability(getApplicationContext()).isWifiConnected()) {
-            Log.e(LOG, "--- No WIFI Network: no video upload allowed");
-            return;
-        }
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        Log.w(LOG, "## onHandleIntent .... starting service, intent: " + intent);
 
-        CacheVideoUtil.getCachedVideoList(getApplicationContext(), new CacheVideoUtil.CacheVideoListener() {
+
+        Snappy.getVideoList((MonApp) getApplication(), new Snappy.VideoListener() {
             @Override
-            public void onDataDeserialized(ResponseDTO response) {
-                list = response.getVideoUploadList();
-                if (list.isEmpty()) {
-                    Log.w(LOG, "--- no cached videos for upload");
-                    if (uploadListener != null)
-                        uploadListener.onUploadsComplete(new ArrayList<VideoUploadDTO>());
-                    return;
-                }
-                getLog(response);
-                int pending = 0;
-                for (VideoUploadDTO x : list) {
-                    if (x.getDateUploaded() == null) {
-                        pending++;
-                    }
-                }
-                if (pending == 0) {
-                    if (uploadListener != null)
-                        uploadListener.onUploadsComplete(new ArrayList<VideoUploadDTO>());
-                    return;
+            public void onVideoAdded() {}
+
+            @Override
+            public void onVideoDeleted() {}
+
+            @Override
+            public void onVideosListed(List<VideoUploadDTO> vList) {
+                list = vList;
+                failedUploads = new ArrayList<>();
+                uploadedList = new ArrayList<>();
+                index = 0;
+                if (!list.isEmpty()) {
+                    controlUploads();
                 } else {
-                    Log.e(LOG, "### ...pending video uploads: " + pending);
+                    MonLog.d(getApplicationContext(),LOG,"No videos to upload, quittin");
                 }
-
-                onHandleIntent(null);
             }
 
             @Override
-            public void onError(String message) {
-
-            }
-
-            @Override
-            public void onDataCached() {
-
+            public void onError() {
+                MonLog.e(getApplicationContext(),LOG,"Snappy went BAD");
             }
         });
 
 
     }
 
-    private static void getLog(ResponseDTO cache) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("## Videos currently in the cache: ")
-                .append(cache.getVideoUploadList().size()).append(" - ");
-        int up = 0, not = 0;
-        for (VideoUploadDTO p : cache.getVideoUploadList()) {
-            if (p.getDateUploaded() != null)
-                up++;
-            else
-                not++;
-
-        }
-        sb.append("videos uploaded: " + up + " pending: " + not);
-        Log.i(LOG, sb.toString());
-    }
-
-
-    List<VideoUploadDTO> uploadedList = new ArrayList<>();
-
-
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        Log.w(LOG, "## onHandleIntent .... starting service");
-        if (list == null) {
-            uploadCachedVideos(uploadListener);
-            return;
-        }
-        failedUploads = new ArrayList<>();
-        uploadedList = new ArrayList<>();
-        controlUploads();
-
-
-    }
-
-    static List<VideoUploadDTO> list;
-    int index;
 
     private void controlUploads() {
         if (index < list.size()) {
@@ -135,10 +93,11 @@ public class VideoUploadService extends IntentService {
             }
 
         } else {
-            Log.d(LOG, "Failed uploads: " + failedUploads.size());
-            if (uploadListener != null) {
-                uploadListener.onUploadsComplete(uploadedList);
-            }
+            Log.d(LOG, "Video uploading complete. Failed uploads: " + failedUploads.size());
+            Intent m = new Intent(BROADCAST_VIDEO_UPLOADED);
+            LocalBroadcastManager.getInstance(getApplicationContext())
+                    .sendBroadcast(m);
+
         }
 
     }
@@ -148,16 +107,16 @@ public class VideoUploadService extends IntentService {
         Log.d(LOG, "** executeVideoUpload, projectID: " + dto.getProjectID());
 
         if (WebCheck.checkNetworkAvailability(getApplicationContext()).isNetworkUnavailable()) {
-            Log.w(LOG,"Network is not available");
+            Log.w(LOG,"Network is not available...exitting");
             return;
         }
 
-        uploadListener.onUploadStarted();
         CDNVideoUploader.uploadVideoFile(getApplicationContext(), dto, new CDNVideoUploader.CDNVideoUploaderListener() {
             @Override
             public void onFileUploaded(VideoUploadDTO video) {
                 uploadedList.add(dto);
-                CacheVideoUtil.removeUploadedVideo(getApplicationContext(),video,null);
+                Snappy.deleteVideo((MonApp)getApplication(),video, null);
+                sendVideoMetadata(video);
                 index++;
                 controlUploads();
             }
@@ -171,25 +130,36 @@ public class VideoUploadService extends IntentService {
             }
         });
 
+
     }
 
 
-    List<VideoUploadDTO> failedUploads = new ArrayList<>();
-    static final String LOG = VideoUploadService.class.getSimpleName();
-    public class LocalBinder extends Binder {
 
-        public VideoUploadService getService() {
-            return VideoUploadService.this;
+
+
+
+
+    private void sendVideoMetadata(final VideoUploadDTO videoUpload) {
+        RequestDTO w = new RequestDTO(RequestDTO.ADD_VIDEO);
+        videoUpload.setDateUploaded(new Date().getTime());
+        w.setVideoUpload(videoUpload);
+        w.setZipResponse(false);
+        OKUtil okUtil = new OKUtil();
+        try {
+            okUtil.sendGETRequest(getApplicationContext(), w, new OKUtil.OKListener() {
+                @Override
+                public void onResponse(ResponseDTO response) {
+                    Snappy.deleteVideo((MonApp)getApplication(),videoUpload,null);
+
+                }
+
+                @Override
+                public void onError(String message) {
+
+                }
+            });
+        } catch (OKHttpException e) {
+            e.printStackTrace();
         }
-
     }
-
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return mBinder;
-    }
-
-    private final IBinder mBinder = new LocalBinder();
-
 }

@@ -16,8 +16,7 @@
             android:id="@+id/PHOTO_image"
             android:src="@drawable/under_construction"
             android:scaleType="centerCrop"
-            android:maxWidth="@dimen/mon_hero_height_large"
-            android:maxHeight="@dimen/mon_hero_height_large"
+
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

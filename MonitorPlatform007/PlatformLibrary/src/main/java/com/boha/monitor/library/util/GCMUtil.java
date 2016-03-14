@@ -35,7 +35,7 @@ public class GCMUtil {
     static GoogleCloudMessaging gcm;
     static boolean weCool;
 
-
+//SenderID fir GCM: 235297950926
     /**
      * Start device registration to Google Cloud Messaging
      * Receive GCM registration string and complete GCM registration by calling back-end

@@ -34,7 +34,7 @@ import java.util.Locale;
 public class ImageUtil {
 
     /**
-     * Draws date and gps coordinates on the bottom of the image
+     * Draws subTitle and gps coordinates on the bottom of the image
      * @param mContext
      * @param path
      * @param loc
@@ -51,7 +51,7 @@ public class ImageUtil {
     }
 
     /**
-     * Draws date and gps coordinates on the bottom of the image
+     * Draws subTitle and gps coordinates on the bottom of the image
      * @param mContext
      * @param bitmap
      * @param location

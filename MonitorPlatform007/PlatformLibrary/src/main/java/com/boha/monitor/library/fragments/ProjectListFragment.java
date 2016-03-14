@@ -21,11 +21,11 @@ import android.widget.TextView;
 
 import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.ProjectMapActivity;
-import com.boha.monitor.library.activities.ProjectTaskActivity;
+import com.boha.monitor.library.activities.YouTubePlayerActivity;
 import com.boha.monitor.library.adapters.ProjectAdapter;
-import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.util.MonLog;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.monitor.library.util.Snappy;
@@ -87,6 +87,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        MonLog.i(getActivity(),LOG,"#################### onCreateView");
         view = inflater.inflate(R.layout.fragment_project_list, container, false);
         searchView = view.findViewById(R.id.top);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
@@ -165,6 +166,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
         if (projectList == null || projectList.isEmpty()) {
             Log.e(LOG, "--- projectList is NULL");
+            getProjectList();
             return;
         }
         if (getContext() == null) {
@@ -258,6 +260,28 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                 Log.d(LOG, "### onGalleryRequired");
                 selectedProject = project;
                 mListener.onGalleryRequired(project);
+            }
+
+            @Override
+            public void onVideoPlayListRequired(ProjectDTO project) {
+                Log.i(LOG, "### onVideoPlayListRequired");
+                selectedProject = project;
+                Snappy.getProject(monApp, project.getProjectID(), new Snappy.SnappyProjectListener() {
+                    @Override
+                    public void onProjectFound(ProjectDTO project) {
+                        Intent w = new Intent(getActivity(), YouTubePlayerActivity.class);
+                        ResponseDTO responseDTO = new ResponseDTO();
+                        responseDTO.setVideoUploadList(project.getVideoUploadList());
+                        w.putExtra("videoList", responseDTO);
+                        startActivity(w);
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+
             }
 
             @Override
@@ -407,6 +431,8 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         void onMessagingRequired(ProjectDTO project);
 
         void onGalleryRequired(ProjectDTO project);
+
+        void onVideoPlayListRequired(ProjectDTO project);
 
         void onStatusReportRequired(ProjectDTO project);
 

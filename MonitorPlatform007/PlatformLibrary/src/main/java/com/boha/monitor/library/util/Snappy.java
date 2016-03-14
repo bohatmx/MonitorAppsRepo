@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.boha.monitor.library.activities.MonApp;
-import com.boha.monitor.library.dto.GcmDeviceDTO;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
@@ -14,6 +13,7 @@ import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.dto.TaskDTO;
 import com.boha.monitor.library.dto.TaskStatusTypeDTO;
+import com.boha.monitor.library.dto.VideoUploadDTO;
 import com.google.gson.Gson;
 import com.snappydb.DB;
 import com.snappydb.SnappydbException;
@@ -98,6 +98,7 @@ public class Snappy {
                     d.setPhotoCount(p.getPhotoCount());
                     d.setMonitorCount(p.getMonitorCount());
                     d.setStaffCount(p.getStaffCount());
+                    d.setVideoCount(p.getVideoCount());
                     d.setProjectTaskCount(p.getProjectTaskCount());
                     d.setLastStatus(p.getLastStatus());
                     snappydb.put(PROJECT_LITE + p.getProjectID(), d);
@@ -127,38 +128,46 @@ public class Snappy {
 
     public static void getProjectList(final MonApp ctx, final SnappyReadListener listener) {
         getDatabase(ctx);
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                ResponseDTO w = null;
-                try {
-                    //DB snappydb = getDatabase(ctx);
-                    if (!snappydb.isOpen()) {
-                        snappydb = monApp.getSnappyDB();
-                    }
-                    String[] keys = snappydb.findKeys(PROJECT_LITE);
-                    List<ProjectDTO> pList = new ArrayList<>(keys.length);
-                    for (String key : keys) {
-                        ProjectDTO dto = snappydb.getObject(key, ProjectDTO.class);
-                        pList.add(dto);
-                    }
-                    w = new ResponseDTO();
-                    w.setProjectList(pList);
-//                    snappydb.close();
-                    listener.onDataRead(w);
-                    android.util.Log.d(LOG, "Read projects from Snappy: " + w.getProjectList().size());
+        readListener = listener;
+        new PTask().execute();
 
-                } catch (SnappydbException e) {
-                    Log.e(LOG, "Crapped out gettting projects: ", e);
-                    listener.onError("Failed to get projects: " + e.getMessage());
+    }
+
+    private static class PTask extends AsyncTask<Void, Void, List<ProjectDTO>> {
+
+        @Override
+        protected List<ProjectDTO> doInBackground(Void... params) {
+            List<ProjectDTO> pList = null;
+            try {
+                if (!snappydb.isOpen()) {
+                    snappydb = monApp.getSnappyDB();
                 }
+                String[] keys = snappydb.findKeys(PROJECT_LITE);
+                pList = new ArrayList<>(keys.length);
+                for (String key : keys) {
+                    ProjectDTO dto = snappydb.getObject(key, ProjectDTO.class);
+                    pList.add(dto);
+                }
+            } catch (SnappydbException e) {
+                Log.e(LOG, "Crapped out gettting projects: ", e);
+                return null;
             }
-        });
+            return pList;
+        }
+
+        @Override
+        protected void onPostExecute(List<ProjectDTO> list) {
+            if (list == null) {
+                readListener.onError("Failed to get projects: ");
+                return;
+            }
+            ResponseDTO w = new ResponseDTO();
+            w.setProjectList(list);
+            readListener.onDataRead(w);
+            android.util.Log.d(LOG, "Read projects from Snappy: " + w.getProjectList().size());
 
 
-//        monApp = ctx;
-//        readListener = listener;
-//        new GetProjectListTask().execute();
+        }
 
     }
 
@@ -592,7 +601,7 @@ public class Snappy {
                 StringBuilder sb = new StringBuilder();
                 try {
                     for (PhotoUploadDTO p : list) {
-                        snappydb.put(PHOTO+p.getDateTaken(),p);
+                        snappydb.put(PHOTO + p.getDateTaken(), p);
                     }
 
                     android.util.Log.d(LOG, "** uploaded photo metadata written to snappy: " + list.size());
@@ -861,6 +870,7 @@ public class Snappy {
 
         }
     }
+
     private static void deleteProjects(final MonApp app) {
         try {
             getDatabase(app);
@@ -966,19 +976,21 @@ public class Snappy {
         getDatabase(app);
         new PhotoUploadTask().execute(photo);
     }
-    static class PhotoUploadTask extends AsyncTask<PhotoUploadDTO,Void,Integer> {
+
+    static class PhotoUploadTask extends AsyncTask<PhotoUploadDTO, Void, Integer> {
 
         @Override
         protected Integer doInBackground(PhotoUploadDTO... params) {
             PhotoUploadDTO photo = params[0];
             try {
-                snappydb.put(PHOTO_FOR_UPLOAD+photo.getDateTaken(),photo);
+                snappydb.put(PHOTO_FOR_UPLOAD + photo.getDateTaken(), photo);
             } catch (SnappydbException e) {
 
                 return 9;
             }
             return 0;
         }
+
         @Override
         protected void onPostExecute(Integer result) {
             if (result == 0) {
@@ -988,20 +1000,22 @@ public class Snappy {
             }
         }
     }
+
     public static void getPhotosForUpload(MonApp app, SnappyReadListener listener) {
         readListener = listener;
         getDatabase(app);
         new GetPhotosForUploadTask().execute();
     }
-    static class GetPhotosForUploadTask extends AsyncTask<Void,Void,List<PhotoUploadDTO>> {
+
+    static class GetPhotosForUploadTask extends AsyncTask<Void, Void, List<PhotoUploadDTO>> {
 
         @Override
         protected List<PhotoUploadDTO> doInBackground(Void... params) {
             List<PhotoUploadDTO> photoList = new ArrayList<>();
             try {
                 String[] keys = snappydb.findKeys(PHOTO_FOR_UPLOAD);
-                for (String key: keys) {
-                    PhotoUploadDTO p = snappydb.getObject(key,PhotoUploadDTO.class);
+                for (String key : keys) {
+                    PhotoUploadDTO p = snappydb.getObject(key, PhotoUploadDTO.class);
                     photoList.add(p);
                 }
 
@@ -1011,6 +1025,7 @@ public class Snappy {
             }
             return photoList;
         }
+
         @Override
         protected void onPostExecute(List<PhotoUploadDTO> result) {
             if (result == null) {
@@ -1022,19 +1037,21 @@ public class Snappy {
             }
         }
     }
+
     public static void deletePhotoUploaded(MonApp app, PhotoUploadDTO photo, SnappyDeleteListener listener) {
         deleteListener = listener;
         getDatabase(app);
         new DeletePhotoUploadedTask().execute(photo);
     }
-    static class DeletePhotoUploadedTask extends AsyncTask<PhotoUploadDTO,Void,Integer> {
+
+    static class DeletePhotoUploadedTask extends AsyncTask<PhotoUploadDTO, Void, Integer> {
 
         @Override
         protected Integer doInBackground(PhotoUploadDTO... params) {
             PhotoUploadDTO photo = params[0];
             try {
-                String[] keys = snappydb.findKeys(PHOTO_FOR_UPLOAD+photo.getDateTaken());
-                for (String key: keys) {
+                String[] keys = snappydb.findKeys(PHOTO_FOR_UPLOAD + photo.getDateTaken());
+                for (String key : keys) {
                     snappydb.del(key);
                 }
 
@@ -1044,6 +1061,7 @@ public class Snappy {
             }
             return 0;
         }
+
         @Override
         protected void onPostExecute(Integer result) {
             if (result != 0) {
@@ -1053,6 +1071,7 @@ public class Snappy {
             }
         }
     }
+
     private static void getDatabase(MonApp app) {
         try {
             if (snappydb == null || !snappydb.isOpen()) {
@@ -1072,7 +1091,8 @@ public class Snappy {
 
 
     }
-    public static void getCompanyTrackerList(MonApp app,SnappyReadListener listener) {
+
+    public static void getCompanyTrackerList(MonApp app, SnappyReadListener listener) {
         readListener = listener;
         getDatabase(app);
 
@@ -1080,21 +1100,22 @@ public class Snappy {
     }
 
 
-    static class GetLocationTrackerTask extends AsyncTask<Void,Void,List<LocationTrackerDTO>> {
+    static class GetLocationTrackerTask extends AsyncTask<Void, Void, List<LocationTrackerDTO>> {
 
         @Override
         protected List<LocationTrackerDTO> doInBackground(Void... params) {
             List<LocationTrackerDTO> list = new ArrayList<>();
 
             try {
-                ResponseDTO w = snappydb.getObject(LOCATION_TRACK,ResponseDTO.class);
+                ResponseDTO w = snappydb.getObject(LOCATION_TRACK, ResponseDTO.class);
                 list = w.getLocationTrackerList();
             } catch (SnappydbException e) {
-                Log.e(LOG,e.getMessage());
+                Log.e(LOG, e.getMessage());
             }
-            Log.w(LOG,"--- trackers found in cache: " + list.size());
+            Log.w(LOG, "--- trackers found in cache: " + list.size());
             return list;
         }
+
         @Override
         protected void onPostExecute(List<LocationTrackerDTO> list) {
             ResponseDTO w = new ResponseDTO();
@@ -1102,8 +1123,10 @@ public class Snappy {
             readListener.onDataRead(w);
         }
     }
+
     static final String LOCATION_TRACK = "LOCATION_TRACK";
-    static class SaveLocationTrackerTask extends AsyncTask<List<LocationTrackerDTO>, Void,Integer> {
+
+    static class SaveLocationTrackerTask extends AsyncTask<List<LocationTrackerDTO>, Void, Integer> {
 
         @Override
         protected Integer doInBackground(List<LocationTrackerDTO>... params) {
@@ -1111,14 +1134,15 @@ public class Snappy {
             ResponseDTO w = new ResponseDTO();
             w.setLocationTrackerList(list);
             try {
-                snappydb.put(LOCATION_TRACK,w);
-                Log.w(LOG,"--- trackers saved in cache: " + list.size());
+                snappydb.put(LOCATION_TRACK, w);
+                Log.w(LOG, "--- trackers saved in cache: " + list.size());
             } catch (SnappydbException e) {
-                Log.e(LOG,e.getMessage(),e);
+                Log.e(LOG, e.getMessage(), e);
                 return 9;
             }
             return 0;
         }
+
         @Override
         protected void onPostExecute(Integer result) {
             if (result == 0) {
@@ -1127,5 +1151,144 @@ public class Snappy {
                 writeListener.onError("Unable to write LocationTrackers");
             }
         }
+    }
+
+
+    static VideoListener videoListener;
+
+    public static void addVideo(MonApp app, VideoUploadDTO video, int type, VideoListener listener) {
+        videoListener = listener;
+        getDatabase(app);
+        VideoData vd = new VideoData();
+        vd.videoUpload = video;
+        vd.operationType = type;
+        new VideoTask().execute(vd);
+    }
+
+    public static void getVideoList(MonApp app, VideoListener listener) {
+        videoListener = listener;
+        getDatabase(app);
+        VideoData vd = new VideoData();
+        vd.operationType = GET_VIDEO_LIST_FOR_UPLOAD;
+        new VideoTask().execute(vd);
+    }
+
+    public static void deleteVideo(MonApp app, VideoUploadDTO video, VideoListener listener) {
+        videoListener = listener;
+        getDatabase(app);
+        VideoData vd = new VideoData();
+        vd.dateTaken = video.getDateTaken();
+        vd.operationType = DELETE_VIDEO;
+        new VideoTask().execute(vd);
+    }
+
+    static class VideoTask extends AsyncTask<VideoData, Void, VideoData> {
+
+        @Override
+        protected VideoData doInBackground(VideoData... params) {
+            VideoData data = params[0];
+            switch (data.operationType) {
+                case ADD_VIDEO_FOR_UPLOAD:
+                    try {
+                        snappydb.put(VIDEO_FOR_UPLOAD + data.videoUpload.getDateTaken(), data.videoUpload);
+                        Log.w(LOG, "------------- Video cached. Awaiting uploadToYouTube .....");
+                    } catch (SnappydbException e) {
+                        data.isError = true;
+                    }
+                    break;
+                case ADD_UPLOADED_VIDEO:
+                    try {
+                        snappydb.put(UPLOADED_VIDEO + data.videoUpload.getDateTaken(), data.videoUpload);
+                        Log.w(LOG, "Uploaded Video cached. +++++++++++");
+                    } catch (SnappydbException e) {
+                        data.isError = true;
+                    }
+                    break;
+                case GET_VIDEO:
+                    try {
+                        VideoUploadDTO video = snappydb.getObject(VIDEO_FOR_UPLOAD + data.dateTaken, VideoUploadDTO.class);
+                        data.videoUpload = video;
+                        Log.w(LOG, "Video retrieved. " + data.videoUpload.getDateTaken());
+                    } catch (SnappydbException e) {
+                        data.isError = true;
+                    }
+                    break;
+                case DELETE_VIDEO:
+                    try {
+                        snappydb.del(VIDEO_FOR_UPLOAD + data.dateTaken);
+                        Log.w(LOG, "Video deleted. -------------: " + new Date(data.dateTaken));
+                        String[] keys = snappydb.findKeys(VIDEO_FOR_UPLOAD);
+                        Log.e(LOG, "after delete, videos on disk: " + keys.length);
+                    } catch (SnappydbException e) {
+                        data.isError = true;
+                    }
+                    break;
+                case GET_VIDEO_LIST_FOR_UPLOAD:
+                    try {
+                        String[] keys = snappydb.findKeys(VIDEO_FOR_UPLOAD);
+                        for (String key : keys) {
+                            Log.e(LOG, "GET_VIDEO_LIST_FOR_UPLOAD, key: " + key);
+                            VideoUploadDTO dto = snappydb.getObject(key, VideoUploadDTO.class);
+                            data.videoUploadList.add(dto);
+                        }
+                        Log.w(LOG, "Videos Listed from Snappy: " + data.videoUploadList.size());
+
+                    } catch (Exception e) {
+                        data.isError = true;
+                    }
+            }
+            return data;
+        }
+
+        @Override
+        protected void onPostExecute(VideoData data) {
+            if (data.isError) {
+                videoListener.onError();
+                return;
+            }
+            if (videoListener == null) {
+                return;
+            }
+            switch (data.operationType) {
+                case ADD_VIDEO_FOR_UPLOAD:
+                    videoListener.onVideoAdded();
+                    break;
+                case ADD_UPLOADED_VIDEO:
+                    videoListener.onVideoAdded();
+                    break;
+                case DELETE_VIDEO:
+                    videoListener.onVideoDeleted();
+                    break;
+                case GET_VIDEO_LIST_FOR_UPLOAD:
+                    videoListener.onVideosListed(data.videoUploadList);
+                    break;
+                case GET_VIDEO:
+                    data.videoUploadList.add(data.videoUpload);
+                    videoListener.onVideosListed(data.videoUploadList);
+                    break;
+            }
+        }
+    }
+
+    public interface VideoListener {
+        void onVideoAdded();
+
+        void onVideoDeleted();
+
+        void onVideosListed(List<VideoUploadDTO> list);
+
+        void onError();
+    }
+
+    public static final int ADD_VIDEO_FOR_UPLOAD = 1, GET_VIDEO = 2,
+            DELETE_VIDEO = 3, GET_VIDEO_LIST_FOR_UPLOAD = 4, ADD_UPLOADED_VIDEO = 5;
+    public static final String VIDEO_FOR_UPLOAD = "videoForUpload", UPLOADED_VIDEO = "uploadedVideo";
+
+    static class VideoData {
+        VideoUploadDTO videoUpload;
+        List<VideoUploadDTO> videoUploadList = new ArrayList<>();
+        Long dateTaken;
+        int operationType;
+        boolean isError;
     }
 }

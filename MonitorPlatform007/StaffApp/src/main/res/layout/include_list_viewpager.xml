@@ -20,13 +20,6 @@
             android:layout_gravity="top" />
         </android.support.v4.view.ViewPager>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:visibility="gone"
-        android:layout_margin="@dimen/mon_margin"
-        android:src="@drawable/ic_action_refresh" />
+
 
 </android.support.design.widget.CoordinatorLayout>

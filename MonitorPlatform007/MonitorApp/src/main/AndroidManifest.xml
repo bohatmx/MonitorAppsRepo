@@ -34,7 +34,6 @@
         android:allowBackup="true"
         android:icon="@drawable/glasses"
         android:label="@string/app_name"
-        tools:replace="android:icon"
         android:name="com.boha.monitor.library.activities.MonApp"
         android:theme="@style/TealTheme" >
         <!-- Keys and metadata -->

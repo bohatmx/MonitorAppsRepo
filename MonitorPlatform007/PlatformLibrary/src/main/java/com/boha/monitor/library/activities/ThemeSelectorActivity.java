@@ -43,7 +43,8 @@ public class ThemeSelectorActivity extends AppCompatActivity {
         themeDarkColor = getIntent().getIntExtra("darkColor", R.color.teal_900);
         CompanyDTO muni = SharedUtil.getCompany(ctx);
         Util.setCustomActionBar(ctx, getSupportActionBar(),
-                muni.getCompanyName(), "Themes",ContextCompat.getDrawable(ctx, R.drawable.ic_action_globe));
+                muni.getCompanyName(), "Themes",ContextCompat.getDrawable(
+                        ctx, R.drawable.glasses));
         //
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();

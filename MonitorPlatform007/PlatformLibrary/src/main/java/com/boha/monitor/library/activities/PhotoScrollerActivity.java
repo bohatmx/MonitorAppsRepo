@@ -10,12 +10,16 @@ import android.view.MenuItem;
 
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
+import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.fragments.PhotoScrollerFragment;
 import com.boha.monitor.library.util.MenuColorizer;
+import com.boha.monitor.library.util.MonLog;
+import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
+import com.google.api.services.youtube.YouTube;
 
 public class PhotoScrollerActivity extends AppCompatActivity implements PhotoScrollerFragment.PhotoListener {
 
@@ -57,11 +61,17 @@ public class PhotoScrollerActivity extends AppCompatActivity implements PhotoScr
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+
         if (id == R.id.action_share) {
+            if (photoScrollerFragment.getPhoto() != null) {
+                startShare(photoScrollerFragment.getPhoto());
+            }
             return true;
         }
         if (id == R.id.action_mark) {
-            Intent w = new Intent(this, ThemeSelectorActivity.class);
+            if (photoScrollerFragment.getPhoto() != null) {
+                startMark(photoScrollerFragment.getPhoto());
+            }
 
             return true;
         }
@@ -72,6 +82,44 @@ public class PhotoScrollerActivity extends AppCompatActivity implements PhotoScr
         return super.onOptionsItemSelected(item);
     }
 
+    private void startShare(PhotoUploadDTO photo) {
+        //todo - create PhotoShareActivity -
+        MonLog.d(getApplicationContext(),"PhotoScrollerActivity","will share photo in a while ............");
+    }
+    private void startMark(PhotoUploadDTO photo) {
+        PhotoUploadDTO p = new PhotoUploadDTO();
+        p.setPhotoUploadID(photo.getPhotoUploadID());
+        p.setMarked(Boolean.TRUE);
+
+        RequestDTO w = new RequestDTO(RequestDTO.UPDATE_PHOTO);
+        w.setPhotoUpload(p);
+
+        NetUtil.sendRequest(getApplicationContext(), w, new NetUtil.NetUtilListener() {
+            @Override
+            public void onResponse(ResponseDTO response) {
+                MonLog.d(getApplicationContext(),"PhotoScrollerActivity","photo has been updated");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onError(final String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Util.showErrorToast(getApplicationContext(),message);
+                    }
+                });
+
+            }
+        });
+        //https://www.youtube.com/channel/UCWHFm6uRFgfsOaXW31Bx2vg
+
+    }
     @Override
     public void onPhotoClicked(PhotoUploadDTO photo) {
         Log.d(TAG, "onPhotoClicked() called with: " + "photo = [" + photo.getUri() + "]");

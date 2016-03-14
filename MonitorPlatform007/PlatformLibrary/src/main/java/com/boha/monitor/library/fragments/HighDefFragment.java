@@ -128,11 +128,11 @@ public class HighDefFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof PictureListener) {
-//            mListener = (PictureListener) context;
+//        if (context instanceof VideoListener) {
+//            mListener = (VideoListener) context;
 //        } else {
 //            throw new RuntimeException(context.toString()
-//                    + " must implement PictureListener");
+//                    + " must implement VideoListener");
 //        }
     }
 

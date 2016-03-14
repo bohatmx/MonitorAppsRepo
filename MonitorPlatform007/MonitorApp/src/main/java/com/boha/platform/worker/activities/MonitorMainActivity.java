@@ -50,6 +50,7 @@ import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
 import com.boha.monitor.library.dto.StaffDTO;
+import com.boha.monitor.library.dto.VideoUploadDTO;
 import com.boha.monitor.library.fragments.MediaDialogFragment;
 import com.boha.monitor.library.fragments.MessagingFragment;
 import com.boha.monitor.library.fragments.MonitorListFragment;
@@ -61,6 +62,7 @@ import com.boha.monitor.library.fragments.TaskListFragment;
 import com.boha.monitor.library.services.DataRefreshService;
 import com.boha.monitor.library.services.LocationTrackerReceiver;
 import com.boha.monitor.library.services.PhotoUploadService;
+import com.boha.monitor.library.services.YouTubeService;
 import com.boha.monitor.library.util.DepthPageTransformer;
 import com.boha.monitor.library.util.MonLog;
 import com.boha.monitor.library.util.NetUtil;
@@ -118,6 +120,12 @@ public class MonitorMainActivity extends AppCompatActivity
     LocationRequest mLocationRequest;
     boolean mRequestingLocationUpdates;
 
+    LocationRequestedReceiver locationRequestedReceiver;
+    DataRefreshDoneReceiver dataRefreshDoneReceiver;
+    PhotoUploadedReceiver photoUploadedReceiver;
+    BroadcastReceiver broadcastReceiver;
+    YouTubeVideoUploadedReceiver youTubeVideoUploadedReceiver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,33 +159,45 @@ public class MonitorMainActivity extends AppCompatActivity
         //receive notification when DataRefreshService has completed work
         IntentFilter mStatusIntentFilter = new IntentFilter(
                 DataRefreshService.BROADCAST_ACTION);
-        DataRefreshDoneReceiver receiver = new DataRefreshDoneReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver,mStatusIntentFilter);
+        dataRefreshDoneReceiver = new DataRefreshDoneReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                dataRefreshDoneReceiver,mStatusIntentFilter);
 
         //receive notification when LocationTrackerReceiver has received location request
         IntentFilter mStatusIntentFilter2 = new IntentFilter(
                 LocationTrackerReceiver.BROADCAST_ACTION);
-        LocationRequestedReceiver receiver2 = new LocationRequestedReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver2, mStatusIntentFilter2);
+        locationRequestedReceiver = new LocationRequestedReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                locationRequestedReceiver, mStatusIntentFilter2);
 
         //receive notification when PhotoUploadService has uploaded photos
         IntentFilter mStatusIntentFilter3 = new IntentFilter(
                 PhotoUploadService.BROADCAST_ACTION);
-        PhotoUploadedReceiver receiver3 = new PhotoUploadedReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver3,
+        photoUploadedReceiver = new PhotoUploadedReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                photoUploadedReceiver,
                 mStatusIntentFilter3);
 
         //receive notification of Airplane Mode
         IntentFilter intentFilter = new IntentFilter(
                 "android.intent.action.AIRPLANE_MODE");
-        BroadcastReceiver receiver4 = new BroadcastReceiver() {
+        broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.e(LOG, "####### Airplane Mode state changed, intent: " + intent.toString());
                 checkAirplane();
             }
         };
-        registerReceiver(receiver4, intentFilter);
+        registerReceiver(broadcastReceiver, intentFilter);
+
+        //receive notification when YouTubeService has uploaded videos
+        IntentFilter mStatusIntentFilter4 = new IntentFilter(
+                YouTubeService.BROADCAST_VIDEO_UPLOADED);
+        youTubeVideoUploadedReceiver = new YouTubeVideoUploadedReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                youTubeVideoUploadedReceiver,
+                mStatusIntentFilter4);
+
     }
     private void checkAirplane() {
         if (WebCheck.isAirplaneModeOn(ctx)) {
@@ -624,6 +644,11 @@ public class MonitorMainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onVideoPlayListRequired(ProjectDTO project) {
+
+    }
+
+    @Override
     public void onStatusReportRequired(ProjectDTO project) {
 
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
@@ -826,7 +851,7 @@ public class MonitorMainActivity extends AppCompatActivity
 
     List<Integer> monitorList, staffList;
 
-    static final int ACCURACY = 300, MONITOR_PICTURE_REQUESTED = 3412;
+    static final int ACCURACY = 50, MONITOR_PICTURE_REQUESTED = 3412;
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -926,6 +951,18 @@ public class MonitorMainActivity extends AppCompatActivity
 
         mGoogleApiClient.disconnect();
         MonLog.d(ctx, LOG, "------- onStop mGoogleApiClient disconnected");
+        MonLog.w(ctx,LOG,"----------- onStop - Unregister broadcast receivers");
+        try {
+            MonLog.w(ctx, LOG, "----------- onStop - Unregister broadcast receivers");
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(dataRefreshDoneReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(locationRequestedReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(photoUploadedReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(youTubeVideoUploadedReceiver);
+
+        } catch (Exception e) {
+            Log.e(LOG,"Unable to unregister receivers",e);
+        }
     }
 
 
@@ -971,6 +1008,24 @@ public class MonitorMainActivity extends AppCompatActivity
             Log.e(LOG, "Photo has been uploaded OK");
 
         }
+    }
+    // Broadcast receiver for receiving status updates from YouTubeService
+    private class YouTubeVideoUploadedReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            MonLog.e(ctx,LOG, "+++++++ YouTubeVideoUploadedReceiver onReceive, photo uploaded: "
+                    + intent.toString());
+            MonLog.w(ctx,LOG,
+                    "YouTube video has been uploaded OK");
+            VideoUploadDTO v = (VideoUploadDTO)intent.getSerializableExtra("video");
+            showYouTubeVideoUploaded(v.getYouTubeID());
+
+
+        }
+    }
+    private void showYouTubeVideoUploaded(String youTubeID) {
+        Util.showToast(ctx,"YouTube video has been uploaded: " + youTubeID);
     }
 
     SimpleMessageDTO simpleMessage;

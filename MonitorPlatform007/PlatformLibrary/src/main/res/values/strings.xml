@@ -80,5 +80,12 @@
     <string name="refresh">Refresh</string>
     <string name="proj_not_located">Projects have not been located via GPS</string>
     <string name="airplane">The device is in Airplane mode. Please reset if appropriate</string>
+    <string name="airplane_msg">The device is in Airplane mode. Do you want to go to Settings to change this?</string>
+    <string name="title_activity_you_tube">YouTubeActivity</string>
+    <string name="title_activity_test_you_tube">TestYouTubeActivity</string>
+    <string name="title_activity_video_player">VideoPlayerActivity</string>
+    <string name="title_activity_you_tube_player">YouTubePlayerActivity</string>
+    <string name="title_activity_media_recorder">MediaRecorderActivity</string>
+    <string name="title_activity_local_video_player">LocalVideoPlayerActivity</string>
 
 </resources>

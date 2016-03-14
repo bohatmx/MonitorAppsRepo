@@ -158,7 +158,7 @@ public class PhotoUploadService extends IntentService {
                         @Override
                         public void onDataWritten() {
                             Log.w(LOG,"******* PhotoUploadService complete, photos uploaded: " +
-                                    uploadedList.size() + " - Broadcasting successful upload ...");
+                                    uploadedList.size() + " - Broadcasting successful uploadToYouTube ...");
 
                             Intent m = new Intent(BROADCAST_ACTION);
                             m.putExtra(PHOTO_UPLOADED,true);

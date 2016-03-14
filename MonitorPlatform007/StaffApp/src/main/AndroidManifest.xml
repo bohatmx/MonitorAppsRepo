@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.boha.monitor.supervisor" >
+    package="com.boha.monitor.supervisor">
 
-    <!-- PROD API KEY:   AIzaSyDLKxbwrZO0kvsUWARNsm598QHXu0_ATX4
- -->
-    <!-- DEBUG API KEY:  AIzaSyBncjb7-oqexK0fKJdfy365tVJUNLkxRkE
- -->
+    <!--  PROD API KEY:   AIzaSyDLKxbwrZO0kvsUWARNsm598QHXu0_ATX4 -->
+    <!--  DEBUG API KEY:  AIzaSyBncjb7-oqexK0fKJdfy365tVJUNLkxRkE -->
 
 
     <!-- PERMISSIONS -->
@@ -23,17 +20,18 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <uses-feature android:name="android.hardware.camera"
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="true" />
+
     <application
         android:name="com.boha.monitor.library.activities.MonApp"
         android:allowBackup="true"
         android:icon="@drawable/glasses"
         android:label="@string/app_name"
-        tools:replace="android:icon"
-        android:theme="@style/BrownTheme" >
+        android:theme="@style/BrownTheme">
 
         <!-- Keys and metadata -->
         <meta-data
@@ -48,7 +46,7 @@
 
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
@@ -58,15 +56,15 @@
         </receiver>
 
         <service
-            android:name="com.boha.monitor.supervisor.services.StaffGCMListenerService"
-            android:exported="false" >
+            android:name=".services.StaffGCMListenerService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
         <service
             android:name="com.boha.monitor.library.services.MonInstanceIDListenerService"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
@@ -74,9 +72,9 @@
 
         <!-- ACTIVITIES -->
         <activity
-            android:name="com.boha.monitor.supervisor.activities.SignInActivity"
+            android:name=".activities.SignInActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -84,43 +82,41 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.boha.monitor.supervisor.activities.StaffMainActivity"
+            android:name=".activities.StaffMainActivity"
             android:label="@string/title_activity_staff_drawer"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
         <activity
             android:name="com.boha.monitor.library.activities.TaskListActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:parentActivityName="com.boha.monitor.supervisor.activities.StaffMainActivity" />
-        <activity android:name="com.boha.monitor.library.activities.UpdateActivity"
-            android:screenOrientation="portrait"/>
+            android:parentActivityName=".activities.StaffMainActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name="com.boha.monitor.library.activities.UpdateActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.boha.monitor.library.activities.ThemeSelectorActivity"
-            android:parentActivityName="com.boha.monitor.supervisor.activities.StaffMainActivity" />
+            android:parentActivityName=".activities.StaffMainActivity" />
         <activity
             android:name="com.boha.monitor.library.activities.PictureActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName="com.boha.monitor.supervisor.activities.StaffMainActivity" />
+            android:parentActivityName=".activities.StaffMainActivity"
+            android:screenOrientation="portrait" />
         <activity android:name="com.boha.monitor.library.activities.PhotoListActivity" />
         <activity
             android:name="com.boha.monitor.library.activities.GPSActivity"
-            android:parentActivityName="com.boha.monitor.supervisor.activities.StaffMainActivity" />
+            android:parentActivityName=".activities.StaffMainActivity" />
         <activity
             android:name="com.boha.monitor.library.activities.StatusReportActivity"
-            android:parentActivityName="com.boha.monitor.supervisor.activities.StaffMainActivity" />
+            android:parentActivityName=".activities.StaffMainActivity" />
         <activity
             android:name="com.boha.monitor.library.activities.ProjectMapActivity"
-            android:parentActivityName="com.boha.monitor.supervisor.activities.StaffMainActivity" />
+            android:parentActivityName=".activities.StaffMainActivity" />
         <activity
             android:name="com.boha.monitor.library.activities.MonitorMapActivity"
-            android:parentActivityName="com.boha.monitor.supervisor.activities.StaffMainActivity" />
+            android:parentActivityName=".activities.StaffMainActivity" />
         <activity
             android:name="com.boha.monitor.library.activities.VideoActivity"
-            android:parentActivityName="com.boha.monitor.supervisor.activities.StaffMainActivity" />
-        <activity
-            android:name="com.boha.monitor.library.activities.ProfilePhotoActivity"
-            android:parentActivityName="com.boha.monitor.supervisor.activities.StaffMainActivity" />
+            android:parentActivityName=".activities.StaffMainActivity" />
+
     </application>
 
 </manifest>

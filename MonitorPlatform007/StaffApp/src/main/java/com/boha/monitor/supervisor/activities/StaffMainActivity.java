@@ -36,7 +36,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -54,7 +53,7 @@ import com.boha.monitor.library.activities.StatusReportActivity;
 import com.boha.monitor.library.activities.TaskListActivity;
 import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.activities.UpdateActivity;
-import com.boha.monitor.library.activities.VideoActivity;
+import com.boha.monitor.library.activities.YouTubeActivity;
 import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
@@ -67,17 +66,20 @@ import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.SimpleMessageDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.dto.StaffProjectDTO;
+import com.boha.monitor.library.dto.VideoUploadDTO;
 import com.boha.monitor.library.fragments.MediaDialogFragment;
 import com.boha.monitor.library.fragments.MonitorListFragment;
-import com.boha.monitor.library.fragments.ProfileFragment;
 import com.boha.monitor.library.fragments.PageFragment;
+import com.boha.monitor.library.fragments.ProfileFragment;
 import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.fragments.ProjectTaskFragment;
 import com.boha.monitor.library.fragments.StaffListFragment;
 import com.boha.monitor.library.fragments.TaskListFragment;
 import com.boha.monitor.library.services.DataRefreshService;
 import com.boha.monitor.library.services.LocationTrackerReceiver;
+import com.boha.monitor.library.services.MonTaskService;
 import com.boha.monitor.library.services.PhotoUploadService;
+import com.boha.monitor.library.services.YouTubeService;
 import com.boha.monitor.library.util.DepthPageTransformer;
 import com.boha.monitor.library.util.MonLog;
 import com.boha.monitor.library.util.NetUtil;
@@ -89,6 +91,9 @@ import com.boha.monitor.library.util.WebCheck;
 import com.boha.monitor.supervisor.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.gcm.GcmNetworkManager;
+import com.google.android.gms.gcm.OneoffTask;
+import com.google.android.gms.gcm.Task;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -99,7 +104,6 @@ import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import hugo.weaving.DebugLog;
 
 /**
  * This class is the main activity that receives control from
@@ -126,6 +130,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     ProjectListFragment projectListFragment;
     ActionBar actionBar;
     Location mLocation;
+static final String TASK_TAG_WIFI = "taskTagWIFI";
 
     @Override
     public void onResume() {
@@ -139,7 +144,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         buildPages();
 
     }
-
+    GcmNetworkManager mGcmNetworkManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ctx = getApplicationContext();
@@ -156,7 +161,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_staff_main);
 
         setFields();
-
+        mGcmNetworkManager = GcmNetworkManager.getInstance(this);
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -169,13 +174,22 @@ public class StaffMainActivity extends AppCompatActivity implements
         setBroadcastReceivers();
         checkAirplane();
 
+        OneoffTask task = new OneoffTask.Builder()
+                .setService(MonTaskService.class)
+                .setTag(TASK_TAG_WIFI)
+                .setExecutionWindow(0L, 3600L)
+                .setRequiredNetwork(Task.NETWORK_STATE_UNMETERED)
+                .build();
+
+        mGcmNetworkManager.schedule(task);
+
 
     }
     private void checkAirplane() {
         if (WebCheck.isAirplaneModeOn(ctx)) {
             AlertDialog.Builder dg = new AlertDialog.Builder(this);
             dg.setTitle("Airplane Mode")
-                    .setMessage("The device is in Airplane mode. Do you want to go to Settings to change this?")
+                    .setMessage(R.string.airplane_msg)
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -198,34 +212,53 @@ public class StaffMainActivity extends AppCompatActivity implements
         //receive notification when DataRefreshService has completed work
         IntentFilter mStatusIntentFilter = new IntentFilter(
                 DataRefreshService.BROADCAST_ACTION);
-        DataRefreshDoneReceiver receiver = new DataRefreshDoneReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver,mStatusIntentFilter);
+        dataRefreshDoneReceiver = new DataRefreshDoneReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                dataRefreshDoneReceiver,mStatusIntentFilter);
 
         //receive notification when LocationTrackerReceiver has received location request
         IntentFilter mStatusIntentFilter2 = new IntentFilter(
                 LocationTrackerReceiver.BROADCAST_ACTION);
-        LocationRequestedReceiver receiver2 = new LocationRequestedReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver2, mStatusIntentFilter2);
+        locationRequestedReceiver = new LocationRequestedReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                locationRequestedReceiver, mStatusIntentFilter2);
 
         //receive notification when PhotoUploadService has uploaded photos
         IntentFilter mStatusIntentFilter3 = new IntentFilter(
                 PhotoUploadService.BROADCAST_ACTION);
-        PhotoUploadedReceiver receiver3 = new PhotoUploadedReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver3,
+        photoUploadedReceiver = new PhotoUploadedReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                photoUploadedReceiver,
                 mStatusIntentFilter3);
 
-        //receive notification of Airplane Mode
-        IntentFilter intentFilter = new IntentFilter(
-                "android.intent.action.AIRPLANE_MODE");
-        BroadcastReceiver receiver4 = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.e(LOG, "####### Airplane Mode state changed, intent: " + intent.toString());
-                checkAirplane();
-            }
-        };
-        registerReceiver(receiver4, intentFilter);
+        //receive notification when YouTubeService has uploaded videos
+        IntentFilter mStatusIntentFilter4 = new IntentFilter(
+                YouTubeService.BROADCAST_VIDEO_UPLOADED);
+        youTubeVideoUploadedReceiver = new YouTubeVideoUploadedReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                youTubeVideoUploadedReceiver,
+                mStatusIntentFilter4);
+
+//        //receive notification of Airplane Mode
+//        IntentFilter intentFilter = new IntentFilter(
+//                "android.intent.action.AIRPLANE_MODE");
+//        broadcastReceiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                Log.e(LOG, "####### Airplane Mode state changed, intent: " + intent.toString());
+//                checkAirplane();
+//            }
+//        };
+//
+//        registerReceiver(broadcastReceiver, intentFilter);
+
     }
+
+    LocationRequestedReceiver locationRequestedReceiver;
+    DataRefreshDoneReceiver dataRefreshDoneReceiver;
+    PhotoUploadedReceiver photoUploadedReceiver;
+//    BroadcastReceiver broadcastReceiver;
+    YouTubeVideoUploadedReceiver youTubeVideoUploadedReceiver;
 
     CircleImageView circleImage;
     StaffDTO staff;
@@ -403,56 +436,8 @@ public class StaffMainActivity extends AppCompatActivity implements
         }
         return list;
     }
-//
-//    @DebugLog
-//    private void getCache() {
-//        Snackbar.make(mPager, "Refreshing your data, this may take a minute or two ...", Snackbar.LENGTH_LONG).show();
-//        setBusy(true);
-//
-//        if (response == null) {
-//            response = new ResponseDTO();
-//        }
-//        Snappy.getProjectList(ctx, new Snappy.SnappyReadListener() {
-//            @Override
-//            public void onDataRead(ResponseDTO r) {
-//                response.setProjectList(r.getProjectList());
-//                Snappy.getStaffList(ctx, new Snappy.SnappyReadListener() {
-//                    @Override
-//                    public void onDataRead(ResponseDTO r) {
-//                        response.setStaffList(r.getStaffList());
-//                        Snappy.getMonitorList(ctx, new Snappy.SnappyReadListener() {
-//                            @Override
-//                            public void onDataRead(ResponseDTO r) {
-//                                response.setTaskStatusTypeList(r.getTaskStatusTypeList());
-//                                MonLog.e(ctx,LOG, "Yebo!! we got da data");
-//                                buildPages();
-//                            }
-//
-//                            @Override
-//                            public void onError(String message) {
-//
-//                            }
-//                        });
-//                    }
-//
-//                    @Override
-//                    public void onError(String message) {
-//
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onError(String message) {
-//
-//            }
-//        });
-//
-//
-//
-//    }
 
-    @DebugLog
+    
     private void getRemoteStaffData(boolean showBusy) {
         RequestDTO w = new RequestDTO(RequestDTO.GET_STAFF_DATA);
         w.setStaffID(SharedUtil.getCompanyStaff(ctx).getStaffID());
@@ -466,7 +451,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         startService(m);
     }
 
-    @DebugLog
+    
     private void buildPages() {
         runOnUiThread(new Runnable() {
             @Override
@@ -530,7 +515,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
     }
 
-    @DebugLog
+    
     protected void startLocationUpdates() {
         MonLog.d(ctx,LOG, "### startLocationUpdates ....");
         if (googleApiClient.isConnected()) {
@@ -545,7 +530,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         }
     }
 
-    @DebugLog
+    
     protected void stopLocationUpdates() {
 
         if (googleApiClient.isConnected()) {
@@ -638,7 +623,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     }
 
     @Override
-    @DebugLog
+    
     public void onStart() {
         MonLog.d(ctx,LOG,
                 "## onStart - GoogleApiClient connecting ... ");
@@ -650,18 +635,28 @@ public class StaffMainActivity extends AppCompatActivity implements
     }
 
     @Override
-    @DebugLog
+    
     public void onStop() {
         super.onStop();
         if (googleApiClient != null) {
             googleApiClient.disconnect();
             MonLog.e(ctx,LOG, "### onStop - locationClient disconnecting ");
         }
+        try {
+            MonLog.w(ctx, LOG, "----------- onStop - Unregister broadcast receivers");
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(dataRefreshDoneReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(locationRequestedReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(photoUploadedReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(youTubeVideoUploadedReceiver);
+
+        } catch (Exception e) {
+            Log.e(LOG,"Unable to unregister receivers",e);
+        }
 
     }
 
     @Override
-    @DebugLog
+    
     public void onConnected(Bundle bundle) {
         MonLog.e(ctx,LOG,
                 "+++  GoogleApiClient onConnected() ...");
@@ -836,7 +831,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     boolean trackUploadBusy;
     private void submitRegularTrack() {
         if (trackUploadBusy) {
-            MonLog.e(ctx,LOG,"Tracker upload is busy ........");
+            MonLog.e(ctx,LOG,"Tracker uploadToYouTube is busy ........");
             return;
         }
         trackUploadBusy = true;
@@ -889,7 +884,7 @@ public class StaffMainActivity extends AppCompatActivity implements
 
 
     @Override
-    @DebugLog
+    
     public void onActivityResult(int reqCode, final int resCode, Intent data) {
         MonLog.d(ctx,LOG, "onActivityResult reqCode " + reqCode + " resCode " + resCode);
         switch (reqCode) {
@@ -1006,10 +1001,19 @@ public class StaffMainActivity extends AppCompatActivity implements
             case REQUEST_CAMERA:
                 if (resCode == RESULT_OK) {
                     ResponseDTO photos = (ResponseDTO) data.getSerializableExtra("photos");
-                    MonLog.w(ctx,LOG,"onActivityResult Photos taken: " + photos.getPhotoUploadList().size());
+                    MonLog.w(ctx,LOG,"onActivityResult, Photos taken: " + photos.getPhotoUploadList().size());
                     startLocationUpdates();
                 } else {
                     MonLog.e(ctx,LOG,"onActivityResult, no photo taken");
+                }
+                break;
+            case REQUEST_VIDEO:
+                if (resCode == RESULT_OK) {
+                    boolean videoTaken = data.getBooleanExtra("videoTaken",false);
+                    MonLog.w(ctx,LOG,"onActivityResult, Video taken: " + videoTaken);
+                    startLocationUpdates();
+                } else {
+                    MonLog.e(ctx,LOG,"onActivityResult, no video taken");
                 }
                 break;
             //REQUEST_STATUS_UPDATE
@@ -1130,7 +1134,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     ProjectDTO selectedProject;
 
     @Override
-    @DebugLog
+    
     public void onCameraRequired(final ProjectDTO project) {
         selectedProject = project;
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
@@ -1139,7 +1143,7 @@ public class StaffMainActivity extends AppCompatActivity implements
         mdf.setListener(new MediaDialogFragment.MediaDialogListener() {
             @Override
             public void onVideoSelected() {
-                Intent w = new Intent(getApplicationContext(), VideoActivity.class);
+                Intent w = new Intent(getApplicationContext(), YouTubeActivity.class);
                 w.putExtra("project", project);
                 startActivityForResult(w, REQUEST_VIDEO);
             }
@@ -1158,7 +1162,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     }
 
     @Override
-    @DebugLog
+    
     public void onStatusUpdateRequired(ProjectDTO project) {
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
         selectedProject = project;
@@ -1172,7 +1176,7 @@ public class StaffMainActivity extends AppCompatActivity implements
     Activity activity;
 
     @Override
-    @DebugLog
+    
     public void onLocationRequired(final ProjectDTO project) {
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
         selectedProject = project;
@@ -1265,6 +1269,11 @@ public class StaffMainActivity extends AppCompatActivity implements
         Intent w = new Intent(this, PhotoListActivity.class);
         w.putExtra("project", project);
         startActivity(w);
+    }
+
+    @Override
+    public void onVideoPlayListRequired(ProjectDTO project) {
+
     }
 
     @Override
@@ -1375,9 +1384,28 @@ public class StaffMainActivity extends AppCompatActivity implements
 
         }
     }
+    // Broadcast receiver for receiving status updates from YouTubeService
+    private class YouTubeVideoUploadedReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            MonLog.e(ctx,LOG, "+++++++ YouTubeVideoUploadedReceiver onReceive, photo uploaded: "
+                    + intent.toString());
+            VideoUploadDTO v = (VideoUploadDTO)intent.getSerializableExtra("video");
+            MonLog.w(ctx,LOG,
+                    "YouTube video has been uploaded OK, youTubeID: " + v.getYouTubeID());
+
+            showYouTubeVideoUploaded(v.getYouTubeID());
+
+
+        }
+    }
+    private void showYouTubeVideoUploaded(String youTubeID) {
+        Util.showToast(ctx,"YouTube video has been uploaded: " + youTubeID);
+    }
     SimpleMessageDTO simpleMessage;
     static final String LOG = StaffMainActivity.class.getSimpleName();
-    static final int ACCURACY_THRESHOLD = 300;
+    static final int ACCURACY_THRESHOLD = 50;
     private DrawerLayout mDrawerLayout;
     StaffPagerAdapter adapter;
     Context ctx;

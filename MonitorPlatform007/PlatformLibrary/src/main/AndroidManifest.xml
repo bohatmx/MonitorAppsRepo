@@ -3,7 +3,11 @@
     package="com.boha.platform.library">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:allowBackup="true"
@@ -13,11 +17,20 @@
         <service android:name="com.boha.monitor.library.services.GPSLocationService" />
         <service android:name="com.boha.monitor.library.services.PhotoUploadService" />
         <service android:name="com.boha.monitor.library.services.VideoUploadService" />
+        <service android:name="com.boha.monitor.library.services.YouTubeService" />
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
         <service
             android:name="com.google.android.gms.analytics.AnalyticsService"
             android:enabled="true"
             android:exported="false" />
+        <service
+            android:name="com.boha.monitor.library.services.MonTaskService"
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+            <intent-filter>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+            </intent-filter>
+        </service>
 
         <!-- RECEIVERS -->
         <receiver android:name="com.boha.monitor.library.services.LocationTrackerReceiver" />
@@ -26,9 +39,10 @@
         <receiver android:name="com.boha.monitor.library.services.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
-            </receiver>
+        </receiver>
         <receiver
             android:name="com.google.android.gms.analytics.AnalyticsReceiver"
             android:enabled="true">
@@ -50,11 +64,6 @@
         <activity
             android:name="com.boha.monitor.library.activities.LocationTrackerListActivity"
             android:label="@string/title_activity_location_tracker" />
-
-        <service
-            android:name="com.boha.monitor.library.services.CachingService"
-            android:exported="false" />
-
         <activity
             android:name="com.boha.monitor.library.activities.ProfileActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
@@ -64,6 +73,9 @@
         <activity
             android:name="com.boha.monitor.library.activities.HighDefActivity"
             android:label="@string/title_activity_high_def" />
+        <activity
+            android:name="com.boha.monitor.library.activities.CameraActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name="com.boha.monitor.library.activities.ProjectSelectionActivity"
             android:label="@string/title_activity_project_selection"
@@ -93,7 +105,26 @@
         <receiver
             android:name="com.boha.monitor.library.services.GeofenceBroadcastReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
+
+        <activity
+            android:name="com.boha.monitor.library.activities.YouTubeActivity"
+            android:label="@string/title_activity_test_you_tube" />
+        <activity
+            android:name="com.boha.monitor.library.activities.VideoPlayerActivity"
+            android:label="@string/title_activity_video_player" />
+        <activity
+            android:name="com.boha.monitor.library.activities.YouTubePlayerActivity"
+            android:label="@string/title_activity_you_tube_player" />
+
+        <receiver
+            android:name="com.boha.monitor.library.services.YouTubeUploadReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity
+            android:name="com.boha.monitor.library.activities.LocalVideoPlayerActivity"
+            android:label="@string/title_activity_local_video_player"></activity>
     </application>
 
 </manifest>

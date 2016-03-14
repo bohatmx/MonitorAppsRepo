@@ -12,6 +12,7 @@
     <style name="BlueThemeTwo" parent="MonTheme">
         <item name="colorPrimary">@color/blue_700</item>
         <item name="colorPrimaryDark">@color/blue_900</item>
+
     </style>
 
     <style name="BlueGrayTheme" parent="MonTheme">
@@ -608,5 +609,10 @@
     </style>
 
     <style name="day_of_week_label_condensed" />
+    <style name="Theme.AppCompat.Light.NoActionBar" parent="@style/Theme.AppCompat.Light">
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item> <!-- For 2.x version  -->
+    </style>
+
 
 </resources>

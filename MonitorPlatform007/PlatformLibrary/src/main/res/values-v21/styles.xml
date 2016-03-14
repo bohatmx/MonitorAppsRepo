@@ -36,12 +36,13 @@
     <style name="RedTheme" parent="MonTheme">
         <item name="colorPrimary">@color/red_800</item>
         <item name="colorPrimaryDark">@color/red_900</item>
+        <item name="android:colorAccent">@color/blue_500</item>
     </style>
 
     <style name="TealTheme" parent="MonTheme">
         <item name="colorPrimary">@color/teal_800</item>
         <item name="colorPrimaryDark">@color/teal_900</item>
-        <item name="colorAccent">@color/blue_800</item>
+        <item name="colorAccent">@color/red_500</item>
     </style>
 
     <style name="PinkTheme" parent="MonTheme">
@@ -53,7 +54,7 @@
     <style name="IndigoTheme" parent="MonTheme">
         <item name="colorPrimary">@color/indigo_500</item>
         <item name="colorPrimaryDark">@color/indigo_700</item>
-        <item name="colorAccent">@color/red_600</item>
+        <item name="colorAccent">@color/purple_500</item>
     </style>
 
     <style name="CyanTheme" parent="MonTheme">
@@ -66,7 +67,7 @@
         <item name="android:windowTitleStyle">@style/smallWhiteText</item>
         <item name="colorPrimary">@color/orange_800</item>
         <item name="colorPrimaryDark">@color/orange_900</item>
-        <item name="colorAccent">@color/red_600</item>
+        <item name="colorAccent">@color/blue_500</item>
     </style>
 
     <style name="LimeTheme" parent="MonTheme">
@@ -84,7 +85,7 @@
     <style name="AmberTheme" parent="MonTheme">
         <item name="colorPrimary">@color/amber_500</item>
         <item name="colorPrimaryDark">@color/amber_900</item>
-        <item name="colorAccent">@color/red_600</item>
+        <item name="colorAccent">@color/blue_500</item>
     </style>
 
     <style name="GreyTheme" parent="MonTheme">
@@ -104,13 +105,14 @@
     <style name="GreenTheme" parent="MonTheme">
         <item name="colorPrimary">@color/green_800</item>
         <item name="colorPrimaryDark">@color/green_900</item>
-        <item name="colorAccent">@color/blue_800</item>
+        <item name="colorAccent">@color/purple_500</item>
     </style>
 
     <style name="BrownTheme" parent="MonTheme">
         <item name="colorPrimary">@color/brown_500</item>
         <item name="colorPrimaryDark">@color/brown_800</item>
         <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <item name="colorAccent">@color/amber_600</item>
     </style>
 
 

@@ -19,7 +19,6 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/NAVHEADER_logo"
         android:src="@drawable/boy"
-        android:tint="@color/white"
         android:scaleType="centerCrop"
         android:layout_centerHorizontal="true"
         android:layout_margin="@dimen/mon_margin"

@@ -17,11 +17,12 @@ import java.util.List;
  */
 public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
     private List<PhotoUploadDTO> photoUploadList;
+    private List<VideoUploadDTO> videoUploadList;
     private static final long serialVersionUID = 1L;
     private Integer projectID, cityID,companyID;
     private Integer programmeID, portfolioID,
             statusCount = 0, photoCount = 0, projectTaskCount = 0,
-            monitorCount = 0, staffCount = 0;
+            monitorCount = 0, staffCount = 0, videoCount = 0;
     private String projectName;
     private Double latitude;
     private Double longitude;
@@ -41,6 +42,22 @@ public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
     private Long dateUploaded;
 
     public ProjectDTO() {
+    }
+
+    public List<VideoUploadDTO> getVideoUploadList() {
+        return videoUploadList;
+    }
+
+    public void setVideoUploadList(List<VideoUploadDTO> videoUploadList) {
+        this.videoUploadList = videoUploadList;
+    }
+
+    public Integer getVideoCount() {
+        return videoCount;
+    }
+
+    public void setVideoCount(Integer videoCount) {
+        this.videoCount = videoCount;
     }
 
     public Long getDateUploaded() {

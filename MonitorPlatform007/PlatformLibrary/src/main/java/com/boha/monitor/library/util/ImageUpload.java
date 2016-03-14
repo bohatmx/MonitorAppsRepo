@@ -43,7 +43,7 @@ public class ImageUpload {
         if (WebCheck.checkNetworkAvailability(ctx).isNetworkUnavailable()) {
             return;
         }
-		Log.i(LOGTAG, "....starting image upload");
+		Log.i(LOGTAG, "....starting image uploadToYouTube");
 		new ImageUploadTask().execute();
 	}
 
@@ -66,7 +66,7 @@ public class ImageUpload {
 				}
 				HttpClient httpclient = new DefaultHttpClient();
 				HttpPost httppost = new HttpPost(Statics.URL + "photo");
-				Log.d(LOGTAG, "-------->>> sending image upload to " + Statics.URL + "photo");
+				Log.d(LOGTAG, "-------->>> sending image uploadToYouTube to " + Statics.URL + "photo");
 
 				Gson gson = new Gson();
 				String json = gson.toJson(photoUpload);
@@ -93,7 +93,7 @@ public class ImageUpload {
 				}
 				responseJSON = new String(bab.toByteArray());
 				if (responseJSON != null) {
-					Log.w(LOGTAG, "Response from upload:\n" + responseJSON);
+					Log.w(LOGTAG, "Response from uploadToYouTube:\n" + responseJSON);
 					response = gson.fromJson(responseJSON, ResponseDTO.class);
 				}
 
@@ -114,7 +114,7 @@ public class ImageUpload {
 
 		@Override
 		protected void onPostExecute(Integer result) {
-			Log.i(LOGTAG, "onPostExecute...........ending image upload");
+			Log.i(LOGTAG, "onPostExecute...........ending image uploadToYouTube");
 			if (result > 0) {
 				imageUploadListener.onUploadError();
 				return;

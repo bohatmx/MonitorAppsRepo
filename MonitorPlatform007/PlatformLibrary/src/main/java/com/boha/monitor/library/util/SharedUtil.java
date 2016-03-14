@@ -41,6 +41,7 @@ public class SharedUtil {
             CREDIT_CARD = "credCard",
             TRACK = "track",
             PHOTO = "photo",
+            AUTH_TOKEN = "token",
             LOG = "SharedUtil",
             REMINDER_TIME = "reminderTime",
             APP_VERSION = "appVersion";
@@ -418,5 +419,24 @@ public class SharedUtil {
         }
 
         return track;
+    }
+
+
+    public static void saveAuthToken(Context ctx, String token) {
+
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putString(AUTH_TOKEN, token);
+        ed.commit();
+        Log.e("SharedUtil", "%%%%% auth-token: " + token + " saved in SharedPreferences");
+    }
+
+    public static String getAuthToken(Context ctx) {
+
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        String id = sp.getString(AUTH_TOKEN, null);
+        return id;
     }
 }

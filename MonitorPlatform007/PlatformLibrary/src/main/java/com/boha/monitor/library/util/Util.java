@@ -7,6 +7,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -47,10 +48,8 @@ import android.widget.ListPopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.PopupListAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
-import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.platform.library.R;
 import com.google.gson.Gson;
@@ -88,6 +87,26 @@ public class Util {
         void onCachingComplete();
         void onError(String message);
     }
+    public static Uri getVideoContentUri(Context context, String absPath) {
+        Cursor cursor = context.getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                , new String[] { MediaStore.Video.Media._ID }
+                , MediaStore.Video.Media.DATA + "=? "
+                , new String[] { absPath }, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+            return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI , Integer.toString(id));
+
+        } else if (!absPath.isEmpty()) {
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.DATA, absPath);
+            return context.getContentResolver().insert(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        } else {
+            return null;
+        }
+    }
 
     @SuppressLint("NewApi")
     public static String getRealPathFromURI_API19(Context context, Uri uri) {
@@ -102,7 +121,8 @@ public class Util {
         // where id is equal to
         String sel = MediaStore.Images.Media._ID + "=?";
 
-        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+        Cursor cursor = context.getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 column, sel, new String[]{id}, null);
 
         int columnIndex = cursor.getColumnIndex(column[0]);
@@ -1911,7 +1931,7 @@ public class Util {
         c.set(Calendar.MINUTE, minute);
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
-        Log.d("Util", "Reset date: " + getLongDateTimeNoSeconds(c.getTime()));
+        Log.d("Util", "Reset subTitle: " + getLongDateTimeNoSeconds(c.getTime()));
         return c;
     }
 
@@ -2371,4 +2391,5 @@ public class Util {
 
         return drawable;
     }
+
 }

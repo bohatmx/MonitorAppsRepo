@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Fragment that manages a grid of PhotoUploadDTO
  * List of photos are received from calling Activity which
- * must implement PhotoAdapter.PictureListener
+ * must implement PhotoAdapter.VideoListener
  */
 public class PhotoGridFragment extends Fragment implements PageFragment {
 
@@ -62,6 +62,8 @@ public class PhotoGridFragment extends Fragment implements PageFragment {
         Log.d(LOG, "### onCreateView");
         view = inflater.inflate(R.layout.fragment_photo_grid, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
+
+        //check for screen width
         StaggeredGridLayoutManager x = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.addItemDecoration(new SpacesItemDecoration(1));
         mRecyclerView.setLayoutManager(x);
@@ -91,7 +93,7 @@ public class PhotoGridFragment extends Fragment implements PageFragment {
             mListener = (PhotoAdapter.PictureListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement PhotoAdapter.PictureListener");
+                    + " must implement PhotoAdapter.VideoListener");
         }
     }
 

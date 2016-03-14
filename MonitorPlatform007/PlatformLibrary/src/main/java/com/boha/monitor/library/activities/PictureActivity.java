@@ -68,7 +68,7 @@ import java.util.List;
 
 /**
  * Manages picture taking - starts onboard camera app and caches
- * the resultant image. Invokes a service to upload the image to cloudinary CDN
+ * the resultant image. Invokes a service to uploadToYouTube the image to cloudinary CDN
  * <p/>
  * Created by aubreyM on 2014/04/21.
  */
@@ -579,7 +579,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
         i.putExtra("pictureTakenOK", pictureTakenOK);
 
         if (pictureTakenOK) {
-            Log.d(LOG, "onBackPressed ... picture cached and scheduled for upload");
+            Log.d(LOG, "onBackPressed ... picture cached and scheduled for uploadToYouTube");
             ResponseDTO resp = new ResponseDTO();
             resp.setPhotoUploadList(photoUploadList);
             i.putExtra("photos", resp);

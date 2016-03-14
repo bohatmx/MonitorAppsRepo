@@ -1,6 +1,7 @@
 package com.boha.monitor.library.util;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.boha.monitor.library.dto.PhotoUploadDTO;
@@ -16,8 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class manages the image upload to the Cloudinary CDN.
- * The upload runs in a Thread and returns its response via CDNUploaderListener
+ * This class manages the image uploadToYouTube to the Cloudinary CDN.
+ * The uploadToYouTube runs in a Thread and returns its response via CDNUploaderListener
  * <p/>
  * Created by aubreyM on 15/06/08.
  */
@@ -30,6 +31,7 @@ public class CDNUploader {
 
     static CDNUploaderListener mListener;
     static final String LOG = CDNUploader.class.getSimpleName();
+    static Context ctx;
     public static final String
             API_KEY = "397571984789619",
             API_SECRET = "2RBq1clEHC5X_0eQlNP-K3yhA8U",
@@ -48,80 +50,82 @@ public class CDNUploader {
      * Upload photo to CDN (Cloudinary at this time). On return of the CDN response, a call is made
      * to the backend to add the metadata of the photo to the backend database
      *
-     * @param ctx
+     * @param context
      * @param dto
      * @param uploaderListener
      * @see PhotoUploadDTO
      * @see com.boha.monitor.library.util.CDNUploader.CDNUploaderListener
      */
-    public static void uploadFile(final Context ctx, final PhotoUploadDTO dto, CDNUploaderListener uploaderListener) {
+    public static void uploadFile(final Context context, final PhotoUploadDTO dto, CDNUploaderListener uploaderListener) {
         mListener = uploaderListener;
+        ctx = context;
         Log.d(LOG, "##### starting CDNUploader uploadFile: " + dto.getThumbFilePath());
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final long start = System.currentTimeMillis();
-                Map config = new HashMap();
-                config.put("cloud_name", CLOUD_NAME);
-                config.put("api_key", API_KEY);
-                config.put("api_secret", API_SECRET);
+        new CDNTask().execute(dto);
+    }
 
-                Cloudinary cloudinary = new Cloudinary(config);
-                File file = new File(dto.getThumbFilePath());
-                Map map;
+    static class CDNTask extends AsyncTask<PhotoUploadDTO, Void, PhotoUploadDTO> {
+
+        @Override
+        protected PhotoUploadDTO doInBackground(PhotoUploadDTO... params) {
+            final PhotoUploadDTO dto = params[0];
+            final long start = System.currentTimeMillis();
+            Map config = new HashMap();
+            config.put("cloud_name", CLOUD_NAME);
+            config.put("api_key", API_KEY);
+            config.put("api_secret", API_SECRET);
+
+            Cloudinary cloudinary = new Cloudinary(config);
+            File file = new File(dto.getThumbFilePath());
+            Map map;
+            try {
+                map = cloudinary.uploader().upload(file, config);
+                long end = System.currentTimeMillis();
+                Log.i(LOG, "----> photo uploaded: " + map.get("url") + " elapsed: "
+                        + Util.getElapsed(start, end) + " seconds");
+
+                dto.setUri((String) map.get("url"));
+                dto.setSecureUrl((String) map.get("secure_url"));
+                dto.setHeight((int) map.get("height"));
+                dto.setWidth((int) map.get("width"));
+                dto.setBytes((int) map.get("bytes"));
+                dto.setDateUploaded(new Date().getTime());
+
+            } catch (Exception e) {
+                Log.e(LOG, "CDN uploadToYouTube Failed", e);
                 try {
-                    map = cloudinary.uploader().upload(file, config);
-                    if (map != null) {
-                        long end = System.currentTimeMillis();
-                        Log.i(LOG, "----> photo uploaded: " + map.get("url") + " elapsed: "
-                                + Util.getElapsed(start, end) + " seconds");
+                    ACRA.getErrorReporter().handleException(e, false);
+                } catch (Exception ex) {//ignore}
+                }
+                return null;
+            }
+            return dto;
+        }
 
-                        dto.setUri((String) map.get("url"));
-                        dto.setSecureUrl((String) map.get("secure_url"));
-                        dto.setHeight((int) map.get("height"));
-                        dto.setWidth((int) map.get("width"));
-                        dto.setBytes((int) map.get("bytes"));
-                        dto.setDateUploaded(new Date().getTime());
+        @Override
+        protected void onPostExecute(final PhotoUploadDTO dto) {
+            if (dto == null) {
+                mListener.onError("Error uploading image to CDN");
+                return;
+            }
+            RequestDTO w = new RequestDTO(RequestDTO.ADD_PHOTO);
+            w.setPhotoUpload(dto);
 
-                        RequestDTO w = new RequestDTO(RequestDTO.ADD_PHOTO);
-                        w.setPhotoUpload(dto);
+            NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
+                @Override
+                public void onResponse(ResponseDTO response) {
+                    Log.i(LOG, "#### photo metadata sent to server");
+                    mListener.onFileUploaded(dto);
+                }
 
-                        NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
-                            @Override
-                            public void onResponse(ResponseDTO response) {
-                                Log.i(LOG, "#### photo metadata sent to server");
-                                if (response.getStatusCode() == 0) {
-                                    PhotoUploadDTO x = response.getPhotoUploadList().get(0);
-                                    x.setThumbFilePath(dto.getThumbFilePath());
-                                    mListener.onFileUploaded(x);
-                                }
-                            }
-
-                            @Override
-                            public void onError(String message) {
-                                Log.e(LOG, message);
-                                dto.setDateUploaded(null);
-                                mListener.onError(message);
-                            }
-
-
-                        });
-                    } else {
-                        mListener.onError("Error uploading image to CDN");
-                    }
-
-                } catch (Exception e) {
-                    Log.e(LOG, "CDN upload Failed", e);
-                    try {
-                        ACRA.getErrorReporter().handleException(e, false);
-                    } catch (Exception ex) {//ignore}
-                    }
+                @Override
+                public void onError(String message) {
+                    Log.e(LOG, message);
                     mListener.onError("Error uploading image to CDN");
                 }
 
 
-            }
-        });
-        thread.start();
+            });
+
+        }
     }
 }

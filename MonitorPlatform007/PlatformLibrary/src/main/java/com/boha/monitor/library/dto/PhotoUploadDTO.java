@@ -62,6 +62,8 @@ public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> 
     private Integer staffID ;
 
     private String secureUrl;
+    private Boolean marked = Boolean.FALSE;
+    private Integer sharedCount = 0;
 
     private Integer width;
     private Integer height;
@@ -83,6 +85,22 @@ public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> 
 
     public void setProjectName(String projectName) {
         this.projectName = projectName;
+    }
+
+    public Boolean getMarked() {
+        return marked;
+    }
+
+    public void setMarked(Boolean marked) {
+        this.marked = marked;
+    }
+
+    public Integer getSharedCount() {
+        return sharedCount;
+    }
+
+    public void setSharedCount(Integer sharedCount) {
+        this.sharedCount = sharedCount;
     }
 
     public ProjectTaskStatusDTO getProjectTaskStatus() {
