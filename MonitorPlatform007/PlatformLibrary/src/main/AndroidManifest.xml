@@ -24,7 +24,43 @@
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name="com.boha.monitor.library.services.MonTaskService"
+            android:name="com.boha.monitor.library.services.DataTaskService"
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+            <intent-filter>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.boha.monitor.library.tasks.TrackerService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+            <intent-filter>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.boha.monitor.library.tasks.PhotoTaskService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+            <intent-filter>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.boha.monitor.library.tasks.YouTubeTaskService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+            <intent-filter>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.boha.monitor.library.tasks.RequestsTaskService"
+            android:enabled="true"
             android:exported="true"
             android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
             <intent-filter>
@@ -124,7 +160,9 @@
 
         <activity
             android:name="com.boha.monitor.library.activities.LocalVideoPlayerActivity"
-            android:label="@string/title_activity_local_video_player"></activity>
+            android:label="@string/title_activity_local_video_player" />
+
+
     </application>
 
 </manifest>

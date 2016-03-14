@@ -76,8 +76,6 @@ import com.boha.monitor.library.fragments.ProjectTaskFragment;
 import com.boha.monitor.library.fragments.StaffListFragment;
 import com.boha.monitor.library.fragments.TaskListFragment;
 import com.boha.monitor.library.services.DataRefreshService;
-import com.boha.monitor.library.services.LocationTrackerReceiver;
-import com.boha.monitor.library.services.MonTaskService;
 import com.boha.monitor.library.services.PhotoUploadService;
 import com.boha.monitor.library.services.YouTubeService;
 import com.boha.monitor.library.util.DepthPageTransformer;
@@ -92,8 +90,6 @@ import com.boha.monitor.supervisor.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GcmNetworkManager;
-import com.google.android.gms.gcm.OneoffTask;
-import com.google.android.gms.gcm.Task;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -161,7 +157,6 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
         setContentView(R.layout.activity_staff_main);
 
         setFields();
-        mGcmNetworkManager = GcmNetworkManager.getInstance(this);
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -173,15 +168,6 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
 
         setBroadcastReceivers();
         checkAirplane();
-
-        OneoffTask task = new OneoffTask.Builder()
-                .setService(MonTaskService.class)
-                .setTag(TASK_TAG_WIFI)
-                .setExecutionWindow(0L, 3600L)
-                .setRequiredNetwork(Task.NETWORK_STATE_UNMETERED)
-                .build();
-
-        mGcmNetworkManager.schedule(task);
 
 
     }
@@ -216,13 +202,6 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 dataRefreshDoneReceiver,mStatusIntentFilter);
 
-        //receive notification when LocationTrackerReceiver has received location request
-        IntentFilter mStatusIntentFilter2 = new IntentFilter(
-                LocationTrackerReceiver.BROADCAST_ACTION);
-        locationRequestedReceiver = new LocationRequestedReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-                locationRequestedReceiver, mStatusIntentFilter2);
-
         //receive notification when PhotoUploadService has uploaded photos
         IntentFilter mStatusIntentFilter3 = new IntentFilter(
                 PhotoUploadService.BROADCAST_ACTION);
@@ -239,25 +218,11 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
                 youTubeVideoUploadedReceiver,
                 mStatusIntentFilter4);
 
-//        //receive notification of Airplane Mode
-//        IntentFilter intentFilter = new IntentFilter(
-//                "android.intent.action.AIRPLANE_MODE");
-//        broadcastReceiver = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                Log.e(LOG, "####### Airplane Mode state changed, intent: " + intent.toString());
-//                checkAirplane();
-//            }
-//        };
-//
-//        registerReceiver(broadcastReceiver, intentFilter);
-
     }
 
     LocationRequestedReceiver locationRequestedReceiver;
     DataRefreshDoneReceiver dataRefreshDoneReceiver;
     PhotoUploadedReceiver photoUploadedReceiver;
-//    BroadcastReceiver broadcastReceiver;
     YouTubeVideoUploadedReceiver youTubeVideoUploadedReceiver;
 
     CircleImageView circleImage;

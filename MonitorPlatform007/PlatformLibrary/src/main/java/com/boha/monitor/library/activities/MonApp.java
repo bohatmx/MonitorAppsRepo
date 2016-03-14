@@ -4,27 +4,26 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.os.SystemClock;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.boha.monitor.library.dto.MonitorDTO;
 import com.boha.monitor.library.dto.StaffDTO;
-import com.boha.monitor.library.services.DataRefreshReceiver;
-import com.boha.monitor.library.services.LocationTrackerReceiver;
-import com.boha.monitor.library.services.PhotoUploadBroadcastReceiver;
-import com.boha.monitor.library.services.RequestAlarmReceiver;
-import com.boha.monitor.library.services.YouTubeUploadReceiver;
+import com.boha.monitor.library.services.DataTaskService;
+import com.boha.monitor.library.tasks.PhotoTaskService;
+import com.boha.monitor.library.tasks.RequestsTaskService;
+import com.boha.monitor.library.tasks.TrackerService;
+import com.boha.monitor.library.tasks.YouTubeTaskService;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.gcm.GcmNetworkManager;
+import com.google.android.gms.gcm.PeriodicTask;
 import com.snappydb.DB;
 import com.snappydb.DBFactory;
 import com.snappydb.SnappydbException;
@@ -74,6 +73,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
     private PendingIntent alarmIntent1,alarmIntent2, alarmIntent3,alarmIntent4, alarmIntent5;
     private boolean messageActivityVisible;
     static final String LOG = MonApp.class.getSimpleName();
+    private GcmNetworkManager mGcmNetworkManager;
     public static Picasso picasso;
     public DB snappyDB;
 
@@ -133,6 +133,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         boolean isDebuggable = 0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
         //refWatcher = LeakCanary.install(this);
         registerActivityLifecycleCallbacks(this);
+        mGcmNetworkManager = GcmNetworkManager.getInstance(this);
 
         // create Picasso.Builder object
         File picassoCacheDir = getCacheDir();
@@ -178,68 +179,82 @@ public class MonApp extends Application implements Application.ActivityLifecycle
             Log.d(LOG, "###### ACRA Crash Reporting has NOT been initiated, in DEBUG mode");
         }
 
-//        startDataRefreshAlarm();
-//        startRequestCacheAlarm();
-//        startPhotoUploadAlarm();
-//        startLocationAlarm();
-//        startVideoUploadAlarm();
+        startLocationTask();
+        startDataTask();
+        startPhotoTask();
+        startYouTubeTask();
+        startRequestsTask();
 
     }
 
-    public void startVideoUploadAlarm() {
-        alarmMgr5 = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        Intent m = new Intent(getApplicationContext(), YouTubeUploadReceiver.class);
-        alarmIntent5 = PendingIntent.getBroadcast(getApplicationContext(), 129, m, 0);
+    static final int MINUTE_IN_SECONDS = 60,
+            HALF_HOUR_IN_SECONDS = 60 * 30,
+            HOUR_IN_SECONDS = 60 * 60,
+            TWO_HOURS_IN_SECONDS = HOUR_IN_SECONDS * 2,
+            FIVE_MINUTE_IN_SECONDS = 60 * 5;
+    public static final String LOCATION_TAG = "TrackerServiceTask",
+        REQUESTS_TAG = "requestsTag",
+        DATA_TAG = "DataRefresh", PHOTO_TAG = "PhotoUpload", YOUTUBE_TAG = "YouTubeUpload" ;
 
-        alarmMgr5.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), HALF_HOUR, alarmIntent5);
+    private void startRequestsTask() {
+        PeriodicTask task = new PeriodicTask.Builder()
+                .setService(RequestsTaskService.class)
+                .setPeriod(HALF_HOUR_IN_SECONDS)
+                .setPersisted(true)
+                .setTag(REQUESTS_TAG)
+                .setRequiredNetwork(PeriodicTask.NETWORK_STATE_CONNECTED)
+                .build();
 
-        Log.w(LOG, "###### YouTubeUpload AlarmManager: " +
-                "alarm set to pull the YouTube upload trigger every: HALF_HOUR");
+        mGcmNetworkManager.schedule(task);
+        Log.i(LOG, "###### mGcmNetworkManager task for REQUESTS upload scheduled: " );
     }
-    public void startLocationAlarm() {
-        alarmMgr1 = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        Intent m = new Intent(getApplicationContext(), LocationTrackerReceiver.class);
-        alarmIntent1 = PendingIntent.getBroadcast(getApplicationContext(), 123, m, 0);
+    private void startPhotoTask() {
+        PeriodicTask task = new PeriodicTask.Builder()
+                .setService(PhotoTaskService.class)
+                .setPeriod(HALF_HOUR_IN_SECONDS)
+                .setPersisted(true)
+                .setTag(PHOTO_TAG)
+                .setRequiredNetwork(PeriodicTask.NETWORK_STATE_UNMETERED)
+                .build();
 
-        alarmMgr1.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), HALF_HOUR, alarmIntent1);
-
-        Log.w(LOG, "###### Location AlarmManager: " +
-                "alarm set to pull the device tracker trigger every: HALF_HOUR");
+        mGcmNetworkManager.schedule(task);
+        Log.i(LOG, "###### mGcmNetworkManager task for PHOTO upload scheduled: " );
     }
-    public void startRequestCacheAlarm() {
-        alarmMgr2 = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        Intent m = new Intent(getApplicationContext(), RequestAlarmReceiver.class);
-        alarmIntent2 = PendingIntent.getBroadcast(getApplicationContext(), 124, m, 0);
+    private void startYouTubeTask() {
+        PeriodicTask task = new PeriodicTask.Builder()
+                .setService(YouTubeTaskService.class)
+                .setPeriod(HALF_HOUR_IN_SECONDS)
+                .setPersisted(true)
+                .setTag(YOUTUBE_TAG)
+                .setRequiredNetwork(PeriodicTask.NETWORK_STATE_UNMETERED)
+                .build();
 
-        alarmMgr2.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), HALF_HOUR, alarmIntent2);
-
-        Log.w(LOG, "###### Request Cache AlarmManager: " +
-                "alarm set to send cached requests every: FIVE_MINUTES");
+        mGcmNetworkManager.schedule(task);
+        Log.i(LOG, "###### mGcmNetworkManager task for YouTUBE scheduled: " );
     }
-    public void startDataRefreshAlarm() {
-        alarmMgr3 = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        Intent m = new Intent(getApplicationContext(), DataRefreshReceiver.class);
-        alarmIntent3 = PendingIntent.getBroadcast(getApplicationContext(), 125, m, 0);
+    private void startLocationTask() {
+        PeriodicTask task = new PeriodicTask.Builder()
+                .setService(TrackerService.class)
+                .setPeriod(HALF_HOUR_IN_SECONDS)
+                .setPersisted(true)
+                .setTag(LOCATION_TAG)
+                .setRequiredNetwork(PeriodicTask.NETWORK_STATE_CONNECTED)
+                .build();
 
-        alarmMgr3.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), THREE_HOURS, alarmIntent3);
-
-        Log.w(LOG, "###### Data Refresh AlarmManager: " +
-                "alarm set to refresh data every: THREE_HOURS");
+        mGcmNetworkManager.schedule(task);
+        Log.i(LOG, "###### mGcmNetworkManager task for LOCATION scheduled: " );
     }
-    public void startPhotoUploadAlarm() {
-        alarmMgr4 = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        Intent m = new Intent(getApplicationContext(), PhotoUploadBroadcastReceiver.class);
-        alarmIntent4 = PendingIntent.getBroadcast(getApplicationContext(), 126, m, 0);
+    private void startDataTask() {
+        PeriodicTask task = new PeriodicTask.Builder()
+                .setService(DataTaskService.class)
+                .setPeriod(TWO_HOURS_IN_SECONDS)
+                .setPersisted(true)
+                .setTag(DATA_TAG)
+                .setRequiredNetwork(PeriodicTask.NETWORK_STATE_UNMETERED)
+                .build();
 
-        alarmMgr4.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), HALF_HOUR, alarmIntent4);
-
-        Log.w(LOG, "###### Photo Upload AlarmManager: " +
-                "alarm set to refresh data every: HALF_HOUR");
+        mGcmNetworkManager.schedule(task);
+        Log.i(LOG, "###### mGcmNetworkManager task for DATA scheduled: " );
     }
 
     static final int

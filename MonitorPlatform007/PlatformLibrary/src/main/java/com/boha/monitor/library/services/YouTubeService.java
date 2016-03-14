@@ -1,11 +1,16 @@
 package com.boha.monitor.library.services;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerCallback;
+import android.accounts.AccountManagerFuture;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -19,6 +24,7 @@ import com.boha.monitor.library.util.MonLog;
 import com.boha.monitor.library.util.OKUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Snappy;
+import com.boha.monitor.library.util.Util;
 import com.boha.monitor.library.util.WebCheck;
 import com.boha.monitor.library.util.bean.VideoFileException;
 import com.boha.platform.library.R;
@@ -74,7 +80,8 @@ public class YouTubeService extends IntentService {
 
         authToken = SharedUtil.getAuthToken(getApplicationContext());
         if (authToken == null) {
-            Log.e(LOG, "------ authToken is null. quitting service");
+            Log.e(LOG, "------ authToken is null. requesting token");
+            chooseAccount();
             return;
         }
         try {
@@ -444,5 +451,44 @@ public class YouTubeService extends IntentService {
 
         void onError();
     }
+    AccountManager accountManager;
+    Account account;
+    private Account chooseAccount() {
+        accountManager = AccountManager.get(getApplicationContext());
+        Account[] accounts = accountManager.getAccountsByType("com.google");
+        if (accounts.length > 0) {
+            account = accounts[0];
+            MonLog.w(getApplicationContext(), LOG, "##### account to be used: " + account.name);
+            requestToken();
+            return accounts[0];
+        } else {
+            Util.showErrorToast(getApplicationContext(), "No Google account found on the device. Cannot continue.");
+        }
+        return null;
+    }
 
+    private void requestToken() {
+        accountManager.getAuthToken(account, "oauth2:" + SCOPE, null, true,
+                new OnTokenAcquired(), null);
+    }
+
+    private final String SCOPE = "https://www.googleapis.com/auth/youtube";
+    private class OnTokenAcquired implements AccountManagerCallback<Bundle> {
+
+        @Override
+        public void run(AccountManagerFuture<Bundle> result) {
+            try {
+                Bundle bundle = result.getResult();
+                Log.w(LOG, "+++++++++++++++++ Token has been acquired");
+                authToken = bundle
+                        .getString(AccountManager.KEY_AUTHTOKEN);
+                SharedUtil.saveAuthToken(getApplicationContext(), authToken);
+                onHandleIntent(null);
+
+
+            } catch (Exception e) {
+                Util.showErrorToast(getApplicationContext(), "Unable to get YouTube authorisation token");
+            }
+        }
+    }
 }
