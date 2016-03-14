@@ -188,7 +188,27 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
             pvh.iconAddTasks.setVisibility(View.GONE);
         }
 
-
+        if (project.getDetailsOpen() == Boolean.TRUE) {
+            pvh.details.setVisibility(View.VISIBLE);
+            pvh.actions.setVisibility(View.VISIBLE);
+        } else {
+            pvh.details.setVisibility(View.GONE);
+            pvh.actions.setVisibility(View.GONE);
+        }
+        pvh.txtProjectName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (project.getDetailsOpen() == Boolean.FALSE) {
+                    project.setDetailsOpen(Boolean.TRUE);
+                    pvh.details.setVisibility(View.VISIBLE);
+                    pvh.actions.setVisibility(View.VISIBLE);
+                } else {
+                    project.setDetailsOpen(Boolean.FALSE);
+                    pvh.details.setVisibility(View.GONE);
+                    pvh.actions.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     public static final double RADIUS_IN_METRES = 500;
@@ -210,10 +230,11 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
             amNear = true;
         }
 
-        Log.d("ProjectAdapter","Distance away from project, as the crow flies: " + dist + " metres");
+        Log.d("ProjectAdapter","Distance away from project, as the crow flies: " + df2.format(dist) + " metres");
 
         return amNear;
     }
+    static final DecimalFormat df2 = new DecimalFormat("###,###,###,##0.00");
     private void setPlaceNames(ProjectDTO project, ProjectViewHolder pvh) {
         pvh.txtMuni.setVisibility(View.GONE);
         pvh.txtCity.setVisibility(View.GONE);
@@ -225,7 +246,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
         if (project.getMunicipalityName() != null) {
             pvh.txtMuni.setVisibility(View.VISIBLE);
             pvh.txtMuni.setText(project.getMunicipalityName());
-            Statics.setRobotoFontLight(ctx, pvh.txtMuni);
+            Statics.setRobotoFontBold(ctx, pvh.txtMuni);
         }
 
     }
@@ -247,12 +268,14 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
         protected ImageView
                 iconCamera, iconDirections, iconDoStatus,
                 iconLocation, iconAddTasks;
-        protected View imageLayout;
+        protected View imageLayout, details, actions;
 
 
         public ProjectViewHolder(View itemView) {
 
             super(itemView);
+            actions = itemView.findViewById(R.id.PI_top);
+            details = itemView.findViewById(R.id.PI_details);
             imageLayout = itemView.findViewById(R.id.PI_imageLayout);
             image = (ImageView) itemView.findViewById(R.id.PI_photo);
             iconAddTasks = (ImageView) itemView.findViewById(R.id.PI_addTaskIcon);

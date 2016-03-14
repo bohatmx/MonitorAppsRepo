@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey"
     tools:context="com.boha.monitor.library.fragments.ProjectListFragment">
 
     <RelativeLayout
@@ -16,21 +15,21 @@
 
         <TextView
             android:id="@+id/count"
-            style="@style/Title2TextStyleBlack"
+            style="@style/Title3TextStyleBlack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/mon_wide"
-            android:layout_marginRight="@dimen/mon_margin"
-            android:layout_marginTop="@dimen/mon_margin"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_marginRight="@dimen/mon_padding"
+            android:layout_marginTop="@dimen/mon_padding"
             android:alpha="0.5"
             android:text="0"
             android:background="@color/blue_200"
-            android:paddingTop="@dimen/mon_padding"
-            android:paddingBottom="@dimen/mon_padding"
-            android:paddingLeft="@dimen/mon_wide"
-            android:paddingRight="@dimen/mon_wide"
+            android:paddingTop="@dimen/mon_divider"
+            android:paddingBottom="@dimen/mon_divider"
+            android:paddingLeft="@dimen/mon_divider"
+            android:paddingRight="@dimen/mon_divider"
             android:textStyle="normal" />
 
         <RelativeLayout

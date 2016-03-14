@@ -20,14 +20,11 @@ import android.widget.TextView;
 import com.boha.monitor.library.adapters.LocationTrackerListAdapter;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
-import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Fragment that manages a list of Monitors assigned to a project
@@ -104,7 +101,6 @@ public class LocationTrackerListFragment extends Fragment implements PageFragmen
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
         recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
 
         setList(locationTrackerList);
         return view;

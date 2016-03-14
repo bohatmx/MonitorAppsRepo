@@ -37,7 +37,6 @@ import com.boha.monitor.library.util.MonLog;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.PopupItem;
 import com.boha.monitor.library.util.SharedUtil;
-import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
@@ -340,8 +339,6 @@ public class StaffListFragment extends Fragment
                 new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecycler.setHasFixedSize(true);
         mRecycler.setLayoutManager(llm);
-        if (getContext() != null)
-            mRecycler.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
 
         mRecycler.setAdapter(staffAdapter);
 

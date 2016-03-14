@@ -77,9 +77,9 @@ public class StaffListAdapter extends RecyclerView.Adapter<StaffListAdapter.Moni
             }
         });
 
-        Statics.setRobotoFontLight(ctx, holder.txtName);
+        Statics.setRobotoFontBold(ctx, holder.txtName);
         Statics.setRobotoFontLight(ctx, holder.projectCount);
-        Statics.setRobotoFontLight(ctx, holder.photoCount);
+        Statics.setRobotoFontBold(ctx, holder.photoCount);
         Statics.setRobotoFontLight(ctx, holder.statusCount);
         if (p.getPhotoUploadList() == null || p.getPhotoUploadList().isEmpty()) {
             holder.photo.setImageDrawable(ContextCompat.getDrawable(ctx,R.drawable.boy));

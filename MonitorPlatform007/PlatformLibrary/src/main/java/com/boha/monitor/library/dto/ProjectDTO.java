@@ -40,6 +40,15 @@ public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
     private ProjectTaskStatusDTO lastStatus;
     private Boolean selected = Boolean.FALSE;
     private Long dateUploaded;
+    private Boolean detailsOpen = Boolean.FALSE;
+
+    public Boolean getDetailsOpen() {
+        return detailsOpen;
+    }
+
+    public void setDetailsOpen(Boolean detailsOpen) {
+        this.detailsOpen = detailsOpen;
+    }
 
     public ProjectDTO() {
     }

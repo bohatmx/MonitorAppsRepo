@@ -357,7 +357,9 @@ public class SharedUtil {
     }
 
     public static Integer getLastProjectID(Context ctx) {
-
+        if (ctx == null) {
+            return 0;
+        }
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);
         int id = sp.getInt(PROJECT_ID, 0);

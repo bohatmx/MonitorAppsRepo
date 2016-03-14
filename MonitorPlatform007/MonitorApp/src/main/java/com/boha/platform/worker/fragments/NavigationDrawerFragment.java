@@ -37,11 +37,9 @@ import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.util.ImageUtil;
-import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.OKHttpException;
 import com.boha.monitor.library.util.OKUtil;
 import com.boha.monitor.library.util.SharedUtil;
-import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.worker.R;
 import com.boha.platform.worker.adapters.DrawerMonitorAdapter;
@@ -295,9 +293,15 @@ public class NavigationDrawerFragment extends Fragment {
                 }
 
                 @Override
-                public void onError(String message) {
+                public void onError(final String message) {
                     Log.e(LOG, message);
-                    Util.showErrorToast(getContext(), message);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Util.showErrorToast(getContext(), message);
+                        }
+                    });
+
                 }
             });
         } catch (OKHttpException e) {

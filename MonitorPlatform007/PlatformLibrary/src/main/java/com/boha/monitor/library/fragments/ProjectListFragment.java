@@ -27,7 +27,6 @@ import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.MonLog;
 import com.boha.monitor.library.util.SharedUtil;
-import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
@@ -98,11 +97,16 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(),
                 LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(llm);
-        mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
         mRecyclerView.setHasFixedSize(true);
 
         if (auto != null) {
             hideKeyboard();
+        }
+        if (savedInstanceState != null) {
+            mResponse = (ResponseDTO)savedInstanceState.getSerializable("response");
+            projectList = mResponse.getProjectList();
+            setList();
+            listHasBeenSet = true;
         }
 
         return view;
@@ -113,6 +117,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     ProjectDTO selectedProject;
     TextView txtCount;
     double latitude, longitude;
+    boolean listHasBeenSet;
 
     public void setLocation(Location location) {
         this.latitude = location.getLatitude();
@@ -126,7 +131,9 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public void onResume() {
         Log.e(LOG, "------------------ onResume, getting projects ............");
-        getProjectList();
+        if (!listHasBeenSet) {
+            getProjectList();
+        }
         super.onResume();
     }
 
@@ -136,7 +143,8 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         Snappy.SnappyReadListener listener = new Snappy.SnappyReadListener() {
             @Override
             public void onDataRead(ResponseDTO response) {
-                projectList = response.getProjectList();
+                mResponse = response;
+                projectList = mResponse.getProjectList();
                 Log.e(LOG, "onDataRead: projectList: " + projectList.size());
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(new Runnable() {
@@ -376,10 +384,14 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     }
 
     public void setLastProject() {
+        if (projectList == null) {
+            return;
+        }
         Integer id = SharedUtil.getLastProjectID(getActivity());
         boolean isFound = false;
         int index = 0;
         if (id.intValue() > 0) {
+
             for (ProjectDTO p : projectList) {
                 if (p.getProjectID().intValue() == id.intValue()) {
                     isFound = true;

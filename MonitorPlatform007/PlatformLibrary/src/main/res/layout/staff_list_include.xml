@@ -11,7 +11,7 @@
         android:id="@+id/STAFF_LIST_top"
         android:layout_below="@id/handle"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/mon_hero_height_medium">
+        android:layout_height="@dimen/mon_hero_height_small">
 
         <LinearLayout
             android:id="@+id/STAFF_LIST_handle"
@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/mon_wide"
-            android:layout_marginTop="@dimen/mon_wider"
+            android:layout_marginTop="@dimen/mon_wide"
             android:text="Staff Team"
             android:textColor="@color/white" />
 
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="@dimen/mon_margin"
-            android:layout_marginTop="@dimen/mon_wider"
+            android:layout_marginTop="@dimen/mon_wide"
             android:text="00"
             android:textColor="@color/white" />
 
@@ -62,9 +62,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/STAFF_LIST_top"
-        android:padding="@dimen/mon_margin"
-        android:background="@color/white">
+        android:padding="@dimen/mon_padding"
+        android:layout_below="@id/STAFF_LIST_top">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/STAFF_LIST_list"

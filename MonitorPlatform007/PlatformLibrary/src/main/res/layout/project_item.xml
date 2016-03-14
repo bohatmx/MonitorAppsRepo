@@ -3,15 +3,15 @@
     xmlns:tools="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:cardCornerRadius="4dp"
-    tools:cardElevation="@dimen/mon_margin">
+    android:layout_margin="@dimen/mon_padding"
+    tools:cardCornerRadius="@dimen/mon_divider"
+    tools:cardElevation="@dimen/mon_padding">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/mon_padding"
         android:elevation="@dimen/mon_padding"
-        android:background="@color/grey">
+        android:padding="@dimen/mon_padding">
 
         <include
             android:id="@+id/PI_top"
@@ -21,22 +21,30 @@
             android:layout_alignParentTop="true" />
 
         <RelativeLayout
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/PI_top"
+            android:background="@color/grey_300" />
+
+        <RelativeLayout
             android:id="@+id/PI_middle1"
-            android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/PI_top"
+            android:layout_below="@id/divider"
             android:layout_marginTop="@dimen/mon_divider_tiny"
+            android:background="@color/white"
             android:padding="@dimen/mon_padding">
 
             <RelativeLayout
                 android:id="@+id/nameLayout"
-                android:layout_marginTop="@dimen/mon_margin"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mon_margin">
+
                 <TextView
                     android:id="@+id/PI_number"
-                    style="@style/BlueCountBoxSmall"
+                    style="@style/BlueCircleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -45,7 +53,7 @@
 
                 <TextView
                     android:id="@+id/PI_projectName"
-                    style="@style/Title2TextStyleBlue"
+                    style="@style/Title3TextStyleBlue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
@@ -58,261 +66,278 @@
             <TextView
                 android:id="@+id/PI_cityName"
                 style="@style/TextStyle"
-                android:layout_marginLeft="@dimen/mon_margin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/nameLayout"
                 android:layout_alignLeft="@id/nameLayout"
+                android:layout_below="@id/nameLayout"
+                android:layout_marginLeft="@dimen/mon_margin"
                 android:layout_marginTop="@dimen/mon_margin"
                 android:text="City Name" />
 
             <TextView
                 android:id="@+id/PI_muniName"
-                style="@style/Title2TextStyleBlack"
+                style="@style/Title3TextStyleBlack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@id/PI_cityName"
-                android:layout_below="@id/PI_cityName"
+                android:layout_toRightOf="@id/PI_cityName"
+                android:layout_alignBaseline="@id/PI_cityName"
+                android:layout_marginLeft="@dimen/mon_margin"
                 android:text="Municipality name" />
 
+
             <RelativeLayout
+                android:id="@+id/PI_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/mon_wider"
                 android:layout_below="@id/PI_muniName"
-                android:layout_marginTop="@dimen/mon_divider">
+                android:visibility="gone">
 
-                <TextView
-                    android:id="@+id/PI_statusCount"
-                    style="@style/GreenCircle"
-                    android:layout_width="68dp"
-                    android:layout_height="68dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="@dimen/mon_wider"
-                    android:elevation="@dimen/mon_padding"
-                    android:text="8,345,678" />
-                <TextView
-                    android:id="@+id/PI_label1"
-                    style="@style/TextStyleGrey"
-                    android:layout_toLeftOf="@id/PI_statusCount"
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:id="@+id/PI_middle1a"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="@dimen/mon_margin"
-                    android:text="Status Updates" />
+                    android:layout_marginRight="@dimen/mon_wider"
+                    android:layout_marginTop="@dimen/mon_divider">
+
+                    <TextView
+                        android:id="@+id/PI_statusCount"
+                        style="@style/GreenCircle"
+                        android:layout_width="68dp"
+                        android:layout_height="68dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/mon_wider"
+                        android:elevation="@dimen/mon_padding"
+                        android:text="8,345,678" />
+
+                    <TextView
+                        android:id="@+id/PI_label1"
+                        style="@style/TextStyleGrey"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="@dimen/mon_margin"
+                        android:layout_toLeftOf="@id/PI_statusCount"
+                        android:text="Status Updates" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/PI_middle2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/PI_middle1a"
+                    android:background="@color/white">
+
+                    <TextView
+                        android:id="@+id/PI_photoCount"
+                        style="@style/RedCircle"
+                        android:layout_width="76dp"
+                        android:layout_height="76dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/mon_wider"
+                        android:elevation="@dimen/mon_padding"
+                        android:text="98,234,567" />
+
+                    <TextView
+                        android:id="@+id/PI_label2"
+                        style="@style/TextStyleGrey"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/mon_margin"
+                        android:layout_toLeftOf="@id/PI_photoCount"
+                        android:text="Photos" />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/PI_middle2x"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/PI_middle2"
+                    android:background="@color/white">
+
+                    <TextView
+                        android:id="@+id/PI_videoCount"
+                        style="@style/BlueCircle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:elevation="@dimen/mon_divider"
+                        android:text="00" />
+
+                    <TextView
+                        android:id="@+id/PI_label2x"
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/PI_videoCount"
+                        android:text="Videos" />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/PI_middle2a"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/PI_middle2x"
+                    android:background="@color/white">
+
+                    <TextView
+                        android:id="@+id/PI_staffCount"
+                        style="@style/GreyCircleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:text="00" />
+
+                    <TextView
+                        android:id="@+id/PI_label2a"
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/PI_staffCount"
+                        android:text="Staff" />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/PI_middle2b"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/PI_middle2a"
+                    android:background="@color/white">
+
+                    <TextView
+                        android:id="@+id/PI_monitorCount"
+                        style="@style/GreyCircleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:text="00" />
+
+                    <TextView
+                        android:id="@+id/PI_label2b"
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/PI_monitorCount"
+                        android:text="@string/monitors" />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/PI_middle3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/PI_middle2b"
+                    android:layout_marginTop="@dimen/mon_divider_tiny"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:visibility="gone">
+
+
+                    <TextView
+                        android:id="@+id/PI_label3"
+                        style="@style/TextStyleGreySmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="@dimen/mon_margin"
+                        android:text="Last Status Update" />
+
+                    <TextView
+                        android:id="@+id/PI_lastStatusDate"
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/PI_label3"
+                        android:text="Saturday, 23 December 2099" />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/PI_middle4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/PI_middle3"
+                    android:background="@color/white"
+                    android:gravity="center">
+
+
+                    <TextView
+                        android:id="@+id/PI_label4"
+                        style="@style/TextStyleGreySmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="@dimen/mon_margin"
+                        android:text="Project Tasks" />
+
+                    <TextView
+                        android:id="@+id/PI_taskCount"
+                        style="@style/Title2TextStyleBlue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/PI_label4"
+                        android:text="0" />
+
+
+                    <ImageView
+                        android:id="@+id/PI_addTaskIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/PI_taskCount"
+                        android:src="@drawable/ic_action_add" />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/PI_imageLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/PI_middle4"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/PI_photo"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/back5" />
+
+                    <TextView
+                        android:id="@+id/PI_caption"
+                        style="@style/TextStyleWhite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/mon_margin"
+                        android:text="Latest project image"
+                        android:visibility="gone" />
+                </RelativeLayout>
             </RelativeLayout>
 
-
         </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/PI_middle2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/PI_middle1">
-
-            <TextView
-                android:id="@+id/PI_photoCount"
-                style="@style/RedCircle"
-                android:layout_width="76dp"
-                android:layout_height="76dp"
-                android:layout_marginRight="@dimen/mon_wider"
-                android:layout_alignParentRight="true"
-                android:elevation="@dimen/mon_padding"
-                android:text="98,234,567" />
-            <TextView
-                android:id="@+id/PI_label2"
-                style="@style/TextStyleGrey"
-                android:layout_toLeftOf="@id/PI_photoCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/mon_margin"
-                android:text="Photos" />
-
-
-        </RelativeLayout>
-        <RelativeLayout
-            android:id="@+id/PI_middle2x"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:layout_below="@id/PI_middle2">
-
-            <TextView
-                android:id="@+id/PI_videoCount"
-                style="@style/BlueCircle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/mon_margin"
-                android:layout_alignParentLeft="true"
-                android:text="00" />
-            <TextView
-                android:id="@+id/PI_label2x"
-                style="@style/TextStyleSmall"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@id/PI_videoCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/mon_margin"
-                android:text="Videos" />
-
-
-        </RelativeLayout>
-        <RelativeLayout
-            android:id="@+id/PI_middle2a"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:layout_below="@id/PI_middle2x">
-
-            <TextView
-                android:id="@+id/PI_staffCount"
-                style="@style/GreyCircleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/mon_margin"
-                android:layout_alignParentLeft="true"
-                android:text="00" />
-            <TextView
-                android:id="@+id/PI_label2a"
-                style="@style/TextStyleSmall"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@id/PI_staffCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/mon_margin"
-                android:text="Staff" />
-
-
-        </RelativeLayout>
-        <RelativeLayout
-            android:id="@+id/PI_middle2b"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:layout_below="@id/PI_middle2a">
-
-            <TextView
-                android:id="@+id/PI_monitorCount"
-                style="@style/GreyCircleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/mon_margin"
-                android:layout_centerVertical="true"
-                android:text="00" />
-            <TextView
-                android:id="@+id/PI_label2b"
-                style="@style/TextStyleSmall"
-                android:layout_toRightOf="@id/PI_monitorCount"
-                android:layout_centerVertical="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/mon_margin"
-                android:text="@string/monitors" />
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/PI_middle3"
-            android:background="@color/white"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/PI_middle2b"
-            android:layout_marginTop="@dimen/mon_divider_tiny"
-            android:gravity="center">
-
-
-            <TextView
-                android:id="@+id/PI_label3"
-                style="@style/TextStyleGreySmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_margin="@dimen/mon_margin"
-                android:text="Last Status Update" />
-
-            <TextView
-                android:id="@+id/PI_lastStatusDate"
-                style="@style/TextStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/mon_margin"
-                android:layout_toRightOf="@id/PI_label3"
-                android:text="Saturday, 23 December 2099" />
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/PI_middle4"
-            android:background="@color/white"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/PI_middle3"
-            android:gravity="center">
-
-
-            <TextView
-                android:id="@+id/PI_label4"
-                style="@style/TextStyleGreySmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_margin="@dimen/mon_margin"
-                android:text="Project Tasks" />
-
-            <TextView
-                android:id="@+id/PI_taskCount"
-                style="@style/Title2TextStyleBlue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/mon_margin"
-                android:layout_toRightOf="@id/PI_label4"
-                android:text="0" />
-
-
-            <ImageView
-                android:id="@+id/PI_addTaskIcon"
-                android:src="@drawable/ic_action_add"
-                android:layout_toRightOf="@id/PI_taskCount"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/PI_imageLayout"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/PI_middle4">
-
-            <ImageView
-                android:id="@+id/PI_photo"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/back5" />
-
-            <TextView
-                android:id="@+id/PI_caption"
-                style="@style/TextStyleWhite"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/mon_margin"
-                android:visibility="gone"
-                android:text="Latest project image" />
-        </RelativeLayout>
-
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

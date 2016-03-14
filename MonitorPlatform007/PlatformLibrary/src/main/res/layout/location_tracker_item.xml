@@ -1,67 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:padding="@dimen/mon_margin"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/mon_padding"
+    card:cardCornerRadius="@dimen/mon_divider"
+    card:cardElevation="@dimen/mon_padding"
+    android:padding="@dimen/mon_margin">
 
     <RelativeLayout
-        android:id="@+id/LT_imgLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/LT_image"
-            android:layout_centerHorizontal="true"
-            android:layout_width="@dimen/mon_widest"
-            android:layout_height="@dimen/mon_widest"
-            android:src="@drawable/black_woman" />
 
-        <TextView
-            android:id="@+id/LT_type"
-            android:text="@string/monitor"
-            style="@style/TextStyleBoldSmall"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/LT_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:layout_toRightOf="@id/LT_imgLayout"
-        android:layout_margin="@dimen/mon_margin"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/LT_txtDevice"
+        <RelativeLayout
+            android:id="@+id/LT_imgLayout"
+            android:layout_margin="@dimen/mon_padding"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/mon_padding"
-            android:text="Device Name and Model"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/LT_image"
+                android:layout_width="@dimen/mon_widest"
+                android:layout_height="@dimen/mon_widest"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/black_woman" />
+
+            <TextView
+                android:id="@+id/LT_type"
+                style="@style/TextStyleBoldSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/LT_image"
+                android:layout_centerHorizontal="true"
+                android:text="@string/monitor" />
+
+        </RelativeLayout>
 
 
-        <TextView
-            android:id="@+id/LT_txtSubtitle"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/LT_txtDevice"
-            android:padding="@dimen/mon_padding"
-            android:text="Staff or Monitor name"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-        <TextView
-            android:id="@+id/LT_txtDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/LT_txtSubtitle"
-            android:padding="@dimen/mon_padding"
-            android:text="Last Date of Location"
-            android:textStyle="bold"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:layout_margin="@dimen/mon_margin"
+            android:layout_toRightOf="@id/LT_imgLayout">
+
+            <TextView
+                android:id="@+id/LT_txtDevice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/mon_padding"
+                android:text="Device Name and Model"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+
+            <TextView
+                android:id="@+id/LT_txtSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/LT_txtDevice"
+                android:padding="@dimen/mon_padding"
+                android:text="Staff or Monitor name"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/LT_txtDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/LT_txtSubtitle"
+                android:padding="@dimen/mon_padding"
+                android:text="Last Date of Location"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textStyle="bold" />
+        </RelativeLayout>
     </RelativeLayout>
 
-
-</RelativeLayout>
+</android.support.v7.widget.CardView>

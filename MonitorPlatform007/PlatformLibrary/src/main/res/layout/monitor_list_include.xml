@@ -12,7 +12,7 @@
         android:id="@+id/MONITOR_LIST_top"
         android:layout_below="@id/handle"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/mon_hero_height_medium">
+        android:layout_height="@dimen/mon_hero_height_small">
 
         <ImageView
             android:id="@+id/MONITOR_LIST_backDrop"
@@ -140,7 +140,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/mon_wide"
-        android:layout_marginTop="@dimen/mon_hero_height_medium_lite"
+        android:layout_marginTop="@dimen/mon_widest"
         android:elevation="@dimen/mon_margin"
         android:src="@drawable/ic_action_location_on" />
 
@@ -150,7 +150,7 @@
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/fab"
         android:layout_marginRight="@dimen/mon_wider"
-        android:layout_marginTop="@dimen/mon_hero_height_medium_lite"
+        android:layout_marginTop="@dimen/mon_widest"
         android:elevation="@dimen/mon_margin"
         android:src="@android:drawable/ic_menu_send" />
 </RelativeLayout>

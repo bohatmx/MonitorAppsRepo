@@ -38,7 +38,6 @@ import com.boha.monitor.library.util.MonLog;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.PopupItem;
 import com.boha.monitor.library.util.SharedUtil;
-import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
@@ -135,9 +134,6 @@ public class MonitorListFragment extends Fragment implements PageFragment {
         LinearLayoutManager llm = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
         recyclerView.setHasFixedSize(true);
-        if (getContext() != null)
-            recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
-
         actionsView.setVisibility(View.GONE);
         txtSelected.setText("");
 

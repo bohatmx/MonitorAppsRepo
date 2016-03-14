@@ -10,8 +10,9 @@
 
         <RelativeLayout
             android:id="@+id/FMD_topLayout"
+
             android:layout_width="match_parent"
-            android:layout_height="192dp">
+            android:layout_height="@dimen/mon_hero_height_medium_lite">
 
             <ImageView
                 android:id="@+id/FMP_backdrop"
@@ -22,19 +23,28 @@
 
             <TextView
                 android:id="@+id/FMP_title"
-                style="@style/Title1TextStyleWhite"
-                android:layout_width="wrap_content"
+                style="@style/Title2TextStyleWhite"
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/mon_margin"
+                android:layout_marginLeft="@dimen/mon_margin"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_margin="@dimen/mon_margin"
+                android:background="@color/transparent_black"
+                android:paddingLeft="@dimen/mon_margin"
+                android:paddingRight="@dimen/mon_margin"
+                android:paddingTop="@dimen/mon_padding"
                 android:text="@string/monitor" />
             <TextView
                 android:id="@+id/FMP_person"
-                style="@style/Title2TextStyleWhite"
+                style="@style/Title3TextStyleWhite"
                 android:layout_below="@id/FMP_title"
-                android:layout_width="wrap_content"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:background="@color/transparent_black"
+                android:paddingLeft="@dimen/mon_margin"
+                android:paddingRight="@dimen/mon_margin"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/mon_wide"
+                android:paddingBottom="@dimen/mon_padding"
                 android:text="@string/monitor" />
 
 
@@ -291,7 +301,7 @@
             android:id="@+id/FMP_personImage"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginTop="140dp"
+            android:layout_marginTop="80dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="@dimen/mon_margin"
             android:scaleType="centerCrop"

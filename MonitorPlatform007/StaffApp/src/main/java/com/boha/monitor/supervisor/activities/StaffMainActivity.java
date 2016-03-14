@@ -1311,6 +1311,7 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
             projectListFragment.getProjectList();
             staffListFragment.getStaffList();
             monitorListFragment.getMonitorList();
+            setRefreshActionButtonState(false);
             startLocationUpdates();
 
         }

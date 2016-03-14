@@ -235,7 +235,8 @@ public class MonitorDTO implements Serializable, Person, Comparable<MonitorDTO> 
 
     @Override
     public int compareTo(MonitorDTO m) {
-
-        return this.getFullName().compareTo(m.getFullName());
+        String name1 = this.getLastName() + this.getFirstName();
+        String name2 = m.getLastName() + m.getFirstName();
+        return name1.compareTo(name2);
     }
 }

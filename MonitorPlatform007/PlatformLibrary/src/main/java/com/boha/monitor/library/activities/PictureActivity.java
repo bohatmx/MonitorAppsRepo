@@ -2,7 +2,6 @@ package com.boha.monitor.library.activities;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +17,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -686,7 +684,7 @@ public class PictureActivity extends AppCompatActivity implements LocationListen
 
             if (main.getWidth() > main.getHeight()) {
                 Log.d(LOG, "*** this image in landscape");
-                bm = Util.rotateBitmap(bm);
+               // bm = Util.rotateBitmap(bm);
 
             }
             getLog(bm, "decoded Bitmap");

@@ -96,15 +96,18 @@
 
         <activity
             android:name="com.boha.monitor.library.activities.PhotoScrollerActivity"
+
             android:label="@string/title_activity_photo_scroller" />
         <activity
             android:name="com.boha.monitor.library.activities.LocationTrackerListActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_location_tracker" />
         <activity
             android:name="com.boha.monitor.library.activities.ProfileActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.boha.monitor.library.activities.ProjectAssignmentActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_project_assignment" />
         <activity
             android:name="com.boha.monitor.library.activities.HighDefActivity"
@@ -127,6 +130,7 @@
 
         <activity
             android:name="com.boha.monitor.library.activities.ProjectTaskActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_project_task" />
 
         <receiver

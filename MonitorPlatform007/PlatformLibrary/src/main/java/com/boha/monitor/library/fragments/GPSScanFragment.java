@@ -268,11 +268,15 @@ public class GPSScanFragment extends Fragment implements PageFragment {
         Snappy.cacheRequest(monApp, request, new Snappy.SnappyWriteListener() {
             @Override
             public void onDataWritten() {
-                if (project == null) return;
+                if (project == null) {
+                    return;
+                }
                 project.setLocationConfirmed(true);
                 Log.e(LOG, "----onDataCached, onEndScanRequested - please stop scanning");
-                listener.onEndScanRequested();
-                listener.onLocationConfirmed(project);
+                if (listener != null) {
+                    listener.onEndScanRequested();
+                    listener.onLocationConfirmed(project);
+                }
             }
 
             @Override
