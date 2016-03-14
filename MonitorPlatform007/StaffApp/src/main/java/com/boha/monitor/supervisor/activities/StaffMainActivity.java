@@ -664,6 +664,9 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
 
         if (location.getAccuracy() <= ACCURACY_THRESHOLD) {
             mLocation = location;
+            if (projectListFragment == null) {
+                return;
+            }
             stopLocationUpdates();
             mRequestingLocationUpdates = false;
             projectListFragment.setLocation(location);

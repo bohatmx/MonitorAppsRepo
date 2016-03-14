@@ -54,8 +54,8 @@ import com.boha.monitor.library.dto.VideoUploadDTO;
 import com.boha.monitor.library.fragments.MediaDialogFragment;
 import com.boha.monitor.library.fragments.MessagingFragment;
 import com.boha.monitor.library.fragments.MonitorListFragment;
-import com.boha.monitor.library.fragments.ProfileFragment;
 import com.boha.monitor.library.fragments.PageFragment;
+import com.boha.monitor.library.fragments.ProfileFragment;
 import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.fragments.StaffListFragment;
 import com.boha.monitor.library.fragments.TaskListFragment;
@@ -67,13 +67,12 @@ import com.boha.monitor.library.util.DepthPageTransformer;
 import com.boha.monitor.library.util.MonLog;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
+import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.library.util.WebCheck;
 import com.boha.platform.worker.R;
 import com.boha.platform.worker.fragments.NavigationDrawerFragment;
-import com.boha.platform.worker.fragments.NoProjectsAssignedFragment;
-import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -145,10 +144,9 @@ public class MonitorMainActivity extends AppCompatActivity
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
-                .addApi(AppIndex.API).build();
+                .build();
 
         setFields();
-        buildPages();
         setBroadcastReceivers();
         checkAirplane();
 
@@ -252,6 +250,7 @@ public class MonitorMainActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
+        getCachedData();
 
     }
 
@@ -284,6 +283,7 @@ public class MonitorMainActivity extends AppCompatActivity
 
                 projectListFragment = new ProjectListFragment();
                 projectListFragment.setMonApp(app);
+                projectListFragment.setProjectList(response.getProjectList());
                 projectListFragment.setPageTitle(getString(R.string.projects));
                 projectListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
 
@@ -295,11 +295,13 @@ public class MonitorMainActivity extends AppCompatActivity
 
                 monitorListFragment = new MonitorListFragment();
                 monitorListFragment.setMonApp(app);
+                monitorListFragment.setMonitorList(response.getMonitorList());
                 monitorListFragment.setPageTitle(getString(R.string.monitors));
                 monitorListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
 
                 staffListFragment = new StaffListFragment();
                 staffListFragment.setMonApp(app);
+                staffListFragment.setStaffList(response.getStaffList());
                 staffListFragment.setPageTitle(getString(R.string.projects));
                 staffListFragment.setThemeColors(themePrimaryColor, themeDarkColor);
 
@@ -409,7 +411,7 @@ public class MonitorMainActivity extends AppCompatActivity
                             data.getBooleanExtra("statusCompleted", false);
                     if (statusCompleted) {
                         MonLog.e(ctx, LOG, "statusCompleted, projectListFragment.getProjectList();");
-                        projectListFragment.getProjectList();
+                        getCachedData();
                     }
                 }
                 Log.i(LOG, "+++++++ onActivityResult, back from UpdateActivity. starting loc update");
@@ -718,7 +720,11 @@ public class MonitorMainActivity extends AppCompatActivity
 
         if (loc.getAccuracy() <= ACCURACY) {
             mLocation = loc;
+            if (projectListFragment == null) {
+                return;
+            }
             stopLocationUpdates();
+
             projectListFragment.setLocation(loc);
 
             if (simpleMessage != null) {
@@ -975,8 +981,7 @@ public class MonitorMainActivity extends AppCompatActivity
             setRefreshActionButtonState(false);
             Log.e(LOG, "@@@@@@@@@@@@@@@@@@@@@@@@ DataRefreshDoneReceiver onReceive, data must have been refreshed: "
                     + intent.toString());
-            projectListFragment.getProjectList();
-            monitorListFragment.getMonitorList();
+            getCachedData();
         }
     }
 
@@ -1004,7 +1009,7 @@ public class MonitorMainActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent) {
             Log.e(LOG, "*************************** PhotoUploadedReceiver onReceive, photo uploaded: "
                     + intent.toString());
-            projectListFragment.getProjectList();
+            getCachedData();
             Log.e(LOG, "Photo has been uploaded OK");
 
         }
@@ -1096,5 +1101,43 @@ public class MonitorMainActivity extends AppCompatActivity
 
         return false;
     }
+    MonApp app;
+    private void getCachedData() {
+        app = (MonApp)getApplicationContext();
+        response = new ResponseDTO();
+        Snappy.getProjectList(app, new Snappy.SnappyReadListener() {
+            @Override
+            public void onDataRead(ResponseDTO r) {
+                response.setProjectList(r.getProjectList());
+                Snappy.getStaffList(app, new Snappy.SnappyReadListener() {
+                    @Override
+                    public void onDataRead(ResponseDTO r) {
+                        response.setStaffList(r.getStaffList());
+                        Snappy.getMonitorList(app, new Snappy.SnappyReadListener() {
+                            @Override
+                            public void onDataRead(ResponseDTO r) {
+                                response.setMonitorList(r.getMonitorList());
+                                buildPages();
+                            }
 
+                            @Override
+                            public void onError(String message) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String message) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String message) {
+
+            }
+        });
+    }
 }
