@@ -149,7 +149,7 @@ public class YouTubeService extends IntentService {
                 //ACRA.getErrorReporter().handleSilentException(e);
             }
         } else {
-            Log.w(LOG, "++++++ video upload sending complete, waiting for uploads to complete ...");
+            Log.w(LOG, "++++++ video upload(s) completed ...Yebo Gogo!!!");
         }
     }
 
@@ -382,7 +382,7 @@ public class YouTubeService extends IntentService {
                     waitABit();
                 }
                 long end = System.currentTimeMillis();
-                Log.i(LOG,"Fake wait took: " + (end-start)/1000 + " seconds, count: " + count);
+                Log.i(LOG,"Fake wait took: " + (end-start)/1000 + " seconds");
                 index++;
                 controlUploads();
             }
