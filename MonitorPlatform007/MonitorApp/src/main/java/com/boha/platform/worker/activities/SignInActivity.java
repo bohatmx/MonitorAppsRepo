@@ -1,8 +1,6 @@
 package com.boha.platform.worker.activities;
 
 import android.Manifest;
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -276,7 +274,8 @@ public class SignInActivity extends AppCompatActivity {
         if (gcmDevice != null) {
             r.setGcmDevice(gcmDevice);
         }
-
+        Snackbar.make(btnSave,"Signing in, data is being prepared " +
+                "and may take a couple of minutes.", Snackbar.LENGTH_INDEFINITE).show();
        setBusyIndicator(true);
         NetUtil.sendRequest(ctx,r,new NetUtil.NetUtilListener() {
             @Override

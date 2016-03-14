@@ -300,7 +300,7 @@ public class SignInActivity extends AppCompatActivity {
             });
         }
     }
-
+    Snackbar bar;
     /**
      * Send staff email and PIN to the backend.
      * The device details are sent with the sign in  request
@@ -331,6 +331,10 @@ public class SignInActivity extends AppCompatActivity {
         if (gcmDevice.getRegistrationID() != null) {
             r.setGcmDevice(gcmDevice);
         }
+
+
+        Snackbar.make(btnSave,"Signing in, data is being prepared " +
+                "and may take a couple of minutes.", Snackbar.LENGTH_INDEFINITE).show();
 
         setBusyIndicator(true);
         NetUtil.sendRequest(ctx, r, new NetUtil.NetUtilListener() {
