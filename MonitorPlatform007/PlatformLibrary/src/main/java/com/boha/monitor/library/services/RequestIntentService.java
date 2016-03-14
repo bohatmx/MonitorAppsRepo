@@ -31,7 +31,7 @@ public class RequestIntentService extends IntentService {
     MonApp app;
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.w(LOG,"################### onHandleIntent");
+        Log.d(LOG,"################### onHandleIntent");
         if (WebCheck.checkNetworkAvailability(getApplicationContext())
                 .isNetworkUnavailable()) {
             Log.e(LOG, "--- No Network: boolean = isNetworkUnavailable");

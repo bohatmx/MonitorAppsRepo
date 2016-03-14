@@ -84,6 +84,11 @@ public class YouTubeActivity extends Activity {
             project.setProjectID(68);
             project.setProjectName("Testing Infrastructure");
         }
+        if (savedInstanceState != null) {
+            MonLog.e(getApplicationContext(),LOG,"*** savedInstanceState is not null");
+            project = (ProjectDTO)savedInstanceState.getSerializable("project");
+            videoUpload = (VideoUploadDTO)savedInstanceState.getSerializable("video");
+        }
 
         authToken = SharedUtil.getAuthToken(getApplicationContext());
         try {
@@ -99,6 +104,17 @@ public class YouTubeActivity extends Activity {
 
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle b) {
+        MonLog.w(getApplicationContext(),LOG,"---- onSaveInstanceState");
+        if (videoUpload != null) {
+            b.putSerializable("video",videoUpload);
+        }
+        if (project != null) {
+            b.putSerializable("project",project);
+        }
+        super.onSaveInstanceState(b);
+    }
     private void setFields() {
         image = (ImageView) findViewById(R.id.image);
         txtTitle = (TextView)findViewById(R.id.title);
@@ -119,17 +135,35 @@ public class YouTubeActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Log.w(LOG, "OnClickListener ... start service ....");
-                Intent m = new Intent(getApplicationContext(), YouTubeService.class);
-                startService(m);
-                btnUpload.setVisibility(View.GONE);
-                btnPlay.setVisibility(View.GONE);
-                fab.setVisibility(View.VISIBLE);
+                Snappy.addVideo(monApp, videoUpload, Snappy.ADD_VIDEO_FOR_UPLOAD, new Snappy.VideoListener() {
+                    @Override
+                    public void onVideoAdded() {
+                        Intent m = new Intent(getApplicationContext(), YouTubeService.class);
+                        startService(m);
+                        btnUpload.setVisibility(View.GONE);
+                        btnPlay.setVisibility(View.GONE);
+                        fab.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onVideoDeleted() {
+                    }
+
+                    @Override
+                    public void onVideosListed(List<VideoUploadDTO> list) {
+                    }
+
+                    @Override
+                    public void onError() {
+                        Util.showErrorToast(getApplicationContext(), "Unable to save video");
+                    }
+                });
+
             }
         });
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent m = new Intent(getApplicationContext(),
                         LocalVideoPlayerActivity.class);
                 m.putExtra("video", videoUpload);
@@ -324,29 +358,11 @@ public class YouTubeActivity extends Activity {
         videoUpload.setFilePath(videoFile.getAbsolutePath());
 
         videoUpload.setDateTaken(new Date().getTime());
+        videoTaken = true;
+        btnUpload.setVisibility(View.VISIBLE);
+        btnPlay.setVisibility(View.VISIBLE);
 
-        Snappy.addVideo(monApp, videoUpload, Snappy.ADD_VIDEO_FOR_UPLOAD, new Snappy.VideoListener() {
-            @Override
-            public void onVideoAdded() {
-                videoTaken = true;
-                fab.setVisibility(View.GONE);
-                btnUpload.setVisibility(View.VISIBLE);
-                btnPlay.setVisibility(View.VISIBLE);
-            }
 
-            @Override
-            public void onVideoDeleted() {
-            }
-
-            @Override
-            public void onVideosListed(List<VideoUploadDTO> list) {
-            }
-
-            @Override
-            public void onError() {
-                Util.showErrorToast(getApplicationContext(), "Unable to save video");
-            }
-        });
     }
 
 

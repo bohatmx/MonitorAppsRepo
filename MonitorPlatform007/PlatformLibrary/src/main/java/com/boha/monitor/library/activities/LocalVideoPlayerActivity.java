@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.Chronometer;
 import android.widget.ImageView;
@@ -46,6 +47,7 @@ public class LocalVideoPlayerActivity extends Activity {
         mVideoView.setMediaController(new MediaController(this));
         mVideoView.setVideoURI(uri);
         mVideoView.requestFocus();
+        chronometer.setBase(SystemClock.elapsedRealtime());
         chronometer.start();
         mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -56,6 +58,7 @@ public class LocalVideoPlayerActivity extends Activity {
         replay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                chronometer.setBase(SystemClock.elapsedRealtime());
                 chronometer.start();
                 mVideoView.start();
 

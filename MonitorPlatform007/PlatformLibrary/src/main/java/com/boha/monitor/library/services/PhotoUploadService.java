@@ -38,7 +38,7 @@ public class PhotoUploadService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.w(LOG, "## PhotoUploadService onHandleIntent .... starting service");
+        Log.d(LOG, "## PhotoUploadService onHandleIntent .... starting service");
         if (WebCheck.checkNetworkAvailability(getApplicationContext()).isNetworkUnavailable()) {
             Log.e(LOG, "--- No Network: boolean = isNetworkUnavailable");
             return;

@@ -49,7 +49,7 @@ public class TrackerService extends GcmTaskService
 
     @Override
     public int onRunTask(TaskParams taskParams) {
-        Log.w(LOG, "############ onRunTask");
+        Log.d(LOG, "############ onRunTask");
         return 0;
     }
 

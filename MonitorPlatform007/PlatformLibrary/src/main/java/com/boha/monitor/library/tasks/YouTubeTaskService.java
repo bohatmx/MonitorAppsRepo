@@ -13,7 +13,7 @@ import com.google.android.gms.gcm.TaskParams;
 public class YouTubeTaskService extends GcmTaskService {
     @Override
     public int onRunTask(TaskParams taskParams) {
-        Log.w("YouTubeTaskService","&&&&&&&& onRunTask");
+        Log.d("YouTubeTaskService","&&&&&&&&---------- onRunTask");
         Intent m = new Intent(getApplicationContext(), YouTubeService.class);
         getApplicationContext().startService(m);
         return 0;
