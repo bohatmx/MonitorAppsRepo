@@ -11,6 +11,9 @@ android {
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE'
     }
+    lintOptions {
+        checkReleaseBuilds false
+    }
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 22
