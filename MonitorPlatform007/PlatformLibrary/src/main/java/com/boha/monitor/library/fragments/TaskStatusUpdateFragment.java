@@ -36,19 +36,15 @@ import com.boha.monitor.library.dto.TaskStatusTypeDTO;
 import com.boha.monitor.library.services.RequestIntentService;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Snappy;
-import com.boha.monitor.library.util.SpacesItemDecoration;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 import com.squareup.picasso.Picasso;
-import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 
 public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
@@ -209,16 +205,9 @@ public class TaskStatusUpdateFragment extends Fragment implements PageFragment {
         hero = (ImageView) view.findViewById(R.id.TSE_backdrop);
         hero.setImageDrawable(Util.getRandomBackgroundImage(getActivity()));
 
-        mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getActivity())
-                .color(ContextCompat.getColor(getActivity(), R.color.grey))
-                .sizeResId(R.dimen.mon_padding)
-                .marginResId(R.dimen.mon_padding, R.dimen.mon_padding)
-                .build());
 
-        mRecyclerView.setItemAnimator(new SlideInLeftAnimator());
         GridLayoutManager glm = new GridLayoutManager(getActivity(), 2, LinearLayoutManager.VERTICAL, false);
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.mon_divider);
-        mRecyclerView.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(glm);
 

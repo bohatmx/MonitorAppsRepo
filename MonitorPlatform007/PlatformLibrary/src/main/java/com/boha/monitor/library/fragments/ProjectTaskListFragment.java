@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,13 +26,11 @@ import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
 import com.boha.monitor.library.util.WebCheck;
 import com.boha.platform.library.R;
-import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 
 /**
@@ -176,13 +173,8 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment {
 
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
-        mRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getActivity())
-                .color(ContextCompat.getColor(getActivity(), R.color.blue_gray_500))
-                .sizeResId(R.dimen.mon_divider)
-                .marginResId(R.dimen.mon_padding, R.dimen.mon_padding)
-                .build());
 
-        mRecyclerView.setItemAnimator(new SlideInLeftAnimator());
+
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         GridLayoutManager glm = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, true);
         mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));

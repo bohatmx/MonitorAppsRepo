@@ -14,7 +14,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.boha.monitor.library.activities.MonApp;
@@ -27,7 +26,6 @@ import com.boha.monitor.library.dto.TaskDTO;
 import com.boha.monitor.library.util.OKHttpException;
 import com.boha.monitor.library.util.OKUtil;
 import com.boha.monitor.library.util.SharedUtil;
-import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
@@ -35,7 +33,6 @@ import com.boha.platform.library.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.wasabeef.recyclerview.animators.FadeInAnimator;
 
 public class ProjectTaskFragment extends Fragment {
 
@@ -87,8 +84,7 @@ public class ProjectTaskFragment extends Fragment {
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.FPT_recycler);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setItemAnimator(new FadeInAnimator());
-        mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+
 
         mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setLayoutManager(llm);

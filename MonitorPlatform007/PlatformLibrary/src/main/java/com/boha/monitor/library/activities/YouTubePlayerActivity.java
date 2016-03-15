@@ -118,7 +118,7 @@ public class YouTubePlayerActivity extends YouTubeBaseActivity
     private String getAPIKey() {
         boolean isDebuggable = 0 != (ctx.getApplicationInfo().flags
                 &= ApplicationInfo.FLAG_DEBUGGABLE);
-        
+
         StaffDTO staff = SharedUtil.getCompanyStaff(ctx);
         MonitorDTO mon = SharedUtil.getMonitor(ctx);
         if (staff != null) {

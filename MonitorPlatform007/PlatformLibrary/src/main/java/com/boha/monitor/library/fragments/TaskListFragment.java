@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,7 +17,6 @@ import android.widget.TextView;
 import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.TaskAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
-import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.dto.TaskDTO;
@@ -26,13 +24,11 @@ import com.boha.monitor.library.services.RequestIntentService;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.monitor.library.util.Snappy;
-import com.boha.monitor.library.util.SpacesItemDecoration;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
 import java.util.List;
 
-import jp.wasabeef.recyclerview.animators.FadeInAnimator;
 
 public class TaskListFragment extends Fragment implements PageFragment {
 
@@ -136,7 +132,6 @@ public class TaskListFragment extends Fragment implements PageFragment {
         hero.setImageDrawable(Util.getRandomBackgroundImage(getActivity()));
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setItemAnimator(new FadeInAnimator());
         mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
 
         mRecyclerView.setHasFixedSize(false);
