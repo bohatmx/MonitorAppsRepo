@@ -1,49 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
+    android:layout_margin="@dimen/mon_padding"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.google.android.youtube.player.YouTubeThumbnailView
-        android:id="@+id/icon"
-        android:src="@drawable/video32"
-        android:layout_margin="@dimen/mon_padding"
-        android:layout_centerVertical="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <RelativeLayout
-        android:id="@+id/top"
-        android:layout_toRightOf="@id/icon"
-        android:layout_margin="@dimen/mon_margin"
+    <android.support.v7.widget.CardView
+        app:cardElevation="@dimen/mon_padding"
+        app:cardCornerRadius="@dimen/mon_padding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/title"
-            android:text="Project Name Here"
-            style="@style/Title3TextStyleBlack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/subtitle"
-            android:text="Date of Video and other possible data"
-            style="@style/TextStyleSmall"
-            android:layout_marginTop="@dimen/mon_padding"
-            android:layout_below="@id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <com.google.android.youtube.player.YouTubeThumbnailView
+                android:id="@+id/icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_margin="@dimen/mon_divider"
+                android:src="@drawable/video32" />
 
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/bottom"
-        android:layout_below="@id/top"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            <RelativeLayout
+                android:id="@+id/top"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/mon_margin"
+                android:layout_toRightOf="@id/icon">
 
+                <TextView
+                    android:id="@+id/title"
+                    style="@style/Title3TextStyleBlack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Project Name Here" />
 
+                <TextView
+                    android:id="@+id/subtitle"
+                    style="@style/TextStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/title"
+                    android:layout_marginTop="@dimen/mon_padding"
+                    android:text="Date of Video and other possible data" />
 
-
-    </RelativeLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
 
 </RelativeLayout>

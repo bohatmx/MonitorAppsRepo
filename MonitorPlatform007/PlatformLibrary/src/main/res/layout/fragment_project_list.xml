@@ -65,5 +65,14 @@
         android:background="@color/white"
         android:scrollbars="vertical" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:src="@drawable/ic_action_refresh"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/mon_margin"
+        android:layout_width="56dp"
+        android:layout_height="56dp" />
+
 </RelativeLayout>
 

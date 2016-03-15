@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.GcmDeviceDTO;
@@ -43,6 +45,7 @@ public class LocationTrackerListActivity extends AppCompatActivity
     static final String LOG = LocationTrackerListActivity.class.getSimpleName();
     GcmDeviceFragment gcmDeviceFragment;
     int themeDarkColor, themePrimaryColor;
+    FloatingActionButton fab;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ThemeChooser.setTheme(this);
@@ -55,6 +58,7 @@ public class LocationTrackerListActivity extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_tracker);
+        fab = (FloatingActionButton)findViewById(R.id.fab);
         ctx = getApplicationContext();
         locationTrackerListFragment = (LocationTrackerListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
 
@@ -63,6 +67,12 @@ public class LocationTrackerListActivity extends AppCompatActivity
                 ContextCompat.getDrawable(getApplicationContext(), com.boha.platform.library.R.drawable.glasses));
 
         getCachedTracks();
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getCompanyTracks();
+            }
+        });
     }
 
     private void getCachedTracks() {

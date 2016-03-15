@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.util.SharedUtil;
+import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
 
@@ -207,6 +208,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
                     pvh.details.setVisibility(View.GONE);
                     pvh.actions.setVisibility(View.GONE);
                 }
+                Snappy.updateProjectLite(project,null);
             }
         });
     }

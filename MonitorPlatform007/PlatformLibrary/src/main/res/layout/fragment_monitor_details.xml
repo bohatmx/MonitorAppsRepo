@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="@dimen/mon_margin"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/FMP_personImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/mon_margin"
+        android:layout_marginTop="80dp"
+        android:elevation="@dimen/mon_margin"
+        android:scaleType="centerCrop"
+        android:src="@drawable/black_woman" />
+
+
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -10,7 +24,6 @@
 
         <RelativeLayout
             android:id="@+id/FMD_topLayout"
-
             android:layout_width="match_parent"
             android:layout_height="@dimen/mon_hero_height_medium_lite">
 
@@ -25,287 +38,296 @@
                 android:id="@+id/FMP_title"
                 style="@style/Title2TextStyleWhite"
                 android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/mon_margin"
-                android:layout_marginLeft="@dimen/mon_margin"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_marginTop="@dimen/mon_margin"
                 android:background="@color/transparent_black"
                 android:paddingLeft="@dimen/mon_margin"
                 android:paddingRight="@dimen/mon_margin"
                 android:paddingTop="@dimen/mon_padding"
                 android:text="@string/monitor" />
+
             <TextView
                 android:id="@+id/FMP_person"
                 style="@style/Title3TextStyleWhite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/FMP_title"
                 android:layout_marginLeft="@dimen/mon_margin"
                 android:background="@color/transparent_black"
+                android:paddingBottom="@dimen/mon_padding"
                 android:paddingLeft="@dimen/mon_margin"
                 android:paddingRight="@dimen/mon_margin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/mon_padding"
                 android:text="@string/monitor" />
 
 
-
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/FMD_midLayout"
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/mon_margin"
             android:layout_below="@id/FMD_topLayout"
-            android:padding="@dimen/mon_margin">
+            app:cardCornerRadius="@dimen/mon_divider"
+            app:cardElevation="@dimen/mon_margin">
 
-
-
-            <RelativeLayout
-                android:id="@+id/box1"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/mon_wide">
+                android:layout_height="match_parent">
 
-                <ImageView
-                    android:id="@+id/icon1"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_action_person" />
-
-                <android.support.design.widget.TextInputLayout
+                <RelativeLayout
+                    android:id="@+id/FMD_midLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/icon1">
+                    android:layout_height="match_parent"
 
-                    <EditText
-                        android:id="@+id/FMP_editFirstName"
+                    android:padding="@dimen/mon_margin">
+
+                    <RelativeLayout
+                        android:id="@+id/box1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_marginTop="@dimen/mon_wide">
 
-                        android:hint="First Name"
-                        android:inputType="textCapWords" />
-                </android.support.design.widget.TextInputLayout>
-            </RelativeLayout>
+                        <ImageView
+                            android:id="@+id/icon1"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_action_person" />
 
-            <RelativeLayout
-                android:id="@+id/box2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/box1">
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/icon1">
 
+                            <EditText
+                                android:id="@+id/FMP_editFirstName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/mon_margin"
 
-                <ImageView
-                    android:id="@+id/icon2"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_action_person" />
+                                android:hint="First Name"
+                                android:inputType="textCapWords" />
+                        </android.support.design.widget.TextInputLayout>
+                    </RelativeLayout>
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/icon2">
-
-                    <EditText
-                        android:id="@+id/FMP_editLastName"
+                    <RelativeLayout
+                        android:id="@+id/box2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/mon_margin"
-                        android:layout_toRightOf="@id/icon2"
-                        android:hint="Surname"
-                        android:inputType="textCapWords" />
-                </android.support.design.widget.TextInputLayout>
+                        android:layout_below="@id/box1">
 
-            </RelativeLayout>
 
-            <RelativeLayout
-                android:id="@+id/box3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/box2">
+                        <ImageView
+                            android:id="@+id/icon2"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_action_person" />
 
-                <ImageView
-                    android:id="@+id/icon3"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_action_globe" />
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/icon2">
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/icon3">
+                            <EditText
+                                android:id="@+id/FMP_editLastName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/mon_margin"
+                                android:layout_toRightOf="@id/icon2"
+                                android:hint="Surname"
+                                android:inputType="textCapWords" />
+                        </android.support.design.widget.TextInputLayout>
 
-                    <EditText
-                        android:id="@+id/FMP_editID"
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/box3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/mon_margin"
-                        android:layout_toRightOf="@id/icon3"
-                        android:hint="Identification Number"
-                        android:inputType="number" />
-                </android.support.design.widget.TextInputLayout>
-            </RelativeLayout>
+                        android:layout_below="@id/box2">
 
-            <RelativeLayout
-                android:id="@+id/box4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/box3">
+                        <ImageView
+                            android:id="@+id/icon3"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_action_globe" />
 
-                <ImageView
-                    android:id="@+id/icon4"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/tick_32" />
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/icon3">
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/icon4">
+                            <EditText
+                                android:id="@+id/FMP_editID"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/mon_margin"
+                                android:layout_toRightOf="@id/icon3"
+                                android:hint="Identification Number"
+                                android:inputType="number" />
+                        </android.support.design.widget.TextInputLayout>
+                    </RelativeLayout>
 
-                    <EditText
-                        android:id="@+id/FMP_editCell"
+                    <RelativeLayout
+                        android:id="@+id/box4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/mon_margin"
-                        android:layout_toRightOf="@id/icon4"
-                        android:hint="Cellphone Number"
-                        android:inputType="number" />
-                </android.support.design.widget.TextInputLayout>
-            </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/box4a"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/box4">
+                        android:layout_below="@id/box3">
 
-                <ImageView
-                    android:id="@+id/icon4a"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_action_message" />
+                        <ImageView
+                            android:id="@+id/icon4"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/tick_32" />
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/icon4a">
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/icon4">
 
-                    <EditText
-                        android:id="@+id/FMP_editEmail"
+                            <EditText
+                                android:id="@+id/FMP_editCell"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/mon_margin"
+                                android:layout_toRightOf="@id/icon4"
+                                android:hint="Cellphone Number"
+                                android:inputType="number" />
+                        </android.support.design.widget.TextInputLayout>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/box4a"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/mon_margin"
-                        android:layout_toRightOf="@id/icon4a"
-                        android:hint="Email Address"
-                        android:inputType="textEmailAddress" />
-                </android.support.design.widget.TextInputLayout>
-            </RelativeLayout>
+                        android:layout_below="@id/box4">
 
-            <RelativeLayout
-                android:id="@+id/box5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/box4a">
+                        <ImageView
+                            android:id="@+id/icon4a"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_action_message" />
 
-                <ImageView
-                    android:id="@+id/icon5"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_action_picture" />
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/icon4a">
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/icon5">
+                            <EditText
+                                android:id="@+id/FMP_editEmail"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/mon_margin"
+                                android:layout_toRightOf="@id/icon4a"
+                                android:hint="Email Address"
+                                android:inputType="textEmailAddress" />
+                        </android.support.design.widget.TextInputLayout>
+                    </RelativeLayout>
 
-                    <EditText
-                        android:id="@+id/FMP_editAddress"
+                    <RelativeLayout
+                        android:id="@+id/box5"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/mon_margin"
-                        android:layout_toRightOf="@id/icon5"
-                        android:hint="Home Address"
-                        android:inputType="textCapWords" />
-                </android.support.design.widget.TextInputLayout>
-            </RelativeLayout>
+                        android:layout_below="@id/box4a">
 
-            <RadioGroup
-                android:id="@+id/FMP_radioGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/box5"
-                android:layout_marginTop="@dimen/mon_margin"
-                android:layout_marginLeft="@dimen/mon_wider"
-                android:orientation="horizontal">
+                        <ImageView
+                            android:id="@+id/icon5"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_action_picture" />
 
-                <RadioButton
-                    android:id="@+id/FMP_radioMale"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Male" />
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/icon5">
 
-                <Space
-                    android:layout_width="@dimen/mon_wide"
-                    android:layout_height="wrap_content" />
+                            <EditText
+                                android:id="@+id/FMP_editAddress"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/mon_margin"
+                                android:layout_toRightOf="@id/icon5"
+                                android:hint="Home Address"
+                                android:inputType="textCapWords" />
+                        </android.support.design.widget.TextInputLayout>
+                    </RelativeLayout>
 
-                <RadioButton
-                    android:id="@+id/FMP_radioFemale"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Female" />
-            </RadioGroup>
-            <RadioGroup
-                android:id="@+id/FMP_radioGroup2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/FMP_radioGroup"
-                android:layout_marginLeft="@dimen/mon_wider"
-                android:layout_marginTop="@dimen/mon_margin"
-                android:orientation="horizontal">
+                    <RadioGroup
+                        android:id="@+id/FMP_radioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/box5"
+                        android:layout_marginLeft="@dimen/mon_wider"
+                        android:layout_marginTop="@dimen/mon_margin"
+                        android:orientation="horizontal">
 
-                <RadioButton
-                    android:id="@+id/FMP_radioActive"
-                    android:checked="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Active" />
+                        <RadioButton
+                            android:id="@+id/FMP_radioMale"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Male" />
 
-                <Space
-                    android:layout_width="@dimen/mon_wide"
-                    android:layout_height="wrap_content" />
+                        <Space
+                            android:layout_width="@dimen/mon_wide"
+                            android:layout_height="wrap_content" />
 
-                <RadioButton
-                    android:id="@+id/FMP_radioInactive"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Not Active" />
-            </RadioGroup>
+                        <RadioButton
+                            android:id="@+id/FMP_radioFemale"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Female" />
+                    </RadioGroup>
 
-            <Button
-                android:id="@+id/FMP_btnSave"
-                style="@style/ButtonRed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/FMP_radioGroup2"
-                android:layout_marginTop="@dimen/mon_wider"
-                android:text="Save Data" />
-        </RelativeLayout>
+                    <RadioGroup
+                        android:id="@+id/FMP_radioGroup2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/FMP_radioGroup"
+                        android:layout_marginLeft="@dimen/mon_wider"
+                        android:layout_marginTop="@dimen/mon_margin"
+                        android:orientation="horizontal">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/FMP_personImage"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="80dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/mon_margin"
-            android:scaleType="centerCrop"
-            android:src="@drawable/black_woman" />
+                        <RadioButton
+                            android:id="@+id/FMP_radioActive"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="Active" />
+
+                        <Space
+                            android:layout_width="@dimen/mon_wide"
+                            android:layout_height="wrap_content" />
+
+                        <RadioButton
+                            android:id="@+id/FMP_radioInactive"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Not Active" />
+                    </RadioGroup>
+
+                    <Button
+                        android:id="@+id/FMP_btnSave"
+                        style="@style/ButtonRed"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/FMP_radioGroup2"
+                        android:layout_marginTop="@dimen/mon_wider"
+                        android:text="Save Data" />
+
+                </RelativeLayout>
+            </ScrollView>
+
+
+        </android.support.v7.widget.CardView>
+
+
 
     </RelativeLayout>
-</ScrollView>
+</RelativeLayout>

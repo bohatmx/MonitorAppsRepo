@@ -14,7 +14,6 @@ import com.boha.monitor.library.dto.StaffDTO;
 import com.boha.monitor.library.dto.VideoUploadDTO;
 import com.boha.monitor.library.util.MonLog;
 import com.boha.monitor.library.util.SharedUtil;
-import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.monitor.library.util.ThemeChooser;
 import com.boha.platform.library.R;
 import com.google.android.youtube.player.YouTubeBaseActivity;
@@ -61,7 +60,7 @@ public class YouTubePlayerActivity extends YouTubeBaseActivity
         if (recycler != null) {
             LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
             recycler.setLayoutManager(llm);
-            recycler.addItemDecoration(new SimpleDividerItemDecoration(getApplicationContext()));
+            recycler.setHasFixedSize(true);
         } else {
 
         }

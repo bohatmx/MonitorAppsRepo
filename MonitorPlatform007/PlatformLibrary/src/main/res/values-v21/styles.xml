@@ -48,13 +48,13 @@
     <style name="PinkTheme" parent="MonTheme">
         <item name="colorPrimary">@color/pink_800</item>
         <item name="colorPrimaryDark">@color/pink_900</item>
-        <item name="colorAccent">@color/blue_gray_600</item>
+        <item name="colorAccent">@color/orange_500</item>
     </style>
 
     <style name="IndigoTheme" parent="MonTheme">
         <item name="colorPrimary">@color/indigo_500</item>
         <item name="colorPrimaryDark">@color/indigo_700</item>
-        <item name="colorAccent">@color/purple_500</item>
+        <item name="colorAccent">@color/red_400</item>
     </style>
 
     <style name="CyanTheme" parent="MonTheme">
@@ -79,7 +79,7 @@
     <style name="LightGreenTheme" parent="MonTheme">
         <item name="colorPrimary">@color/green_lite_700</item>
         <item name="colorPrimaryDark">@color/green_lite_600</item>
-        <item name="colorAccent">@color/indigo_600</item>
+        <item name="colorAccent">@color/pink_400</item>
     </style>
 
     <style name="AmberTheme" parent="MonTheme">
@@ -98,14 +98,14 @@
     <style name="PurpleTheme" parent="MonTheme">
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryDark">@color/purple_800</item>
-        <item name="colorAccent">@color/blue_gray_600</item>
+        <item name="colorAccent">@color/lime_700</item>
     </style>
 
 
     <style name="GreenTheme" parent="MonTheme">
         <item name="colorPrimary">@color/green_800</item>
         <item name="colorPrimaryDark">@color/green_900</item>
-        <item name="colorAccent">@color/purple_500</item>
+        <item name="colorAccent">@color/amber_400</item>
     </style>
 
     <style name="BrownTheme" parent="MonTheme">

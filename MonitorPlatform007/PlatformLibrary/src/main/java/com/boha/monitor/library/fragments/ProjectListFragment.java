@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -53,6 +54,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     private AutoCompleteTextView auto;
     private TextView txtProgramme, txtProjectCount;
     private View searchView;
+    private FloatingActionButton fab;
     MonApp monApp;
 
     public MonApp getMonApp() {
@@ -92,12 +94,19 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         auto = (AutoCompleteTextView) view.findViewById(R.id.autocomplete_project);
         txtCount = (TextView) view.findViewById(R.id.count);
+        fab = (FloatingActionButton)view.findViewById(R.id.fab);
         Statics.setRobotoFontLight(getActivity(), txtCount);
         top = view.findViewById(R.id.top);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(),
                 LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(llm);
         mRecyclerView.setHasFixedSize(true);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onRefreshRequired();
+            }
+        });
 
         if (auto != null) {
             hideKeyboard();
@@ -272,6 +281,11 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                 startActivity(w);
             }
 
+            @Override
+            public void onRefreshRequired() {
+                mListener.onRefreshRequired();
+            }
+
 
         });
         mRecyclerView.setAdapter(projectAdapter);
@@ -410,6 +424,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         void onStatusReportRequired(ProjectDTO project);
 
         void onMapRequired(ProjectDTO project);
+        void onRefreshRequired();
     }
 
     List<ProjectDTO> projectList;

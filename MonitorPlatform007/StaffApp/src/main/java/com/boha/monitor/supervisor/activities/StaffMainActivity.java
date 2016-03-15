@@ -1265,6 +1265,12 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
     }
 
+    boolean isBusy;
+    @Override
+    public void onRefreshRequired() {
+        getRemoteStaffData(true);
+    }
+
     /**
      * Adapter to manage fragments in view pager
      */

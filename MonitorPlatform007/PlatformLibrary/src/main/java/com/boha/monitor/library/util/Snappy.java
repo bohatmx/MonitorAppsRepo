@@ -349,6 +349,49 @@ public class Snappy {
         }
     }
 
+    static final int UPDATE_PROJECT_LITE = 1;
+
+    public static void updateProjectLite(ProjectDTO project, SnappyWriteListener listener) {
+        ProjectLiteTask task = new ProjectLiteTask(project, listener);
+        task.execute();
+    }
+
+    static class ProjectLiteTask extends AsyncTask<Void, Void, Integer> {
+
+        public ProjectLiteTask(ProjectDTO p, SnappyWriteListener listener) {
+            this.project = p;
+            this.listener = listener;
+        }
+
+        ProjectDTO project;
+        SnappyWriteListener listener;
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+            Integer projectID = project.getProjectID();
+            try {
+                if (!snappydb.isOpen()) {
+                    snappydb = monApp.getSnappyDB();
+                }
+                snappydb.put(PROJECT_LITE + projectID, project);
+                Log.d(LOG,"*** Project updated: " + project.getProjectID());
+
+            } catch (Exception e) {
+                android.util.Log.e(LOG, "Failed ProjectLiteTask", e);
+                return 9;
+            }
+            return 0;
+        }
+
+        @Override
+        protected void onPostExecute(Integer p) {
+            if (p == 0)
+                if (listener != null) {
+                    listener.onDataWritten();
+                }
+        }
+    }
+
     static SnappyProjectListener snappyProjectListener;
     static MonApp monApp;
 

@@ -665,6 +665,11 @@ public class MonitorMainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onRefreshRequired() {
+        getRemoteData();
+    }
+
+    @Override
     public void onConnected(Bundle bundle) {
         Log.i(LOG,
                 "+++  onConnected() -  requestLocationUpdates ...");
