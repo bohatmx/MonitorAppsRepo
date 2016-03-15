@@ -84,6 +84,7 @@ public class YouTubePlayerActivity extends YouTubeBaseActivity
                 position = index;
             }
         });
+
         recycler.setAdapter(adapter);
         youTubePlayer.cueVideo(videoList.get(position).getYouTubeID());
     }
@@ -117,6 +118,7 @@ public class YouTubePlayerActivity extends YouTubeBaseActivity
     private String getAPIKey() {
         boolean isDebuggable = 0 != (ctx.getApplicationInfo().flags
                 &= ApplicationInfo.FLAG_DEBUGGABLE);
+        
         StaffDTO staff = SharedUtil.getCompanyStaff(ctx);
         MonitorDTO mon = SharedUtil.getMonitor(ctx);
         if (staff != null) {
