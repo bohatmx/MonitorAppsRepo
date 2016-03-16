@@ -31,8 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/STATLST_heroImage"
-            android:background="@color/beige_pale"
-            android:padding="@dimen/mon_padding">
+            >
 
 
         </RelativeLayout>
@@ -41,8 +40,7 @@
             android:id="@+id/STATLST_dates"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/STATLST_top"
-            android:background="@color/beige_pale">
+            android:layout_below="@id/STATLST_top">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -160,13 +158,12 @@
 
     </RelativeLayout>
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/STATLST_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/STATLST_topView"
         android:layout_marginTop="@dimen/mon_divider"
-        android:background="@color/white"
         android:dividerHeight="4dp" />
 
 

@@ -54,6 +54,7 @@ import com.boha.monitor.library.activities.TaskListActivity;
 import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.activities.UpdateActivity;
 import com.boha.monitor.library.activities.YouTubeActivity;
+import com.boha.monitor.library.activities.YouTubePlayerActivity;
 import com.boha.monitor.library.dto.CompanyDTO;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
@@ -409,7 +410,7 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
         w.setStaffID(SharedUtil.getCompanyStaff(ctx).getStaffID());
 
         companyDataRefreshed = false;
-        setRefreshActionButtonState(showBusy);
+        //setRefreshActionButtonState(showBusy);
         if (showBusy) {
             Snackbar.make(mPager, "Refreshing your data, this may take a minute or two ...", Snackbar.LENGTH_LONG).show();
         }
@@ -1247,7 +1248,22 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
 
     @Override
     public void onVideoPlayListRequired(ProjectDTO project) {
+        SharedUtil.saveLastProjectID(ctx, project.getProjectID());
+        Snappy.getProject((MonApp)getApplication(), project.getProjectID(), new Snappy.SnappyProjectListener() {
+            @Override
+            public void onProjectFound(ProjectDTO project) {
+                Intent w = new Intent(ctx, YouTubePlayerActivity.class);
+                ResponseDTO responseDTO = new ResponseDTO();
+                responseDTO.setVideoUploadList(project.getVideoUploadList());
+                w.putExtra("videoList", responseDTO);
+                startActivity(w);
+            }
 
+            @Override
+            public void onError() {
+
+            }
+        });
     }
 
     @Override
@@ -1263,12 +1279,23 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
     @Override
     public void onMapRequired(ProjectDTO project) {
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
+        Intent w = new Intent(ctx, ProjectMapActivity.class);
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setProjectList(new ArrayList<ProjectDTO>());
+        responseDTO.getProjectList().add(project);
+        w.putExtra("projects", responseDTO);
+        startActivity(w);
     }
 
     boolean isBusy;
     @Override
     public void onRefreshRequired() {
         getRemoteStaffData(true);
+    }
+
+    @Override
+    public void onPositioningRequired(int position) {
+
     }
 
     /**

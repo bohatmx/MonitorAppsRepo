@@ -7,19 +7,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.activities.PhotoListActivity;
-import com.boha.monitor.library.adapters.StatusReportAdapter;
+import com.boha.monitor.library.adapters.StatusAdapter;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
@@ -71,9 +71,9 @@ public class StatusReportFragment extends Fragment implements PageFragment {
     ImageView heroImage;
     ProjectDTO project;
     TextView txtTitle, txtCount, txtPhotoCount;
-    ListView listView;
+    RecyclerView listView;
     LayoutInflater inflater;
-    StatusReportAdapter adapter;
+    StatusAdapter adapter;
     Button btnStart, btnEnd;
     Date startDate, endDate;
     View view, handle, topView, photoLayout;
@@ -101,7 +101,7 @@ public class StatusReportFragment extends Fragment implements PageFragment {
         handle = view.findViewById(R.id.STATLST_handle);
         topView = view.findViewById(R.id.STATLST_topView);
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        listView = (ListView) view.findViewById(R.id.STATLST_list);
+        listView = (RecyclerView) view.findViewById(R.id.STATLST_list);
         heroImage = (ImageView) view.findViewById(R.id.STATLST_heroImage);
         txtTitle = (TextView) view.findViewById(R.id.STATLST_txtTitle);
         txtPhotoCount = (TextView) view.findViewById(R.id.STATLST_txtPhotoCount);
@@ -109,10 +109,14 @@ public class StatusReportFragment extends Fragment implements PageFragment {
         btnEnd = (Button) view.findViewById(R.id.STATLST_endDate);
         btnStart = (Button) view.findViewById(R.id.STATLST_startDate);
 
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        listView.setLayoutManager(llm);
+        listView.setHasFixedSize(true);
+
         heroImage.setImageDrawable(Util.getRandomBackgroundImage(ctx));
 
-        Statics.setRobotoFontBold(ctx, btnEnd);
-        Statics.setRobotoFontBold(ctx, btnStart);
+        Statics.setRobotoFontLight(ctx, btnEnd);
+        Statics.setRobotoFontLight(ctx, btnStart);
         Statics.setRobotoFontLight(ctx, txtTitle);
         setDatesx();
 
@@ -249,13 +253,8 @@ public class StatusReportFragment extends Fragment implements PageFragment {
         txtPhotoCount.setText("" + count);
         Collections.sort(projectTaskStatusList);
         txtCount.setText("" + projectTaskStatusList.size());
-        adapter = new StatusReportAdapter(ctx, R.layout.status_report_card, projectTaskStatusList, false);
+        adapter = new StatusAdapter(projectTaskStatusList,getActivity());
         listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            }
-        });
 
 
     }

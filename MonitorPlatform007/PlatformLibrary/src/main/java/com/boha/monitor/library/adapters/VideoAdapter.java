@@ -5,10 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.dto.VideoUploadDTO;
+import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeThumbnailLoader;
@@ -87,7 +87,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             }
         });
 
-
+        Statics.setRobotoFontRegular(ctx,holder.projectName);
 
     }
 

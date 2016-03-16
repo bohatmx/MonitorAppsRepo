@@ -40,6 +40,7 @@ import com.boha.monitor.library.activities.StatusReportActivity;
 import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.activities.UpdateActivity;
 import com.boha.monitor.library.activities.VideoActivity;
+import com.boha.monitor.library.activities.YouTubePlayerActivity;
 import com.boha.monitor.library.dto.ChatMessageDTO;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
 import com.boha.monitor.library.dto.MonitorDTO;
@@ -263,7 +264,7 @@ public class MonitorMainActivity extends AppCompatActivity
         RequestDTO w = new RequestDTO(RequestDTO.GET_MONITOR_PROJECTS);
         w.setMonitorID(SharedUtil.getMonitor(ctx).getMonitorID());
 
-        setRefreshActionButtonState(true);
+        //setRefreshActionButtonState(true);
         busyGettingRemoteData = true;
         Snackbar.make(mPager, "Refreshing your data. May take a minute or two ...", Snackbar.LENGTH_LONG).show();
 
@@ -647,7 +648,22 @@ public class MonitorMainActivity extends AppCompatActivity
 
     @Override
     public void onVideoPlayListRequired(ProjectDTO project) {
+        SharedUtil.saveLastProjectID(ctx, project.getProjectID());
+        Snappy.getProject((MonApp)getApplication(), project.getProjectID(), new Snappy.SnappyProjectListener() {
+            @Override
+            public void onProjectFound(ProjectDTO project) {
+                Intent w = new Intent(ctx, YouTubePlayerActivity.class);
+                ResponseDTO responseDTO = new ResponseDTO();
+                responseDTO.setVideoUploadList(project.getVideoUploadList());
+                w.putExtra("videoList", responseDTO);
+                startActivity(w);
+            }
 
+            @Override
+            public void onError() {
+
+            }
+        });
     }
 
     @Override
@@ -662,11 +678,22 @@ public class MonitorMainActivity extends AppCompatActivity
     @Override
     public void onMapRequired(ProjectDTO project) {
         SharedUtil.saveLastProjectID(ctx, project.getProjectID());
+        Intent w = new Intent(ctx, ProjectMapActivity.class);
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setProjectList(new ArrayList<ProjectDTO>());
+        responseDTO.getProjectList().add(project);
+        w.putExtra("projects", responseDTO);
+        startActivity(w);
     }
 
     @Override
     public void onRefreshRequired() {
         getRemoteData();
+    }
+
+    @Override
+    public void onPositioningRequired(int position) {
+
     }
 
     @Override

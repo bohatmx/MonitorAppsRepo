@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.boha.monitor.library.adapters.VideoAdapter;
 import com.boha.monitor.library.dto.MonitorDTO;
@@ -28,6 +29,7 @@ public class YouTubePlayerActivity extends YouTubeBaseActivity
 
     private YouTubePlayerFragment youTubePlayerFragment;
     private YouTubePlayer youTubePlayer;
+    private TextView txtCount;
     private Context ctx;
     private List<VideoUploadDTO> videoList;
     private RecyclerView recycler;
@@ -46,6 +48,7 @@ public class YouTubePlayerActivity extends YouTubeBaseActivity
         ThemeChooser.setTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_you_tube_player);
+        txtCount = (TextView)findViewById(R.id.videoCount);
         ctx = getApplicationContext();
 
         ResponseDTO r = (ResponseDTO)getIntent().getSerializableExtra("videoList");
@@ -77,6 +80,7 @@ public class YouTubePlayerActivity extends YouTubeBaseActivity
         if (videoList == null || videoList.isEmpty()) {
             return;
         }
+        txtCount.setText("" + videoList.size());
         adapter = new VideoAdapter(videoList, getApplicationContext(), new VideoAdapter.VideoListener() {
             @Override
             public void onVideoClicked(VideoUploadDTO videoUpload, int index) {

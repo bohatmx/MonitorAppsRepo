@@ -16,6 +16,7 @@ import com.boha.monitor.library.fragments.ProjectListFragment;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Statics;
+import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
 import java.text.DecimalFormat;
@@ -201,12 +202,25 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
             public void onClick(View v) {
                 if (project.getDetailsOpen() == Boolean.FALSE) {
                     project.setDetailsOpen(Boolean.TRUE);
-                    pvh.details.setVisibility(View.VISIBLE);
-                    pvh.actions.setVisibility(View.VISIBLE);
+                    Util.expand(pvh.actions, 700, new Util.UtilAnimationListener() {
+                        @Override
+                        public void onAnimationEnded() {
+                            Util.expand(pvh.details,1000,null);
+                            listener.onPositioningRequired(position);
+                        }
+                    });
+//                    pvh.details.setVisibility(View.VISIBLE);
+//                    pvh.actions.setVisibility(View.VISIBLE);
                 } else {
                     project.setDetailsOpen(Boolean.FALSE);
-                    pvh.details.setVisibility(View.GONE);
-                    pvh.actions.setVisibility(View.GONE);
+                    Util.collapse(pvh.details, 1000, new Util.UtilAnimationListener() {
+                        @Override
+                        public void onAnimationEnded() {
+                            Util.collapse(pvh.actions, 700,null);
+                        }
+                    });
+//                    pvh.details.setVisibility(View.GONE);
+//                    pvh.actions.setVisibility(View.GONE);
                 }
                 Snappy.updateProjectLite(project,null);
             }

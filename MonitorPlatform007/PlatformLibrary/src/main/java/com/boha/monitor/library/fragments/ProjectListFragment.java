@@ -2,7 +2,6 @@ package com.boha.monitor.library.fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -21,14 +20,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.boha.monitor.library.activities.MonApp;
-import com.boha.monitor.library.activities.ProjectMapActivity;
-import com.boha.monitor.library.activities.YouTubePlayerActivity;
 import com.boha.monitor.library.adapters.ProjectAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.MonLog;
 import com.boha.monitor.library.util.SharedUtil;
-import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
 
@@ -244,21 +240,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             public void onVideoPlayListRequired(ProjectDTO project) {
                 Log.i(LOG, "### onVideoPlayListRequired");
                 selectedProject = project;
-                Snappy.getProject(monApp, project.getProjectID(), new Snappy.SnappyProjectListener() {
-                    @Override
-                    public void onProjectFound(ProjectDTO project) {
-                        Intent w = new Intent(getActivity(), YouTubePlayerActivity.class);
-                        ResponseDTO responseDTO = new ResponseDTO();
-                        responseDTO.setVideoUploadList(project.getVideoUploadList());
-                        w.putExtra("videoList", responseDTO);
-                        startActivity(w);
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
+                mListener.onVideoPlayListRequired(project);
 
             }
 
@@ -273,17 +255,17 @@ public class ProjectListFragment extends Fragment implements PageFragment {
             public void onMapRequired(ProjectDTO project) {
                 Log.i(LOG, "### onMapRequired");
                 selectedProject = project;
-                Intent w = new Intent(getActivity(), ProjectMapActivity.class);
-                ResponseDTO responseDTO = new ResponseDTO();
-                responseDTO.setProjectList(new ArrayList<ProjectDTO>());
-                responseDTO.getProjectList().add(project);
-                w.putExtra("projects", responseDTO);
-                startActivity(w);
+                mListener.onMapRequired(project);
             }
 
             @Override
             public void onRefreshRequired() {
                 mListener.onRefreshRequired();
+            }
+
+            @Override
+            public void onPositioningRequired(int position) {
+                mRecyclerView.scrollToPosition(position);
             }
 
 
@@ -425,6 +407,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
         void onMapRequired(ProjectDTO project);
         void onRefreshRequired();
+        void onPositioningRequired(int position);
     }
 
     List<ProjectDTO> projectList;

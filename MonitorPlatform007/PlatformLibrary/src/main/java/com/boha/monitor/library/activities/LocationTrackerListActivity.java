@@ -63,7 +63,7 @@ public class LocationTrackerListActivity extends AppCompatActivity
         locationTrackerListFragment = (LocationTrackerListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
 
         Util.setCustomActionBar(getApplicationContext(), getSupportActionBar(),
-                SharedUtil.getCompany(ctx).getCompanyName(), "Device List",
+                SharedUtil.getCompany(ctx).getCompanyName(), "Location of Monitor Devices",
                 ContextCompat.getDrawable(getApplicationContext(), com.boha.platform.library.R.drawable.glasses));
 
         getCachedTracks();
