@@ -7,7 +7,7 @@
     <!--  DEBUG API KEY:  AIzaSyBncjb7-oqexK0fKJdfy365tVJUNLkxRkE -->
 
 
-    <!-- PERMISSIONS -->
+    <!-- PERMISSIONS 083 385 9969 -->
     <permission
         android:name="com.boha.platform.supervisor.gcm.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />

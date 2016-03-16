@@ -652,6 +652,9 @@ public class MonitorMainActivity extends AppCompatActivity
         Snappy.getProject((MonApp)getApplication(), project.getProjectID(), new Snappy.SnappyProjectListener() {
             @Override
             public void onProjectFound(ProjectDTO project) {
+                if (project.getVideoUploadList().isEmpty()) {
+                    return;
+                }
                 Intent w = new Intent(ctx, YouTubePlayerActivity.class);
                 ResponseDTO responseDTO = new ResponseDTO();
                 responseDTO.setVideoUploadList(project.getVideoUploadList());

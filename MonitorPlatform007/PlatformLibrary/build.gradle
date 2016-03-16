@@ -40,7 +40,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    //animations
 
     compile 'com.android.support:appcompat-v7:23.2.0'
     compile 'com.android.support:cardview-v7:23.2.0'
@@ -71,5 +70,7 @@ dependencies {
 
     compile ('com.google.apis:google-api-services-youtube:v3-rev163-1.21.0') {
         exclude group: 'com.google.code.findbugs', module: 'jsr305' }
+
+    compile files('libs/YouTubeAndroidPlayerApi.jar')
 
 }
