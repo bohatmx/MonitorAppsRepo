@@ -114,8 +114,7 @@
         </activity>
         <activity android:name="com.boha.monitor.library.activities.MonitorMapActivity"
             android:parentActivityName=".activities.MonitorMainActivity"/>
-        <activity android:name="com.boha.monitor.library.activities.ProfilePhotoActivity"
-            android:parentActivityName=".activities.MonitorMainActivity"/>
+
         <activity android:name="com.boha.monitor.library.activities.UpdateActivity"
             android:parentActivityName=".activities.MonitorMainActivity"/>
 

@@ -90,7 +90,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         auto = (AutoCompleteTextView) view.findViewById(R.id.autocomplete_project);
         txtCount = (TextView) view.findViewById(R.id.count);
-        fab = (FloatingActionButton)view.findViewById(R.id.fab);
+        fab = (FloatingActionButton) view.findViewById(R.id.fab);
         Statics.setRobotoFontLight(getActivity(), txtCount);
         top = view.findViewById(R.id.top);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(),
@@ -128,7 +128,7 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
     @Override
     public void onResume() {
-        Log.e(LOG, "------------------ onResume, getting projects ............");
+        MonLog.w(getActivity(),LOG, "------------------ onResume, calling setList() ............");
         setList();
 
         super.onResume();
@@ -141,9 +141,13 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         }
     }
 
-       private void setList() {
+    private void setList() {
 
         if (getContext() == null) {
+            return;
+        }
+        if (projectList.isEmpty()) {
+             MonLog.e(getActivity(),LOG,"------- ******************************** projectList is empty");
             return;
         }
         Collections.sort(projectList);
@@ -406,7 +410,9 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         void onStatusReportRequired(ProjectDTO project);
 
         void onMapRequired(ProjectDTO project);
+
         void onRefreshRequired();
+
         void onPositioningRequired(int position);
     }
 

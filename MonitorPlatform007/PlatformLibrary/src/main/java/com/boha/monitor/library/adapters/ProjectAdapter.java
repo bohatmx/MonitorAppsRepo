@@ -202,25 +202,21 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
             public void onClick(View v) {
                 if (project.getDetailsOpen() == Boolean.FALSE) {
                     project.setDetailsOpen(Boolean.TRUE);
-                    Util.expand(pvh.actions, 700, new Util.UtilAnimationListener() {
+                    Util.expand(pvh.actions, 400, new Util.UtilAnimationListener() {
                         @Override
                         public void onAnimationEnded() {
                             Util.expand(pvh.details,1000,null);
                             listener.onPositioningRequired(position);
                         }
                     });
-//                    pvh.details.setVisibility(View.VISIBLE);
-//                    pvh.actions.setVisibility(View.VISIBLE);
                 } else {
                     project.setDetailsOpen(Boolean.FALSE);
                     Util.collapse(pvh.details, 1000, new Util.UtilAnimationListener() {
                         @Override
                         public void onAnimationEnded() {
-                            Util.collapse(pvh.actions, 700,null);
+                            Util.collapse(pvh.actions, 500,null);
                         }
                     });
-//                    pvh.details.setVisibility(View.GONE);
-//                    pvh.actions.setVisibility(View.GONE);
                 }
                 Snappy.updateProjectLite(project,null);
             }

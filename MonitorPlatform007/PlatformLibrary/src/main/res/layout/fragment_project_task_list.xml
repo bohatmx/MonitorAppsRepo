@@ -31,8 +31,9 @@
                 android:text="Programme Name" />
             <TextView
                 android:id="@+id/PRH_subTitle"
-                style="@style/Title1TextStyleWhite"
+                style="@style/Title2TextStyleWhite"
                 android:padding="@dimen/mon_margin"
+                android:textStyle="normal"
                 android:layout_alignParentTop="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -51,20 +52,14 @@
 
 
     </RelativeLayout>
-    <RelativeLayout
-        android:layout_below="@id/topBox"
-        android:background="@color/grey"
-        android:padding="@dimen/mon_padding"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler"
         android:scrollbars="vertical"
-        android:padding="@dimen/mon_divider"
+        android:layout_below="@id/topBox"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    </RelativeLayout>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="56dp"

@@ -53,6 +53,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         holder.subTitle.setText(sdf.format(p.getDateTaken()));
         holder.projectName.setText(p.getProjectName());
         holder.position = position;
+        holder.number.setText("" + (position + 1));
 
 
         holder.image.initialize(p.getYouTubeID(), new YouTubeThumbnailView.OnInitializedListener() {
@@ -102,7 +103,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
     public class VideoViewHolder extends RecyclerView.ViewHolder {
         protected YouTubeThumbnailView image;
-        protected TextView projectName, subTitle;
+        protected TextView projectName, subTitle, number;
         protected int position;
         protected View main;
 
@@ -113,6 +114,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             image = (YouTubeThumbnailView) itemView.findViewById(R.id.icon);
             projectName = (TextView) itemView.findViewById(R.id.title);
             subTitle = (TextView) itemView.findViewById(R.id.subtitle);
+            number = (TextView) itemView.findViewById(R.id.number);
 
 
         }

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.boha.monitor.library.dto.ProjectTaskDTO;
 import com.boha.monitor.library.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.library.dto.TaskStatusTypeDTO;
+import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
 
@@ -89,6 +90,7 @@ public class ProjectTaskAdapter extends RecyclerView.Adapter<ProjectTaskAdapter.
 
         if (p.getTask() != null) {
             holder.txtTaskName.setText(p.getTask().getTaskName());
+            Statics.setRobotoFontLight(ctx,holder.txtTaskName);
         }
 
         holder.image.setColorFilter(darkColor, PorterDuff.Mode.SRC_IN);

@@ -1,35 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     tools:context="com.boha.monitor.library.activities.LocalVideoPlayerActivity">
 
-    <VideoView
-        android:id="@+id/videoView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
     <RelativeLayout
-        android:padding="@dimen/mon_margin"
-        android:background="@android:color/transparent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <Chronometer
-            android:id="@+id/chronometer"
-            android:textColor="@color/white"
-            android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <ImageView
-            android:id="@+id/replay"
-            android:src="@drawable/ic_action_refresh"
-            android:layout_toRightOf="@id/chronometer"
-            android:layout_centerVertical="true"
-            android:tint="@color/white"
-            android:layout_marginLeft="@dimen/mon_margin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+
+        <VideoView
+            android:id="@+id/videoView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:padding="@dimen/mon_margin">
+
+            <Chronometer
+                android:id="@+id/chronometer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textColor="@color/white" />
+
+            <ImageView
+                android:id="@+id/replay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_toRightOf="@id/chronometer"
+                android:src="@drawable/ic_action_refresh"
+                android:tint="@color/white" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/spinnerLayout"
+            android:elevation="@dimen/mon_padding"
+            android:background="@color/white"
+            android:padding="@dimen/mon_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/play"
+                android:src="@drawable/ic_action_movie"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_toLeftOf="@id/play"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></Spinner>
+
+        </RelativeLayout>
     </RelativeLayout>
+
+
 
 </RelativeLayout>

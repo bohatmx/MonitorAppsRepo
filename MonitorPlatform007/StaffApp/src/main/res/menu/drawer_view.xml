@@ -26,6 +26,10 @@
             android:id="@+id/nav_devices"
             android:icon="@drawable/ic_action_check_circle"
             android:title="Company Devices" />
+        <item
+            android:id="@+id/nav_video"
+            android:icon="@drawable/ic_action_movie"
+            android:title="Local Project Videos" />
 
     </group>
 

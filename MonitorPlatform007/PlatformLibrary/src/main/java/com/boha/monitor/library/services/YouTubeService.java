@@ -487,6 +487,7 @@ public class YouTubeService extends IntentService {
 
 
             } catch (Exception e) {
+                Log.e(LOG,"Failed YT auth",e);
                 Util.showErrorToast(getApplicationContext(), "Unable to get YouTube authorisation token");
             }
         }

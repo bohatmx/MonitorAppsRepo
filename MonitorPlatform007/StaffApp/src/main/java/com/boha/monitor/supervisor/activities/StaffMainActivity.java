@@ -41,6 +41,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.boha.monitor.library.activities.GPSActivity;
+import com.boha.monitor.library.activities.LocalVideoPlayerActivity;
 import com.boha.monitor.library.activities.LocationTrackerListActivity;
 import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.activities.PhotoListActivity;
@@ -170,6 +171,9 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
 
         setBroadcastReceivers();
         checkAirplane();
+        if (savedInstanceState != null) {
+            response = (ResponseDTO)savedInstanceState.getSerializable("response");
+        }
 
 
     }
@@ -359,6 +363,12 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
                     Intent m = new Intent(ctx, LocationTrackerListActivity.class);
                     startActivity(m);
                 }
+                if (menuItem.getItemId() == R.id.nav_video) {
+                    Intent m = new Intent(ctx, LocalVideoPlayerActivity.class);
+                    //startActivity(m);
+                    Util.showToast(ctx,"Not available yet!");
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+                }
 
 
                 return false;
@@ -420,6 +430,7 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
 
     
     private void buildPages() {
+        MonLog.e(getApplicationContext(),LOG,"$$$$$$$$$$$$$$ .......... rebuilding pages");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -590,8 +601,9 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
 
     @Override
     public void onRestoreInstanceState(Bundle b) {
-        MonLog.w(ctx,LOG, "onRestoreInstanceState");
+        MonLog.w(ctx,LOG, "...............................onRestoreInstanceState");
         selectedProject = (ProjectDTO) b.getSerializable("selectedProject");
+        response = (ResponseDTO)b.getSerializable("response");
         super.onRestoreInstanceState(b);
     }
 
@@ -1437,6 +1449,7 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
     CompanyDTO company;
     MonApp app;
     private void getCachedData() {
+        MonLog.w(ctx,LOG,"***************** getCachedData *********************");
         app = (MonApp)getApplicationContext();
         response = new ResponseDTO();
         Snappy.getProjectList(app, new Snappy.SnappyReadListener() {

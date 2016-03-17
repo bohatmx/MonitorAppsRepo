@@ -158,9 +158,6 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            project = (ProjectDTO) getArguments().getSerializable("project");
-//        }
     }
 
     @Override
@@ -188,7 +185,7 @@ public class ProjectTaskListFragment extends Fragment implements PageFragment {
             }
         });
 
-
+        //refreshData();
         return view;
     }
 

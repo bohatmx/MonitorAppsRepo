@@ -180,7 +180,7 @@ public class YouTubeActivity extends Activity {
             return;
         }
 
-        String imageFileName = "vid_" + sdf.format(new Date()) + ".mp4";
+        String imageFileName = ""+project.getProjectID() + "-"+ sdf.format(new Date()) + ".mp4";
 
         File root;
         if (Util.hasStorage(true)) {
@@ -267,7 +267,8 @@ public class YouTubeActivity extends Activity {
                 }
 
             } catch (Exception e) {
-                Util.showErrorToast(getApplicationContext(), "Unable to get YouTube authorisation token");
+                Log.e(LOG,"Failed YT auth",e);
+                Util.showErrorToast(getApplicationContext(), "A:Unable to get YouTube authorisation token");
             }
         }
     }
