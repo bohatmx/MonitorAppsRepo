@@ -24,9 +24,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.boha.monitor.library.dto.LocationTrackerDTO;
-import com.boha.monitor.library.dto.RequestDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
-import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.boha.monitor.library.util.Statics;
 import com.boha.monitor.library.util.ThemeChooser;
@@ -320,8 +318,14 @@ public class MonitorMapActivity extends AppCompatActivity
         list.add("Street View");
         list.add("Status Report");
 
+        String url = null;
+        if (track != null) {
+            if (track.getPhoto() != null) {
+                url = track.getPhoto().getSecureUrl();
+            }
+        }
         Util.showPopupBasicWithHeroImage(ctx, this, list, topLayout,
-                title,
+                title, false,url,
                 new Util.UtilPopupListener() {
                     @Override
                     public void onItemSelected(int index) {

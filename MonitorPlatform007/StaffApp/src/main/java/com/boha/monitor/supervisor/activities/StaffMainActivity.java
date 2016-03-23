@@ -1026,6 +1026,8 @@ static final String TASK_TAG_WIFI = "taskTagWIFI";
                 break;
             case LOCATION_REQUESTED:
                 if (resCode == RESULT_OK) {
+                    ProjectDTO project = (ProjectDTO)data.getSerializableExtra("project");
+                    projectListFragment.onLocationConfirmed(project);
                     getRemoteStaffData(true);
                 }
                 break;

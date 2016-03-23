@@ -89,12 +89,14 @@
         <activity
             android:name="com.boha.monitor.library.activities.TaskListActivity"
             android:parentActivityName=".activities.StaffMainActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.boha.monitor.library.activities.UpdateActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.boha.monitor.library.activities.ThemeSelectorActivity"
+            android:screenOrientation="portrait"
             android:parentActivityName=".activities.StaffMainActivity" />
         <activity
             android:name="com.boha.monitor.library.activities.PictureActivity"
@@ -103,9 +105,11 @@
         <activity android:name="com.boha.monitor.library.activities.PhotoListActivity" />
         <activity
             android:name="com.boha.monitor.library.activities.GPSActivity"
+            android:screenOrientation="portrait"
             android:parentActivityName=".activities.StaffMainActivity" />
         <activity
             android:name="com.boha.monitor.library.activities.StatusReportActivity"
+            android:screenOrientation="portrait"
             android:parentActivityName=".activities.StaffMainActivity" />
         <activity
             android:name="com.boha.monitor.library.activities.ProjectMapActivity"

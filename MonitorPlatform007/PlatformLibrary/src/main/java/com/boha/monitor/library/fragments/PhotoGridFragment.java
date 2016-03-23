@@ -10,11 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.PhotoAdapter;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.SpacesItemDecoration;
 import com.boha.platform.library.R;
+import com.squareup.leakcanary.RefWatcher;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.StatsSnapshot;
 
@@ -109,8 +111,10 @@ public class PhotoGridFragment extends Fragment implements PageFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
-//        refWatcher.watch(this);
+        MonApp app = (MonApp)getActivity().getApplication();
+        RefWatcher refWatcher = app.getRefWatcher();
+        refWatcher.watch(this);
+
         if (getActivity() != null) {
             StatsSnapshot picassoStats = Picasso.with(getActivity()).getSnapshot();
             Log.d("Picasso Stats", picassoStats.toString());

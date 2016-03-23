@@ -25,7 +25,9 @@ import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.monitor.library.util.NetUtil;
 import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
+import com.boha.monitor.library.util.WebCheck;
 import com.boha.platform.library.R;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.text.DecimalFormat;
 
@@ -52,9 +54,9 @@ public class GPSScanFragment extends Fragment implements PageFragment {
 
     public interface GPSScanFragmentListener {
          void onStartScanRequested();
-         void onLocationConfirmed(ProjectDTO projectSite);
-         void onEndScanRequested();
-         void onMapRequested(ProjectDTO projectSite);
+         void onLocationConfirmed(ProjectDTO project);
+         void onEndScanRequested(ProjectDTO project);
+         void onMapRequested(ProjectDTO project);
         void setBusy(boolean busy);
 
 
@@ -157,7 +159,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
                             btnScan.setText(ctx.getString(R.string.stop_gps));
                         } else {
                             chronometer.stop();
-                            listener.onEndScanRequested();
+                            listener.onEndScanRequested(project);
                             btnScan.setText(ctx.getString(R.string.start_gps));
                         }
                     }
@@ -230,7 +232,10 @@ public class GPSScanFragment extends Fragment implements PageFragment {
                 .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                        count = 0;
+                        txtAccuracy.setText("0.0");
+                        txtCount.setText("0");
+                        btnScan.setText("Start GPS Scan");
                     }
                 })
                 .show();
@@ -241,12 +246,17 @@ public class GPSScanFragment extends Fragment implements PageFragment {
      * on the backend server
      */
     private void sendGPSCoordinates() {
+
         final RequestDTO w = new RequestDTO(RequestDTO.CONFIRM_LOCATION);
         w.setProjectID(project.getProjectID());
         w.setLatitude(project.getLatitude());
         w.setLongitude(project.getLongitude());
         w.setAccuracy(project.getAccuracy());
 
+        if (WebCheck.checkNetworkAvailability(getContext()).isNetworkUnavailable()) {
+            addRequestToCache(w);
+            return;
+        }
         NetUtil.sendRequest(ctx, w, new NetUtil.NetUtilListener() {
             @Override
             public void onResponse(final ResponseDTO response) {
@@ -274,7 +284,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
                 project.setLocationConfirmed(true);
                 Log.e(LOG, "----onDataCached, onEndScanRequested - please stop scanning");
                 if (listener != null) {
-                    listener.onEndScanRequested();
+                    listener.onEndScanRequested(project);
                     listener.onLocationConfirmed(project);
                 }
             }
@@ -309,7 +319,7 @@ public class GPSScanFragment extends Fragment implements PageFragment {
             project.setLongitude(location.getLongitude());
             project.setAccuracy(location.getAccuracy());
             //
-            listener.onEndScanRequested();
+            listener.onEndScanRequested(project);
             Util.flashSeveralTimes(hero, 300, 2, new Util.UtilAnimationListener() {
                 @Override
                 public void onAnimationEnded() {
@@ -343,8 +353,8 @@ public class GPSScanFragment extends Fragment implements PageFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
-//        refWatcher.watch(this);
+        RefWatcher refWatcher = monApp.getRefWatcher();
+        refWatcher.watch(this);
     }
     Location location;
     static final String LOG = GPSScanFragment.class.getSimpleName();

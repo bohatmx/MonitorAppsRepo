@@ -122,7 +122,6 @@ public class ProjectMapActivity extends AppCompatActivity
         txtCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                useSmallIcons = !useSmallIcons;
                 setProjectMarkers();
             }
         });
@@ -147,7 +146,6 @@ public class ProjectMapActivity extends AppCompatActivity
 
     }
 
-    boolean useSmallIcons;
 
     //todo remove
     private void temporaryWork(LatLng latLng) {
@@ -313,27 +311,18 @@ public class ProjectMapActivity extends AppCompatActivity
             @Override
             public void onMapLoaded() {
                 //ensure that all markers in bounds
-                if (useSmallIcons) {
-                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                    for (Marker marker : markers) {
-                        builder.include(marker.getPosition());
-                    }
-
-                    LatLngBounds bounds = builder.build();
-                    int padding = 60; // offset from edges of the map in pixels
-                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-
-                    txtCount.setText("" + markers.size());
-                    googleMap.animateCamera(cu);
-                } else {
-                    LatLng pnt = markers.get(getMarkerIndex()).getPosition();
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pnt, 1.0f));
-                    if (projectList.size() == 1) {
-                        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15.0f));
-                    } else {
-                        googleMap.animateCamera(CameraUpdateFactory.zoomTo(11.0f));
-                    }
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for (Marker marker : markers) {
+                    builder.include(marker.getPosition());
                 }
+
+                LatLngBounds bounds = builder.build();
+                int padding = 60; // offset from edges of the map in pixels
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+
+                txtCount.setText("" + markers.size());
+                googleMap.animateCamera(cu);
+
             }
         });
 
@@ -394,7 +383,7 @@ public class ProjectMapActivity extends AppCompatActivity
         list.add(getString(R.string.statrpt));
 
         Util.showPopupBasicWithHeroImage(ctx, this, list, topLayout,
-                snippet,
+                snippet, true,null,
                 new Util.UtilPopupListener() {
                     @Override
                     public void onItemSelected(int index) {

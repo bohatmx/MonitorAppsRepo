@@ -39,7 +39,7 @@
         <!-- Keys and metadata -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyCZ6MSdEkJLRcUpz1KnGU6hM1Fd1Gl9GXA" />
+            android:value="AIzaSyCzkBfMREH3my1bgrXw5TcDew7sZpbLKFI" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -91,6 +91,7 @@
         <activity android:name="com.boha.monitor.library.activities.ProjectMapActivity"
             android:parentActivityName=".activities.MonitorMainActivity"/>
         <activity android:name="com.boha.monitor.library.activities.StatusReportActivity"
+            android:screenOrientation="portrait"
             android:parentActivityName=".activities.MonitorMainActivity"/>
 
         <activity android:name="com.boha.monitor.library.activities.ThemeSelectorActivity"
@@ -116,6 +117,7 @@
             android:parentActivityName=".activities.MonitorMainActivity"/>
 
         <activity android:name="com.boha.monitor.library.activities.UpdateActivity"
+            android:screenOrientation="portrait"
             android:parentActivityName=".activities.MonitorMainActivity"/>
 
     </application>

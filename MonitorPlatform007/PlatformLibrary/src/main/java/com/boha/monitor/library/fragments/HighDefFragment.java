@@ -1,7 +1,6 @@
 package com.boha.monitor.library.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,12 +9,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.dto.PhotoUploadDTO;
 import com.boha.platform.library.R;
+import com.squareup.leakcanary.RefWatcher;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -144,5 +144,11 @@ public class HighDefFragment extends Fragment {
 
     public interface PictureListener {
 
+    }
+    @Override public void onDestroy() {
+        super.onDestroy();
+        MonApp app = (MonApp)getActivity().getApplication();
+        RefWatcher refWatcher = app.getRefWatcher();
+        refWatcher.watch(this);
     }
 }

@@ -1,11 +1,15 @@
 package com.boha.monitor.library.fragments;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,10 +27,13 @@ import com.boha.monitor.library.activities.MonApp;
 import com.boha.monitor.library.adapters.ProjectAdapter;
 import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
+import com.boha.monitor.library.services.DataRefreshService;
 import com.boha.monitor.library.util.MonLog;
 import com.boha.monitor.library.util.SharedUtil;
+import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Statics;
 import com.boha.platform.library.R;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -107,6 +114,10 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         if (auto != null) {
             hideKeyboard();
         }
+        IntentFilter m = new IntentFilter(DataRefreshService.BROADCAST_ACTION);
+        DataRefreshDoneReceiver receiver = new DataRefreshDoneReceiver();
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(receiver,m);
+        MonLog.w(getContext(),LOG,"DataRefreshDoneReceiver registered");
 
         return view;
     }
@@ -139,6 +150,20 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         if (mRecyclerView != null) {
             setList();
         }
+    }
+
+    public void onLocationConfirmed(ProjectDTO project) {
+        MonLog.e(getContext(),LOG,"################ -------------> onLocationConfirmed");
+        List<ProjectDTO> list = new ArrayList<>();
+        for (ProjectDTO p: projectList) {
+            if (p.getProjectID().intValue() == project.getProjectID().intValue()) {
+                list.add(project);
+            } else {
+                list.add(p);
+            }
+        }
+        projectList = list;
+        projectAdapter.notifyDataSetChanged();
     }
 
     private void setList() {
@@ -329,8 +354,9 @@ public class ProjectListFragment extends Fragment implements PageFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        RefWatcher refWatcher = MonApp.getRefWatcher(getActivity());
-//        refWatcher.watch(this);
+        MonApp app = (MonApp)getActivity().getApplication();
+        RefWatcher refWatcher = app.getRefWatcher();
+        refWatcher.watch(this);
     }
 
     @Override
@@ -424,5 +450,31 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         this.primaryColor = primaryColor;
         this.darkColor = darkColor;
     }
+    // Broadcast receiver for receiving status updates from DataRefreshService
+    private class DataRefreshDoneReceiver extends BroadcastReceiver {
 
+        // Called when the BroadcastReceiver gets an Intent it's registered to receive
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e(LOG,"+++++++DataRefreshDoneReceiver onReceive, data must have been refreshed, getting new project list ");
+
+            Snappy.getProjectList(monApp, new Snappy.SnappyReadListener() {
+                @Override
+                public void onDataRead(final ResponseDTO response) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            projectList = response.getProjectList();
+                            projectAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(String message) {
+
+                }
+            });
+        }
+    }
 }

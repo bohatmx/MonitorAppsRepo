@@ -133,8 +133,9 @@ public class GPSActivity extends AppCompatActivity
     }
 
     @Override
-    public void onEndScanRequested() {
+    public void onEndScanRequested(ProjectDTO project) {
         Log.e(LOG,"%%%% onEndScanRequested");
+        this.project = project;
         stopLocationUpdates();
     }
 

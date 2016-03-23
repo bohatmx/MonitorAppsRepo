@@ -10,9 +10,9 @@
         android:id="@+id/HERO_image"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mon_hero_height_small"
-        android:visibility="gone"
+        android:visibility="visible"
         android:scaleType="centerCrop"
-        android:src="@drawable/banner_construction3" />
+        android:src="@drawable/back14" />
 
     <RelativeLayout
         android:id="@+id/HERO_middle"

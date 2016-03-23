@@ -1,4 +1,4 @@
-package com.boha.monitor.library.fragments;
+package com.boha.monitor.library.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.boha.monitor.library.dto.GcmDeviceDTO;
+import com.boha.monitor.library.fragments.GcmDeviceFragment;
 import com.boha.platform.library.R;
 
 import java.util.List;

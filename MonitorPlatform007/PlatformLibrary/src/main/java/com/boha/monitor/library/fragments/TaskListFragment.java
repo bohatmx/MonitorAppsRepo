@@ -26,6 +26,7 @@ import com.boha.monitor.library.util.SimpleDividerItemDecoration;
 import com.boha.monitor.library.util.Snappy;
 import com.boha.monitor.library.util.Util;
 import com.boha.platform.library.R;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.util.List;
 
@@ -192,6 +193,9 @@ public class TaskListFragment extends Fragment implements PageFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        MonApp app = (MonApp)getActivity().getApplication();
+        RefWatcher refWatcher = app.getRefWatcher();
+        refWatcher.watch(this);
     }
 
     @Override

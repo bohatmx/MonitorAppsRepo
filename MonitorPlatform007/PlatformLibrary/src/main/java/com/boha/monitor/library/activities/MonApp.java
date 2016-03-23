@@ -27,6 +27,8 @@ import com.google.android.gms.gcm.PeriodicTask;
 import com.snappydb.DB;
 import com.snappydb.DBFactory;
 import com.snappydb.SnappydbException;
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
@@ -75,7 +77,12 @@ public class MonApp extends Application implements Application.ActivityLifecycle
     static final String LOG = MonApp.class.getSimpleName();
     private GcmNetworkManager mGcmNetworkManager;
     public static Picasso picasso;
-    public DB snappyDB;
+    private DB snappyDB;
+    private  RefWatcher refWatcher;
+
+    public  RefWatcher getRefWatcher() {
+        return refWatcher;
+    }
 
     public DB getSnappyDB() {
         try {
@@ -121,6 +128,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
     public void onCreate() {
         MultiDex.install(getApplicationContext());
         super.onCreate();
+
         StringBuilder sb = new StringBuilder();
         sb.append("\n\n\n#######################################\n");
         sb.append("#######################################\n");
@@ -130,6 +138,7 @@ public class MonApp extends Application implements Application.ActivityLifecycle
         sb.append("#######################################\n\n");
 
         Log.d(LOG, sb.toString());
+        refWatcher = LeakCanary.install(this);
         boolean isDebuggable = 0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
         //refWatcher = LeakCanary.install(this);
         registerActivityLifecycleCallbacks(this);

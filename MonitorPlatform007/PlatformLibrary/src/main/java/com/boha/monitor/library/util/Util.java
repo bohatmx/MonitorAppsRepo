@@ -53,6 +53,7 @@ import com.boha.monitor.library.dto.ProjectDTO;
 import com.boha.monitor.library.dto.ResponseDTO;
 import com.boha.platform.library.R;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -595,6 +596,58 @@ public class Util {
         return e.intValue();
     }
 
+    public static void showPopupBasicWithHeroImage(Context ctx, Activity act,
+                                                   List<String> list,
+                                                   View anchorView, String caption, boolean heroVisible,
+                                                   String url, final UtilPopupListener listener) {
+        final ListPopupWindow pop = new ListPopupWindow(act);
+        LayoutInflater inf = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = inf.inflate(R.layout.hero_image_popup, null);
+        TextView txt = (TextView) v.findViewById(R.id.HERO_caption);
+        CircleImageView imgp = (CircleImageView) v.findViewById(R.id.HERO_personImage);
+        if (url != null) {
+            imgp.setVisibility(View.VISIBLE);
+            Picasso.with(ctx).load(url).into(imgp);
+            imgp.setAlpha(1.0f);
+        }else {
+            imgp.setVisibility(View.GONE);
+        }
+        if (caption != null) {
+            txt.setText(caption);
+        } else {
+            txt.setVisibility(View.INVISIBLE);
+        }
+        ImageView img = (ImageView) v.findViewById(R.id.HERO_image);
+        if (heroVisible) {
+            img.setImageDrawable(getRandomBackgroundImage(ctx));
+            img.setVisibility(View.VISIBLE);
+        } else {
+           img.setVisibility(View.GONE);
+        }
+
+        pop.setPromptView(v);
+        pop.setPromptPosition(ListPopupWindow.POSITION_PROMPT_ABOVE);
+        pop.setAdapter(new PopupListAdapter(ctx, R.layout.xxsimple_spinner_item,
+                list, false));
+        pop.setAnchorView(anchorView);
+        pop.setHorizontalOffset(getPopupHorizontalOffset(act));
+        pop.setModal(true);
+        pop.setWidth(getPopupWidth(act));
+        pop.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                pop.dismiss();
+                if (listener != null) {
+                    listener.onItemSelected(position);
+                }
+            }
+        });
+        try {
+            pop.show();
+        } catch (Exception e) {
+            Log.e(LOG, "-- popup failed, probably nullpointer", e);
+        }
+    }
     public static void showPopupBasicWithHeroImage(Context ctx, Activity act,
                                                    List<String> list,
                                                    View anchorView, String caption, final UtilPopupListener listener) {

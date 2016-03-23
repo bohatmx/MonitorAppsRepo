@@ -36,7 +36,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
     private Context ctx;
     private int darkColor;
     private double latitude, longitude;
-    static final int HEADER = 1, ITEM = 2;
+    private Integer projectID;
 
     public ProjectAdapter(List<ProjectDTO> projectList,
                           Context context, int darkColor,
@@ -48,6 +48,10 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
         this.darkColor = darkColor;
         this.latitude = latitude;
         this.longitude = longitude;
+        projectID = SharedUtil.getLastProjectID(ctx);
+        if (projectID == null) {
+            projectID = 0;
+        }
     }
 
     @Override
@@ -196,6 +200,10 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
         } else {
             pvh.details.setVisibility(View.GONE);
             pvh.actions.setVisibility(View.GONE);
+        }
+        if (project.getProjectID().intValue() == projectID.intValue()) {
+            pvh.details.setVisibility(View.VISIBLE);
+            pvh.actions.setVisibility(View.VISIBLE);
         }
         pvh.txtProjectName.setOnClickListener(new View.OnClickListener() {
             @Override
