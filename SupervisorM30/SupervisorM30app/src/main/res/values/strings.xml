@@ -1,0 +1,97 @@
+<resources>
+    <string name="app_name">PlatformLibrary</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+        AIzaSyAywCwgQ36jX8JcEp_QA4UYZTrDT-YOxsc
+    </string>
+    <string name="title_activity_maps">My fucking Map!</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="no_address">No address computed.</string>
+    <string name="net_not_avail">Network not available</string>
+    <string name="comms_interrupt">Communications interrupted. Try again.</string>
+    <string name="invite_dialog">Are you sure you want to invite a download of this app? \nThe user will be able to add and change data in your Company\'s database.</string>
+    <string name="invite_confirm">Do you want to invite someone to download the App?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="gcm_sender_id">235297950926</string>
+    <string name="subject">Invitation to Monitor Platform</string>
+
+    <!-- monitor drawer strings -->
+    <string name="projects">Projects</string>
+    <string name="monitors">Monitors</string>
+    <string name="messaging">Messaging</string>
+    <string name="profile">Profile</string>
+    <string name="get_status">Get Status</string>
+    <string name="take_picture">Take Photos</string>
+    <string name="send_app_link">Send App Invitation Link</string>
+    <string name="edit">Edit Details</string>
+    <string name="under_cons">Under Construction</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="select_email">Select email account</string>
+    <string name="monitor">Monitor</string>
+    <string name="welcome_aboard">Welcome Aboard!</string>
+    <string name="title_activity_status_update">StatusUpdateActivity</string>
+    <string name="title_activity_task_update">TaskUpdateActivity</string>
+    <string name="title_activity_task_type_list">TaskTypeListActivity</string>
+    <string name="photo_error">Error caching photo</string>
+    <string name="camera_error">Unable to process image from camera</string>
+    <string name="file_error">Error getting photo file</string>
+    <string name="status_saved">Task Status update has been saved</string>
+    <string name="open_camera">Open Camera</string>
+    <string name="title_activity_photo">PhotoActivity</string>
+    <string name="title_activity_test">TestActivity</string>
+    <string name="select_account">Select email account or enter email address</string>
+    <string name="no_prev_photos">No previous photos found. Tap to start</string>
+    <string name="start_scan">Start Scan</string>
+    <string name="stop_scan">Stop Scan</string>
+    <string name="select_action">Select Action</string>
+    <string name="status_updates">Status Updates</string>
+    <string name="select_proj">Select Project</string>
+    <string name="status_rept">Status Report</string>
+    <string name="assign_projects">Assign Projects</string>
+    <string name="welcome_msg">Welcome to Monitor Messaging</string>
+    <string name="sel_recipients">Select Recipients</string>
+    <string name="directions">Directions</string>
+    <string name="streetview">Street View</string>
+    <string name="statrpt">Status Report</string>
+    <string name="send_message">Send Message</string>
+    <string name="send_my_location">Send My Location</string>
+    <string name="get_location">Get Current Location</string>
+    <string name="get_updates">Get Status Updates</string>
+    <string name="start_gps">Start GPS Scan</string>
+    <string name="stop_gps">Stop GPS Scan</string>
+    <string name="confirm_loc">Confirm Location</string>
+    <string name="confirm_loc_of">Do you want to confirm the location of\n</string>
+    <string name="title_activity_messaging">MessagingActivity</string>
+    <string name="title_activity_main_update">MainUpdateActivity</string>
+    <string name="title_activity_update">UpdateActivity</string>
+    <string name="select_media">Please select the media you want to use for this update. Video clips should be no longer than 2 minutes long.</string>
+    <string name="title_activity_photo_scroller">PhotoScrollerActivity</string>
+    <string name="title_activity_location_tracker">LocationTrackerActivity</string>
+    <string name="proj_assgn">Project Assignments</string>
+    <string name="title_activity_project_assignment">ProjectAssignmentActivity</string>
+    <string name="req_deviceloc">Request Device Location</string>
+    <string name="upd_profile">Update Profile</string>
+    <string name="generate_pin">Generate new PIN</string>
+    <string name="title_activity_high_def">HighDefActivity</string>
+    <string name="title_activity_project_selection">ProjectSelectionActivity</string>
+    <string name="title_activity_project_task">ProjectTaskActivity</string>
+    <string name="staff">Staff</string>
+    <string name="refresh">Refresh</string>
+    <string name="proj_not_located">Projects have not been located via GPS</string>
+    <string name="airplane">The device is in Airplane mode. Please reset if appropriate</string>
+    <string name="airplane_msg">The device is in Airplane mode. Do you want to go to Settings to change this?</string>
+    <string name="title_activity_you_tube">YouTubeActivity</string>
+    <string name="title_activity_test_you_tube">TestYouTubeActivity</string>
+    <string name="title_activity_video_player">VideoPlayerActivity</string>
+    <string name="title_activity_you_tube_player">YouTubePlayerActivity</string>
+    <string name="title_activity_media_recorder">MediaRecorderActivity</string>
+    <string name="title_activity_local_video_player">LocalVideoPlayerActivity</string>
+    <string name="title_activity_user_management">UserManagementActivity</string>
+    <string name="first_name">First Name</string>
+    <string name="lastname">LastName</string>
+
+</resources>

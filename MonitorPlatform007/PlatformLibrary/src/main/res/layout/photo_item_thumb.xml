@@ -5,6 +5,8 @@
     android:layout_height="240dp"
     android:background="@color/white"
     android:padding="@dimen/mon_padding"
+    tools:cardElevation="@dimen/mon_padding"
+    android:layout_margin="@dimen/mon_divider"
     tools:cardCornerRadius="0dp">
 
     <RelativeLayout

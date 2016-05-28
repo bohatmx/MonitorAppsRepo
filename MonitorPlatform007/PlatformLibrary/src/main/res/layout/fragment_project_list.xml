@@ -56,12 +56,58 @@
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/midBox"
+        android:layout_below="@id/topBox"
+        android:layout_marginLeft="@dimen/mon_wide"
+        android:layout_marginBottom="@dimen/mon_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/gpsLabel"
+            android:text="GPS Locations:"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/locatedCount"
+            android:text="0"
+            android:layout_toRightOf="@id/gpsLabel"
+            android:layout_marginLeft="@dimen/mon_margin"
+            style="@style/Title3TextStyleGreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/locatedCountLabel"
+            android:layout_toRightOf="@id/locatedCount"
+            android:text="Located"
+            android:layout_marginLeft="@dimen/mon_padding"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/unlocatedCount"
+            android:text="0"
+            android:layout_marginLeft="@dimen/mon_wide"
+            style="@style/Title3TextStyleRed"
+            android:layout_toRightOf="@id/locatedCountLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/unlocatedCountLabel"
+            android:layout_toRightOf="@id/unlocatedCount"
+            android:text="Not Located"
+            android:layout_marginLeft="@dimen/mon_padding"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
+    </RelativeLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/topBox"
+        android:layout_below="@id/midBox"
         android:background="@color/white"
         android:scrollbars="vertical" />
 

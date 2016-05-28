@@ -1,0 +1,188 @@
+/*
+ * To change this license header, choose License Headers in ProjectDTO Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.boha.supervisor.m35.dto;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author aubreyM
+ */
+public class ProjectTaskDTO implements Serializable, Comparable<ProjectTaskDTO> {
+
+    private static final long serialVersionUID = 1L;
+    private Integer projectTaskID;
+    private Long dateRegistered;
+    private Double latitude;
+    private Double longitude;
+    private Integer projectID,statusCount, photoCount;
+    private TaskDTO task;
+    private String projectName;
+    private ProjectTaskStatusDTO lastStatus;
+    private PhotoUploadDTO lastPhoto;
+    private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
+    private List<ProjectTaskStatusDTO> projectTaskStatusList = new ArrayList<>();
+
+    public ProjectTaskDTO() {
+    }
+
+    public TaskDTO getTask() {
+        return task;
+    }
+
+    public ProjectTaskStatusDTO getLastStatus() {
+        if (lastStatus == null) {
+            if (!getProjectTaskStatusList().isEmpty()) {
+                lastStatus = projectTaskStatusList.get(0);
+            }
+        }
+        return lastStatus;
+    }
+
+    public void setLastStatus(ProjectTaskStatusDTO lastStatus) {
+
+        this.lastStatus = lastStatus;
+    }
+
+    public PhotoUploadDTO getLastPhoto() {
+        return lastPhoto;
+    }
+
+    public void setLastPhoto(PhotoUploadDTO lastPhoto) {
+        this.lastPhoto = lastPhoto;
+    }
+
+    public Integer getStatusCount() {
+        return statusCount;
+    }
+
+    public void setStatusCount(Integer statusCount) {
+        this.statusCount = statusCount;
+    }
+
+    public Integer getPhotoCount() {
+        return photoCount;
+    }
+
+    public void setPhotoCount(Integer photoCount) {
+        this.photoCount = photoCount;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setTask(TaskDTO task) {
+        this.task = task;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public Integer getProjectTaskID() {
+        return projectTaskID;
+    }
+
+    public void setProjectTaskID(Integer projectTaskID) {
+        this.projectTaskID = projectTaskID;
+    }
+
+    public Long getDateRegistered() {
+        return dateRegistered;
+    }
+
+    public void setDateRegistered(Long dateRegistered) {
+        this.dateRegistered = dateRegistered;
+    }
+
+    public Integer getProjectID() {
+        return projectID;
+    }
+
+    public void setProjectID(Integer projectID) {
+        this.projectID = projectID;
+    }
+
+
+
+
+    public List<PhotoUploadDTO> getPhotoUploadList() {
+        if (photoUploadList == null) {
+            photoUploadList = new ArrayList<>();
+        }
+        return photoUploadList;
+    }
+
+    public void setPhotoUploadList(List<PhotoUploadDTO> photoUploadList) {
+        this.photoUploadList = photoUploadList;
+    }
+
+    public List<ProjectTaskStatusDTO> getProjectTaskStatusList() {
+        if (projectTaskStatusList == null) {
+            projectTaskStatusList = new ArrayList<>();
+        }
+        return projectTaskStatusList;
+    }
+
+    public void setProjectTaskStatusList(List<ProjectTaskStatusDTO> projectTaskStatusList) {
+        this.projectTaskStatusList = projectTaskStatusList;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (projectTaskID != null ? projectTaskID.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof ProjectTaskDTO)) {
+            return false;
+        }
+        ProjectTaskDTO other = (ProjectTaskDTO) object;
+        if ((this.projectTaskID == null && other.projectTaskID != null) || (this.projectTaskID != null && !this.projectTaskID.equals(other.projectTaskID))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "com.boha.monitor.data.ProjectTask[ projectTaskID=" + projectTaskID + " ]";
+    }
+
+    @Override
+    public int compareTo(ProjectTaskDTO another) {
+        try {
+            int w = this.getTask().getTaskName().compareTo(another.getTask().getTaskName());
+            return w;
+        } catch (Exception e) {
+
+        }
+        return 0;
+    }
+}

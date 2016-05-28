@@ -51,12 +51,12 @@ public class ProjectListFragment extends Fragment implements PageFragment {
 
     private ProjectListFragmentListener mListener;
     private ResponseDTO mResponse;
-    private View view, top;
+    private View view, midBox;
     private ImageView image;
     private RecyclerView mRecyclerView;
     private AutoCompleteTextView auto;
     private TextView txtProgramme, txtProjectCount;
-    private View searchView;
+    private TextView txtLocated, txtUnlocated;
     private FloatingActionButton fab;
     MonApp monApp;
 
@@ -93,13 +93,14 @@ public class ProjectListFragment extends Fragment implements PageFragment {
                              Bundle savedInstanceState) {
         MonLog.i(getActivity(), LOG, "#################### onCreateView");
         view = inflater.inflate(R.layout.fragment_project_list, container, false);
-        searchView = view.findViewById(R.id.top);
+        txtLocated = (TextView) view.findViewById(R.id.locatedCount);
+        txtUnlocated = (TextView) view.findViewById(R.id.unlocatedCount);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         auto = (AutoCompleteTextView) view.findViewById(R.id.autocomplete_project);
         txtCount = (TextView) view.findViewById(R.id.count);
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
         Statics.setRobotoFontLight(getActivity(), txtCount);
-        top = view.findViewById(R.id.top);
+        midBox = view.findViewById(R.id.midBox);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(),
                 LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(llm);
@@ -174,6 +175,19 @@ public class ProjectListFragment extends Fragment implements PageFragment {
         if (projectList.isEmpty()) {
              MonLog.e(getActivity(),LOG,"------- ******************************** projectList is empty");
             return;
+        }
+        int located = 0, unlocated = 0;
+        for (ProjectDTO p: projectList) {
+            if (p.getLocationConfirmed() == true) {
+                located++;
+            } else {
+                unlocated++;
+            }
+        }
+        txtLocated.setText(""+located);
+        txtUnlocated.setText(""+unlocated);
+        if (unlocated == 0) {
+            midBox.setVisibility(View.GONE);
         }
         Collections.sort(projectList);
         txtCount.setText("" + projectList.size());

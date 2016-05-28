@@ -150,7 +150,7 @@ public class UpdateActivity extends AppCompatActivity
         mdf.setListener(new MediaDialogFragment.MediaDialogListener() {
             @Override
             public void onVideoSelected() {
-                Intent w = new Intent(getApplicationContext(), VideoActivity.class);
+                Intent w = new Intent(getApplicationContext(), YouTubeActivity.class);
                 w.putExtra("project", project);
                 startActivityForResult(w, GET_PROJECT_VIDEO);
             }
@@ -175,7 +175,7 @@ public class UpdateActivity extends AppCompatActivity
         mdf.setListener(new MediaDialogFragment.MediaDialogListener() {
             @Override
             public void onVideoSelected() {
-                Intent w = new Intent(getApplicationContext(), VideoActivity.class);
+                Intent w = new Intent(getApplicationContext(), YouTubeActivity.class);
                 w.putExtra("projectTask", projectTask);
                 startActivityForResult(w, GET_PROJECT_TASK_VIDEO);
             }
@@ -199,7 +199,7 @@ public class UpdateActivity extends AppCompatActivity
         mdf.setListener(new MediaDialogFragment.MediaDialogListener() {
             @Override
             public void onVideoSelected() {
-                Intent w = new Intent(getApplicationContext(), VideoActivity.class);
+                Intent w = new Intent(getApplicationContext(), YouTubeActivity.class);
                 w.putExtra("projectTask", projectTask);
                 startActivityForResult(w, GET_PROJECT_TASK_VIDEO);
             }

@@ -1,0 +1,104 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/indigo_600</item>
+        <item name="colorPrimaryDark">@color/indigo_900</item>
+        <item name="colorAccent">@color/purple_300</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="MonTheme" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/blue_700</item>
+        <item name="colorPrimaryDark">@color/blue_900</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:actionBarStyle">@style/smallWhiteText</item>
+        <item name="android:textViewStyle">@style/RobotoTextStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+
+    <style name="BlueThemeTwo" parent="MonTheme">
+        <item name="colorPrimary">@color/blue_700</item>
+        <item name="colorPrimaryDark">@color/blue_900</item>
+
+    </style>
+
+    <style name="BlueGrayTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/blue_gray_500</item>
+        <item name="colorPrimaryDark">@color/blue_gray_800</item>
+    </style>
+
+
+    <style name="RedTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/red_800</item>
+        <item name="colorPrimaryDark">@color/red_900</item>
+    </style>
+
+    <style name="TealTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/teal_800</item>
+        <item name="colorPrimaryDark">@color/teal_900</item>
+    </style>
+
+    <style name="PinkTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/pink_800</item>
+        <item name="colorPrimaryDark">@color/pink_900</item>
+    </style>
+
+    <style name="IndigoTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/indigo_500</item>
+        <item name="colorPrimaryDark">@color/indigo_700</item>
+    </style>
+
+    <style name="CyanTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/cyan_600</item>
+        <item name="colorPrimaryDark">@color/cyan_900</item>
+    </style>
+
+    <style name="OrangeTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/orange_800</item>
+        <item name="colorPrimaryDark">@color/orange_900</item>
+    </style>
+
+    <style name="LimeTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/lime_600</item>
+        <item name="colorPrimaryDark">@color/lime_900</item>
+    </style>
+
+    <style name="LightGreenTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/green_lite_700</item>
+        <item name="colorPrimaryDark">@color/green_lite_600</item>
+    </style>
+
+    <style name="AmberTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/amber_500</item>
+        <item name="colorPrimaryDark">@color/amber_900</item>
+        <item name="colorAccent">@color/accent01</item>
+    </style>
+
+    <style name="GreyTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/grey_600</item>
+        <item name="colorPrimaryDark">@color/grey_800</item>
+    </style>
+
+    <style name="BrownTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/brown_500</item>
+        <item name="colorPrimaryDark">@color/brown_800</item>
+    </style>
+
+
+    <style name="PurpleTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryDark">@color/purple_800</item>
+    </style>
+
+
+
+</resources>

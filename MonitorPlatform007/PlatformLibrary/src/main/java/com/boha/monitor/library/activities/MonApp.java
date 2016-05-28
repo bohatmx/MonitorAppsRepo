@@ -77,20 +77,18 @@ public class MonApp extends Application implements Application.ActivityLifecycle
     static final String LOG = MonApp.class.getSimpleName();
     private GcmNetworkManager mGcmNetworkManager;
     public static Picasso picasso;
-    private DB snappyDB;
+
     private  RefWatcher refWatcher;
 
     public  RefWatcher getRefWatcher() {
         return refWatcher;
     }
 
+    private DB snappyDB;
     public DB getSnappyDB() {
         try {
             if (snappyDB == null || !snappyDB.isOpen()) {
                 snappyDB = DBFactory.open(getApplicationContext());
-            }
-            if (snappyDB.isOpen()) {
-                //Log.e(LOG,"getSnappyDB - database is OPEN!");
             }
         } catch (SnappydbException e) {
             e.printStackTrace();

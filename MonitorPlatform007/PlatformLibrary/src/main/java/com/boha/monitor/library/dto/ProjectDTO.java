@@ -275,6 +275,9 @@ public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
     }
 
     public Boolean getLocationConfirmed() {
+        if (locationConfirmed == null) {
+            locationConfirmed = false;
+        }
         return locationConfirmed;
     }
 

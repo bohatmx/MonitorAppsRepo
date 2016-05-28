@@ -3,17 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.boha.monitor.supervisor">
 
-    <!--  PROD API KEY:   AIzaSyDLKxbwrZO0kvsUWARNsm598QHXu0_ATX4 -->
-    <!--  DEBUG API KEY:  AIzaSyBncjb7-oqexK0fKJdfy365tVJUNLkxRkE -->
+    <!-- PROD API KEY:   AIzaSyDLKxbwrZO0kvsUWARNsm598QHXu0_ATX4 -->
+    <!-- DEBUG API KEY:  AIzaSyBncjb7-oqexK0fKJdfy365tVJUNLkxRkE -->
 
 
     <!-- PERMISSIONS 083 385 9969 -->
     <permission
-        android:name="com.boha.platform.supervisor.gcm.permission.C2D_MESSAGE"
+        android:name="com.boha.platform.supervisor.m30.gcm.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="com.boha.platform.supervisor.gcm.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.boha.platform.supervisor.m30.gcm.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -30,10 +30,16 @@
         android:name="com.boha.monitor.library.activities.MonApp"
         android:allowBackup="true"
         android:icon="@drawable/glasses"
+        tools:replace="android:theme"
         android:label="@string/app_name"
         android:theme="@style/BrownTheme">
 
         <!-- Keys and metadata -->
+
+        <!-- <meta-data android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"/>
+            -->
+
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyBncjb7-oqexK0fKJdfy365tVJUNLkxRkE" />
@@ -85,7 +91,7 @@
             android:name=".activities.StaffMainActivity"
             android:label="@string/title_activity_staff_drawer"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden"></activity>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.boha.monitor.library.activities.TaskListActivity"
             android:parentActivityName=".activities.StaffMainActivity"
@@ -96,8 +102,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name="com.boha.monitor.library.activities.ThemeSelectorActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".activities.StaffMainActivity" />
+            android:parentActivityName=".activities.StaffMainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.boha.monitor.library.activities.PictureActivity"
             android:parentActivityName=".activities.StaffMainActivity"
@@ -105,12 +111,12 @@
         <activity android:name="com.boha.monitor.library.activities.PhotoListActivity" />
         <activity
             android:name="com.boha.monitor.library.activities.GPSActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".activities.StaffMainActivity" />
+            android:parentActivityName=".activities.StaffMainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.boha.monitor.library.activities.StatusReportActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".activities.StaffMainActivity" />
+            android:parentActivityName=".activities.StaffMainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.boha.monitor.library.activities.ProjectMapActivity"
             android:parentActivityName=".activities.StaffMainActivity" />
@@ -120,7 +126,15 @@
         <activity
             android:name="com.boha.monitor.library.activities.VideoActivity"
             android:parentActivityName=".activities.StaffMainActivity" />
+        <activity
+            android:name=".activities.SelectUserTypeActivity"
+            android:label="@string/title_activity_select_user_type">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

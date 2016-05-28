@@ -39,7 +39,7 @@ import com.boha.monitor.library.activities.ProjectMapActivity;
 import com.boha.monitor.library.activities.StatusReportActivity;
 import com.boha.monitor.library.activities.ThemeSelectorActivity;
 import com.boha.monitor.library.activities.UpdateActivity;
-import com.boha.monitor.library.activities.VideoActivity;
+import com.boha.monitor.library.activities.YouTubeActivity;
 import com.boha.monitor.library.activities.YouTubePlayerActivity;
 import com.boha.monitor.library.dto.ChatMessageDTO;
 import com.boha.monitor.library.dto.LocationTrackerDTO;
@@ -542,7 +542,7 @@ public class MonitorMainActivity extends AppCompatActivity
         mdf.setListener(new MediaDialogFragment.MediaDialogListener() {
             @Override
             public void onVideoSelected() {
-                Intent w = new Intent(getApplicationContext(), VideoActivity.class);
+                Intent w = new Intent(getApplicationContext(), YouTubeActivity.class);
                 w.putExtra("project", project);
                 startActivityForResult(w, REQUEST_CAMERA_VIDEO);
             }

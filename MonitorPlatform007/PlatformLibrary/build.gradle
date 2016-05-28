@@ -47,12 +47,12 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.2.0'
     compile 'com.android.support:design:23.2.0'
     compile 'com.android.support:support-v4:23.2.0'
-    compile 'com.google.android.gms:play-services-base:8.4.0'
-    compile 'com.google.android.gms:play-services-analytics:8.4.0'
-    compile 'com.google.android.gms:play-services-gcm:8.4.0'
-    compile 'com.google.android.gms:play-services-location:8.4.0'
-    compile 'com.google.android.gms:play-services-maps:8.4.0'
-    compile 'com.google.android.gms:play-services-nearby:8.4.0'
+    compile 'com.google.android.gms:play-services-base:9.0.0'
+    compile 'com.google.android.gms:play-services-analytics:9.0.0'
+    compile 'com.google.android.gms:play-services-gcm:9.0.0'
+    compile 'com.google.android.gms:play-services-location:9.0.0'
+    compile 'com.google.android.gms:play-services-maps:9.0.0'
+    compile 'com.google.android.gms:play-services-nearby:9.0.0'
     compile 'com.github.dmytrodanylyk.shadow-layout:library:1.0.1'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.7.2'
@@ -68,6 +68,12 @@ dependencies {
     compile 'com.snappydb:snappydb-lib:0.4.0'
     compile 'com.esotericsoftware.kryo:kryo:2.24.0'
 
+    //compile 'com.facebook.android:facebook-android-sdk:[4,5)'
+    compile 'com.google.firebase:firebase-database:9.0.0'
+    compile 'com.google.firebase:firebase-storage:9.0.0'
+    //compile 'com.firebaseui:firebase-ui:0.4.0'
+    compile 'com.firebaseui:firebase-ui-auth:0.4.0'
+    compile 'com.firebaseui:firebase-ui-database:0.4.0'
     compile ('com.google.apis:google-api-services-youtube:v3-rev163-1.21.0') {
         exclude group: 'com.google.code.findbugs', module: 'jsr305' }
 

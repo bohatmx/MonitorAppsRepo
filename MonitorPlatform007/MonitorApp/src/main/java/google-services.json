@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "318296148114",
+    "firebase_url": "https://fir-monitor.firebaseio.com",
+    "project_id": "fir-monitor",
+    "storage_bucket": "fir-monitor.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:318296148114:android:4405c256dfe95014",
+        "android_client_info": {
+          "package_name": "com.boha.monitor.supervisor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "318296148114-chuonsmmnbesc2hmiqapp62925vl07v4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXz8tbB8IA1L7WukHfrqmis-Bml-RSYaQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
