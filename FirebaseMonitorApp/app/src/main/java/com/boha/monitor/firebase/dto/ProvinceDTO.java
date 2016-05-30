@@ -2,6 +2,7 @@ package com.boha.monitor.firebase.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -9,16 +10,25 @@ import java.util.List;
  */
 public class ProvinceDTO implements Serializable {
     private static final long serialVersionUID = 1L;
-    private Integer provinceID;
+    private String provinceID;
     private String provinceName;
+    private HashMap<String, MunicipalityDTO> municipalities;
     private List<MunicipalityDTO> municipalityList;
     private Integer countryID;
 
-    public Integer getProvinceID() {
+    public HashMap<String, MunicipalityDTO> getMunicipalities() {
+        return municipalities;
+    }
+
+    public void setMunicipalities(HashMap<String, MunicipalityDTO> municipalities) {
+        this.municipalities = municipalities;
+    }
+
+    public String getProvinceID() {
         return provinceID;
     }
 
-    public void setProvinceID(Integer provinceID) {
+    public void setProvinceID(String provinceID) {
         this.provinceID = provinceID;
     }
 

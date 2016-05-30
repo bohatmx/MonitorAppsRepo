@@ -31,7 +31,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-base:9.0.0'
     compile 'com.google.android.gms:play-services-location:9.0.0'
     compile 'com.google.android.gms:play-services-maps:9.0.0'
-    compile 'com.google.android.gms:play-services-nearby:9.0.0'
+//    compile 'com.google.android.gms:play-services-nearby:9.0.0'
 
     //firebase
     compile 'com.google.firebase:firebase-database:9.0.0'
@@ -49,6 +49,10 @@ dependencies {
     compile 'com.firebase:geofire:1.1.0+'
     compile group: 'com.firebase', name: 'firebase-client-android', version: '2.5.2'
     compile 'com.google.code.gson:gson:2.5'
+    compile 'commons-io:commons-io:2.4'
+    compile 'de.hdodenhof:circleimageview:2.0.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
 }
 
 

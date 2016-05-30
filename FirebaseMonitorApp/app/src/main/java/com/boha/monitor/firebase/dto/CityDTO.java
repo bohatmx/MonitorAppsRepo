@@ -1,45 +1,47 @@
 package com.boha.monitor.firebase.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by aubreyM on 15/07/25.
  */
 public class CityDTO implements Serializable {
-    private Integer municipalityID;
-    private List<ProjectDTO> projectList;
+    private String municipalityID, provinceID;
     private static final long serialVersionUID = 1L;
-    private Integer cityID;
-    private String cityName;
-    private Double latitude;
-    private Double longitude;
+    private String cityID;
+    private String cityName, municipalityName;
+    private double latitude;
+    private double longitude;
 
-    public Integer getMunicipalityID() {
+    public String getProvinceID() {
+        return provinceID;
+    }
+
+    public void setProvinceID(String provinceID) {
+        this.provinceID = provinceID;
+    }
+
+    public String getMunicipalityName() {
+        return municipalityName;
+    }
+
+    public void setMunicipalityName(String municipalityName) {
+        this.municipalityName = municipalityName;
+    }
+
+    public String getMunicipalityID() {
         return municipalityID;
     }
 
-    public void setMunicipalityID(Integer municipalityID) {
+    public void setMunicipalityID(String municipalityID) {
         this.municipalityID = municipalityID;
     }
 
-    public List<ProjectDTO> getProjectList() {
-        if (projectList == null) {
-            projectList = new ArrayList<>();
-        }
-        return projectList;
-    }
-
-    public void setProjectList(List<ProjectDTO> projectList) {
-        this.projectList = projectList;
-    }
-
-    public Integer getCityID() {
+    public String getCityID() {
         return cityID;
     }
 
-    public void setCityID(Integer cityID) {
+    public void setCityID(String cityID) {
         this.cityID = cityID;
     }
 
@@ -51,19 +53,19 @@ public class CityDTO implements Serializable {
         this.cityName = cityName;
     }
 
-    public Double getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Double latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public Double getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Double longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 }

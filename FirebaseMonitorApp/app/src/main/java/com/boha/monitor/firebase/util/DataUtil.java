@@ -1,20 +1,25 @@
 package com.boha.monitor.firebase.util;
 
+import android.content.Context;
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.boha.monitor.firebase.dto.KeyName;
+import com.boha.monitor.firebase.dto.CityDTO;
 import com.boha.monitor.firebase.dto.MonitorCompanyDTO;
 import com.boha.monitor.firebase.dto.MonitorDTO;
-import com.boha.monitor.firebase.dto.PhotoUploadDTO;
+import com.boha.monitor.firebase.dto.MunicipalityDTO;
 import com.boha.monitor.firebase.dto.ProjectDTO;
 import com.boha.monitor.firebase.dto.ProjectTaskDTO;
 import com.boha.monitor.firebase.dto.ProjectTaskStatusDTO;
+import com.boha.monitor.firebase.dto.ProvinceDTO;
 import com.boha.monitor.firebase.dto.StaffDTO;
 import com.boha.monitor.firebase.dto.UserDTO;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -53,6 +58,12 @@ public class DataUtil {
         void onError(String message);
     }
 
+    public interface UserProfileListener {
+        void onProfileUpdated();
+
+        void onError(String message);
+    }
+
     static final String TAG = DataUtil.class.getSimpleName();
 
     public static String MONITOR_DB = "MonitorDB",
@@ -64,11 +75,17 @@ public class DataUtil {
             TASKS = "tasks",
             TASK_STATUS = "taskStatus",
             PHOTOS = "photos",
+            USER_PHOTOS = "userphotos",
+            PROJECT_PHOTOS = "projectPhotos",
+            PROVINCES = "provinces",
+            MUNICIPALITIES = "municipalities",
+            CITIES = "cities",
             COMPANY_PROJECTS = "companyProjects";
 
     private static FirebaseDatabase db;
     private static FirebaseAuth.AuthStateListener mAuthListener;
     private static FirebaseAuth mAuth;
+    private static FirebaseAnalytics analytics;
 
     public static void getUsers(final DataAddedListener listener) {
         final FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -191,7 +208,7 @@ public class DataUtil {
         });
     }
 
-    public static void createUser(final UserDTO user,
+    public static void createUser(final Context ctx, final UserDTO user,
                                   final DataAddedListener listener) {
 
         if (mAuth == null)
@@ -202,13 +219,16 @@ public class DataUtil {
             public void onSuccess(AuthResult authResult) {
 
                 FirebaseUser fbUser = authResult.getUser();
-                Log.i(TAG, "onSuccess: user added to Monitor Platform: " + fbUser.getEmail());
+                Log.i(TAG, "onSuccess: user added to Monitor Platform: " + fbUser.getEmail() + " "
+                        + fbUser.getUid());
+                user.setUid(fbUser.getUid());
                 //add user to company
                 if (user.getCompanyID() != null) {
-                    addUser(user, new DataAddedListener() {
+                    addUser(ctx, user, new DataAddedListener() {
                         @Override
                         public void onResponse(String key) {
                             listener.onResponse(key);
+                            updateUserProfile(user, null);
                         }
 
                         @Override
@@ -218,23 +238,6 @@ public class DataUtil {
                     });
                 }
 
-                //update user profile set display name + photo
-                UserProfileChangeRequest.Builder b = new UserProfileChangeRequest.Builder()
-                        .setDisplayName(user.getFullName());
-                Task<Void> task = fbUser.updateProfile(b.build());
-                task.addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        FirebaseCrash.report(e);
-                        Log.e(TAG, "onFailure: unable to update profile",e);
-                    }
-                });
-                task.addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.i(TAG, "onSuccess: user display name updated");
-                    }
-                });
 
             }
         });
@@ -242,17 +245,65 @@ public class DataUtil {
             @Override
             public void onFailure(@NonNull Exception e) {
                 FirebaseCrash.report(e);
-                Log.e(TAG, "onFailure: ",e );
+                Log.e(TAG, "onFailure: ", e);
                 listener.onError("Unable to create user");
             }
         });
 
     }
 
-    private static void addUser(final UserDTO user, final DataAddedListener listener) {
+    static FirebaseAuth.AuthStateListener authStateListener;
+    public static void updateUserProfile(final UserDTO user, final UserProfileListener listener) {
+        if (mAuth == null)
+            mAuth = FirebaseAuth.getInstance();
+        mAuth.signInWithEmailAndPassword(user.getEmail(), user.getPassword());
+        authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser fbUser = firebaseAuth.getCurrentUser();
+                //update user profile set display name + photo
+                UserProfileChangeRequest.Builder b;
+                if (user.getUri() == null) {
+                    b = new UserProfileChangeRequest.Builder()
+                            .setDisplayName(user.getFullName());
+                } else {
+                    Uri uri = Uri.parse(user.getUri());
+                    b = new UserProfileChangeRequest.Builder()
+                            .setDisplayName(user.getFullName()).setPhotoUri(uri);
+                }
+                Task<Void> task = fbUser.updateProfile(b.build());
+                task.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        FirebaseCrash.report(e);
+                        Log.e(TAG, "--------- onFailure: unable to update profile", e);
+                        if (listener != null)
+                            listener.onError(e.getMessage());
+                    }
+                });
+
+                task.addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.i(TAG, "++++++++++ onSuccess: user display name updated");
+
+                        mAuth.removeAuthStateListener(authStateListener);
+                        if (listener != null)
+                            listener.onProfileUpdated();
+
+                    }
+                });
+            }
+        };
+
+        mAuth.addAuthStateListener(authStateListener);
+
+    }
+
+    private static void addUser(final Context ctx, final UserDTO user, final DataAddedListener listener) {
         if (db == null)
             db = FirebaseDatabase.getInstance();
-        DatabaseReference users = db.getReference(MONITOR_DB)
+        final DatabaseReference users = db.getReference(MONITOR_DB)
                 .child(COMPANIES)
                 .child(user.getCompanyID())
                 .child(USERS);
@@ -260,32 +311,29 @@ public class DataUtil {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if (databaseError == null) {
-                    Log.i(TAG, "onComplete: user added to FB, " + user.getFirstName() +
+                    Log.i(TAG, "********** onComplete: user added to MPS, " + user.getFirstName() +
                             " key: " + databaseReference.getKey());
+                    //set userID
+                    DatabaseReference userID = users.child(databaseReference.getKey())
+                            .child("userID");
+                    userID.setValue(databaseReference.getKey());
+
+                    if (analytics == null) {
+                        analytics = FirebaseAnalytics.getInstance(ctx);
+                    }
+                    Bundle b = new Bundle();
+                    b.putString("userAdded", "MPS");
+                    analytics.logEvent("userEvent", b);
                     listener.onResponse(databaseReference.getKey());
                 } else {
                     listener.onError("Unable to add user");
+                    FirebaseCrash.log("Unable to add authenticated user to MPS platform: " + user.getEmail());
                 }
             }
         });
     }
 
-    public static void addProjectPhoto(final PhotoUploadDTO photo, final DataAddedListener listener) {
-        if (db == null)
-            db = FirebaseDatabase.getInstance();
-        DatabaseReference photos = db.getReference(MONITOR_DB)
-                .child(COMPANIES)
-                .child(photo.getCompanyID())
-                .child(PROJECTS)
-                .child(photo.getProjectID())
-                .child(PHOTOS);
-        photos.push().setValue(photo, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                Log.i(TAG, "onComplete: photo added: key: " + databaseReference.getKey());
-            }
-        });
-    }
+
 
     public static void addProject(final ProjectDTO proj, final DataAddedListener listener) {
         if (db == null)
@@ -308,29 +356,90 @@ public class DataUtil {
                             .child(databaseReference.getKey())
                             .child("projectID");
                     projectID.setValue(databaseReference.getKey());
-
-                    //add to companyProjects - add project id and name to list
-                    DatabaseReference companyProjects = db.getReference(MONITOR_DB)
-                            .child(COMPANIES)
-                            .child(proj.getCompanyID())
-                            .child(COMPANY_PROJECTS);
-                    KeyName kn = new KeyName();
-                    kn.setKey(databaseReference.getKey());
-                    kn.setName(proj.getProjectName());
-
-                    companyProjects.push().setValue(kn, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                            Log.i(TAG, "onComplete: returned from adding project to company, "
-                                    + proj.getProjectName() + ": key: "
-                                    + databaseReference.getKey());
-
-                        }
-                    });
-
                     listener.onResponse(databaseReference.getKey());
                 } else {
                     listener.onError("Unable to add project to database");
+                }
+            }
+        });
+    }
+    public static void addProvince(final ProvinceDTO proj, final DataAddedListener listener) {
+        if (db == null)
+            db = FirebaseDatabase.getInstance();
+        final DatabaseReference projects = db.getReference(MONITOR_DB)
+                .child(PROVINCES);
+
+        projects.push().setValue(proj, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                Log.i(TAG, "onComplete: returned from adding province: " + proj.getProvinceName() +
+                        " key: " + databaseReference.getKey());
+                if (databaseError == null) {
+                    proj.setProvinceID(databaseReference.getKey());
+                    DatabaseReference provinceID = db.getReference(MONITOR_DB)
+                            .child(PROVINCES)
+                            .child(databaseReference.getKey())
+                            .child("provinceID");
+                    provinceID.setValue(databaseReference.getKey());
+                    listener.onResponse(databaseReference.getKey());
+                } else {
+                    listener.onError("Unable to add project to database");
+                }
+            }
+        });
+    }
+    public static void addMunicipality(final MunicipalityDTO mun, final DataAddedListener listener) {
+        if (db == null)
+            db = FirebaseDatabase.getInstance();
+        final DatabaseReference muniRef = db.getReference(MONITOR_DB)
+                .child(PROVINCES)
+                .child(mun.getProvinceID())
+                .child(MUNICIPALITIES);
+
+
+        muniRef.push().setValue(mun, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                Log.i(TAG, "onComplete: returned from adding muni: " + mun.getMunicipalityName() +
+                        " key: " + databaseReference.getKey());
+                if (databaseError == null) {
+                    mun.setMunicipalityID(databaseReference.getKey());
+                    DatabaseReference mID = muniRef
+                            .child(databaseReference.getKey())
+                            .child("municipalityID");
+                    mID.setValue(databaseReference.getKey());
+                    listener.onResponse(databaseReference.getKey());
+                } else {
+                    listener.onError("Unable to add muni to database");
+                }
+            }
+        });
+    }
+    public static void addCity(final CityDTO city, final DataAddedListener listener) {
+        if (db == null)
+            db = FirebaseDatabase.getInstance();
+        final DatabaseReference citiesRef = db.getReference(MONITOR_DB)
+                .child(PROVINCES)
+                .child(city.getProvinceID())
+                .child(MUNICIPALITIES)
+                .child(city.getMunicipalityID())
+                .child(CITIES);
+
+
+        citiesRef.push().setValue(city, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                Log.i(TAG, "onComplete: returned from adding city: " + city.getCityName() +
+                        " key: " + databaseReference.getKey());
+                if (databaseError == null) {
+                    city.setCityID(databaseReference.getKey());
+                    DatabaseReference mID = citiesRef
+                            .child(databaseReference.getKey())
+                            .child("cityID");
+                    mID.setValue(databaseReference.getKey());
+                    listener.onResponse(databaseReference.getKey());
+                } else {
+                    listener.onError("Unable to add muni to database");
                 }
             }
         });
@@ -343,7 +452,7 @@ public class DataUtil {
         companies.push().setValue(co, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                Log.i(TAG, "onComplete: returned from adding company: key: " + databaseReference.getKey());
+                Log.i(TAG, "onComplete: returned from adding project: key: " + databaseReference.getKey());
                 if (databaseError == null) {
                     co.setCompanyID(databaseReference.getKey());
                     DatabaseReference x = db.getReference(MONITOR_DB)
@@ -353,7 +462,7 @@ public class DataUtil {
 
                     listener.onResponse(databaseReference.getKey());
                 } else {
-                    listener.onError("Unable to add company to database");
+                    listener.onError("Unable to add project to database");
                 }
             }
         });

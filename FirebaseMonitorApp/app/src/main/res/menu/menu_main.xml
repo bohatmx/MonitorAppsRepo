@@ -2,9 +2,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activities.CompanyActivity">
+
+    <!--<item-->
+        <!--android:id="@+id/action_provinces"-->
+        <!--android:orderInCategory="100"-->
+        <!--android:title="Help"-->
+        <!--android:icon="@drawable/ic_action_import"-->
+        <!--app:showAsAction="ifRoom" />-->
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_help"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="Help"
+        android:icon="@drawable/ic_action_help"
         app:showAsAction="never" />
 </menu>

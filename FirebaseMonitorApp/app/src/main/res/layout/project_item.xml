@@ -26,8 +26,9 @@
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Company Name"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                android:text="Project Name"
+                android:textColor="@color/teal_700"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <TextView
                 android:id="@+id/date"
@@ -37,7 +38,7 @@
                 android:layout_marginTop="8dp"
                 android:text="23 December 2099 10:30"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:textColor="@color/pink_800" />
+                android:textColor="@color/black" />
 
         </RelativeLayout>
 
@@ -46,35 +47,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/mainLayout"
-            android:padding="16dp"
-            android:background="@color/grey_100"
             android:layout_margin="16dp">
 
-
+            <ImageView
+                android:id="@+id/addStaff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_account_circle_black_24dp"
+                android:tint="@color/red_800" />
 
             <ImageView
                 android:id="@+id/addUsers"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="48dp"
+                android:layout_toLeftOf="@id/addStaff"
                 android:src="@drawable/ic_account_circle_black_24dp"
                 android:tint="@color/black" />
-            <ImageView
-                android:id="@+id/importProjects"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginRight="48dp"
-                android:layout_toLeftOf="@id/addUsers"
-                android:src="@drawable/ic_action_import"
-                android:tint="@color/black" />
-            <ImageView
-                android:id="@+id/importUsers"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginRight="48dp"
-                android:layout_toLeftOf="@id/importProjects"
-                android:src="@drawable/ic_action_face"
-                android:tint="@color/black" />
+
 
         </RelativeLayout>
     </RelativeLayout>

@@ -2,8 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.boha.monitor.firebase">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:name=".activities.App"
         android:allowBackup="true"
@@ -14,21 +20,45 @@
         <activity
             android:name=".activities.CompanyActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
+        <activity
+            android:name=".activities.ProjectActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".activities.UserActivity"
+            android:label="@string/title_activity_picture"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".activities.UserImportActivity"
+            android:label="@string/user_imports"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".activities.PictureActivity"
+            android:label="@string/mps_pictures"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity android:name=".activities.ProvinceImportActivity" />
+        <activity android:name=".activities.MuniImportActivity" />
+        <activity android:name=".activities.CityImportActivity" />
+        <activity android:name=".activities.ProjectImportActivity" />
+        <activity
+            android:name=".activities.MonitorAssignActivity"
+            android:label="@string/title_activity_monitor_assign"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.SignInActivity"
+            android:label="@string/title_activity_login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-        <activity
-            android:name=".activities.PictureActivity"
-            android:label="@string/title_activity_picture"
-            android:theme="@style/AppTheme">
 
-        </activity>
     </application>
 
 </manifest>

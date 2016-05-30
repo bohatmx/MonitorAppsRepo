@@ -1,7 +1,9 @@
 package com.boha.monitor.firebase.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by aubreymalabie on 5/21/16.
@@ -11,9 +13,39 @@ public class UserDTO implements Serializable {
     public UserDTO() {}
 
 
-    private String firstName = "", lastName = "", email = "", userID = "", companyID = "", password;
-    private HashMap<String, Object> photos;
+    private String firstName = "",
+            lastName = "", fullName,
+            email = "", userID = "", companyID = "", password, uid;
     private String uri;
+    private HashMap<String, PhotoUploadDTO> photos;
+    private List<PhotoUploadDTO> photoList;
+
+    public List<PhotoUploadDTO> getPhotoList() {
+        photoList = new ArrayList<>();
+        if (photos != null) {
+            for (PhotoUploadDTO p : photos.values()) {
+                photoList.add(p);
+            }
+        }
+        return photoList;
+    }
+
+    public void setPhotos(HashMap<String, PhotoUploadDTO> photos) {
+        this.photos = photos;
+        getPhotoList();
+    }
+
+    public HashMap<String, PhotoUploadDTO> getPhotos() {
+        return photos;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 
     public String getUri() {
         return uri;
@@ -23,17 +55,18 @@ public class UserDTO implements Serializable {
         this.uri = uri;
     }
 
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
     public String getFullName() {
-        return firstName + " " + lastName;
+        if (fullName == null) {
+            return firstName + " " + lastName;
+        } else {
+            return fullName;
+        }
     }
 
-    public HashMap<String, Object> getPhotos() {
-        return photos;
-    }
-
-    public void setPhotos(HashMap<String, Object> photos) {
-        this.photos = photos;
-    }
 
     public String getCompanyID() {
         return companyID;

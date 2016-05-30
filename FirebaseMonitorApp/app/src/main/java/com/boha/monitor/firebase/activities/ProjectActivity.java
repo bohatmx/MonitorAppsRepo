@@ -1,6 +1,5 @@
 package com.boha.monitor.firebase.activities;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -18,22 +17,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.boha.monitor.firebase.R;
+import com.boha.monitor.firebase.dto.CityDTO;
 import com.boha.monitor.firebase.dto.MonitorCompanyDTO;
+import com.boha.monitor.firebase.dto.ProjectDTO;
 import com.boha.monitor.firebase.util.DataUtil;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
-public class CompanyActivity extends AppCompatActivity {
+public class ProjectActivity extends AppCompatActivity {
 
-    static final String TAG = CompanyActivity.class.getSimpleName();
-
+    static final String TAG = ProjectActivity.class.getSimpleName();
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseAuth mAuth;
     private FirebaseDatabase db;
     private FirebaseAnalytics analytics;
     private Snackbar snackbar;
@@ -41,16 +43,25 @@ public class CompanyActivity extends AppCompatActivity {
     private ImageView tick;
     private TextView count;
     private RecyclerView recyclerView;
-    private List<MonitorCompanyDTO> companies;
-    private int counter;
+    private MonitorCompanyDTO company;
+    private CityDTO city;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_proj);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
+        city = (CityDTO) getIntent().getSerializableExtra("city");
+        company = (MonitorCompanyDTO) getIntent().getSerializableExtra("company");
+        TextView title = (TextView) findViewById(R.id.title);
+        title.setText(company.getCompanyName());
+
+        mAuth = FirebaseAuth.getInstance();
         db = FirebaseDatabase.getInstance();
         analytics = FirebaseAnalytics.getInstance(getApplicationContext());
+        //
         companyName = (EditText) findViewById(R.id.companyName);
         count = (TextView) findViewById(R.id.count);
         recyclerView = (RecyclerView) findViewById(R.id.recycler);
@@ -58,36 +69,43 @@ public class CompanyActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(llm);
         recyclerView.setHasFixedSize(true);
         tick = (ImageView) findViewById(R.id.addCompany);
+
+        //
         tick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addCompany();
+                addProject();
             }
         });
 
         sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent m = new Intent(getApplicationContext(), UserActivity.class);
-                startActivity(m);
+                addProject();
             }
         });
     }
 
-    private void addCompany() {
-        final MonitorCompanyDTO c = new MonitorCompanyDTO();
-        c.setCompanyName(companyName.getText().toString());
+    private void addProject() {
+        final ProjectDTO c = new ProjectDTO();
+        c.setProjectName(companyName.getText().toString());
+        c.setCompanyID(company.getCompanyID());
+        c.setCityName(city.getCityName());
+        c.setCityID(city.getCityID());
+        c.setMunicipalityName(city.getMunicipalityName());
+        c.setLocationConfirmed(false);
         c.setDateRegistered(new Date().getTime());
 
-        DataUtil.addCompany(c, new DataUtil.DataAddedListener() {
+        DataUtil.addProject(c, new DataUtil.DataAddedListener() {
             @Override
             public void onResponse(String key) {
                 Log.i(TAG, "onResponse: " + key);
                 Bundle params = new Bundle();
-                params.putString("companyName", c.getCompanyName());
-                analytics.logEvent("Company registered on Monitor", params);
+                params.putString("projectName", c.getProjectName());
+                analytics.logEvent("Project registered on MPS", params);
             }
 
             @Override
@@ -99,48 +117,40 @@ public class CompanyActivity extends AppCompatActivity {
 
     SharedPreferences sp;
 
-
-    FirebaseRecyclerAdapter<MonitorCompanyDTO, CompanyViewHolder> adapter;
+    FirebaseRecyclerAdapter<ProjectDTO, ProjectViewHolder> adapter;
 
     @Override
     public void onStart() {
         super.onStart();
         Log.i(TAG, "+++++++++++++++++++ onStart: FirebaseAuth.getInstance(");
         final DatabaseReference companiesRef = db.getReference(DataUtil.MONITOR_DB)
-                .child(DataUtil.COMPANIES);
+                .child(DataUtil.COMPANIES)
+                .child(company.getCompanyID())
+                .child(DataUtil.PROJECTS);
 
         adapter =
-                new FirebaseRecyclerAdapter<MonitorCompanyDTO, CompanyViewHolder>(
-                        MonitorCompanyDTO.class,
-                        R.layout.company_item,
-                        CompanyViewHolder.class,
+                new FirebaseRecyclerAdapter<ProjectDTO, ProjectViewHolder>(
+                        ProjectDTO.class,
+                        R.layout.project_item,
+                        ProjectViewHolder.class,
                         companiesRef
                 ) {
                     @Override
-                    protected void populateViewHolder(CompanyViewHolder h, final MonitorCompanyDTO model, int position) {
-                        Log.d(TAG, "####### populateViewHolder: " + model.getCompanyName() + " " + model.getCompanyID());
+                    protected void populateViewHolder(ProjectViewHolder h, ProjectDTO model, int position) {
+                        Log.d(TAG, "####### populateViewHolder: " + model.getProjectName() + " " + model.getProjectID());
                         count.setText("" + adapter.getItemCount());
-                        h.company.setText(model.getCompanyName());
+                        h.project.setText(model.getProjectName());
                         h.date.setText(sdf.format(new Date(model.getDateRegistered())));
-
-                        h.addUsers.setOnClickListener(new View.OnClickListener() {
+                        h.addStaff.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                goAddUsers(model);
+                                addStaff();
                             }
                         });
-                        h.importUsers.setOnClickListener(new View.OnClickListener() {
+                        h.addMonitors.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Intent m = new Intent(getApplicationContext(),UserImportActivity.class);
-                                m.putExtra("company", model);
-                                startActivity(m);
-                            }
-                        });
-                        h.importProjects.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                goAddProjects(model);
+                                addMonitors();
                             }
                         });
                     }
@@ -150,18 +160,12 @@ public class CompanyActivity extends AppCompatActivity {
 
     }
 
-    private void goAddProjects(MonitorCompanyDTO co) {
-        Log.d(TAG, "goAddProjects: ");
-        Intent m = new Intent(getApplicationContext(), ProvinceImportActivity.class);
-        m.putExtra("company", co);
-        startActivity(m);
+    private void addStaff() {
+        Log.d(TAG, "addStaff: ");
     }
 
-    private void goAddUsers(MonitorCompanyDTO co) {
-        Log.d(TAG, "goAddUsers: ");
-        Intent m = new Intent(getApplicationContext(), UserActivity.class);
-        m.putExtra("company", co);
-        startActivity(m);
+    private void addMonitors() {
+        Log.d(TAG, "addMonitors: ");
     }
 
     static final Locale loc = Locale.getDefault();
@@ -171,13 +175,18 @@ public class CompanyActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         Log.w(TAG, "---------------- onStop: ");
+        mAuth.removeAuthStateListener(mAuthListener);
 
     }
 
 
+
+    private void setFields() {
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -186,30 +195,24 @@ public class CompanyActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-//        if (id == R.id.action_provinces) {
-//            Intent m = new Intent(getApplicationContext(),ProvinceImportActivity.class);
-//            startActivity(m);
+//        if (id == R.id.action_settings) {
 //            return true;
 //        }
-        if (id == R.id.action_help) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public static class CompanyViewHolder extends RecyclerView.ViewHolder {
-        protected TextView company, date;
-        protected ImageView addUsers, importUsers, importProjects;
+    public static class ProjectViewHolder extends RecyclerView.ViewHolder {
+        protected TextView project, date;
+        protected ImageView addStaff, addMonitors;
 
 
-        public CompanyViewHolder(View itemView) {
+        public ProjectViewHolder(View itemView) {
             super(itemView);
-            company = (TextView) itemView.findViewById(R.id.name);
+            project = (TextView) itemView.findViewById(R.id.name);
             date = (TextView) itemView.findViewById(R.id.date);
-            addUsers = (ImageView) itemView.findViewById(R.id.addUsers);
-            importProjects = (ImageView) itemView.findViewById(R.id.importProjects);
-            importUsers = (ImageView) itemView.findViewById(R.id.importUsers);
+            addStaff = (ImageView) itemView.findViewById(R.id.addStaff);
+            addMonitors = (ImageView) itemView.findViewById(R.id.addUsers);
         }
 
     }

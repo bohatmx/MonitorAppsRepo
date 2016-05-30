@@ -8,6 +8,7 @@ import com.boha.monitor.firebase.dto.MonitorDTO;
 import com.boha.monitor.firebase.dto.PhotoUploadDTO;
 import com.boha.monitor.firebase.dto.ProjectDTO;
 import com.boha.monitor.firebase.dto.StaffDTO;
+import com.boha.monitor.firebase.dto.UserDTO;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.geofire.GeoFire;
@@ -44,13 +45,73 @@ public class StorageUtil {
 
     static FirebaseStorage storage;
 
+    public static void uploadUserPhoto(final UserDTO user,final PhotoUploadDTO p, final StorageListener listener) {
+        if (storage == null) {
+            storage = FirebaseStorage.getInstance();
+        }
+        Log.d(TAG, "uploadUserPhoto: starting photo upload to Firebase Storage");
+        StorageReference ref = storage.getReferenceFromUrl(STORAGE_URL);
+        StorageReference imagesRef = ref
+                .child(p.getCompanyID())
+                .child(DataUtil.USER_PHOTOS)
+                .child(user.getUserID())
+                .child(DataUtil.PHOTOS)
+                .child("" + p.getDateTaken());
+
+        File file = new File(p.getFilePath());
+        try {
+            UploadTask task = imagesRef.putStream(new FileInputStream(file));
+            task.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                    Log.e(TAG, "onFailure: ", exception);
+                    if (listener != null)
+                        listener.onError("Unable to upload the photo");
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                    Log.w(TAG, "onSuccess: photo uploaded, url: " + taskSnapshot.getDownloadUrl().toString());
+                    Log.d(TAG, "onSuccess: taskSnapshot: " + taskSnapshot);
+                    final Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    p.setUrl(downloadUrl.toString());
+
+                    addUserPhotoToDatabase(p, new StorageListener() {
+                        @Override
+                        public void onUploaded(String key) {
+                            listener.onUploaded(key);
+                        }
+
+                        @Override
+                        public void onError(String message) {
+
+                        }
+                    });
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    Log.e(TAG, "onProgress: " + taskSnapshot.getBytesTransferred() + " of " + taskSnapshot.getTotalByteCount());
+                }
+            });
+        } catch (FileNotFoundException e) {
+            if (listener != null)
+                listener.onError(e.getMessage());
+        }
+    }
     public static void uploadProjectPhoto(final PhotoUploadDTO p, final StorageListener listener) {
         if (storage == null) {
             storage = FirebaseStorage.getInstance();
         }
         Log.d(TAG, "uploadProjectPhoto: starting photo upload to Firebase Storage");
         StorageReference ref = storage.getReferenceFromUrl(STORAGE_URL);
-        StorageReference imagesRef = ref.child(p.getCompanyID()).child("photos").child(p.getProjectID());
+        StorageReference imagesRef = ref.child(p.getCompanyID())
+                .child(DataUtil.PROJECT_PHOTOS)
+                .child(p.getProjectID())
+                .child(DataUtil.PHOTOS)
+                .child("" + p.getDateTaken());
 
         File file = new File(p.getFilePath());
         try {
@@ -71,10 +132,9 @@ public class StorageUtil {
                     Log.d(TAG, "onSuccess: taskSnapshot: " + taskSnapshot);
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     p.setUrl(downloadUrl.toString());
-                    DataUtil.addProjectPhoto(p, new DataUtil.DataAddedListener() {
+                    addProjectPhotoToDatabase(p, new StorageListener() {
                         @Override
-                        public void onResponse(String key) {
-                            addProjectPhotoToGeofire(p, null);
+                        public void onUploaded(String key) {
                             if (listener != null)
                                 listener.onUploaded(key);
                         }
@@ -85,6 +145,7 @@ public class StorageUtil {
                                 listener.onError(message);
                         }
                     });
+
                 }
             }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -97,12 +158,15 @@ public class StorageUtil {
                 listener.onError(e.getMessage());
         }
     }
-    public static void addMonitorPhotoToDatabase(final PhotoUploadDTO p, final StorageListener listener) {
+
+    public static void addUserPhotoToDatabase(final PhotoUploadDTO p, final StorageListener listener) {
         final FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference ref = db.getReference(DataUtil.MONITOR_DB)
-                .child(DataUtil.COMPANIES).child(p.getCompanyID())
-                .child("monitors")
-                .child(p.getMonitorID());
+                .child(DataUtil.COMPANIES)
+                .child(p.getCompanyID())
+                .child(DataUtil.USERS)
+                .child(p.getUserID())
+                .child(DataUtil.PHOTOS);
 
         ref.push().setValue(p, new DatabaseReference.CompletionListener() {
             @Override
@@ -122,37 +186,15 @@ public class StorageUtil {
             }
         });
     }
-    public static void addStaffPhotoToDatabase(final PhotoUploadDTO p, final StorageListener listener) {
-        final FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference ref = db.getReference(DataUtil.MONITOR_DB)
-                .child(DataUtil.COMPANIES).child(p.getCompanyID())
-                .child("staff")
-                .child(p.getStaffID());
 
-        ref.push().setValue(p, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if (databaseError == null) {
-                    Log.w(TAG, "onComplete: staff photo added to database");
-                    FirebaseCrash.log("Staff Photo added to database: " + databaseReference.getKey() + "\n"
-                            + p.getUrl());
-                    if (listener != null)
-                        listener.onUploaded(databaseReference.getKey());
-                } else {
-                    Log.e(TAG, "onComplete: error" + databaseError.toString());
-                    FirebaseCrash.log("Error adding staff photo to database: " + databaseError.toString());
-                    if (listener != null)
-                        listener.onError("Unable to add staff photo to database");
-                }
-            }
-        });
-    }
-    public static void addProjectPhotoToDatabasex(final PhotoUploadDTO p, final StorageListener listener) {
+    public static void addProjectPhotoToDatabase(final PhotoUploadDTO p, final StorageListener listener) {
         final FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference ref = db.getReference(DataUtil.MONITOR_DB)
-                .child(DataUtil.COMPANIES).child(p.getCompanyID())
+                .child(DataUtil.COMPANIES)
+                .child(p.getCompanyID())
+                .child(DataUtil.PROJECTS)
                 .child(p.getProjectID())
-                .child("photos");
+                .child(DataUtil.PHOTOS);
 
         ref.push().setValue(p, new DatabaseReference.CompletionListener() {
             @Override
@@ -163,6 +205,7 @@ public class StorageUtil {
                             + p.getUrl());
                     if (listener != null)
                         listener.onUploaded(databaseReference.getKey());
+                    p.setPhotoUploadID(databaseReference.getKey());
                     addProjectPhotoToGeofire(p, null);
                 } else {
                     Log.e(TAG, "onComplete: error" + databaseError.toString());

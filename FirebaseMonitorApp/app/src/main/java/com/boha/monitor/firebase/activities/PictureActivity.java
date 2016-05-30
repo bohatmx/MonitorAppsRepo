@@ -10,25 +10,21 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.boha.monitor.firebase.R;
 import com.boha.monitor.firebase.dto.PhotoUploadDTO;
+import com.boha.monitor.firebase.dto.ProjectDTO;
 import com.boha.monitor.firebase.dto.UserDTO;
 import com.boha.monitor.firebase.util.ImageUtil;
 import com.boha.monitor.firebase.util.StorageUtil;
 import com.boha.monitor.firebase.util.Util;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,108 +36,132 @@ public class PictureActivity extends AppCompatActivity {
     String mCurrentPhotoPath;
     static final int REQUEST_VIDEO_CAPTURE = 162, CAPTURE_IMAGE = 766;
     File photoFile;
-    ImageView image;
-    FloatingActionButton fab;
     Uri fileUri;
     Snackbar snackbar;
     File currentThumbFile, currentFullFile;
     Uri thumbUri, fullUri;
     Bitmap bitmapForScreen;
-    FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
+    ImageView upload, camera, image;
+    TextView title;
+
+    UserDTO user;
+    ProjectDTO project;
+    int type;
+    public static final int USER = 1, PROJECT = 2;
 
     static final String TAG = PictureActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_picture);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        setContentView(R.layout.pictures);
 
-        mAuth = FirebaseAuth.getInstance();
-        checkStatus();
+        user = (UserDTO)getIntent().getSerializableExtra("user");
+        project = (ProjectDTO)getIntent().getSerializableExtra("project");
+        if (user != null) {
+            type = USER;
+        }
+        if (project != null) {
+            type = PROJECT;
+        }
+
+        setFields();
+
+
+    }
+
+    private void setFields() {
+
         image = (ImageView) findViewById(R.id.image);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        camera = (ImageView) findViewById(R.id.takePicture);
+        upload = (ImageView) findViewById(R.id.upload);
+        title = (TextView) findViewById(R.id.title);
+        switch (type) {
+            case USER:
+                title.setText(user.getFullName());
+                break;
+            case PROJECT:
+                title.setText(project.getProjectName());
+                break;
+        }
+        camera.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 dispatchTakePictureIntent();
             }
         });
-    }
-    private void checkStatus() {
-        Log.i(TAG, "checkStatus: ---------- check Firebase user log in");
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
+        upload.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    Log.i(TAG, "++++++++++++++ onAuthStateChanged:signed_in:" + user.getUid()
-                            + " " + user.getEmail());
-                    UserDTO x = new UserDTO();
-                    x.setEmail(user.getEmail());
-                    x.setUserID(user.getUid());
-                    Log.w(TAG, "****************** - onAuthStateChanged: remember to save this app user somewhere");
-
-                } else {
-                    // User is signed out
-                    Log.d(TAG, "-----------onAuthStateChanged:signed_out - start sign in");
-                    signIn();
-                }
-
-            }
-        };
-
-        mAuth.addAuthStateListener(mAuthListener);
-
-    }
-    private void signIn() {
-        Log.w(TAG, "signIn: ================ Firebase signin");
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        String email = "aubrey@mlab.co.za";
-        String password = "kktiger3";
-
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.i(TAG, "####### signIn: onComplete: " + task.isSuccessful());
-
-                        if (task.isSuccessful()) {
-                            FirebaseUser user = task.getResult().getUser();
-                            Log.i(TAG, "####### onComplete: we cool, name: "
-                                    + user.getDisplayName() + " email: " + user.getEmail()
-                                    + " uid: " + user.getUid() + " \ntoken: " + user.getToken(true));
-                        } else {
-                            Log.e(TAG, "------------ sign in FAILED");
-                        }
-                    }
-                });
-    }
-
-    private void uploadPhoto() {
-        PhotoUploadDTO p = new PhotoUploadDTO();
-        p.setBucketName("mybucket_list");
-        p.setDateTaken(new Date().getTime());
-        p.setUserID("-KIP8VGt3zCwGie7mVgv");
-        p.setMarked(false);
-        p.setProjectID("-KIOekBDdxNcRCWK3kjk");
-        p.setDateUploaded(new Date().getTime());
-        p.setMonitorName("Peggy Monitor");
-        p.setFilePath(currentThumbFile.getPath());
-        p.setCompanyID("-KIOek3aRAC8Xvi3BTki");
-        StorageUtil.uploadProjectPhoto(p, new StorageUtil.StorageListener() {
-            @Override
-            public void onUploaded(String key) {
-                Log.e(TAG, "onUploaded: heita!" + key);
-            }
-
-            @Override
-            public void onError(String message) {
-                Log.e(TAG, "onError: " + message );
+            public void onClick(View v) {
+                uploadPhoto();
             }
         });
+
+    }
+
+
+    private void uploadPhoto() {
+        if (currentThumbFile == null) {
+            Snackbar.make(image,"No image to upload",Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+        PhotoUploadDTO p = new PhotoUploadDTO();
+        p.setDateTaken(new Date().getTime());
+        p.setMarked(false);
+        p.setDateUploaded(new Date().getTime());
+        p.setFilePath(currentThumbFile.getPath());
+        switch (type) {
+            case USER:
+                p.setUserID(user.getUserID());
+                p.setMonitorName(user.getFullName());
+                p.setCompanyID(user.getCompanyID());
+                p.setBucketName("bucket-users");
+                StorageUtil.uploadUserPhoto(user,p, new StorageUtil.StorageListener() {
+                    @Override
+                    public void onUploaded(String key) {
+                        Log.e(TAG, "onUploaded: heita!" + key);
+                        showSnack("User photo uploaded");
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        Log.e(TAG, "onError: " + message );
+                        showSnack(message);
+                    }
+                });
+                break;
+            case PROJECT:
+                p.setProjectID(project.getProjectID());
+                p.setProjectName(project.getProjectName());
+                p.setCompanyID(project.getCompanyID());
+                p.setBucketName("bucket" + project.getProjectID());
+                StorageUtil.uploadProjectPhoto(p, new StorageUtil.StorageListener() {
+                    @Override
+                    public void onUploaded(String key) {
+                        Log.e(TAG, "onUploaded: heita!" + key);
+                        showSnack("Project photo uploaded");
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        Log.e(TAG, "onError: " + message );
+                        showSnack(message);
+                    }
+                });
+                break;
+        }
+
+    }
+    private void showSnack(String message) {
+        snackbar = Snackbar.make(image,message,Snackbar.LENGTH_INDEFINITE);
+        snackbar.setActionTextColor(ContextCompat.getColor(getApplicationContext(),R.color.green_200));
+        snackbar.setAction("Cool", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                snackbar.dismiss();
+            }
+        });
+        snackbar.show();
     }
     @Override
     public void onActivityResult(final int requestCode, final int resultCode,
@@ -169,7 +189,7 @@ public class PictureActivity extends AppCompatActivity {
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
+        // Ensure that there's a addMonitors activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             photoFile = null;
             try {
@@ -202,13 +222,7 @@ public class PictureActivity extends AppCompatActivity {
             storageDir = Environment.getDataDirectory();
         }
 
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
+        File image = File.createTempFile(imageFileName,".jpg",storageDir );
         mCurrentPhotoPath = "file:" + image.getAbsolutePath();
         return image;
     }
@@ -277,17 +291,19 @@ public class PictureActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Integer result) {
             if (result > 0) {
-                snackbar = Snackbar.make(fab, "Unable to process file from camera", Snackbar.LENGTH_INDEFINITE);
-                snackbar.setAction("OK", new View.OnClickListener() {
+                snackbar = Snackbar.make(image, "Unable to process file from addMonitors", Snackbar.LENGTH_INDEFINITE);
+                snackbar.setAction("Not Cool", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         snackbar.dismiss();
                     }
                 });
+                snackbar.setActionTextColor(ContextCompat.getColor(getApplicationContext(),R.color.red_500));
+                snackbar.show();
+
                 return;
             }
             image.setImageBitmap(bitmapForScreen);
-            uploadPhoto();
 
         }
     }

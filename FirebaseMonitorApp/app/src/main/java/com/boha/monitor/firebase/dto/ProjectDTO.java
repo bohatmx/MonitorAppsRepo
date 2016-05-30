@@ -8,6 +8,7 @@ package com.boha.monitor.firebase.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -16,88 +17,61 @@ import java.util.List;
  */
 public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
 
-    private List<PhotoUploadDTO> photoUploadList;
-    private List<VideoUploadDTO> videoUploadList;
+
     private static final long serialVersionUID = 1L;
     private String projectID = "NOT CREATED YET", cityID,companyID;
-    private Integer programmeID, portfolioID,
+    private int
             statusCount = 0, photoCount = 0, projectTaskCount = 0,
             monitorCount = 0, staffCount = 0, videoCount = 0;
     private String projectName;
-    private Double latitude;
-    private Double longitude;
-    private Float accuracy;
-    private Boolean activeFlag;
-    private Boolean locationConfirmed;
+    private double latitude;
+    private double longitude;
+    private float accuracy;
+    private boolean activeFlag;
+    private boolean locationConfirmed;
     private String address,cityName, municipalityName;
-    private String description, programmeName, portfolioName;
-    private List<ProjectTaskDTO> projectTaskList;
-    private List<ProjectStatusDTO> projectStatusList;
-    private List<GcmDeviceDTO> gcmDeviceList;
-    private List<MonitorDTO> monitorList;
-    private List<StaffDTO> staffList;
-    private ProjectTaskStatusDTO lastStatus;
-    private Boolean selected = Boolean.FALSE;
-    private Long dateUploaded;
-    private Boolean detailsOpen = Boolean.FALSE;
+    private String description;
+    private HashMap<String, PhotoUploadDTO> photos;
+    private List<PhotoUploadDTO> photoList;
 
-    public Boolean getDetailsOpen() {
-        return detailsOpen;
+    public List<PhotoUploadDTO> getPhotoList() {
+        return photoList;
     }
 
-    public void setDetailsOpen(Boolean detailsOpen) {
-        this.detailsOpen = detailsOpen;
-    }
+    private boolean selected;
+    private long dateUploaded, dateRegistered;
 
     public ProjectDTO() {
     }
 
-    public List<VideoUploadDTO> getVideoUploadList() {
-        return videoUploadList;
+    public HashMap<String, PhotoUploadDTO> getPhotos() {
+        return photos;
     }
 
-    public void setVideoUploadList(List<VideoUploadDTO> videoUploadList) {
-        this.videoUploadList = videoUploadList;
+    public void setPhotos(HashMap<String, PhotoUploadDTO> photos) {
+        photoList = new ArrayList<>();
+        if (photos != null) {
+            for (PhotoUploadDTO m: photos.values()) {
+                photoList.add(m);
+            }
+        }
+        this.photos = photos;
     }
 
-    public Integer getVideoCount() {
-        return videoCount;
+    public String getProjectID() {
+        return projectID;
     }
 
-    public void setVideoCount(Integer videoCount) {
-        this.videoCount = videoCount;
+    public void setProjectID(String projectID) {
+        this.projectID = projectID;
     }
 
-    public Long getDateUploaded() {
-        return dateUploaded;
+    public String getCityID() {
+        return cityID;
     }
 
-    public Integer getProjectTaskCount() {
-        return projectTaskCount;
-    }
-
-    public void setProjectTaskCount(Integer projectTaskCount) {
-        this.projectTaskCount = projectTaskCount;
-    }
-
-    public Integer getMonitorCount() {
-        return monitorCount;
-    }
-
-    public void setMonitorCount(Integer monitorCount) {
-        this.monitorCount = monitorCount;
-    }
-
-    public Integer getStaffCount() {
-        return staffCount;
-    }
-
-    public void setStaffCount(Integer staffCount) {
-        this.staffCount = staffCount;
-    }
-
-    public void setDateUploaded(Long dateUploaded) {
-        this.dateUploaded = dateUploaded;
+    public void setCityID(String cityID) {
+        this.cityID = cityID;
     }
 
     public String getCompanyID() {
@@ -108,12 +82,108 @@ public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
         this.companyID = companyID;
     }
 
-    public Boolean getSelected() {
-        return selected;
+    public int getStatusCount() {
+        return statusCount;
     }
 
-    public void setSelected(Boolean selected) {
-        this.selected = selected;
+    public void setStatusCount(int statusCount) {
+        this.statusCount = statusCount;
+    }
+
+    public int getPhotoCount() {
+        return photoCount;
+    }
+
+    public void setPhotoCount(int photoCount) {
+        this.photoCount = photoCount;
+    }
+
+    public int getProjectTaskCount() {
+        return projectTaskCount;
+    }
+
+    public void setProjectTaskCount(int projectTaskCount) {
+        this.projectTaskCount = projectTaskCount;
+    }
+
+    public int getMonitorCount() {
+        return monitorCount;
+    }
+
+    public void setMonitorCount(int monitorCount) {
+        this.monitorCount = monitorCount;
+    }
+
+    public int getStaffCount() {
+        return staffCount;
+    }
+
+    public void setStaffCount(int staffCount) {
+        this.staffCount = staffCount;
+    }
+
+    public int getVideoCount() {
+        return videoCount;
+    }
+
+    public void setVideoCount(int videoCount) {
+        this.videoCount = videoCount;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public float getAccuracy() {
+        return accuracy;
+    }
+
+    public void setAccuracy(float accuracy) {
+        this.accuracy = accuracy;
+    }
+
+    public boolean getActiveFlag() {
+        return activeFlag;
+    }
+
+    public void setActiveFlag(boolean activeFlag) {
+        this.activeFlag = activeFlag;
+    }
+
+    public boolean getLocationConfirmed() {
+        return locationConfirmed;
+    }
+
+    public void setLocationConfirmed(boolean locationConfirmed) {
+        this.locationConfirmed = locationConfirmed;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getCityName() {
@@ -132,166 +202,6 @@ public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
         this.municipalityName = municipalityName;
     }
 
-    public Integer getPortfolioID() {
-        return portfolioID;
-    }
-
-    public void setPortfolioID(Integer portfolioID) {
-        this.portfolioID = portfolioID;
-    }
-
-    public String getPortfolioName() {
-        return portfolioName;
-    }
-
-    public void setPortfolioName(String portfolioName) {
-        this.portfolioName = portfolioName;
-    }
-
-    public Integer getPhotoCount() {
-        if (photoCount == null) {
-            photoCount = 0;
-        }
-        return photoCount;
-    }
-
-    public void setPhotoCount(Integer photoCount) {
-        this.photoCount = photoCount;
-    }
-
-    public ProjectTaskStatusDTO getLastStatus() {
-//        List<ProjectTaskStatusDTO> stList = new ArrayList<>();
-//        if (lastStatus == null) {
-//            for (ProjectTaskDTO pt: getProjectTaskList()) {
-//                for (ProjectTaskStatusDTO st: pt.getProjectTaskStatusList()) {
-//                    stList.add(st);
-//                }
-//            }
-//            Collections.sort(stList);
-//            if (!stList.isEmpty()) {
-//                lastStatus = stList.get(0);
-//            }
-//        }
-
-        return lastStatus;
-    }
-
-    public void setLastStatus(ProjectTaskStatusDTO lastStatus) {
-        this.lastStatus = lastStatus;
-    }
-
-    public String getProgrammeName() {
-        return programmeName;
-    }
-
-    public void setProgrammeName(String programmeName) {
-        this.programmeName = programmeName;
-    }
-
-    public Integer getStatusCount() {
-        return statusCount;
-    }
-
-    public void setStatusCount(Integer statusCount) {
-        this.statusCount = statusCount;
-    }
-
-    
-    public List<PhotoUploadDTO> getPhotoUploadList() {
-        if (photoUploadList == null) {
-            photoUploadList = new ArrayList<>();
-        }
-        return photoUploadList;
-    }
-
-    public void setPhotoUploadList(List<PhotoUploadDTO> photoUploadList) {
-        this.photoUploadList = photoUploadList;
-    }
-
-    public String getCityID() {
-        return cityID;
-    }
-
-    public void setCityID(String cityID) {
-        this.cityID = cityID;
-    }
-
-
-    public String getProjectID() {
-        return projectID;
-    }
-
-    public void setProjectID(String projectID) {
-        this.projectID = projectID;
-    }
-
-    public Integer getProgrammeID() {
-        return programmeID;
-    }
-
-    public void setProgrammeID(Integer programmeID) {
-        this.programmeID = programmeID;
-    }
-
-    public String getProjectName() {
-        return projectName;
-    }
-
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
-    public Float getAccuracy() {
-        return accuracy;
-    }
-
-    public void setAccuracy(Float accuracy) {
-        this.accuracy = accuracy;
-    }
-
-    public Boolean getActiveFlag() {
-        return activeFlag;
-    }
-
-    public void setActiveFlag(Boolean activeFlag) {
-        this.activeFlag = activeFlag;
-    }
-
-    public Boolean getLocationConfirmed() {
-        if (locationConfirmed == null) {
-            locationConfirmed = false;
-        }
-        return locationConfirmed;
-    }
-
-    public void setLocationConfirmed(Boolean locationConfirmed) {
-        this.locationConfirmed = locationConfirmed;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -300,71 +210,28 @@ public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
         this.description = description;
     }
 
-    public List<ProjectTaskDTO> getProjectTaskList() {
-        if (projectTaskList == null) {
-            projectTaskList = new ArrayList<>();
-        }
-        return projectTaskList;
+    public boolean isSelected() {
+        return selected;
     }
 
-    public void setProjectTaskList(List<ProjectTaskDTO> projectTaskList) {
-        this.projectTaskList = projectTaskList;
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
-
-    public List<ProjectStatusDTO> getProjectStatusList() {
-        return projectStatusList;
+    public long getDateUploaded() {
+        return dateUploaded;
     }
 
-    public void setProjectStatusList(List<ProjectStatusDTO> projectStatusList) {
-        this.projectStatusList = projectStatusList;
+    public void setDateUploaded(long dateUploaded) {
+        this.dateUploaded = dateUploaded;
     }
 
-    public List<GcmDeviceDTO> getGcmDeviceList() {
-        if (gcmDeviceList == null) {
-            gcmDeviceList = new ArrayList<>();
-        }
-        return gcmDeviceList;
+    public long getDateRegistered() {
+        return dateRegistered;
     }
 
-    public void setGcmDeviceList(List<GcmDeviceDTO> gcmDeviceList) {
-       
-        this.gcmDeviceList = gcmDeviceList;
-    }
-    public List<MonitorDTO> getMonitorList() {
-        return monitorList;
-    }
-
-    public void setMonitorList(List<MonitorDTO> monitorList) {
-        this.monitorList = monitorList;
-    }
-
-    public List<StaffDTO> getStaffList() {
-        return staffList;
-    }
-
-    public void setStaffList(List<StaffDTO> staffList) {
-        this.staffList = staffList;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (projectID != null ? projectID.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ProjectDTO)) {
-            return false;
-        }
-        ProjectDTO other = (ProjectDTO) object;
-        if ((this.projectID == null && other.projectID != null) || (this.projectID != null && !this.projectID.equals(other.projectID))) {
-            return false;
-        }
-        return true;
+    public void setDateRegistered(long dateRegistered) {
+        this.dateRegistered = dateRegistered;
     }
 
     @Override

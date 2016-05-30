@@ -295,7 +295,7 @@ public class ListUtil {
                     HashMap<String, String> obj = (HashMap<String, String>) shot.getValue();
                     MonitorCompanyDTO c  = shot.getValue(MonitorCompanyDTO.class);
                     list.add(c);
-                    Log.w(TAG, "++++++++++++ onDataChange: we have a company: " + c.getCompanyName());
+                    Log.w(TAG, "++++++++++++ onDataChange: we have a project: " + c.getCompanyName());
                 }
 
                 listener.onResponse(list);

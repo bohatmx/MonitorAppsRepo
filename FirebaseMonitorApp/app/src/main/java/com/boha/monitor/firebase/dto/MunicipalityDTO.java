@@ -2,6 +2,7 @@ package com.boha.monitor.firebase.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -12,11 +13,12 @@ public class MunicipalityDTO implements Serializable {
     public MunicipalityDTO() {}
     private static final long serialVersionUID = 1L;
     private List<CityDTO> cityList;
-    private Integer municipalityID;
-    private String municipalityName;
-    private Double latitude;
-    private Double longitude;
-    private Integer provinceID;
+    private HashMap<String, CityDTO> cities;
+    private String municipalityID;
+    private String municipalityName, provinceName;
+    private double latitude;
+    private double longitude;
+    private String provinceID;
 
     public List<CityDTO> getCityList() {
         if (cityList == null) {
@@ -25,15 +27,31 @@ public class MunicipalityDTO implements Serializable {
         return cityList;
     }
 
+    public String getProvinceName() {
+        return provinceName;
+    }
+
+    public void setProvinceName(String provinceName) {
+        this.provinceName = provinceName;
+    }
+
+    public HashMap<String, CityDTO> getCities() {
+        return cities;
+    }
+
+    public void setCities(HashMap<String, CityDTO> cities) {
+        this.cities = cities;
+    }
+
     public void setCityList(List<CityDTO> cityList) {
         this.cityList = cityList;
     }
 
-    public Integer getMunicipalityID() {
+    public String getMunicipalityID() {
         return municipalityID;
     }
 
-    public void setMunicipalityID(Integer municipalityID) {
+    public void setMunicipalityID(String municipalityID) {
         this.municipalityID = municipalityID;
     }
 
@@ -45,27 +63,27 @@ public class MunicipalityDTO implements Serializable {
         this.municipalityName = municipalityName;
     }
 
-    public Double getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Double latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public Double getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Double longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
-    public Integer getProvinceID() {
+    public String getProvinceID() {
         return provinceID;
     }
 
-    public void setProvinceID(Integer provinceID) {
+    public void setProvinceID(String provinceID) {
         this.provinceID = provinceID;
     }
 }

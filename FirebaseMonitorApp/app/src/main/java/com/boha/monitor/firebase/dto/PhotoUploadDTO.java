@@ -28,8 +28,8 @@ public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> 
     @Override
     public int compareTo(PhotoUploadDTO another) {
 
-        Date thisDate = new Date(this.dateTaken.longValue());
-        Date anotherDate = new Date(another.dateTaken.longValue());
+        Date thisDate = new Date(this.dateTaken);
+        Date anotherDate = new Date(another.dateTaken);
 
         if (thisDate.after(anotherDate)) {
             return -1;
@@ -41,22 +41,22 @@ public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> 
     }
 
     private static final long serialVersionUID = 1L;
-    private String photoUploadID = "x";
-    private Long dateTaken = Long.parseLong("0");
-    private Double latitude = Double.parseDouble("0.0");
-    private Double longitude = Double.parseDouble("0.0");
-    private Float accuracy = Float.parseFloat("0.0");
-    private String  projectName = "", taskName,  monitorName = "";
-    private Long dateUploaded = Long.parseLong("0");
+    private String photoUploadID;
+    private long dateTaken;
+    private double latitude;
+    private double longitude;
+    private float accuracy;
+    private String  projectName, taskName,  monitorName;
+    private long dateUploaded;
     private String filePath;
-    private String companyID = "x";
-    private String projectID = "x";
-    private String projectTaskID = "x";
-    private String userID  = "x", monitorID = "", staffID = "";
+    private String companyID;
+    private String projectID;
+    private String projectTaskID;
+    private String userID, monitorID, staffID;
 
-    private String url = "url", bucketName = "x";
-    private Boolean marked = Boolean.FALSE;
-    private Integer sharedCount = 0;
+    private String url, bucketName;
+    private boolean marked = false;
+    private int sharedCount = 0;
 
 
     public PhotoUploadDTO() {
@@ -94,27 +94,27 @@ public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> 
         this.photoUploadID = photoUploadID;
     }
 
-    public Long getDateTaken() {
+    public long getDateTaken() {
         return dateTaken;
     }
 
-    public void setDateTaken(Long dateTaken) {
+    public void setDateTaken(long dateTaken) {
         this.dateTaken = dateTaken;
     }
 
-    public Double getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Double latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public Double getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Double longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
@@ -150,11 +150,11 @@ public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> 
         this.monitorName = monitorName;
     }
 
-    public Long getDateUploaded() {
+    public long getDateUploaded() {
         return dateUploaded;
     }
 
-    public void setDateUploaded(Long dateUploaded) {
+    public void setDateUploaded(long dateUploaded) {
         this.dateUploaded = dateUploaded;
     }
 
@@ -206,19 +206,19 @@ public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> 
         this.url = url;
     }
 
-    public Boolean getMarked() {
+    public boolean getMarked() {
         return marked;
     }
 
-    public void setMarked(Boolean marked) {
+    public void setMarked(boolean marked) {
         this.marked = marked;
     }
 
-    public Integer getSharedCount() {
+    public int getSharedCount() {
         return sharedCount;
     }
 
-    public void setSharedCount(Integer sharedCount) {
+    public void setSharedCount(int sharedCount) {
         this.sharedCount = sharedCount;
     }
 }

@@ -196,7 +196,7 @@ public class RequestDTO implements Serializable, Comparable<RequestDTO> {
             SEND_LOCATION = 703,
             SEND_SIMPLE_MESSAGE = 704;
 
-    public static final String COMPANY_DIR = "company";
+    public static final String COMPANY_DIR = "project";
     public static final String STAFF_DIR = "staff";
     public static final String PROJECT_DIR = "project";
     public static final String TASK_DIR = "task";
