@@ -27,7 +27,6 @@ import com.boha.monitor.library.util.ListUtil;
 import com.boha.monitor.library.util.SharedUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -93,11 +92,14 @@ public class SignInActivity extends AppCompatActivity implements
                 if (user != null) {
                     Log.i(TAG, "++++++++++++++ onAuthStateChanged:signed_in:" + user.getUid()
                             + " " + user.getEmail());
-                    startMain();
+                    if (SharedUtil.getCompany(getApplicationContext()) == null) {
+                        startMain();
+                    } else {
+                        startClientMain();
+                    }
                 } else {
-                    // User is signed out
+                    // User needs to sign in
                     Log.e(TAG, "-----------onAuthStateChanged:signed_out - start sign in");
-                    signIn();
                 }
 
             }
@@ -106,31 +108,6 @@ public class SignInActivity extends AppCompatActivity implements
         mAuth.addAuthStateListener(mAuthListener);
 
     }
-
-//    private void checkUser(String uid) {
-//
-//        DatabaseReference ref = db.getReference(DataUtil.MONITOR_DB)
-//                .child(DataUtil.USERS);
-//        Query query = ref.orderByChild("uid").equalTo(uid);
-//        query.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                if (dataSnapshot.getChildrenCount() > 0) {
-//                    for (DataSnapshot m: dataSnapshot.getChildren()) {
-//                        UserDTO user = (UserDTO) m.getValue();
-//                        SharedUtil.setUser(user, getApplicationContext());
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//                UserDTO m = new UserDTO();
-//            }
-//        });
-//
-//    }
 
     private void startMain() {
         Intent m = new Intent(getApplicationContext(), CompanyActivity.class);
@@ -191,7 +168,7 @@ public class SignInActivity extends AppCompatActivity implements
                             SharedUtil.setCreds(e, p, getApplicationContext());
                             getUser(user.getUid());
 
-                            startMain();
+
                         } else {
                             Log.e(TAG, "------------ sign in FAILED");
                             errorBar("Sorry! MPS Sign in has failed. Please try again a bit later");
@@ -214,22 +191,29 @@ public class SignInActivity extends AppCompatActivity implements
                         public void onResponse(List<MonitorCompanyDTO> list) {
                             if (!list.isEmpty()) {
                                 SharedUtil.setCompany(list.get(0),getApplicationContext());
+                                startMain();
                             }
                         }
 
                         @Override
                         public void onError(String message) {
-
+                            errorBar(message);
                         }
                     });
+                } else {
+                    startMain();
                 }
             }
 
             @Override
             public void onError(String message) {
-
+                errorBar(message);
             }
         });
+    }
+    private void startClientMain() {
+        Intent m = new Intent(getApplicationContext(), MainClientActivity.class);
+        startActivity(m);
     }
     @Override
     public void onStart() {
@@ -318,25 +302,7 @@ public class SignInActivity extends AppCompatActivity implements
             }
         }
     }
-    private boolean checkGooglePlayServices(){
-        int checkGooglePlayServices = GooglePlayServicesUtil
-                .isGooglePlayServicesAvailable(getApplicationContext());
-        if (checkGooglePlayServices != ConnectionResult.SUCCESS) {
-		/*
-		* Google Play Services is missing or update is required
-		*  return code could be
-		* SUCCESS,
-		* SERVICE_MISSING, SERVICE_VERSION_UPDATE_REQUIRED,
-		* SERVICE_DISABLED, SERVICE_INVALID.
-		*/
-            GooglePlayServicesUtil.getErrorDialog(checkGooglePlayServices,
-                    this, REQUEST_CODE_RECOVER_PLAY_SERVICES).show();
 
-            return false;
-        }
-
-        return true;
-    }
 
     static final int REQUEST_CODE_RECOVER_PLAY_SERVICES = 6;
 }

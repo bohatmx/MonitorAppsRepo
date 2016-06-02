@@ -37,19 +37,48 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support:design:23.4.0'
 
 
-    compile 'com.android.support:cardview-v7:23.4.0'
-    compile 'com.android.support:recyclerview-v7:23.4.0'
+
+
     compile 'com.android.support:design:23.4.0'
 //    compile 'com.google.android.gms:play-services-base:9.0.0'
-    compile 'com.google.android.gms:play-services-location:9.0.0'
-    compile 'com.google.android.gms:play-services-maps:9.0.0'
+    
 
-    compile project(':monlibrary')
+    //firebase
+    
+    
+    //geofire
+    compile group: 'com.firebase', name: 'firebase-client-android', version: '2.5.2'
+    
+
+    compile project(
+    ':monlibrary')
+compile
+    'com.android.support:multidex:1.0.0'compile
+    'com.android.support:appcompat-v7:24.0.0-beta1'compile
+    'com.android.support:design:24.0.0-beta1'compile
+    'com.android.support:cardview-v7:24.0.0-beta1'compile
+    'com.android.support:recyclerview-v7:24.0.0-beta1'compile
+    'com.google.android.gms:play-services-location:9.0.0'compile 'com.google.android.gms:play-services-maps:9.0.1'
+    compile 'com.google.firebase:firebase-core:9.0.0'
+    compile 'com.google.firebase:firebase-database:9.0.1'
+    compile 'com.google.firebase:firebase-storage:9.0.1'
+    compile 'com.google.firebase:firebase-messaging:9.0.1'
+    compile 'com.google.firebase:firebase-ads:9.0.1'
+    compile 'com.google.firebase:firebase-analytics:9.0.1'
+    compile 'com.firebaseui:firebase-ui-auth:0.4.0'
+    compile 'com.firebaseui:firebase-ui-database:0.4.0'
+    compile 'com.google.firebase:firebase-crash:9.0.0'
+    compile 'com.firebase:geofire:1.1.0.+'
+    compile 'com.google.code.gson:gson:2.5'
+    compile 'commons-io:commons-io:2.4'
+    compile 'de.hdodenhof:circleimageview:2.0.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.google.maps.android:android-maps-utils:0.4.+'
+    compile 'com.firebase:firebase-client-android:2.3.1'
 }
+
 
 
 

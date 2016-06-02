@@ -37,7 +37,6 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-        <service android:name="com.mapbox.mapboxsdk.telemetry.TelemetryService" />
 
         <activity
             android:name=".activities.CompanyActivity"
@@ -96,10 +95,6 @@
         <activity
             android:name=".activities.GoogleMapsActivity"
             android:label="@string/title_activity_google_maps" />
-        <activity
-            android:name=".activities.MapboxActivity"
-            android:label="@string/title_activity_mapbox"
-            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
