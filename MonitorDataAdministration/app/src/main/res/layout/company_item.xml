@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardElevation="8dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <RelativeLayout
+            android:id="@+id/mainLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Company Name"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/name"
+                android:layout_marginTop="8dp"
+                android:text="23 December 2099 10:30"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@color/pink_800" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/actionLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/mainLayout"
+            android:padding="16dp"
+            android:background="@color/grey_100"
+            android:layout_margin="16dp">
+
+
+
+            <ImageView
+                android:id="@+id/addUsers"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_account_circle"
+                android:tint="@color/black" />
+            <ImageView
+                android:id="@+id/importProjects"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginRight="48dp"
+                android:layout_toLeftOf="@id/addUsers"
+                android:src="@drawable/ic_arrow_downward"
+                android:tint="@color/black" />
+            <ImageView
+                android:id="@+id/importUsers"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginRight="48dp"
+                android:layout_toLeftOf="@id/importProjects"
+                android:src="@drawable/ic_photo_filter"
+                android:tint="@color/black" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

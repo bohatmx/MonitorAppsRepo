@@ -25,15 +25,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.boha.monitor.firebase.R;
-import com.boha.monitor.firebase.dto.MonitorCompanyDTO;
-import com.boha.monitor.firebase.dto.MunicipalityDTO;
-import com.boha.monitor.firebase.dto.ProvinceDTO;
-import com.boha.monitor.firebase.util.DataUtil;
-import com.boha.monitor.firebase.util.ImportUtil;
+import com.boha.monitor.library.data.MonitorCompanyDTO;
+import com.boha.monitor.library.data.MunicipalityDTO;
+import com.boha.monitor.library.data.ProvinceDTO;
+import com.boha.monitor.library.util.DataUtil;
+import com.boha.monitor.library.util.ImportUtil;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -77,6 +78,7 @@ public class MuniImportActivity extends AppCompatActivity {
         analytics = FirebaseAnalytics.getInstance(getApplicationContext());
         setFields();
 
+        setTitle("Municipalities");
         sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -193,7 +195,7 @@ public class MuniImportActivity extends AppCompatActivity {
         for (File p : files) {
             list.add(p.getName() + " - " + sdf.format(new Date(p.lastModified())));
         }
-        ArrayAdapter a = new ArrayAdapter(getApplicationContext(), R.layout.simple_list_item, list);
+        ArrayAdapter a = new ArrayAdapter(getApplicationContext(), R.layout.simple_list_item_small, list);
         fileSpinner.setAdapter(a);
         fileSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -277,13 +279,13 @@ public class MuniImportActivity extends AppCompatActivity {
                 .child(province.getProvinceID())
                 .child(DataUtil.MUNICIPALITIES);
                 
-
+        Query query = userRef.orderByChild("municipalityName");
          adapter  =
                 new FirebaseRecyclerAdapter<MunicipalityDTO, MuniViewHolder>(
                         MunicipalityDTO.class,
                         R.layout.place_item,
                         MuniViewHolder.class,
-                        userRef
+                        query
                 ) {
                     @Override
                     protected void populateViewHolder(MuniViewHolder h, final MunicipalityDTO model, int position) {
@@ -301,8 +303,11 @@ public class MuniImportActivity extends AppCompatActivity {
                                 addCities(model);
                             }
                         });
-                        h.label.setText("Add Cities");
+                        h.label.setText("Cities");
                         txtCount.setText("" + adapter.getItemCount());
+                        h.count.setText("" + (position + 1));
+                        h.count.setBackground(ContextCompat.getDrawable(
+                                getApplicationContext(),R.drawable.xblack_oval_small));
                     }
                 };
 
@@ -343,7 +348,7 @@ public class MuniImportActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
     public static class MuniViewHolder extends RecyclerView.ViewHolder {
-        protected TextView name, label;
+        protected TextView name, label, count;
         protected ImageView addCities;
 
 
@@ -352,6 +357,8 @@ public class MuniImportActivity extends AppCompatActivity {
             name = (TextView) itemView.findViewById(R.id.name);
             addCities = (ImageView) itemView.findViewById(R.id.addIcon);
             label = (TextView) itemView.findViewById(R.id.label);
+            count = (TextView) itemView.findViewById(R.id.count);
+
 
         }
 

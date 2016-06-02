@@ -1,37 +1,60 @@
 package com.boha.monitor.firebase.activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.boha.monitor.firebase.R;
-import com.boha.monitor.firebase.dto.PhotoUploadDTO;
-import com.boha.monitor.firebase.dto.ProjectDTO;
-import com.boha.monitor.firebase.dto.UserDTO;
-import com.boha.monitor.firebase.util.ImageUtil;
-import com.boha.monitor.firebase.util.StorageUtil;
-import com.boha.monitor.firebase.util.Util;
+import com.boha.monitor.library.data.PhotoUploadDTO;
+import com.boha.monitor.library.data.ProjectDTO;
+import com.boha.monitor.library.data.UserDTO;
+import com.boha.monitor.library.util.Constants;
+import com.boha.monitor.library.util.ImageUtil;
+import com.boha.monitor.library.util.StorageUtil;
+import com.boha.monitor.library.util.Util;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class PictureActivity extends AppCompatActivity {
+public class PictureActivity extends AppCompatActivity implements LocationListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
+
+    Location mLocation;
+    GoogleApiClient mGoogleApiClient;
+    LocationRequest mLocationRequest;
+    boolean mRequestingLocationUpdates;
 
     String mCurrentPhotoPath;
     static final int REQUEST_VIDEO_CAPTURE = 162, CAPTURE_IMAGE = 766;
@@ -47,6 +70,10 @@ public class PictureActivity extends AppCompatActivity {
     UserDTO user;
     ProjectDTO project;
     int type;
+    InterstitialAd mInterstitialAd;
+    boolean showAd = true;
+    ProgressBar progressBar;
+
     public static final int USER = 1, PROJECT = 2;
 
     static final String TAG = PictureActivity.class.getSimpleName();
@@ -55,6 +82,12 @@ public class PictureActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pictures);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
 
         user = (UserDTO)getIntent().getSerializableExtra("user");
         project = (ProjectDTO)getIntent().getSerializableExtra("project");
@@ -67,10 +100,38 @@ public class PictureActivity extends AppCompatActivity {
 
         setFields();
 
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(Constants.INTERSTITIAL_AD);
+        requestNewAd();
+    }
 
+    private void requestNewAd() {
+        AdRequest request = new AdRequest.Builder()
+                .addTestDevice("3E:F3:AA:D7:B9:B4:71:22:A7:F0:CD:4F:89:74:84:6A:92:8C:99:E0")
+                .build();
+        mInterstitialAd.loadAd(request);
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                showAd = false;
+                onBackPressed();
+            }
+        });
+    }
+    @Override
+    public void onBackPressed() {
+        if (showAd) {
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+                return;
+            }
+        }
+        finish();
     }
 
     private void setFields() {
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.GONE);
 
         image = (ImageView) findViewById(R.id.image);
         camera = (ImageView) findViewById(R.id.takePicture);
@@ -105,9 +166,12 @@ public class PictureActivity extends AppCompatActivity {
             Snackbar.make(image,"No image to upload",Snackbar.LENGTH_SHORT).show();
             return;
         }
+        progressBar.setVisibility(View.VISIBLE);
         PhotoUploadDTO p = new PhotoUploadDTO();
         p.setDateTaken(new Date().getTime());
         p.setMarked(false);
+        p.setLatitude(mLocation.getLatitude());
+        p.setLongitude(mLocation.getLongitude());
         p.setDateUploaded(new Date().getTime());
         p.setFilePath(currentThumbFile.getPath());
         switch (type) {
@@ -121,11 +185,13 @@ public class PictureActivity extends AppCompatActivity {
                     public void onUploaded(String key) {
                         Log.e(TAG, "onUploaded: heita!" + key);
                         showSnack("User photo uploaded");
+                        progressBar.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void onError(String message) {
                         Log.e(TAG, "onError: " + message );
+                        progressBar.setVisibility(View.GONE);
                         showSnack(message);
                     }
                 });
@@ -140,12 +206,14 @@ public class PictureActivity extends AppCompatActivity {
                     public void onUploaded(String key) {
                         Log.e(TAG, "onUploaded: heita!" + key);
                         showSnack("Project photo uploaded");
+                        progressBar.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void onError(String message) {
                         Log.e(TAG, "onError: " + message );
                         showSnack(message);
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
                 break;
@@ -321,5 +389,132 @@ public class PictureActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.w(TAG, "######### onStart");
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+            progressBar.setVisibility(View.VISIBLE);
+        }
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "######### onStop");
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //getMenuInflater().inflate(R.menu.gps_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.i(TAG,
+                "+++  onConnected() -  requestLocationUpdates ...");
+        mLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLocation != null) {
+            Log.w(TAG, "## requesting location updates ....lastLocation: "
+                    + mLocation.getLatitude() + " "
+                    + mLocation.getLongitude() + " acc: "
+                    + mLocation.getAccuracy());
+        }
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setInterval(2000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setFastestInterval(1000);
+
+        startLocationUpdates();
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+
+    public void startLocationUpdates() {
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            return;
+        }
+
+        Log.w(TAG, "###### startLocationUpdates: " + new Date().toString());
+        if (mGoogleApiClient.isConnected()) {
+            mRequestingLocationUpdates = true;
+            LocationServices.FusedLocationApi.requestLocationUpdates(
+                    mGoogleApiClient, mLocationRequest, this);
+            progressBar.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startLocationUpdates();
+
+                } else {
+                    throw new UnsupportedOperationException();
+                }
+                return;
+            }
+        }
+    }
+
+    protected void stopLocationUpdates() {
+        Log.w(TAG, "###### stopLocationUpdates - " + new Date().toString());
+        if (mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(
+                    mGoogleApiClient, this);
+            progressBar.setVisibility(View.GONE);
+        }
+    }
+
+
+    static final float ACCURACY = 10;
+
+    @Override
+    public void onLocationChanged(Location loc) {
+        Log.d(TAG, "## onLocationChanged accuracy = " + loc.getAccuracy()
+                + " - " + new Date().toString());
+        mLocation = loc;
+        if (loc.getAccuracy() > ACCURACY) {
+            return;
+        }
+        stopLocationUpdates();
+
+
+    }
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
 }

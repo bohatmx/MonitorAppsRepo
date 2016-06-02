@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardElevation="8dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="8dp"
+        android:layout_margin="8dp">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:text="Project name Here"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <RelativeLayout
+            android:id="@+id/layout2"
+            android:layout_below="@id/name"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/label1"
+                android:layout_centerVertical="true"
+                android:text="Project Monitors: "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/monCount"
+                android:text="0"
+                android:background="@drawable/xindigo_oval_small"
+                android:textSize="14sp"
+                android:textStyle="normal"
+                android:layout_marginLeft="8dp"
+                android:layout_centerVertical="true"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:layout_toRightOf="@id/label1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/midlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layout2"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp">
+
+            <ImageView
+                android:id="@+id/addIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_search" />
+
+            <TextView
+                android:id="@+id/label"
+                android:text="Monitors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16dp"
+                android:layout_toLeftOf="@id/addIcon" />
+            <ImageView
+                android:id="@+id/camera"
+                android:src="@drawable/ic_camera_enhance"
+                android:scaleType="centerCrop"
+                android:visibility="visible"
+                android:layout_marginRight="48dp"
+                android:layout_toLeftOf="@id/label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:id="@+id/location"
+                android:src="@drawable/ic_location_on"
+                android:scaleType="centerCrop"
+                android:visibility="visible"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="24dp"
+                android:layout_toLeftOf="@id/camera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+        <ImageView
+            android:id="@+id/image"
+            android:src="@drawable/back13"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:layout_below="@id/midlayout"
+            android:layout_width="match_parent"
+            android:layout_height="300dp" />
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

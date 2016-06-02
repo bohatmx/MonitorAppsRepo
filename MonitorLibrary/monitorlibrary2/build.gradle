@@ -1,0 +1,9 @@
+apply plugin: 'java'
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+task copyLibrary(type: Copy) {
+    from 'build/libs/'
+    into '/work/REPOS/MonitorAppsRepo/FirebaseMonitorApp/app/libs'
+}

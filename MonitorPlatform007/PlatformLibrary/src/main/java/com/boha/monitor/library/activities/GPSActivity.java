@@ -38,7 +38,8 @@ import java.util.Date;
  * @see ProjectDTO
  */
 public class GPSActivity extends AppCompatActivity
-        implements GPSScanFragment.GPSScanFragmentListener, LocationListener,
+        implements GPSScanFragment.GPSScanFragmentListener,
+        LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 

@@ -142,6 +142,10 @@
     <color name="orange_800">#EF6C00</color>
     <color name="orange_900">#E65100</color>
 
+    <color name="colorAccent">#E65100</color>
+    <color name="colorPrimary">#009688</color>
+    <color name="colorPrimaryDark">#004D40</color>
+
     <!-- BlueGray Pallete -->
     <color name="blue_gray_100">#CFD8DC</color>
     <color name="blue_gray_200">#B0BEC5</color>
