@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "677918290162",
+    "project_id": "supervisor-1335"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:677918290162:android:4405c256dfe95014",
+        "android_client_info": {
+          "package_name": "com.boha.monitor.supervisor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "677918290162-u91vmm029giebkq727vfhrlbnod8olv3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.boha.monitor.supervisor",
+            "certificate_hash": "22DB2064643C9A8F0C5B23CF4E48FF4981A98D7B"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANKs_qDt3RYx7Ts-xb0daxOcaMV0ddkVo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-78989883-1"
+          }
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

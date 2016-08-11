@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="@dimen/mon_margin"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/AV_title"
+        android:text="Make Video"
+        style="@style/Title1TextStyleBlack"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:layout_below="@id/AV_title"
+        android:layout_marginTop="@dimen/mon_wide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/AV_result"
+            android:text="Video Done OK"
+            style="@style/Title1TextStyleBlue"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/mon_wide"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/mon_wide"
+        android:elevation="@dimen/mon_margin"
+        android:src="@drawable/camera_a32" />
+</RelativeLayout>

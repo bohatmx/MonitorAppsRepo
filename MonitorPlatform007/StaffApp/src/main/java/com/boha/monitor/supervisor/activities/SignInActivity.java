@@ -206,9 +206,6 @@ public class SignInActivity extends AppCompatActivity {
      * @see StaffMainActivity
      */
     private void checkVirgin() {
-
-
-
         StaffDTO dto = SharedUtil.getCompanyStaff(ctx);
         if (dto != null) {
             Log.i(LOG, "++++++++ Not a virgin anymore ...checking GCM registration: " + dto.getFullName());

@@ -1,0 +1,17 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_500"
+    tools:context="com.boha.monitor.library.activities.TaskUpdateActivity">
+
+    <RelativeLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"></RelativeLayout>
+    <fragment
+        android:id="@+id/fragment"
+        android:name="com.boha.monitor.library.fragments.TaskStatusUpdateFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</RelativeLayout>

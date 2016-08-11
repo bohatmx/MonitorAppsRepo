@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/TC_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/beige_pale"
+            android:padding="@dimen/mon_margin">
+
+            <TextView
+                style="@style/Title2TextStyleBlue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Select Color Theme" />
+        </RelativeLayout>
+
+        <ScrollView
+            android:layout_below="@id/TC_top"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/TC_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/TC_top"
+                android:layout_marginLeft="@dimen/mon_wide"
+                android:layout_marginRight="@dimen/mon_wide"
+                android:layout_marginTop="@dimen/mon_margin">
+                <RelativeLayout
+                    android:id="@+id/TC_indigoLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/TC_dark0"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/indigo_800" />
+
+                    <TextView
+                        android:id="@+id/TC_primary0"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_dark0"
+                        android:background="@color/indigo_500" />
+
+                    <TextView
+                        android:id="@+id/TC_accent0"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_primary0"
+                        android:background="@color/indigo_300" />
+
+                    <TextView
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Indigo"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/TC_greenLayout"
+                    android:layout_below="@id/TC_indigoLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/TC_dark02"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/green_900" />
+
+                    <TextView
+                        android:id="@+id/TC_primary02"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_dark02"
+                        android:background="@color/green_700" />
+
+                    <TextView
+                        android:id="@+id/TC_accent02"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_primary02"
+                        android:background="@color/green_200" />
+
+                    <TextView
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Green"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/TC_brownLayout"
+                    android:layout_below="@id/TC_greenLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/TC_dark03"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/brown_900" />
+
+                    <TextView
+                        android:id="@+id/TC_primary03"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_dark03"
+                        android:background="@color/brown_700" />
+
+                    <TextView
+                        android:id="@+id/TC_accent03"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_primary03"
+                        android:background="@color/amber_100" />
+
+                    <TextView
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Brown"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/TC_amberLayout"
+                    android:layout_below="@id/TC_brownLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/TC_dark04"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/amber_900" />
+
+                    <TextView
+                        android:id="@+id/TC_primary04"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_dark04"
+                        android:background="@color/amber_600" />
+
+                    <TextView
+                        android:id="@+id/TC_accent04"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_primary04"
+                        android:background="@color/amber_100" />
+
+                    <TextView
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Amber"
+                        android:textColor="@color/black" />
+
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/TC_purpleLayout"
+                    android:layout_below="@id/TC_amberLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/TC_dark05"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/purple_900" />
+
+                    <TextView
+                        android:id="@+id/TC_primary05"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_dark05"
+                        android:background="@color/purple_500" />
+
+                    <TextView
+                        android:id="@+id/TC_accent05"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_primary05"
+                        android:background="@color/purple_100" />
+
+                    <TextView
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Purple"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/TC_limeLayout"
+                    android:layout_below="@id/TC_purpleLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/TC_dark07"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/lime_900" />
+
+                    <TextView
+                        android:id="@+id/TC_primary07"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_dark07"
+                        android:background="@color/lime_700" />
+
+                    <TextView
+                        android:id="@+id/TC_accent07"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_primary07"
+                        android:background="@color/lime_200" />
+
+                    <TextView
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Lime"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/TC_greyLayout"
+                    android:layout_below="@id/TC_limeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/TC_dark01"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/grey_800" />
+
+                    <TextView
+                        android:id="@+id/TC_primary01"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_dark01"
+                        android:background="@color/grey_600" />
+
+                    <TextView
+                        android:id="@+id/TC_accent01"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_primary01"
+                        android:background="@color/grey_300" />
+
+                    <TextView
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Grey"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/TC_blueLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/TC_greyLayout"
+                    android:padding="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/TC_dark1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/blue_900" />
+
+                    <TextView
+                        android:id="@+id/TC_primary1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_dark1"
+                        android:background="@color/blue_500" />
+
+                    <TextView
+                        android:id="@+id/TC_accent1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_primary1"
+                        android:background="@color/blue_100" />
+
+                    <TextView
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Blue"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/TC_blueGrayLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/TC_blueLayout"
+                    android:padding="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/TC_dark2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/blue_gray_700" />
+
+                    <TextView
+                        android:id="@+id/TC_primary2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_dark2"
+                        android:background="@color/blue_gray_500" />
+
+                    <TextView
+                        android:id="@+id/TC_accent2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_primary2"
+                        android:background="@color/blue_gray_100" />
+
+                    <TextView
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="BlueGray"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/TC_tealLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/TC_blueGrayLayout"
+                    android:padding="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/TC_dark3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/teal_700" />
+
+                    <TextView
+                        android:id="@+id/TC_primary3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_dark3"
+                        android:background="@color/teal_500" />
+
+                    <TextView
+                        android:id="@+id/TC_accent3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_primary3"
+                        android:background="@color/teal_100" />
+
+                    <TextView
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Teal"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/TC_cyanLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/TC_tealLayout"
+                    android:padding="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/TC_dark7"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/cyan_800" />
+
+                    <TextView
+                        android:id="@+id/TC_primary7"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_dark7"
+                        android:background="@color/cyan_500" />
+
+                    <TextView
+                        android:id="@+id/TC_accent7"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_primary7"
+                        android:background="@color/cyan_100" />
+
+                    <TextView
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Cyan"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/TC_orangeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/TC_cyanLayout"
+                    android:padding="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/TC_dark4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/orange_800" />
+
+                    <TextView
+                        android:id="@+id/TC_primary4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_dark4"
+                        android:background="@color/orange_500" />
+
+                    <TextView
+                        android:id="@+id/TC_accent4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_primary4"
+                        android:background="@color/orange_100" />
+
+                    <TextView
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Orange"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/TC_pinkLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/TC_orangeLayout"
+                    android:padding="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/TC_dark5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/pink_900" />
+
+                    <TextView
+                        android:id="@+id/TC_primary5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_dark5"
+                        android:background="@color/pink_500" />
+
+                    <TextView
+                        android:id="@+id/TC_accent5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_primary5"
+                        android:background="@color/pink_100" />
+
+                    <TextView
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Pink"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/TC_redLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/TC_pinkLayout"
+                    android:padding="@dimen/mon_padding">
+
+                    <TextView
+                        android:id="@+id/TC_dark6"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/red_800" />
+
+                    <TextView
+                        android:id="@+id/TC_primary6"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_dark6"
+                        android:background="@color/red_500" />
+
+                    <TextView
+                        android:id="@+id/TC_accent6"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TC_primary6"
+                        android:background="@color/red_100" />
+
+                    <TextView
+                        style="@style/TextStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Red"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
+            </RelativeLayout>
+
+        </ScrollView>
+    </RelativeLayout>
+
+</RelativeLayout>

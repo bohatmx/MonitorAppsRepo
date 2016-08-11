@@ -1,0 +1,97 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.boha.monitor.library.fragments.ChatMemberSelectionFragment">
+
+    <RelativeLayout
+        android:id="@+id/CML_top"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mon_hero_height_small"
+        android:background="@color/steel_blue">
+
+        <TextView
+            android:id="@+id/CML_title"
+            android:text="MonitorMessage"
+            style="@style/Title1TextStyleWhite"
+            android:layout_marginTop="@dimen/mon_margin"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/CML_projectName"
+            android:layout_below="@id/CML_title"
+            android:text="ProjectName"
+            style="@style/Title3TextStyleGrey"
+            android:textColor="@color/white"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/CML_messageLayout"
+        android:layout_below="@id/CML_top"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <RelativeLayout
+            android:id="@+id/CML_textLayout"
+            android:background="@color/beige_pale"
+            android:padding="@dimen/mon_margin"
+            android:elevation="@dimen/mon_padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/CML_chatName"
+                style="@style/Title2TextStyleBlue"
+                android:text="Select Chat Name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/CML_text"
+                android:layout_below="@id/CML_chatName"
+                android:layout_marginTop="@dimen/mon_margin"
+                android:hint="Type message here"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/CML_messageList"
+            android:layout_below="@id/CML_textLayout"
+            android:background="@color/white"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:dividerHeight="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/CML_fabSendLayout"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/mon_widest"
+        android:layout_marginRight="@dimen/mon_wide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/fab_send" />
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/mon_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

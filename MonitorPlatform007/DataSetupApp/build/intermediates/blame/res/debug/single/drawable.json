@@ -1,0 +1,522 @@
+[
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_list_selector_holo_light.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_list_selector_holo_light.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xblue_oval_smaller.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xblue_oval_smaller.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xborder_rounded.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xborder_rounded.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/below_shadow.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.sothree.slidinguppanel/library/3.2.1/res/drawable/below_shadow.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_edit_text_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_edit_text_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xorange_oval_small.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xorange_oval_small.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_ratingbar_full_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_ratingbar_full_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_ic_menu_selectall_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_ic_menu_selectall_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xtransparent_oval.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xtransparent_oval.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xborder.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xborder.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xteal_oval_large.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xteal_oval_large.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xnavy_rounded_corners_small.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xnavy_rounded_corners_small.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_spinner_textfield_background_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_spinner_textfield_background_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xgreen_small_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xgreen_small_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xamber_oval_large.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xamber_oval_large.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xindigo_oval_small.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xindigo_oval_small.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_ic_menu_share_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_ic_menu_share_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xgrey_light_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xgrey_light_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_btn_radio_on_mtrl.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_btn_radio_on_mtrl.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xgrey_white_gradient.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xgrey_white_gradient.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xorange_box.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xorange_box.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xbluelight_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xbluelight_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xred_dark_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xred_dark_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xblue_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xblue_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/common_google_signin_btn_text_dark.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/8.4.0/res/drawable/common_google_signin_btn_text_dark.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xgrey_white_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xgrey_white_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_btn_checkbox_checked_mtrl.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_btn_checkbox_checked_mtrl.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xamber_oval_small.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xamber_oval_small.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_btn_radio_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_btn_radio_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xindigo_oval_large.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xindigo_oval_large.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/bubble_green9.png",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/bubble_green9.png"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_ic_menu_paste_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_ic_menu_paste_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_seekbar_thumb_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_seekbar_thumb_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xpurple_oval_large.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xpurple_oval_large.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/common_plus_signin_btn_text_dark.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/8.4.0/res/drawable/common_plus_signin_btn_text_dark.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_text_cursor_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_text_cursor_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xwhite_beige.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xwhite_beige.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_btn_check_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_btn_check_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xred_oval_large.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xred_oval_large.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xgrey_oval_small.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xgrey_oval_small.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xblack_oval_small.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xblack_oval_small.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/line_divider.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/line_divider.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xblack_box.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xblack_box.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xwhite_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xwhite_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xdarkblue_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xdarkblue_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_btn_checkbox_unchecked_mtrl.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_btn_checkbox_unchecked_mtrl.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_ic_go_search_api_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_ic_go_search_api_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xgreen_oval_large.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xgreen_oval_large.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xwhite_grey.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xwhite_grey.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xerror_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xerror_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xblue_oval_small.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xblue_oval_small.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_ic_ab_back_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_ic_ab_back_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xmessage_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xmessage_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xorange_oval.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xorange_oval.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_cab_background_top_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_cab_background_top_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_switch_thumb_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_switch_thumb_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xred_oval.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xred_oval.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_seekbar_track_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_seekbar_track_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xwhite_grey_gradient.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xwhite_grey_gradient.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/circle.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/circle.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xgrey_lite_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xgrey_lite_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xwhite_paleblue_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xwhite_paleblue_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xgrey_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xgrey_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xtransparent_black_small.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xtransparent_black_small.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_item_background_holo_light.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_item_background_holo_light.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xbubble_red.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xbubble_red.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/common_google_signin_btn_text_light.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/8.4.0/res/drawable/common_google_signin_btn_text_light.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xtransparent_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xtransparent_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xblue_oval.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xblue_oval.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_ratingbar_small_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_ratingbar_small_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_btn_colored_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_btn_colored_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_list_selector_background_transition_holo_light.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_list_selector_background_transition_holo_light.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/common_google_signin_btn_icon_light.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/8.4.0/res/drawable/common_google_signin_btn_icon_light.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xthin_grey_box.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xthin_grey_box.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xwhite_beige_rounded_corners_padded.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xwhite_beige_rounded_corners_padded.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xgreen_oval.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xgreen_oval.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xgrey_box.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xgrey_box.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xgrey_rounded_corners_small.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xgrey_rounded_corners_small.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xsteelblue_oval_large.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xsteelblue_oval_large.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_ratingbar_indicator_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_ratingbar_indicator_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_ic_menu_copy_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_ic_menu_copy_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_btn_radio_off_mtrl.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_btn_radio_off_mtrl.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_btn_default_mtrl_shape.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_btn_default_mtrl_shape.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xblue_box.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xblue_box.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_list_selector_holo_dark.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_list_selector_holo_dark.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/bubble_yellow9.png",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/bubble_yellow9.png"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_textfield_search_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_textfield_search_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_list_selector_background_transition_holo_dark.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_list_selector_background_transition_holo_dark.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xblack_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xblack_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/rectangle.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/rectangle.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_ic_clear_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_ic_clear_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_tab_indicator_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_tab_indicator_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_ic_voice_search_api_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_ic_voice_search_api_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/common_plus_signin_btn_icon_light.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/8.4.0/res/drawable/common_plus_signin_btn_icon_light.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xwhite_oval.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xwhite_oval.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xnavy_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xnavy_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_dialog_material_background_light.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_dialog_material_background_light.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xyellow_box.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xyellow_box.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/design_snackbar_background.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/design/23.2.0/res/drawable/design_snackbar_background.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_dialog_material_background_dark.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_dialog_material_background_dark.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xblack_oval_large.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xblack_oval_large.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xgreen_box.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xgreen_box.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xred_box.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xred_box.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xwhite_beige_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xwhite_beige_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_btn_borderless_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_btn_borderless_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/common_plus_signin_btn_icon_dark.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/8.4.0/res/drawable/common_plus_signin_btn_icon_dark.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/above_shadow.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.sothree.slidinguppanel/library/3.2.1/res/drawable/above_shadow.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/white_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/white_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xwhite_green_gradient.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xwhite_green_gradient.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/design_fab_background.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/design/23.2.0/res/drawable/design_fab_background.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xblack_oval.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xblack_oval.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/common_plus_signin_btn_text_light.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/8.4.0/res/drawable/common_plus_signin_btn_text_light.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xwhite_blue_rounded.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xwhite_blue_rounded.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xamber_oval.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xamber_oval.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xgreen_oval_small.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xgreen_oval_small.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/common_google_signin_btn_icon_dark.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/8.4.0/res/drawable/common_google_signin_btn_icon_dark.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_cab_background_internal_bg.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_cab_background_internal_bg.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xmessage_red.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xmessage_red.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xorange_oval_large.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xorange_oval_large.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_ic_menu_cut_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_ic_menu_cut_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xred_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xred_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xgreen_rounded_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xgreen_rounded_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_item_background_holo_dark.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_item_background_holo_dark.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xgrey_oval.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xgrey_oval.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/abc_ic_menu_overflow_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable/abc_ic_menu_overflow_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xbubble_green.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xbubble_green.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xwhite_blue_gradient.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xwhite_blue_gradient.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xbeige_pale_corners.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xbeige_pale_corners.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xred_oval_small.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xred_oval_small.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable/xyellow_oval.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable/xyellow_oval.xml"
+    }
+]

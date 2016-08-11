@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/mon_margin"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:id="@+id/DEV_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/DEV_image"
+        android:src="@drawable/ic_action_location_on"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/DEV_model"
+        android:text="Device Model"
+        android:layout_toRightOf="@id/DEV_image"
+        android:layout_marginLeft="@dimen/mon_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Title3TextStyleBlack"/>
+
+
+    <TextView
+        android:id="@+id/DEV_manufacturer"
+        android:text="Manufacturer"
+        android:layout_marginLeft="@dimen/mon_margin"
+        android:layout_toRightOf="@id/DEV_model"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Title3TextStyleGrey"/>
+    </RelativeLayout>
+    <TextView
+        android:id="@+id/DEV_person"
+        android:text="Person Name"
+        android:layout_margin="@dimen/mon_margin"
+        android:layout_below="@id/DEV_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Title2TextStyleBlue"/>
+
+</RelativeLayout>

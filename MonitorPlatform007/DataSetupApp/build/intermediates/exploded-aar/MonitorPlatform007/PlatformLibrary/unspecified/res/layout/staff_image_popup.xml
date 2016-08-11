@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:paddingBottom="@dimen/mon_padding"
+    android:background="@color/white"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/HERO_image"
+        android:src="@drawable/banner_construction11"
+        android:scaleType="centerCrop"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mon_hero_height_medium" />
+
+    <RelativeLayout
+        android:id="@+id/HERO_top"
+        android:layout_below="@id/HERO_image"
+        android:padding="@dimen/mon_margin"
+        android:background="@color/beige_pale"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/HERO_caption"
+            android:text="Operations"
+            android:paddingTop="@dimen/mon_divider"
+            style="@style/TextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/HERO_date"
+            android:text="23 December 2098 10:33"
+            android:padding="@dimen/mon_divider"
+            android:layout_below="@id/HERO_caption"
+            style="@style/TextStyleBlue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_below="@id/HERO_top"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/HERO_label"
+            android:text="Nearest Address"
+            style="@style/TextStyleGreySmall"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/HERO_address"
+            android:text="Geocoded Address"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/HERO_label"
+            style="@style/TextStyleRedSmall"
+            android:padding="@dimen/mon_padding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+</RelativeLayout>

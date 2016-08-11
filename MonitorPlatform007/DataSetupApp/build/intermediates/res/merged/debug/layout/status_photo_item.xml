@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/apk/res-auto"
+    tools:cardCornerRadius="0dp"
+    android:background="@color/white"
+    android:padding="1dp"
+    android:layout_width="200dp"
+    android:layout_height="200dp">
+
+    <RelativeLayout
+        android:id="@+id/PHOTO_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+
+        <ImageView
+            android:id="@+id/PHOTO_image"
+            android:src="@drawable/under_construction"
+            android:scaleType="fitCenter"
+            android:maxWidth="@dimen/mon_hero_height_large"
+            android:maxHeight="@dimen/mon_hero_height_large"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <RelativeLayout
+            android:id="@+id/PHOTO_capLayout"
+            android:layout_alignParentBottom="true"
+            android:background="@color/transparent_black"
+            android:layout_marginBottom="@dimen/mon_wide"
+            android:visibility="gone"
+            android:padding="@dimen/mon_padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/PHOTO_caption"
+                android:text="Photo caption here"
+                style="@style/TextStyleSmall"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="@dimen/mon_padding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/PHOTO_date"
+                android:text="Tuesday, December 2014"
+                style="@style/TextStyleBlueSmall"
+                android:textColor="@color/yellow"
+                android:textSize="12sp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/mon_divider"
+                android:layout_marginLeft="@dimen/mon_padding"
+                android:layout_below="@id/PHOTO_caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/PHOTO_numberAmber"
+        style="@style/AmberCircleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_margin="@dimen/mon_padding"
+        android:text="0000" />
+    <TextView
+        android:id="@+id/PHOTO_numberRed"
+        style="@style/RedCircleMedium"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/mon_padding"
+        android:text="0000" />
+    <TextView
+        android:id="@+id/PHOTO_numberGreen"
+        style="@style/GreenCircleSmall"
+        android:textSize="10dp"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/mon_padding"
+        android:text="0000" />
+    <TextView
+        android:id="@+id/PHOTO_numberNone"
+        style="@style/BlackCircleSmall"
+        android:textSize="10dp"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/mon_padding"
+        android:text="0000" />
+
+
+</android.support.v7.widget.CardView><!-- From: file:/Volumes/HardDrive/REPOS/AAA-Dec2014-Repos/maono-android/MonitorPlatform007/PlatformLibrary/src/main/res/layout-sw600dp/photo_item.xml -->

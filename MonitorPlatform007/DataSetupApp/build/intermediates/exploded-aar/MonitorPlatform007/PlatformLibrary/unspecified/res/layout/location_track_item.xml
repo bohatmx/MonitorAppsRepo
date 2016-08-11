@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent_black"
+    android:gravity="center"
+    android:padding="@dimen/mon_padding">
+
+    <RelativeLayout
+        android:id="@+id/LTI_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/LTI_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_action_location_on" />
+
+        <TextView
+            android:id="@+id/LTI_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_toRightOf="@id/LTI_number"
+            android:text="Personname here"
+            android:textColor="@color/white" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/LTI_bottom2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/LTI_top"
+        android:layout_marginLeft="@dimen/mon_wide"
+        android:layout_marginTop="@dimen/mon_padding">
+
+        <TextView
+            android:id="@+id/LTI_device"
+            style="@style/TextStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/mon_padding"
+
+            android:text="Motorola"
+            android:textColor="@color/blue_300" />
+
+        <TextView
+            android:id="@+id/LTI_model"
+            style="@style/TextStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/mon_padding"
+            android:layout_toRightOf="@id/LTI_device"
+            android:text="Nexus 6"
+            android:textColor="@color/amber_100" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/LTI_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/LTI_bottom2"
+        android:layout_marginLeft="@dimen/mon_wide"
+        android:layout_marginTop="@dimen/mon_padding">
+
+        <TextView
+            android:id="@+id/LTI_date"
+            style="@style/TextStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/mon_padding"
+
+            android:text="31 December 2056"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/LTI_time"
+            style="@style/TextStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/mon_padding"
+            android:layout_toRightOf="@id/LTI_date"
+            android:text="14:35"
+            android:textColor="@color/amber_500" />
+    </RelativeLayout>
+
+
+</RelativeLayout>

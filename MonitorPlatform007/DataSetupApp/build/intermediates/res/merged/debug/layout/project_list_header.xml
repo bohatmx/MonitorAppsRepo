@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:elevation="@dimen/mon_padding"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+
+    <RelativeLayout
+        android:id="@+id/PRH_top"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/PRH_image"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mon_hero_height_small"
+            android:scaleType="centerCrop"
+            android:src="@drawable/back13" />
+        <TextView
+            android:id="@+id/PRH_programme"
+            style="@style/Title2TextStyleWhite"
+            android:layout_centerVertical="true"
+            android:padding="@dimen/mon_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Programme Name" />
+        <TextView
+            android:id="@+id/PRH_count"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/mon_wide"
+            android:layout_marginTop="@dimen/mon_wide"
+            style="@style/TransparentCircleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0" />
+    </RelativeLayout>
+
+
+</RelativeLayout>

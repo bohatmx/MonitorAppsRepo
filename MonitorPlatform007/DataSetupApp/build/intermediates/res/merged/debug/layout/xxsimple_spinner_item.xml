@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/mon_margin">
+
+
+
+        <ImageView
+            android:id="@+id/image1"
+            android:src="@android:drawable/ic_dialog_info"
+            android:tint="@color/absa_red"
+            android:layout_width="32dp"
+            android:layout_height="32dp" />
+
+        <TextView
+            android:id="@+id/text1"
+            style="@style/TextStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:layout_centerVertical="true"
+            android:text="Spinner item text here"
+            android:layout_toRightOf="@id/image1"
+            android:layout_marginLeft="@dimen/mon_padding"
+            android:textStyle="normal"
+            android:textColor="@color/black" />
+</RelativeLayout>

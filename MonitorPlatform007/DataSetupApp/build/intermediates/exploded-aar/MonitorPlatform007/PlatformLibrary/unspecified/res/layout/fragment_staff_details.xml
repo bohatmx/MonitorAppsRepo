@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/FSP_topLayout"
+            android:layout_width="match_parent"
+            android:layout_height="192dp">
+
+            <ImageView
+                android:id="@+id/FSP_backdrop"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/black_woman" />
+
+            <TextView
+                android:id="@+id/FSP_name"
+                style="@style/Title2TextStyleWhite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent_black"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/mon_margin"
+                android:padding="@dimen/mon_padding"
+                android:text="StaffName" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/FSP_personImage"
+                android:layout_width="@dimen/mon_hero_height_small"
+                android:layout_height="@dimen/mon_hero_height_small"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_margin="@dimen/mon_wide"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:scaleType="centerCrop"
+                android:src="@drawable/black_woman" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/FSP_midLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/FSP_topLayout"
+            android:padding="@dimen/mon_margin">
+
+            <ImageView
+                android:id="@+id/FSP_iconCamera"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_action_camera"
+                android:visibility="gone" />
+
+            <RelativeLayout
+                android:id="@+id/box1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/FSP_iconCamera"
+                android:layout_marginTop="@dimen/mon_wide">
+
+                <ImageView
+                    android:id="@+id/icon1"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_action_person" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/icon1">
+
+                    <EditText
+                        android:id="@+id/FSP_editFirstName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/mon_margin"
+
+                        android:hint="First Name"
+                        android:inputType="textCapWords" />
+                </android.support.design.widget.TextInputLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/box2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/box1">
+
+
+                <ImageView
+                    android:id="@+id/icon2"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_action_person" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/icon2">
+
+                    <EditText
+                        android:id="@+id/FSP_editLastName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/icon2"
+                        android:hint="Surname"
+                        android:inputType="textCapWords" />
+                </android.support.design.widget.TextInputLayout>
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/box4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/box2">
+
+                <ImageView
+                    android:id="@+id/icon4"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_action_view_as_list" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/icon4">
+
+                    <EditText
+                        android:id="@+id/FSP_editCell"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/icon4"
+                        android:hint="Cellphone Number"
+                        android:inputType="phone" />
+                </android.support.design.widget.TextInputLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/box5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/box4">
+
+                <ImageView
+                    android:id="@+id/icon5"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_action_picture" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/icon5">
+
+                    <EditText
+                        android:id="@+id/FSP_editEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/icon5"
+                        android:hint="eMail Address"
+                        android:inputType="textCapWords" />
+                </android.support.design.widget.TextInputLayout>
+            </RelativeLayout>
+
+            <RadioGroup
+                android:id="@+id/FSP_radioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/box5"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/mon_margin"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/FSP_radioStaff"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Staff" />
+
+                <Space
+                    android:layout_width="@dimen/mon_wide"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/FSP_radioExec"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Executive" />
+            </RadioGroup>
+            <RadioGroup
+                android:id="@+id/FSP_radioGroup2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/FSP_radioGroup"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/mon_margin"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/FSP_radioActive"
+                    android:checked="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Active" />
+
+                <Space
+                    android:layout_width="@dimen/mon_wide"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/FSP_radioInactive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Not Active" />
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/FSP_btnSave"
+                style="@style/ButtonRed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/FSP_radioGroup2"
+                android:layout_marginTop="@dimen/mon_wider"
+                android:text="Save Data" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+</ScrollView>

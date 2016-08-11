@@ -12,24 +12,24 @@ public class Statics {
      * REMOTE URL - bohamaker back end - production
      * 68.169.60.130
      */
-
-//    public static final String WEBSOCKET_URL = "ws://bohamaker.com:3030/mp/";
-//    public static final String URL = "http://bohamaker.com:3030/mp/";
-//    public static final String IMAGE_URL = "http://bohamaker.com:3030/monitor_images/";
-//    public static final String PDF_URL = "http://bohamaker.com:3030/monitor_documents/";
-
+/*
+    public static final String WEBSOCKET_URL = "ws://bohamaker.com:3030/mp/";
+    public static final String URL = "http://bohamaker.com:3030/mp/";
+    public static final String IMAGE_URL = "http://bohamaker.com:3030/monitor_images/";
+    public static final String PDF_URL = "http://bohamaker.com:3030/monitor_documents/";
+*/
     //pecanwood IS MY HOME!!!
-    public static final String WEBSOCKET_URL = "ws://192.168.1.111:8080/mp/";
-    public static final String URL = "http://192.168.1.111:8080/mp/";
-    public static final String IMAGE_URL = "http://192.168.1.111:8080/monitor_images/";
-    public static final String PDF_URL = "http://192.168.1.111:8080/monitor_documents/";
+  //  public static final String WEBSOCKET_URL = "ws://192.168.1.111:8080/mp/";
+  //  public static final String URL = "http://192.168.1.111:8080/mp/";
+   // public static final String IMAGE_URL = "http://192.168.1.111:8080/monitor_images/";
+ //   public static final String PDF_URL = "http://192.168.1.111:8080/monitor_documents/";
 
-//codetribe
+//Dynatech
 
-//    public static final String WEBSOCKET_URL = "ws://192.168.2.64:8080/mwp/";
-//    public static final String URL = "http://192.168.2.64:8080/mwp/";
-//    public static final String IMAGE_URL = "http://192.168.2.64:8080/";
-//    public static final String PDF_URL = "http://192.168.2.64:8080/monitor_documents/";
+    public static final String WEBSOCKET_URL = "ws://10.0.0.102:8080/mwp/";
+    public static final String URL = "http://10.0.0.102:8080/mwp/";
+    public static final String IMAGE_URL = "http://10.0.0.102:8080/";
+    public static final String PDF_URL = "http://10.0.0.102:8080/monitor_documents/";
 
     public static final String INVITE_DESTINATION = "https://play.google.com/store/apps/details?id=";
     public static final String INVITE_MONITOR = INVITE_DESTINATION + "com.boha.platform.worker";

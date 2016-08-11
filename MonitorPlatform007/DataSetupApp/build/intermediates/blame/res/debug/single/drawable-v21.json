@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable-v21/abc_edit_text_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable-v21/abc_edit_text_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable-v21/circle.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/drawable-v21/circle.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable-v21/abc_btn_colored_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable-v21/abc_btn_colored_material.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/drawable-v21/abc_action_bar_item_background_material.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.2.0/res/drawable-v21/abc_action_bar_item_background_material.xml"
+    }
+]

@@ -1,0 +1,50 @@
+[
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/interpolator/anticipate.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/interpolator/anticipate.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/interpolator/linear.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/interpolator/linear.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/interpolator/accelerate_quad.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/interpolator/accelerate_quad.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/interpolator/accelerate_cubic.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/interpolator/accelerate_cubic.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/interpolator/decelerate_quint.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/interpolator/decelerate_quint.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/interpolator/decelerate_cubic.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/interpolator/decelerate_cubic.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/interpolator/anticipate_overshoot.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/interpolator/anticipate_overshoot.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/interpolator/bounce.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/interpolator/bounce.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/interpolator/accelerate_decelerate.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/interpolator/accelerate_decelerate.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/interpolator/decelerate_quad.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/interpolator/decelerate_quad.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/interpolator/accelerate_quint.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/interpolator/accelerate_quint.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/interpolator/overshoot.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/interpolator/overshoot.xml"
+    }
+]

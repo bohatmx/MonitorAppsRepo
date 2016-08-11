@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.boha.monitor.library.activities.MainUpdateActivity">
+    <item
+        android:id="@+id/action_refresh"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_refresh"
+        android:showAsAction="ifRoom"
+        android:title="Refresh" />
+    <item
+        android:id="@+id/action_help"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_help"
+        android:showAsAction="never"
+        android:title="Refresh" />
+</menu>

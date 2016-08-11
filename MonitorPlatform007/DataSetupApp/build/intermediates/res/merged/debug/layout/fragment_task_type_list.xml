@@ -1,0 +1,99 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.boha.monitor.library.fragments.TaskListFragment">
+
+    <RelativeLayout
+        android:id="@+id/topBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/PRH_top"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mon_hero_height_small"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/PRH_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/back13" />
+
+            <TextView
+                android:id="@+id/PRH_company"
+                style="@style/Title2TextStyleWhite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerVertical="true"
+                android:padding="@dimen/mon_margin"
+                android:text="Company Name" />
+
+            <TextView
+                android:id="@+id/PRH_subTitle"
+                style="@style/Title2TextStyleWhite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:padding="@dimen/mon_margin"
+                android:text="Things to Monitor" />
+
+            <TextView
+                android:id="@+id/PRH_count"
+                style="@style/TransparentCircle"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:layout_marginTop="@dimen/mon_margin"
+                android:text="9,778" />
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/editBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topBox"
+        android:padding="@dimen/mon_margin">
+
+        <ImageView
+            android:id="@+id/PRH_plusIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_action_add_circle" />
+
+        <EditText
+            android:id="@+id/PRH_editName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/mon_margin"
+            android:layout_toLeftOf="@id/PRH_plusIcon"
+            android:hint="Enter task name" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:padding="@dimen/mon_padding"
+        android:background="@color/grey"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/editBox">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" />
+    </RelativeLayout>
+
+</RelativeLayout>
+

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/AM_top"
+        android:padding="@dimen/mon_margin"
+        android:layout_width="match_parent"
+        android:background="@drawable/back13"
+        android:layout_height="@dimen/mon_hero_height_small">
+
+        <ImageView
+            android:id="@+id/AM_icon1"
+            android:src="@drawable/messaging2"
+            android:layout_alignParentLeft="true"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
+        <TextView
+            android:id="@+id/AM_title"
+            style="@style/Title1TextStyleWhite"
+            android:layout_toRightOf="@id/AM_icon1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="Messaging" />
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/AM_recycler"
+        android:padding="@dimen/mon_padding"
+        android:background="@color/grey"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/AM_top"
+        android:scrollbars="vertical" />
+
+    <ImageView
+        android:src="@android:drawable/ic_menu_week"
+        android:layout_margin="@dimen/mon_margin"
+        android:tint="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

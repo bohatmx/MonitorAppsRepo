@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="@dimen/mon_padding"
+    app:cardCornerRadius="@dimen/mon_divider">
+
+    <RelativeLayout
+        android:id="@+id/SMI_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/SMI_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/mon_padding">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/SMI_fromImage"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/black_woman" />
+            <RelativeLayout
+                android:id="@+id/SMI_fromLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_toRightOf="@id/SMI_fromImage">
+
+                <TextView
+                    android:id="@+id/SMI_from"
+                    style="@style/TextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="from name" />
+
+                <TextView
+                    android:id="@+id/SMI_fromTime"
+                    style="@style/TextStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/SMI_from"
+                    android:text="12 December 2099 12:35"
+                    android:textColor="@color/red_300" />
+                <ImageView
+                    android:id="@+id/SMI_iconRespond"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/mon_margin"
+                    android:src="@android:drawable/ic_menu_revert"
+                    android:tint="@color/green_700" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/SMI_fromMsg"
+            style="@style/TextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/SMI_top"
+            android:padding="@dimen/mon_padding"
+            android:text="The message from my team mate comes here. It might be longer than your typical tweet!"
+            android:textColor="@color/blue_700" />
+
+        <RelativeLayout
+            android:id="@+id/SMI_middle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/SMI_fromMsg">
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/SMI_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/SMI_middle">
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+</android.support.v7.widget.CardView>

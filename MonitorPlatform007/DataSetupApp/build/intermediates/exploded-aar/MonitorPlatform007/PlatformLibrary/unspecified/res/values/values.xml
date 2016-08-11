@@ -1,0 +1,840 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="absa_red">#D00505</color>
+    <color name="accent01">#82b1ff</color>
+    <color name="accent_ibg">#607D8B</color>
+    <color name="accent_material_light">#00695C</color>
+    <color name="accent_teal">#007399</color>
+    <color name="accent_yellow">#ffff40</color>
+    <color name="amber">#FFC200</color>
+    <color name="amber_100">#FFECB3</color>
+    <color name="amber_200">#FFE082</color>
+    <color name="amber_300">#FFD54F</color>
+    <color name="amber_400">#FFCA28</color>
+    <color name="amber_500">#FFC107</color>
+    <color name="amber_600">#FFB300</color>
+    <color name="amber_700">#FFA000</color>
+    <color name="amber_800">#FF8F00</color>
+    <color name="amber_900">#FF6F00</color>
+    <color name="ampm_text_color">#8c8c8c</color>
+    <color name="beige">#EFEDFC</color>
+    <color name="beige_pale">#F7F2E0</color>
+    <color name="black">#000000</color>
+    <color name="blue">#ff33b5e5</color>
+    <color name="blue_100">#BBDEFB</color>
+    <color name="blue_200">#90CAF9</color>
+    <color name="blue_300">#64B5F6</color>
+    <color name="blue_400">#42A5F5</color>
+    <color name="blue_500">#2196F3</color>
+    <color name="blue_600">#1E88E5</color>
+    <color name="blue_700">#1976D2</color>
+    <color name="blue_800">#1565C0</color>
+    <color name="blue_900">#0D47A1</color>
+    <color name="blue_gray_100">#CFD8DC</color>
+    <color name="blue_gray_200">#B0BEC5</color>
+    <color name="blue_gray_300">#90A4AE</color>
+    <color name="blue_gray_400">#78909C</color>
+    <color name="blue_gray_500">#607D8B</color>
+    <color name="blue_gray_600">#546E7A</color>
+    <color name="blue_gray_700">#455A64</color>
+    <color name="blue_gray_800">#37474F</color>
+    <color name="blue_gray_900">#263238</color>
+    <color name="blue_pale">#EEEEFF</color>
+    <color name="brown">#CC0000</color>
+    <color name="brown_100">#D7CCC8</color>
+    <color name="brown_200">#BCAAA4</color>
+    <color name="brown_300">#A1887F</color>
+    <color name="brown_400">#8D6E63</color>
+    <color name="brown_500">#795548</color>
+    <color name="brown_600">#6D4C41</color>
+    <color name="brown_700">#5D4037</color>
+    <color name="brown_800">#4E342E</color>
+    <color name="brown_900">#3E2723</color>
+    <color name="calendar_header">#ff999999</color>
+    <color name="circle_background">#fff2f2f2</color>
+    <color name="cyan_100">#B2EBF2</color>
+    <color name="cyan_200">#80DEEA</color>
+    <color name="cyan_300">#4DD0E1</color>
+    <color name="cyan_400">#26C6DA</color>
+    <color name="cyan_500">#00BCD4</color>
+    <color name="cyan_600">#00ACC1</color>
+    <color name="cyan_700">#0097A7</color>
+    <color name="cyan_800">#00838F</color>
+    <color name="cyan_900">#006064</color>
+    <color name="dark_blue">#0000FF</color>
+    <color name="dark_slate_grey">#2F4F4F</color>
+    <color name="darker_blue">#ff0099cc</color>
+    <color name="date_picker_text_normal">#ff999999</color>
+    <color name="date_picker_view_animator">#fff2f2f2</color>
+    <color name="divider_ibg">#B6B6B6</color>
+    <color name="done_text_color_disabled">#ffcccccc</color>
+    <color name="done_text_color_normal">#ff333333</color>
+    <color name="green">#339966</color>
+    <color name="green_100">#C8E6C9</color>
+    <color name="green_200">#A5D6A7</color>
+    <color name="green_300">#81C784</color>
+    <color name="green_400">#66BB6A</color>
+    <color name="green_500">#4CAF50</color>
+    <color name="green_600">#43A047</color>
+    <color name="green_700">#388E3C</color>
+    <color name="green_800">#2E7D32</color>
+    <color name="green_900">#1B5E20</color>
+    <color name="green_lite_100">#DCEDC8</color>
+    <color name="green_lite_200">#C5E1A5</color>
+    <color name="green_lite_300">#AED581</color>
+    <color name="green_lite_400">#9CCC65</color>
+    <color name="green_lite_500">#8BC34A</color>
+    <color name="green_lite_600">#7CB342</color>
+    <color name="green_lite_700">#689F38</color>
+    <color name="green_lite_800">#558B2F</color>
+    <color name="green_lite_900">#33691E</color>
+    <color name="green_pale">#99FF99</color>
+    <color name="green_two">#009900</color>
+    <color name="grey">#CCCCCC</color>
+    <color name="grey_100">#F5F5F5</color>
+    <color name="grey_200">#EEEEEE</color>
+    <color name="grey_300">#E0E0E0</color>
+    <color name="grey_400">#BDBDBD</color>
+    <color name="grey_500">#9E9E9E</color>
+    <color name="grey_600">#757575</color>
+    <color name="grey_700">#616161</color>
+    <color name="grey_800">#424242</color>
+    <color name="grey_900">#212121</color>
+    <color name="grey_light">#EEEEEE</color>
+    <color name="icons_ibg">#FFFFFF</color>
+    <color name="indian_red">#CD5C5C</color>
+    <color name="indigo">#4B0082</color>
+    <color name="indigo_100">#C5CAE9</color>
+    <color name="indigo_200">#9FA8DA</color>
+    <color name="indigo_300">#7986CB</color>
+    <color name="indigo_400">#5C6BC0</color>
+    <color name="indigo_500">#3F51B5</color>
+    <color name="indigo_600">#3949AB</color>
+    <color name="indigo_700">#303F9F</color>
+    <color name="indigo_800">#283593</color>
+    <color name="indigo_900">#1a237e</color>
+    <color name="light_blue_100">#B3E5FC</color>
+    <color name="light_blue_200">#81D4FA</color>
+    <color name="light_blue_300">#4FC3F7</color>
+    <color name="light_blue_400">#29B6F6</color>
+    <color name="light_blue_500">#0277BD</color>
+    <color name="light_blue_600">#039BE5</color>
+    <color name="light_blue_700">#0288D1</color>
+    <color name="light_blue_800">#0277BD</color>
+    <color name="light_blue_900">#01579B</color>
+    <color name="lime_100">#F0F4C3</color>
+    <color name="lime_200">#E6EE9C</color>
+    <color name="lime_300">#DCE775</color>
+    <color name="lime_400">#D4E157</color>
+    <color name="lime_500">#CDDC39</color>
+    <color name="lime_600">#C0CA33</color>
+    <color name="lime_700">#AFB42B</color>
+    <color name="lime_800">#9E9D24</color>
+    <color name="lime_900">#827717</color>
+    <color name="line_background">#ffcccccc</color>
+    <color name="maroon">#CC0000</color>
+    <color name="maroon0">#a02525</color>
+    <color name="medium_purple">#9370DB</color>
+    <color name="medium_sea_green">#3CB371</color>
+    <color name="midnight_blue">#191970</color>
+    <color name="navy_blue">#3399CC</color>
+    <color name="numbers_text_color">#8c8c8c</color>
+    <color name="opaque_red">#f00</color>
+    <color name="orange">#FFA500</color>
+    <color name="orange_100">#FFE0b2</color>
+    <color name="orange_200">#ffcc80</color>
+    <color name="orange_300">#ffb74d</color>
+    <color name="orange_400">#ffa726</color>
+    <color name="orange_500">#ff9800</color>
+    <color name="orange_600">#fb8c00</color>
+    <color name="orange_700">#F57C00</color>
+    <color name="orange_800">#EF6C00</color>
+    <color name="orange_900">#E65100</color>
+    <color name="pale_yellow">#EAFEE2</color>
+    <color name="pink_100">#F8BBD0</color>
+    <color name="pink_200">#F48Fb1</color>
+    <color name="pink_300">#F06292</color>
+    <color name="pink_400">#EC407A</color>
+    <color name="pink_500">#E91E63</color>
+    <color name="pink_600">#D81B60</color>
+    <color name="pink_700">#C2185B</color>
+    <color name="pink_800">#AD1457</color>
+    <color name="pink_900">#880E4F</color>
+    <color name="primary_dark_ibg">#303F9F</color>
+    <color name="primary_ibg">#3F51B5</color>
+    <color name="primary_light_ibg">#C5CAE9</color>
+    <color name="primary_text_default_material_light">#ffffff</color>
+    <color name="primary_text_ibg">#212121</color>
+    <color name="purple">#800080</color>
+    <color name="purple_100">#E1BEE7</color>
+    <color name="purple_200">#CE93D8</color>
+    <color name="purple_300">#BA68C8</color>
+    <color name="purple_400">#AB47BC</color>
+    <color name="purple_500">#9C27B0</color>
+    <color name="purple_600">#7B1FA2</color>
+    <color name="purple_700">#7B1FA2</color>
+    <color name="purple_800">#6A1B9A</color>
+    <color name="purple_900">#4A148C</color>
+    <color name="rebecca_purple">#663399</color>
+    <color name="red_100">#ffcdd2</color>
+    <color name="red_200">#ef9a9a</color>
+    <color name="red_300">#e57373</color>
+    <color name="red_400">#ef5350</color>
+    <color name="red_500">#f44336</color>
+    <color name="red_600">#e53935</color>
+    <color name="red_700">#D32F2F</color>
+    <color name="red_800">#C62828</color>
+    <color name="red_900">#B71C1C</color>
+    <color name="royal_blue">#4169E1</color>
+    <color name="secondary_text_ibg">#727272</color>
+    <color name="slate_grey">#708090</color>
+    <color name="steel_blue">#4682B4</color>
+    <color name="teal">#008080</color>
+    <color name="teal_100">#B2DFDB</color>
+    <color name="teal_200">#80CBC4</color>
+    <color name="teal_300">#4DB6AC</color>
+    <color name="teal_400">#26A69A</color>
+    <color name="teal_500">#009688</color>
+    <color name="teal_600">#00897B</color>
+    <color name="teal_700">#00796B</color>
+    <color name="teal_800">#00695C</color>
+    <color name="teal_900">#004D40</color>
+    <color name="translucent_red">#80ff0000</color>
+    <color name="transparent_black">#7F000000</color>
+    <color name="white">#ffffffff</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="yellow_pale">#F2F5A9</color>
+    <declare-styleable name="PullToRefresh"><attr format="reference|color" name="ptrRefreshableViewBackground"/><attr format="reference|color" name="ptrHeaderBackground"/><attr format="reference|color" name="ptrHeaderTextColor"/><attr format="reference|color" name="ptrHeaderSubTextColor"/><attr name="ptrMode"><flag name="disabled" value="0x0"/><flag name="pullFromStart" value="0x1"/><flag name="pullFromEnd" value="0x2"/><flag name="both" value="0x3"/><flag name="manualOnly" value="0x4"/><flag name="pullDownFromTop" value="0x1"/><flag name="pullUpFromBottom" value="0x2"/></attr><attr format="reference|boolean" name="ptrShowIndicator"/><attr format="reference" name="ptrDrawable"/><attr format="reference" name="ptrDrawableStart"/><attr format="reference" name="ptrDrawableEnd"/><attr format="reference|boolean" name="ptrOverScroll"/><attr format="reference" name="ptrHeaderTextAppearance"/><attr format="reference" name="ptrSubHeaderTextAppearance"/><attr name="ptrAnimationStyle"><flag name="rotate" value="0x0"/><flag name="flip" value="0x1"/></attr><attr format="reference|boolean" name="ptrScrollingWhileRefreshingEnabled"/><attr format="reference|boolean" name="ptrListViewExtrasEnabled"/><attr format="reference|boolean" name="ptrRotateDrawableWhilePulling"/><attr format="reference|color" name="ptrAdapterViewBackground"/><attr format="reference" name="ptrDrawableTop"/><attr format="reference" name="ptrDrawableBottom"/></declare-styleable>
+    <declare-styleable name="StaggeredGridViewOld"/>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="ampm_label_size">16sp</dimen>
+    <dimen name="ampm_left_padding">6dip</dimen>
+    <dimen name="date_picker_component_width">270dip</dimen>
+    <dimen name="date_picker_header_height">30dip</dimen>
+    <dimen name="date_picker_header_text_size">14dip</dimen>
+    <dimen name="date_picker_view_animator_height">270dip</dimen>
+    <dimen name="day_number_select_circle_radius">16dip</dimen>
+    <dimen name="day_number_size">16sp</dimen>
+    <dimen name="done_label_size">14sp</dimen>
+    <dimen name="extra_time_label_margin">-30dp</dimen>
+    <dimen name="header_footer_left_right_padding">24dp</dimen>
+    <dimen name="header_footer_top_bottom_padding">12dp</dimen>
+    <dimen name="header_height">96dip</dimen>
+    <dimen name="indicator_corner_radius">12dp</dimen>
+    <dimen name="indicator_internal_padding">4dp</dimen>
+    <dimen name="indicator_right_padding">10dp</dimen>
+    <dimen name="minimum_margin_sides">48dip</dimen>
+    <dimen name="minimum_margin_top_bottom">24dip</dimen>
+    <dimen name="mon_divider">4dp</dimen>
+    <dimen name="mon_divider_small">2dp</dimen>
+    <dimen name="mon_divider_tiny">1dp</dimen>
+    <dimen name="mon_hero_height_large">240dp</dimen>
+    <dimen name="mon_hero_height_medium">160dp</dimen>
+    <dimen name="mon_hero_height_medium_lite">130dp</dimen>
+    <dimen name="mon_hero_height_small">100dp</dimen>
+    <dimen name="mon_margin">16dp</dimen>
+    <dimen name="mon_middle">12dp</dimen>
+    <dimen name="mon_nav_width">240dp</dimen>
+    <dimen name="mon_padding">8dp</dimen>
+    <dimen name="mon_picture_large">400dp</dimen>
+    <dimen name="mon_picture_larger">600dp</dimen>
+    <dimen name="mon_wide">24dp</dimen>
+    <dimen name="mon_wider">48dp</dimen>
+    <dimen name="mon_widest">80dp</dimen>
+    <dimen name="month_day_label_text_size">10sp</dimen>
+    <dimen name="month_label_size">16sp</dimen>
+    <dimen name="month_list_item_header_height">50dip</dimen>
+    <dimen name="month_select_circle_radius">45dip</dimen>
+    <dimen name="picker_dimen">270dip</dimen>
+    <dimen name="selected_calendar_layout_height">155dip</dimen>
+    <dimen name="selected_date_day_size">55dip</dimen>
+    <dimen name="selected_date_month_size">30dip</dimen>
+    <dimen name="selected_date_year_size">30dip</dimen>
+    <dimen name="separator_padding">4dip</dimen>
+    <dimen name="stgv_margin">8dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+    <dimen name="time_label_size">60sp</dimen>
+    <dimen name="year_label_height">64dip</dimen>
+    <dimen name="year_label_text_size">22dip</dimen>
+    <string name="action_settings">Settings</string>
+    <string name="app_name">PlatformLibrary</string>
+    <string name="assign_projects">Assign Projects</string>
+    <string name="camera_error">Unable to process image from camera</string>
+    <string name="comms_interrupt">Communications interrupted. Try again.</string>
+    <string name="confirm_loc">Confirm Location</string>
+    <string name="confirm_loc_of">Do you want to confirm the location of\n</string>
+    <string name="directions">Directions</string>
+    <string name="edit">Edit Details</string>
+    <string name="file_error">Error getting photo file</string>
+    <string name="gcm_sender_id">235297950926</string>
+    <string name="generate_pin">Generate new PIN</string>
+    <string name="get_location">Get Current Location</string>
+    <string name="get_status">Get Status</string>
+    <string name="get_updates">Get Status Updates</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="invite_confirm">Do you want to invite someone to download the App?</string>
+    <string name="invite_dialog">Are you sure you want to invite a download of this app? \nThe user will be able to add and change data in your Company\'s database.</string>
+    <string name="messaging">Messaging</string>
+    <string name="monitor">Monitor</string>
+    <string name="monitors">Monitors</string>
+    <string name="net_not_avail">Network not available</string>
+    <string name="no">No</string>
+    <string name="no_address">No address computed.</string>
+    <string name="no_prev_photos">No previous photos found. Tap to start</string>
+    <string name="open_camera">Open Camera</string>
+    <string name="photo_error">Error caching photo</string>
+    <string name="profile">Profile</string>
+    <string name="proj_assgn">Project Assignments</string>
+    <string name="projects">Projects</string>
+    <string name="pull_to_refresh_from_bottom_pull_label">@string/pull_to_refresh_pull_label</string>
+    <string name="pull_to_refresh_from_bottom_refreshing_label">@string/pull_to_refresh_refreshing_label</string>
+    <string name="pull_to_refresh_from_bottom_release_label">@string/pull_to_refresh_release_label</string>
+    <string name="pull_to_refresh_pull_label">Pull to refresh…</string>
+    <string name="pull_to_refresh_refreshing_label">Loading…</string>
+    <string name="pull_to_refresh_release_label">Release to refresh…</string>
+    <string name="refresh">Refresh</string>
+    <string name="req_deviceloc">Request Device Location</string>
+    <string name="sel_recipients">Select Recipients</string>
+    <string name="select_account">Select email account or enter email address</string>
+    <string name="select_action">Select Action</string>
+    <string name="select_email">Select email account</string>
+    <string name="select_media">Please select the media you want to use for this update. Video clips should be no longer than 2 minutes long.</string>
+    <string name="select_proj">Select Project</string>
+    <string name="send_app_link">Send App Invitation Link</string>
+    <string name="send_message">Send Message</string>
+    <string name="send_my_location">Send My Location</string>
+    <string name="staff">Staff</string>
+    <string name="start_gps">Start GPS Scan</string>
+    <string name="start_scan">Start Scan</string>
+    <string name="statrpt">Status Report</string>
+    <string name="status_rept">Status Report</string>
+    <string name="status_saved">Task Status update has been saved</string>
+    <string name="status_updates">Status Updates</string>
+    <string name="stop_gps">Stop GPS Scan</string>
+    <string name="stop_scan">Stop Scan</string>
+    <string name="streetview">Street View</string>
+    <string name="subject">Invitation to Monitor Platform</string>
+    <string name="take_picture">Take Photos</string>
+    <string name="title_activity_high_def">HighDefActivity</string>
+    <string name="title_activity_location_tracker">LocationTrackerActivity</string>
+    <string name="title_activity_main_update">MainUpdateActivity</string>
+    <string name="title_activity_messaging">MessagingActivity</string>
+    <string name="title_activity_photo">PhotoActivity</string>
+    <string name="title_activity_photo_scroller">PhotoScrollerActivity</string>
+    <string name="title_activity_project_assignment">ProjectAssignmentActivity</string>
+    <string name="title_activity_project_selection">ProjectSelectionActivity</string>
+    <string name="title_activity_project_task">ProjectTaskActivity</string>
+    <string name="title_activity_status_update">StatusUpdateActivity</string>
+    <string name="title_activity_task_type_list">TaskTypeListActivity</string>
+    <string name="title_activity_task_update">TaskUpdateActivity</string>
+    <string name="title_activity_test">TestActivity</string>
+    <string name="title_activity_update">UpdateActivity</string>
+    <string name="under_cons">Under Construction</string>
+    <string name="upd_profile">Update Profile</string>
+    <string name="welcome_aboard">Welcome Aboard!</string>
+    <string name="welcome_msg">Welcome to Monitor Messaging</string>
+    <string name="yes">Yes</string>
+    <style name="AmberCircleSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:background">@drawable/xamber_oval_small</item>
+    </style>
+    <style name="AmberTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/amber_500</item>
+        <item name="colorPrimaryDark">@color/amber_900</item>
+        <item name="colorAccent">@color/accent01</item>
+    </style>
+    <style name="AppTheme" parent="Base.Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryDark">@color/grey</item>
+    </style>
+    <style name="BlackCircle" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xblack_oval</item>
+    </style>
+    <style name="BlackCircleSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:background">@drawable/xblack_oval_small</item>
+    </style>
+    <style name="BlackCountBox" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xblack_box</item>
+    </style>
+    <style name="BlackCountBoxSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xblack_box</item>
+    </style>
+    <style name="BlackCountOvalSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:background">@drawable/xblack_oval</item>
+    </style>
+    <style name="BlueCircle" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xblue_oval</item>
+    </style>
+    <style name="BlueCircleSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xblue_oval_small</item>
+    </style>
+    <style name="BlueCountBox" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:background">@drawable/xblue_box</item>
+    </style>
+    <style name="BlueCountBoxSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/xblue_box</item>
+    </style>
+    <style name="BlueGrayTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/blue_gray_500</item>
+        <item name="colorPrimaryDark">@color/blue_gray_800</item>
+    </style>
+    <style name="BlueThemeTwo" parent="MonTheme">
+        <item name="colorPrimary">@color/blue_700</item>
+        <item name="colorPrimaryDark">@color/blue_900</item>
+    </style>
+    <style name="BrownTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/brown_500</item>
+        <item name="colorPrimaryDark">@color/brown_800</item>
+    </style>
+    <style name="ButtonCancel" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:background">@drawable/xgrey_rounded_corners</item>
+    </style>
+    <style name="ButtonCancelSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:background">@drawable/xgrey_rounded_corners</item>
+    </style>
+    <style name="ButtonDelete" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:background">@drawable/xred_dark_rounded_corners</item>
+    </style>
+    <style name="ButtonNavyBlue" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:background">@drawable/xbluelight_rounded_corners</item>
+    </style>
+    <style name="ButtonNavyBlueSmall" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:background">@drawable/xbluelight_rounded_corners</item>
+        <item name="android:drawableLeft">@android:drawable/ic_menu_send</item>
+    </style>
+    <style name="ButtonRed" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:background">@drawable/xred_dark_rounded_corners</item>
+    </style>
+    <style name="ButtonSave" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:background">@drawable/xbluelight_rounded_corners</item>
+    </style>
+    <style name="ButtonSaveSmall" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:background">@drawable/xbluelight_rounded_corners</item>
+    </style>
+    <style name="CyanTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/cyan_600</item>
+        <item name="colorPrimaryDark">@color/cyan_900</item>
+    </style>
+    <style name="GreenCircle" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xgreen_oval</item>
+    </style>
+    <style name="GreenCircleSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:background">@drawable/xgreen_oval_small</item>
+    </style>
+    <style name="GreenCountBox" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/xgreen_box</item>
+    </style>
+    <style name="GreenCountBoxSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+
+        <item name="android:background">@drawable/xgreen_box</item>
+    </style>
+    <style name="GreenTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/green_800</item>
+        <item name="colorPrimaryDark">@color/green_900</item>
+    </style>
+    <style name="GreyCircle" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xgrey_oval</item>
+
+    </style>
+    <style name="GreyCircleSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:background">@drawable/xgrey_oval_small</item>
+    </style>
+    <style name="GreyCountBox" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:background">@drawable/xgrey_box</item>
+    </style>
+    <style name="GreyCountBoxSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:background">@drawable/xgrey_box</item>
+    </style>
+    <style name="GreyTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/grey_600</item>
+        <item name="colorPrimaryDark">@color/grey_800</item>
+    </style>
+    <style name="IndigoCircleSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:background">@drawable/xindigo_oval_small</item>
+    </style>
+    <style name="IndigoTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/indigo_500</item>
+        <item name="colorPrimaryDark">@color/indigo_700</item>
+    </style>
+    <style name="LightGreenTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/green_lite_700</item>
+        <item name="colorPrimaryDark">@color/green_lite_600</item>
+    </style>
+    <style name="LimeTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/lime_600</item>
+        <item name="colorPrimaryDark">@color/lime_900</item>
+    </style>
+    <style name="MediumTextStyle" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="MediumTextStyleBold" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="MonTheme" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/blue_700</item>
+        <item name="colorPrimaryDark">@color/blue_900</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:actionBarStyle">@style/smallWhiteText</item>
+        <item name="android:textViewStyle">@style/RobotoTextStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+    <style name="NavigationViewTheme" parent="MonTheme">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+    <style name="OrangeCircle" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xorange_oval</item>
+    </style>
+    <style name="OrangeCircleSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xorange_oval_small</item>
+    </style>
+    <style name="OrangeTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/orange_800</item>
+        <item name="colorPrimaryDark">@color/orange_900</item>
+    </style>
+    <style name="Pager">
+        <item name="android:textColor">@color/blue</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="PagerSmall" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:padding">@dimen/mon_margin</item>
+        <item name="android:background">@color/teal_400</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="PinkTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/pink_800</item>
+        <item name="colorPrimaryDark">@color/pink_900</item>
+    </style>
+    <style name="PurpleTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryDark">@color/purple_800</item>
+    </style>
+    <style name="RedCircle" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xred_oval</item>
+    </style>
+    <style name="RedCircleMedium" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xred_oval_small</item>
+    </style>
+    <style name="RedCircleSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:background">@drawable/xred_oval_small</item>
+    </style>
+    <style name="RedCountBox" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">@dimen/mon_padding</item>
+        <item name="android:background">@drawable/xred_box</item>
+    </style>
+    <style name="RedCountBoxSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/xred_box</item>
+    </style>
+    <style name="RedTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/red_800</item>
+        <item name="colorPrimaryDark">@color/red_900</item>
+    </style>
+    <style name="RobotoButtonStyle" parent="android:Widget.Holo.Button">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+    <style name="RobotoSpinnerDropDownStyle" parent="android:Widget.Holo.Light.TextView.SpinnerItem">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+    <style name="RobotoSpinnerTextStyle" parent="android:Widget.Holo.Light.TextView.SpinnerItem">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+    <style name="RobotoTextStyle" parent="android:Widget.Holo.TextView">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+    <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+    <style name="SmallTextGrey" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="TealTheme" parent="MonTheme">
+        <item name="colorPrimary">@color/teal_800</item>
+        <item name="colorPrimaryDark">@color/teal_900</item>
+    </style>
+    <style name="TextStyle" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="TextStyle20" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+    <style name="TextStyleBlue" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/navy_blue</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="TextStyleBlueSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/navy_blue</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="TextStyleBold" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textStyle">bold</item>
+        <item name="android:color">@color/black</item>
+    </style>
+    <style name="TextStyleBoldBlueSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/navy_blue</item>
+    </style>
+    <style name="TextStyleBoldSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="TextStyleGreen" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/green</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="TextStyleGreenSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/green</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="TextStyleGrey" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="TextStyleGreySmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="TextStyleNavyBlue" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/navy_blue</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="TextStyleRed" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/translucent_red</item>
+    </style>
+    <style name="TextStyleRedSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/translucent_red</item>
+    </style>
+    <style name="TextStyleSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="TextStyleWhite" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="TextStyleWhiteSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="ThinGreyBox" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:background">@drawable/xthin_grey_box</item>
+    </style>
+    <style name="Title1TextStyleBlack" parent="@android:style/TextAppearance.Large">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+    <style name="Title1TextStyleBlue" parent="@android:style/TextAppearance.Large">
+        <item name="android:textColor">@color/blue_500</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+    <style name="Title1TextStyleGreen" parent="@android:style/TextAppearance.Large">
+        <item name="android:textColor">@color/green_500</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+    <style name="Title1TextStyleGrey" parent="@android:style/TextAppearance.Large">
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+    <style name="Title1TextStyleRed" parent="@android:style/TextAppearance.Large">
+        <item name="android:textColor">@color/maroon</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+    <style name="Title1TextStyleWhite" parent="@android:style/TextAppearance.Large">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+    <style name="Title2TextStyleBlack" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+    <style name="Title2TextStyleBlue" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/navy_blue</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+    <style name="Title2TextStyleGreen" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/green</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+    <style name="Title2TextStyleGrey" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+    <style name="Title2TextStyleWhite" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+    <style name="Title3TextStyleBlack" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="Title3TextStyleBlue" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/navy_blue</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18sp</item>
+
+    </style>
+    <style name="Title3TextStyleGreen" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/green</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="Title3TextStyleGrey" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="Title3TextStyleRed" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/translucent_red</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="Title3TextStyleWhite" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="TransparentCircle" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xtransparent_oval</item>
+    </style>
+    <style name="TransparentCircleSmall" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:width">32dp</item>
+        <item name="android:height">32dp</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:background">@drawable/xtransparent_black_small</item>
+    </style>
+    <style name="YellowCircle" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/absa_red</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xyellow_oval</item>
+    </style>
+    <style name="ampm_label">
+        <item name="android:textSize">@dimen/ampm_label_size</item>
+        <item name="android:textColor">@color/ampm_text_color</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="day_of_week_label_condensed"/>
+    <style name="smallWhiteText" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="time_label">
+        <item name="android:textSize">@dimen/time_label_size</item>
+        <item name="android:textColor">@color/numbers_text_color</item>
+    </style>
+</resources>

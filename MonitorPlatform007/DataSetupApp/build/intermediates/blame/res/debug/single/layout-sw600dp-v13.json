@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/layout-sw600dp-v13/fragment_gps.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/layout-sw600dp-v13/fragment_gps.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/layout-sw600dp-v13/fragment_project_list.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/layout-sw600dp-v13/fragment_project_list.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/layout-sw600dp-v13/message_item.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/layout-sw600dp-v13/message_item.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/layout-sw600dp-v13/design_layout_snackbar.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/com.android.support/design/23.2.0/res/layout-sw600dp-v13/design_layout_snackbar.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/layout-sw600dp-v13/fab_send.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/layout-sw600dp-v13/fab_send.xml"
+    },
+    {
+        "merged": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/res/merged/debug/layout-sw600dp-v13/color_with_border.xml",
+        "source": "/Users/Nkululeko/Documents/MonitorAppsRepo/MonitorPlatform007/DataSetupApp/build/intermediates/exploded-aar/MonitorPlatform007/PlatformLibrary/unspecified/res/layout-sw600dp-v13/color_with_border.xml"
+    }
+]

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:padding="@dimen/mon_margin">
+
+    <RelativeLayout
+        android:id="@+id/FSL_panelTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/mon_margin">
+
+        <ImageView
+            android:id="@+id/FSL_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_email" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_toRightOf="@id/FSL_icon"
+            android:text="Monitor Platform Messaging" />
+
+        <ImageView
+            android:id="@+id/FSL_iconClose"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_clear" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/FSL_name"
+        style="@style/Title3TextStyleBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/FSL_panelTop"
+        android:layout_marginLeft="@dimen/mon_margin"
+        android:text="Person's Name Here" />
+
+    <TextView
+        android:id="@+id/FSL_fromMessage"
+        style="@style/TextStyleSmall"
+        android:textColor="@color/grey"
+        android:layout_marginTop="@dimen/mon_padding"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/FSL_name"
+        android:layout_marginLeft="@dimen/mon_margin"
+        android:text="TheMessage that needs to be responded to under thePerson's Name Here" />
+
+    <EditText
+        android:id="@+id/FSL_message"
+        android:maxLength="280"
+        android:maxLines="3"
+        android:lines="3"
+
+        android:inputType="textMultiLine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/FSL_fromMessage"
+        android:hint="Enter message here" />
+
+    <Button
+        android:id="@+id/FSL_btnSend"
+        style="@style/ButtonRed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/FSL_message"
+        android:layout_marginTop="@dimen/mon_margin"
+        android:drawableLeft="@android:drawable/ic_menu_send"
+        android:text="@string/send_message" />
+</RelativeLayout>

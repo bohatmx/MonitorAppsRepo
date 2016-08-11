@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/FMD_topLayout"
+            android:layout_width="match_parent"
+            android:layout_height="192dp">
+
+            <ImageView
+                android:id="@+id/FMP_backdrop"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/black_woman" />
+
+            <TextView
+                android:id="@+id/FMP_title"
+                style="@style/Title1TextStyleWhite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_margin="@dimen/mon_margin"
+                android:text="@string/monitor" />
+            <TextView
+                android:id="@+id/FMP_person"
+                style="@style/Title2TextStyleWhite"
+                android:layout_below="@id/FMP_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/mon_wide"
+                android:text="@string/monitor" />
+
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/FMD_midLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/FMD_topLayout"
+            android:padding="@dimen/mon_margin">
+
+
+
+            <RelativeLayout
+                android:id="@+id/box1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mon_wide">
+
+                <ImageView
+                    android:id="@+id/icon1"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_action_person" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/icon1">
+
+                    <EditText
+                        android:id="@+id/FMP_editFirstName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/mon_margin"
+
+                        android:hint="First Name"
+                        android:inputType="textCapWords" />
+                </android.support.design.widget.TextInputLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/box2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/box1">
+
+
+                <ImageView
+                    android:id="@+id/icon2"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_action_person" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/icon2">
+
+                    <EditText
+                        android:id="@+id/FMP_editLastName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/icon2"
+                        android:hint="Surname"
+                        android:inputType="textCapWords" />
+                </android.support.design.widget.TextInputLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/box3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/box2">
+
+                <ImageView
+                    android:id="@+id/icon3"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_action_globe" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/icon3">
+
+                    <EditText
+                        android:id="@+id/FMP_editID"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/icon3"
+                        android:hint="Identification Number"
+                        android:inputType="number" />
+                </android.support.design.widget.TextInputLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/box4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/box3">
+
+                <ImageView
+                    android:id="@+id/icon4"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/tick_32" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/icon4">
+
+                    <EditText
+                        android:id="@+id/FMP_editCell"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/icon4"
+                        android:hint="Cellphone Number"
+                        android:inputType="number" />
+                </android.support.design.widget.TextInputLayout>
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/box4a"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/box4">
+
+                <ImageView
+                    android:id="@+id/icon4a"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_action_message" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/icon4a">
+
+                    <EditText
+                        android:id="@+id/FMP_editEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/icon4a"
+                        android:hint="Email Address"
+                        android:inputType="textEmailAddress" />
+                </android.support.design.widget.TextInputLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/box5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/box4a">
+
+                <ImageView
+                    android:id="@+id/icon5"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_action_picture" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/icon5">
+
+                    <EditText
+                        android:id="@+id/FMP_editAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_toRightOf="@id/icon5"
+                        android:hint="Home Address"
+                        android:inputType="textCapWords" />
+                </android.support.design.widget.TextInputLayout>
+            </RelativeLayout>
+
+            <RadioGroup
+                android:id="@+id/FMP_radioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/box5"
+                android:layout_marginTop="@dimen/mon_margin"
+                android:layout_marginLeft="@dimen/mon_wider"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/FMP_radioMale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Male" />
+
+                <Space
+                    android:layout_width="@dimen/mon_wide"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/FMP_radioFemale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Female" />
+            </RadioGroup>
+            <RadioGroup
+                android:id="@+id/FMP_radioGroup2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/FMP_radioGroup"
+                android:layout_marginLeft="@dimen/mon_wider"
+                android:layout_marginTop="@dimen/mon_margin"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/FMP_radioActive"
+                    android:checked="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Active" />
+
+                <Space
+                    android:layout_width="@dimen/mon_wide"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/FMP_radioInactive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Not Active" />
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/FMP_btnSave"
+                style="@style/ButtonRed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/FMP_radioGroup2"
+                android:layout_marginTop="@dimen/mon_wider"
+                android:text="Save Data" />
+        </RelativeLayout>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/FMP_personImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="140dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/mon_margin"
+            android:scaleType="centerCrop"
+            android:src="@drawable/black_woman" />
+
+    </RelativeLayout>
+</ScrollView>

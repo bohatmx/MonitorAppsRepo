@@ -39,10 +39,20 @@ public class OKUtil {
 
 
     static Gson gson = new Gson();
-    public static final String DEV_URL = "http://192.168.1.233:40405/mp/gatex";
+   // public static final String DEV_URL = "http://10.0.0.102:40405/mp/gatex";
     public static final String PROD_URL = "http://bohamaker.com:3030/mp/gatex";
 
-    public static final String DEV_URL_CACHED = "http://192.168.1.233:40405/mp/cachedRequests";
+    //public static final String DEV_URL_CACHED = "http://192.168.1.253:40405/mp/cachedRequests";
+
+    //public static final String URL = "http://10.0.0.102:8080/mp/gatex";
+    public static final String DEV_URL = "http://10.0.0.102:8080/mp/gatex";
+    //public static final String DEV_URL = "http://10.0.0.102:40405/mp/gatex";
+   // public static final String PROD_URL = "http://bohamaker.com:3030/mp/gatex";
+
+   // public static final String DEV_URL_CACHED = "http://10.0.0.102:40405/mp/cachedRequests";
+    public static final String DEV_URL_CACHED = "http://10.0.0.102:8080/mp/cachedRequests";
+
+
     public static final String PROD_URL_CACHED = "http://bohamaker.com:3030/mp/cachedRequests";
 
     static final String FAILED_RESPONSE_NOT_SUCCESSFUL = "Request failed. Response not successful";
@@ -70,19 +80,24 @@ public class OKUtil {
         boolean isDebuggable = 0 != (ctx.getApplicationInfo().flags
                 &= ApplicationInfo.FLAG_DEBUGGABLE);
         if (isDebuggable) {
-            return PROD_URL;
+            return DEV_URL;
+          //  return PROD_URL;
         } else {
-            return PROD_URL;
+            return DEV_URL;
+         //  return PROD_URL;
         }
     }
 
     private String getURLCached(Context ctx) {
+
         boolean isDebuggable = 0 != (ctx.getApplicationInfo().flags
                 &= ApplicationInfo.FLAG_DEBUGGABLE);
         if (isDebuggable) {
-            return PROD_URL_CACHED;
+            return DEV_URL_CACHED;
+         //   return PROD_URL_CACHED;
         } else {
-            return PROD_URL_CACHED;
+            return DEV_URL_CACHED;
+        //   return PROD_URL_CACHED;
         }
     }
 

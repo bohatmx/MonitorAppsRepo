@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="@dimen/mon_padding"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/COUNTS_infoLayout"
+        android:layout_marginTop="@dimen/mon_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/COUNTS_taskCount"
+            style="@style/RedCountBoxSmall"
+            android:text="0"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/mon_padding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/COUNTS_label0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/COUNTS_taskCount"
+            android:layout_marginRight="@dimen/mon_margin"
+            android:text="Tasks" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/COUNTS_subLayout"
+        android:layout_marginTop="@dimen/mon_padding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/COUNTS_infoLayout">
+
+        <TextView
+            android:id="@+id/COUNTS_subtaskCount"
+            style="@style/GreenCountBoxSmall"
+            android:text="0"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/mon_padding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/COUNTS_label1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/COUNTS_subtaskCount"
+            android:layout_marginRight="@dimen/mon_margin"
+            android:text="Sub Tasks" />
+    </RelativeLayout>
+</RelativeLayout>

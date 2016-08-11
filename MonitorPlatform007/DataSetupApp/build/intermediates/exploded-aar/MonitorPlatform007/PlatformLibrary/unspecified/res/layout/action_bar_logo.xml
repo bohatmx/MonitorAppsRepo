@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ACTION_BAR_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:src="@drawable/glasses" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/mon_padding"
+            android:layout_toRightOf="@id/ACTION_BAR_logo">
+
+            <TextView
+                android:id="@+id/ACTION_BAR_text"
+                style="@style/TextStyleBoldSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Municipality Name"
+                android:textColor="@color/white" />
+            <TextView
+                android:id="@+id/ACTION_BAR_subText"
+                style="@style/TextStyleSmall"
+                android:layout_below="@id/ACTION_BAR_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="sub heading here" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+</RelativeLayout>

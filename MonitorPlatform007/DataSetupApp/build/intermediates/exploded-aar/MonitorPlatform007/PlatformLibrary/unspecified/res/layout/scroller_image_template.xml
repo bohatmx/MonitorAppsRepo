@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="@dimen/mon_divider_tiny"
+    android:background="@color/grey"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/statusColor"
+        android:scaleType="centerCrop"
+        android:src="@drawable/under_construction"
+        android:layout_width="@dimen/mon_picture_large"
+        android:layout_height="@dimen/mon_picture_larger" />
+
+    <TextView
+        android:id="@+id/statusColor"
+        android:text="00"
+        style="@style/TextStyleSmall"
+        android:textColor="@color/white"
+        android:layout_margin="@dimen/mon_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+
+</RelativeLayout><!-- From: file:/Volumes/HardDrive/REPOS/AAA-Dec2014-Repos/maono-android/MonitorPlatform006/MonPlatformLibrary/src/main/res/layout/scroller_image_template.xml -->

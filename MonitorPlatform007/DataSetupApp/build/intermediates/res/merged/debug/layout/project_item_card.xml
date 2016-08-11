@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/PROJ_top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/mon_padding"
+        android:padding="@dimen/mon_margin">
+
+        <RelativeLayout
+            android:id="@+id/PROJ_actions_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:padding="@dimen/mon_margin">
+
+            <ImageView
+                android:id="@+id/PROJ_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/mon_wider"
+                android:src="@android:drawable/ic_menu_compass" />
+
+            <ImageView
+                android:id="@+id/PROJ_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/mon_wider"
+                android:layout_toRightOf="@id/PROJ_location"
+                android:src="@android:drawable/ic_menu_delete" />
+
+            <ImageView
+                android:id="@+id/PROJ_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/mon_wider"
+                android:layout_toRightOf="@id/PROJ_delete"
+                android:src="@android:drawable/ic_menu_edit" />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/PROJ_name_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/PROJ_actions_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:padding="@dimen/mon_margin">
+
+            <TextView
+                android:id="@+id/PROJ_number"
+                style="@style/BlackCircleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1" />
+
+            <TextView
+                android:id="@+id/PROJ_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_toRightOf="@id/PROJ_number"
+                android:text="Project Name"
+                android:textStyle="bold"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/PROJ_citylayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/PROJ_name_layout">
+
+            <TextView
+                android:id="@+id/PROJ_cityName"
+                style="@style/Title3TextStyleBlue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:text="City Name" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/PROJ_tasklayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/PROJ_citylayout"
+            android:layout_marginLeft="@dimen/mon_wide">
+
+
+            <TextView
+                android:id="@+id/PROJ_taskCount"
+                style="@style/Title1TextStyleRed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:text="10" />
+
+            <TextView
+                android:id="@+id/PROJ_label0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:layout_toLeftOf="@id/PROJ_taskCount"
+                android:text="Project Monitored Tasks" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/PROJ_monlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/PROJ_tasklayout"
+            android:layout_marginLeft="@dimen/mon_wide"
+            android:padding="@dimen/mon_margin">
+
+
+            <TextView
+                android:id="@+id/PROJ_monCount"
+                style="@style/Title1TextStyleBlue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="789" />
+
+            <TextView
+                android:id="@+id/PROJ_label1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:layout_toLeftOf="@id/PROJ_monCount"
+                android:text="Project Monitors" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/PROJ_stafflayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/PROJ_monlayout"
+            android:layout_marginLeft="@dimen/mon_wide">
+
+
+            <TextView
+                android:id="@+id/PROJ_staffCount"
+                style="@style/Title1TextStyleBlack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:text="0" />
+
+            <TextView
+                android:id="@+id/PROJ_labelx"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:layout_toLeftOf="@id/PROJ_staffCount"
+                android:text="Project Staff" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/PROJ_locationConfirmedlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/PROJ_stafflayout"
+            android:layout_marginLeft="@dimen/mon_wide"
+            android:layout_marginTop="@dimen/mon_margin">
+
+
+            <ImageView
+                android:id="@+id/PROJ_locConfirmed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:src="@drawable/tick_32" />
+
+            <TextView
+                android:id="@+id/PROJ_label4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/mon_margin"
+
+                android:layout_toLeftOf="@id/PROJ_locConfirmed"
+                android:text="Project Location Confirmed" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/PROJ_locationNotConfirmedlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/PROJ_locationConfirmedlayout"
+            android:layout_marginLeft="@dimen/mon_wide">
+
+
+            <ImageView
+                android:id="@+id/PROJ_locNotConfirmed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:src="@drawable/cancel_32" />
+
+            <TextView
+                android:id="@+id/PROJ_label5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/mon_margin"
+
+                android:layout_toLeftOf="@id/PROJ_locNotConfirmed"
+                android:text="Project Location Confirmed" />
+        </RelativeLayout>
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

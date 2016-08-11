@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/STATLST_handle"
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
+
+    <RelativeLayout
+        android:id="@+id/STATLST_topView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/STATLST_handle">
+
+
+        <ImageView
+            android:id="@+id/STATLST_heroImage"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mon_hero_height_small"
+            android:scaleType="centerCrop"
+            android:src="@drawable/back10"
+            android:visibility="visible" />
+
+        <RelativeLayout
+            android:id="@+id/STATLST_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/STATLST_heroImage"
+            android:background="@color/beige_pale"
+            android:padding="@dimen/mon_padding">
+
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/STATLST_dates"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/STATLST_top"
+            android:background="@color/beige_pale">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="@dimen/mon_padding">
+
+                <TextView
+                    android:id="@+id/label1"
+                    style="@style/TextStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Start Date" />
+
+                <Button
+                    android:id="@+id/STATLST_startDate"
+                    style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/label1"
+                    android:text="Start Date"
+                    android:textColor="@color/blue"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="@dimen/mon_padding">
+
+                <TextView
+                    android:id="@+id/label2"
+                    style="@style/TextStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="End Date" />
+
+                <Button
+                    android:id="@+id/STATLST_endDate"
+                    style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/label2"
+                    android:text="End Date"
+                    android:textColor="@color/teal"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/STATLST_txtTitle"
+            style="@style/Title1TextStyleWhite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_marginTop="@dimen/mon_margin"
+            android:text="@string/status_rept" />
+
+        <TextView
+            android:id="@+id/STATLST_txtCount"
+            style="@style/Title1TextStyleWhite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/mon_wide"
+            android:layout_marginTop="@dimen/mon_margin"
+            android:text="000" />
+
+        <RelativeLayout
+            android:id="@+id/STATLST_photoLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mon_divider"
+            android:layout_below="@id/STATLST_txtTitle">
+
+
+            <TextView
+                android:id="@+id/STATLST_txtPhotoCountLabel"
+                style="@style/TextStyleWhiteSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/mon_wide"
+                android:layout_marginTop="@dimen/mon_divider"
+                android:text="Number Of Photos" />
+
+            <TextView
+                android:id="@+id/STATLST_txtPhotoCount"
+                style="@style/BlackCircleSmall"
+                android:layout_toRightOf="@id/STATLST_txtPhotoCountLabel"
+                android:textSize="11dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:text="0" />
+        </RelativeLayout>
+
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:elevation="@dimen/mon_margin"
+            android:layout_marginRight="@dimen/mon_margin"
+            android:layout_marginTop="@dimen/mon_widest"
+            android:src="@drawable/ic_action_search" />
+
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/STATLST_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/STATLST_topView"
+        android:layout_marginTop="@dimen/mon_divider"
+        android:background="@color/white"
+        android:dividerHeight="4dp" />
+
+
+</RelativeLayout>

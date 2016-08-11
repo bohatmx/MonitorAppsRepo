@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.boha.monitor.setup"
+    android:versionCode="2"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="19"
+        android:targetSdkVersion="23" />
+
+    <!-- DEV API KEY: AIzaSyCoeT0P_4FBk2qt7f_1KMkzUCBNWsoSiDo -->
+    <!-- PROD API KEY: AIzaSyA1ePn3jrM-aU61Cz4kTk-ehE0cfLnfzVk -->
+
+    <permission
+        android:name="com.boha.platform.worker.setup.gcm.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.boha.platform.monitor.setup.gcm.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- Include required permissions for Analytics to run. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <application
+        android:name="com.boha.monitor.library.activities.MonApp"
+        android:allowBackup="true"
+        android:icon="@drawable/glasses"
+        android:label="@string/app_name"
+        android:theme="@style/RedTheme" >
+
+        <!-- Keys and metadata -->
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyA1ePn3jrM-aU61Cz4kTk-ehE0cfLnfzVk" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <!-- SERVICES -->
+        <service android:name="com.boha.monitor.library.services.RegistrationIntentService" />
+
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="com.boha.platform.monitor" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.boha.monitor.setup.services.DataSetupGCMListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.boha.monitor.library.services.MonInstanceIDListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name="com.boha.monitor.setup.activities.FileImportActivity"
+            android:label="@string/app_name"
+            android:parentActivityName="com.boha.monitor.setup.activities.CompanyListActivity" >
+        </activity>
+        <activity
+            android:name="com.boha.monitor.setup.activities.MainPagerActivity"
+            android:label="@string/title_activity_data_import" >
+        </activity>
+        <activity
+            android:name="com.boha.monitor.setup.activities.TaskTypeListActivity"
+            android:label="@string/title_activity_task_type_list"
+            android:parentActivityName="com.boha.monitor.setup.activities.CompanyListActivity" >
+        </activity>
+        <activity
+            android:name="com.boha.monitor.setup.activities.TaskListActivity"
+            android:label="@string/title_activity_task" >
+        </activity>
+        <activity
+            android:name="com.boha.monitor.setup.activities.ProgrammeListActivity"
+            android:parentActivityName="com.boha.monitor.setup.activities.CompanyDrawerActivity" />
+        <activity android:name="com.boha.monitor.setup.activities.SignInActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.boha.monitor.setup.activities.ProjectDataListActivity"
+            android:parentActivityName="com.boha.monitor.setup.activities.ProgrammeListActivity" />
+        <activity
+            android:name="com.boha.monitor.setup.activities.CompanyDrawerActivity"
+            android:label="@string/title_activity_main_drawer" >
+        </activity>
+        <activity
+            android:name="com.boha.monitor.setup.activities.ProjectAssignmentActivity"
+            android:label="@string/title_activity_project_assignment" >
+        </activity>
+        <!-- SERVICES -->
+        <service android:name="com.boha.monitor.library.services.GPSLocationService" />
+        <service android:name="com.boha.monitor.library.services.PhotoUploadService" />
+        <service android:name="com.boha.monitor.library.services.VideoUploadService" />
+        <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
+        <service
+            android:name="com.google.android.gms.analytics.AnalyticsService"
+            android:enabled="true"
+            android:exported="false" /> <!-- RECEIVERS -->
+        <receiver android:name="com.boha.monitor.library.services.LocationTrackerReceiver" />
+        <receiver android:name="com.boha.monitor.library.services.RequestAlarmReceiver" />
+        <receiver android:name="com.boha.monitor.library.services.DataRefreshReceiver" />
+        <receiver android:name="com.boha.monitor.library.services.BootReceiver" />
+        <receiver
+            android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name="com.boha.monitor.library.activities.SimpleMessagingActivity"
+            android:label="@string/title_activity_messaging" />
+        <activity
+            android:name="com.boha.monitor.library.activities.PhotoScrollerActivity"
+            android:label="@string/title_activity_photo_scroller" />
+        <activity
+            android:name="com.boha.monitor.library.activities.DeviceListActivity"
+            android:label="@string/title_activity_location_tracker" />
+
+        <service
+            android:name="com.boha.monitor.library.services.CachingService"
+            android:exported="false" />
+
+        <activity
+            android:name="com.boha.monitor.library.activities.ProfileActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name="com.boha.monitor.library.activities.ProjectAssignmentActivity"
+            android:label="@string/title_activity_project_assignment" />
+        <activity
+            android:name="com.boha.monitor.library.activities.HighDefActivity"
+            android:label="@string/title_activity_high_def" />
+        <activity
+            android:name="com.boha.monitor.library.activities.ProjectSelectionActivity"
+            android:label="@string/title_activity_project_selection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <service
+            android:name="com.boha.monitor.library.services.RequestIntentService"
+            android:exported="false" />
+        <service
+            android:name="com.boha.monitor.library.services.DataRefreshService"
+            android:exported="false" />
+
+        <activity
+            android:name="com.boha.monitor.library.activities.ProjectTaskActivity"
+            android:label="@string/title_activity_project_task" />
+
+        <receiver
+            android:name="com.boha.monitor.library.services.PhotoUploadBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <provider
+            android:name="com.google.android.gms.measurement.AppMeasurementContentProvider"
+            android:authorities="com.boha.monitor.setup.google_measurement_service"
+            android:exported="false" />
+
+        <receiver
+            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="com.google.android.gms.measurement.UPLOAD" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.google.android.gms.measurement.AppMeasurementService"
+            android:enabled="true"
+            android:exported="false" />
+    </application>
+
+</manifest>

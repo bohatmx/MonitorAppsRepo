@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/mon_padding">
+
+    <ImageView
+        android:id="@+id/DI_icon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/ic_action_new"
+        android:tint="@color/teal" />
+
+    <TextView
+        android:id="@+id/DI_txtTitle"
+        style="@style/TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/mon_margin"
+        android:layout_toRightOf="@id/DI_icon"
+        android:text="Name of Action" />
+
+    <TextView
+        android:id="@+id/DI_txtCount"
+        style="@style/Title2TextStyleBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="8dp"
+        android:text="0" />
+
+</RelativeLayout>

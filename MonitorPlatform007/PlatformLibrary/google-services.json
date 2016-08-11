@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "418561474192",
+    "project_id": "monitorproject-1029"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:418561474192:android:5d63abc40d8c5474",
+        "android_client_info": {
+          "package_name": "com.boha.platform.library"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "418561474192-kl6kvc1egq0t6k0q9mnar4fjouq8oids.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.boha.platform.library",
+            "certificate_hash": "22DB2064643C9A8F0C5B23CF4E48FF4981A98D7B"
+          }
+        },
+        {
+          "client_id": "418561474192-0jspfhkqfbtrkohdauapg6nkpmrp7qsj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlwTp6jDgGgZnZCzscX0zpwhx4YW5KzFk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

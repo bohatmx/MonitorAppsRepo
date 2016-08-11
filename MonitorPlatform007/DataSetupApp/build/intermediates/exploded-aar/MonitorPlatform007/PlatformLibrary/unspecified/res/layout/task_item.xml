@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/grey"
+    android:padding="@dimen/mon_divider_tiny"
+    android:id="@+id/card"
+    tools:cardCornerRadius="0dp"
+    tools:cardElevation="0dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="@dimen/mon_margin">
+
+        <RelativeLayout
+            android:id="@+id/TSK_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/mon_divider_tiny">
+
+            <ImageView
+                android:id="@+id/TSK_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_action_assessment" />
+
+            <TextView
+                android:id="@+id/TSK_taskName"
+                style="@style/Title3TextStyleBlack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_toRightOf="@id/TSK_icon"
+                android:text="Project Task Name Here" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/TSK_middle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/TSK_top"
+            android:padding="@dimen/mon_divider_tiny">
+
+            <TextView
+                android:id="@+id/TSK_label1"
+                style="@style/TextStyleGreySmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="Updates" />
+
+            <TextView
+                android:id="@+id/TSK_statusCount"
+                style="@style/Title2TextStyleGreen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/mon_padding"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:layout_toRightOf="@id/TSK_label1"
+                android:text="130,399" />
+
+            <TextView
+                android:id="@+id/TSK_label2"
+                style="@style/TextStyleGreySmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/TSK_statusCount"
+                android:text="Last" />
+
+            <TextView
+                android:id="@+id/TSK_date"
+                style="@style/TextStyleBoldBlueSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/mon_padding"
+                android:layout_toRightOf="@id/TSK_label2"
+                android:text="23 December 2099 11:33" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/TSK_middle2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/TSK_middle"
+            android:visibility="gone"
+            android:padding="@dimen/mon_divider_tiny">
+
+            <TextView
+                android:id="@+id/TSK_label3"
+                style="@style/TextStyleGreySmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="Photos:"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/TSK_photoCount"
+                style="@style/TextStyleBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:layout_toRightOf="@id/TSK_label3"
+                android:text="45,703" />
+
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/TSK_middle3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/TSK_middle2"
+            android:padding="@dimen/mon_divider_tiny">
+
+            <TextView
+                android:id="@+id/TSK_label3a"
+                style="@style/TextStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="Last Status:"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/TSK_statusColor"
+                android:background="@drawable/xgrey_oval_small"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:layout_toRightOf="@id/TSK_label3a" />
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

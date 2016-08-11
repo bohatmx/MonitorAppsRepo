@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/mon_padding"
+    tools:cardCornerRadius="8dp">
+
+    <RelativeLayout
+        android:id="@+id/top"
+        android:layout_marginLeft="@dimen/mon_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/PSN_imagex"
+            android:layout_width="@dimen/mon_widest"
+            android:layout_height="@dimen/mon_widest"
+            android:layout_centerVertical="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/black_woman"
+ />
+
+        <RelativeLayout
+            android:id="@+id/PSN_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/PSN_imagex">
+
+            <TextView
+                android:id="@+id/PSN_txtName"
+                style="@style/Title3TextStyleBlack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/mon_padding"
+                android:text="PersonsNameHere" />
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/PSN_layoutCount"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/top"
+        android:layout_marginRight="@dimen/mon_wide"
+        android:layout_marginTop="@dimen/mon_wider"
+        android:visibility="visible">
+
+
+        <TextView
+            android:id="@+id/PSN_txtCounter"
+            style="@style/BlueCircleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="5dp"
+
+            android:text="0" />
+
+        <TextView
+            android:id="@+id/PSN_txtCounterLabel"
+            style="@style/TextStyleGreySmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/PSN_txtCounter"
+            android:text="status_updates" />
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
+

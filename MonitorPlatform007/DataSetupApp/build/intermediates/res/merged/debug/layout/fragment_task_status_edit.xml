@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/TSE_top"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mon_hero_height_medium_lite">
+
+        <ImageView
+            android:id="@+id/TSE_backdrop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/back10" />
+
+        <TextView
+            android:id="@+id/TSE_title"
+            style="@style/Title1TextStyleWhite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/mon_margin"
+            android:text="@string/status_updates" />
+
+        <TextView
+            android:id="@+id/TSE_taskName"
+            style="@style/TextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@id/TSE_title"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/mon_margin"
+            android:padding="@dimen/mon_padding"
+            android:text="Task Name Here"
+            android:textColor="@color/white" />
+        <ImageView
+            android:id="@+id/TSE_iconCancel"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:tint="@color/white"
+            android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/mon_margin"
+            android:src="@drawable/ic_action_clear" />
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/TSE_actionLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/TSE_top"
+        android:background="@color/beige_pale"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/TSE_statusType"
+            style="@style/Title2TextStyleBlue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:text="Task Status Type Here" />
+
+        <include
+            android:id="@+id/TSE_btn"
+            layout="@layout/btn_red"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/mon_wide"
+            android:layout_marginRight="@dimen/mon_wide"
+            android:layout_below="@id/TSE_statusType"
+            android:layout_marginTop="@dimen/mon_padding" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/TSE_btn"
+            android:visibility="gone"
+            android:layout_marginBottom="@dimen/mon_padding"
+            android:layout_marginTop="@dimen/mon_padding">
+
+            <TextView
+                android:id="@+id/TSE_time"
+                style="@style/TextStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="00:30" />
+
+            <TextView
+                android:id="@+id/TSE_result"
+                style="@style/TextStyleRedSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_toRightOf="@id/TSE_time"
+                android:text="The result shown here" />
+
+            <ImageView
+                android:id="@+id/TSE_closeIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_action_clear" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/TSE_pLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/TSE_actionLayout">
+
+        <HorizontalScrollView
+            android:id="@+id/TSE_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/TSE_photoContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/TSE_btnLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/TSE_pLayout"
+        android:padding="@dimen/mon_margin">
+
+        <Button
+            android:id="@+id/TSE_btnDone"
+            style="@style/ButtonNavyBlue"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_marginRight="@dimen/mon_margin"
+            android:text="Status Completed" />
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/TSE_btnLayout"
+        android:layout_marginTop="@dimen/mon_padding"
+        android:layout_marginLeft="@dimen/mon_padding"
+        android:layout_marginRight="@dimen/mon_padding"
+        android:scrollbars="vertical" />
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/mon_wide"
+        android:layout_marginTop="100dp"
+        android:elevation="@dimen/mon_margin"
+        android:src="@drawable/camera_a32" />
+
+</RelativeLayout>

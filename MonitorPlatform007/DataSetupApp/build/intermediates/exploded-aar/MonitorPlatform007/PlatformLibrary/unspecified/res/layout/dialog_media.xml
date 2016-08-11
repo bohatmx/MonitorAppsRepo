@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="@dimen/mon_wide"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/DM_title"
+        android:text="Select Media"
+        style="@style/Title1TextStyleBlack"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/DM_message"
+        android:layout_below="@id/DM_title"
+        android:layout_marginTop="@dimen/mon_wide"
+        android:text="@string/select_media"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:id="@+id/DM_cancel"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_action_clear"
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_below="@id/DM_message"
+        android:layout_marginTop="@dimen/mon_wider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/DM_video"
+            android:text="Video Clip"
+            style="@style/TextStyleBlue"
+            android:layout_weight="2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/DM_photo"
+            android:text="Photo"
+            style="@style/TextStyleBlue"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/mon_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

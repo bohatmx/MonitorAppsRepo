@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center"
+    android:id="@+id/FAB"
+    android:elevation="@dimen/mon_divider"
+    android:padding="@dimen/mon_padding"
+    android:background="@drawable/xsteelblue_oval_large"
+    android:layout_width="56dp"
+    android:layout_height="56dp">
+
+    <ImageView
+        android:id="@+id/FAB_icon"
+        android:tint="@color/white"
+        android:visibility="visible"
+        android:src="@drawable/ic_action_new"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/FAB_text"
+        android:text="33"
+        style="@style/Title2TextStyleWhite"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_below="@id/FAB_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

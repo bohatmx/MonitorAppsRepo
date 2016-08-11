@@ -1,0 +1,76 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context="com.boha.monitor.library.fragments.PhotoGridFragment">
+
+    <RelativeLayout
+        android:id="@+id/FPG_top"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/mon_margin"
+        android:paddingTop="@dimen/mon_padding">
+
+        <TextView
+            android:id="@+id/FPG_days"
+            style="@style/Title1TextStyleGreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="3" />
+
+        <TextView
+            android:id="@+id/FPG_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_toRightOf="@id/FPG_days"
+            android:text="Days" />
+
+        <SeekBar
+            android:id="@+id/FPG_seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/FPG_label"
+            android:max="30"
+            android:progress="3" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/FPG_seekLayout"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/FPG_top">
+
+        <TextView
+            android:id="@+id/FPG_label2"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Number of days from today to find pictures" />
+        <ImageView
+            android:id="@+id/FPG_icon"
+            android:src="@drawable/ic_action_search"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/mon_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/FPG_seekLayout"
+        android:scrollbars="vertical" />
+
+</RelativeLayout>

@@ -1,0 +1,132 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/mon_padding"
+    android:background="@color/grey"
+    tools:context="com.boha.monitor.library.fragments.ProjectTaskFragment">
+
+
+    <RelativeLayout
+        android:id="@+id/FPT_top"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/mon_padding">
+
+        <TextView
+            android:id="@+id/FPT_count"
+            style="@style/Title1TextStyleGreen"
+            android:textSize="48sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/mon_padding"
+            android:layout_centerVertical="true"
+            android:text="00" />
+
+        <TextView
+            android:id="@+id/FPT_title"
+            style="@style/Title2TextStyleBlack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/mon_margin"
+            android:layout_toLeftOf="@id/FPT_count"
+            android:text="Project Name Here" />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/FPT_top2"
+        android:layout_below="@id/FPT_top"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/FPT_count2"
+            style="@style/Title1TextStyleGrey"
+            android:textSize="24sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/mon_margin"
+            android:layout_centerVertical="true"
+            android:text="00" />
+
+        <TextView
+            android:id="@+id/FPT_title2"
+            style="@style/TextStyle"
+            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/mon_margin"
+            android:layout_toLeftOf="@id/FPT_count2"
+            android:text="Total Tasks" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/FPT_middle"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/FPT_top2">
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/FPT_bottom"
+        android:layout_width="match_parent"
+        android:background="@color/beige_pale"
+        android:padding="@dimen/mon_padding"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/FPT_middle">
+
+        <ImageView
+            android:id="@+id/FPT_addIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_action_add" />
+
+        <EditText
+            android:id="@+id/FPT_editProjectName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapWords"
+            android:layout_toLeftOf="@id/FPT_addIcon"
+            android:hint="Enter new Project name" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/FPT_lowest"
+        android:layout_below="@id/FPT_bottom"
+        android:background="@color/beige_pale"
+        android:padding="@dimen/mon_padding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <CheckBox
+            android:id="@+id/FPT_chkBoxAll"
+            android:text="Select All Tasks"
+
+            android:textSize="20sp"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/FPT_recycler"
+        android:background="@color/white"
+        android:layout_marginTop="@dimen/mon_padding"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/FPT_lowest" />
+
+
+</RelativeLayout>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorPrimary"
+    android:padding="0dp">
+
+
+    <RelativeLayout
+        android:id="@+id/CAM_layout1"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/CAM_layout2"
+            android:visibility="gone"
+            android:padding="@dimen/mon_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/CAM_title"
+                style="@style/Title2TextStyleBlack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Project Name Here" />
+
+            <TextView
+                android:id="@+id/CAM_subTitle"
+                style="@style/Title3TextStyleBlack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/CAM_title"
+                android:layout_marginTop="@dimen/mon_padding"
+                android:text="Task Name Here" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/CAM_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/CAM_layout2"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:scaleType="centerCrop"
+            android:src="@drawable/back15" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/CAM_layout2"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:background="@color/white"
+            android:scrollbars="vertical"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="@dimen/mon_wide"
+        android:layout_marginRight="@dimen/mon_wide"
+        android:elevation="@dimen/mon_margin"
+        android:src="@drawable/camera_a32" />
+    <TextView
+        android:id="@+id/CAM_count"
+        style="@style/Title1TextStyleRed"
+        android:textSize="@dimen/mon_wider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/mon_margin"
+        android:layout_marginTop="@dimen/mon_margin"
+        android:text="0" />
+
+</RelativeLayout>

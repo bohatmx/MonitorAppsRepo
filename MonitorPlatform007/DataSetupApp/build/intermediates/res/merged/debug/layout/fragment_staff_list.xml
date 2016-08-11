@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.boha.monitor.library.fragments.StaffListFragment">
+
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+        xmlns:sothree="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/sliding_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        sothree:umanoDragView="@+id/dragView"
+        sothree:umanoOverlay="true"
+        sothree:umanoPanelHeight="68dp"
+        sothree:umanoScrollableView="@+id/list"
+        sothree:umanoShadowHeight="4dp">
+
+        <FrameLayout
+            android:id="@+id/FSL_frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <include layout="@layout/staff_list_include"/>
+        </FrameLayout>
+
+        <RelativeLayout
+            android:id="@+id/FSL_panel"
+            android:padding="@dimen/mon_margin"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mon_picture_large">
+
+            <include layout="@layout/message_panel"/>
+        </RelativeLayout>
+
+
+
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/mon_wide"
+        android:layout_marginTop="@dimen/mon_hero_height_medium_lite"
+        android:elevation="@dimen/mon_margin"
+        android:src="@drawable/ic_action_location_on" />
+
+
+</RelativeLayout>

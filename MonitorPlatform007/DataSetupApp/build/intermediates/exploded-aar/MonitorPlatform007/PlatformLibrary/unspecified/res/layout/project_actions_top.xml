@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/mon_margin"
+    android:background="@color/white"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/PA_camera"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:src="@drawable/ic_action_camera" />
+    <ImageView
+        android:id="@+id/PA_directions"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:src="@drawable/ic_action_directions" />
+    <ImageView
+        android:id="@+id/PA_doStatus"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:elevation="@dimen/mon_padding"
+        android:layout_weight="1"
+        android:src="@drawable/ic_action_edit" />
+    <ImageView
+        android:id="@+id/PA_locations"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:src="@drawable/ic_action_globe" />
+
+</LinearLayout>

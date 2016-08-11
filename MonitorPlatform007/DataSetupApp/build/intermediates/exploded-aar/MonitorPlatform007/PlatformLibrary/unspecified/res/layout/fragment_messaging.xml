@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/MSG_topLayout"
+                android:layout_alignParentTop="true"
+                android:layout_width="match_parent"
+                android:layout_height="192dp">
+
+                <RelativeLayout
+                    android:id="@+id/handle"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"/>
+
+                <ImageView
+                    android:id="@+id/backdrop"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/back13" />
+
+                <RelativeLayout
+                    android:id="@+id/layout0"
+                    android:layout_marginTop="@dimen/mon_margin"
+                    android:background="@color/white"
+                    android:padding="@dimen/mon_padding"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true">
+
+                    <ImageView
+                        android:id="@+id/MSG_iconAdd"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/mon_margin"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/ic_action_add_person" />
+
+                    <TextView
+                        android:id="@+id/MSG_recipients"
+                        style="@style/TextStyle"
+                        android:text="Recipients"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/mon_margin"
+                        android:layout_toLeftOf="@id/MSG_iconAdd" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_above="@id/layout0"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/MSG_name"
+                        style="@style/Title2TextStyleWhite"
+                        android:layout_width="wrap_content"
+                        android:layout_marginLeft="@dimen/mon_margin"
+                        android:layout_height="wrap_content"
+                        android:text="MonitorChats" />
+
+                    <ImageView
+                        android:id="@+id/MSG_clear"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/mon_margin"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_action_clear"
+                        android:tint="@color/white" />
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/MSG_midLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/MSG_topLayout"
+                android:padding="@dimen/mon_margin">
+                <ListView
+                    android:id="@+id/MSG_messageList"
+                    android:padding="@dimen/mon_padding"
+                    android:layout_marginTop="@dimen/mon_margin"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/beige_pale"
+        android:padding="@dimen/mon_margin">
+
+        <ImageView
+            android:id="@+id/MSG_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="?attr/colorPrimaryDark"
+            android:layout_alignParentRight="true"
+            android:elevation="@dimen/mon_margin"
+            android:src="@android:drawable/ic_menu_send" />
+
+        <EditText
+            android:id="@+id/MSG_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/mon_margin"
+            android:layout_toLeftOf="@id/MSG_send"
+            android:hint="Enter Message" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

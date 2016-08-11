@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/TSKT_taskCard"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:cardCornerRadius="4dp"
+    tools:cardElevation="@dimen/mon_divider">
+
+    <RelativeLayout
+        android:id="@+id/TSKT_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="@dimen/mon_padding">
+
+        <TextView
+            android:id="@+id/TSKT_number"
+            style="@style/GreyCircleSmall"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/btn_star"
+            android:text="0" />
+
+        <TextView
+            android:id="@+id/TSKT_taskName"
+            style="@style/Title3TextStyleBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/mon_margin"
+            android:layout_marginTop="@dimen/mon_padding"
+            android:layout_toRightOf="@id/TSKT_number"
+            android:text=" Task Name Here" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/TSKT_taskName"
+            android:layout_below="@id/TSKT_taskName">
+
+            <CheckBox
+                android:id="@+id/TSKT_chkBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mon_margin"
+                android:text="Assigned to Project"
+                android:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/TSKT_deleteIcon"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/mon_margin"
+                android:src="@drawable/ic_action_clear"
+                android:tint="@color/absa_red" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+</android.support.v7.widget.CardView>

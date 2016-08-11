@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="@dimen/mon_margin"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/CHATMSG_toLayout"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/xmessage_red"
+        android:padding="@dimen/mon_padding"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/CHATMSG_chatNameLayoutTo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/CHATMSG_headerTo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/CHATMSG_chatNameTo"
+                    android:text="#ChatNameHere"
+                    style="@style/TextStyleWhiteSmall"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <RelativeLayout
+                    android:id="@+id/CHATMSG_colorTo"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <include layout="@layout/color_with_border" />
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/CHATMSG_cover1"
+                android:layout_below="@id/CHATMSG_headerTo"
+                android:padding="@dimen/mon_padding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/CHATMSG_iconTo"
+                    android:layout_width="@dimen/mon_widest"
+                    android:layout_height="@dimen/mon_widest"
+                    android:src="@drawable/boy" />
+
+
+                <TextView
+                    android:id="@+id/CHATMSG_toStaff"
+                    android:text="Catherine Beauty Malabie"
+                    android:layout_toRightOf="@id/CHATMSG_iconTo"
+                    android:layout_marginLeft="@dimen/mon_padding"
+                    android:layout_centerVertical="true"
+                    style="@style/TextStyleBoldSmall"
+                    android:textColor="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/CHATMSG_messageTo"
+            android:layout_below="@id/CHATMSG_chatNameLayoutTo"
+            android:text="Message To Someone Out There"
+            android:padding="@dimen/mon_divider"
+            style="@style/TextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <RelativeLayout
+            android:layout_below="@id/CHATMSG_messageTo"
+            android:padding="@dimen/mon_divider"
+            android:layout_marginTop="@dimen/mon_divider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/CHATMSG_messageToDate"
+                android:text="9 December 2099"
+                style="@style/TextStyleSmall"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/CHATMSG_messageToTime"
+                android:text="19:33"
+                style="@style/TextStyleBoldBlueSmall"
+                android:textColor="@color/midnight_blue"
+                android:layout_toRightOf="@id/CHATMSG_messageToDate"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/CHATMSG_fromLayout"
+        android:layout_below="@id/CHATMSG_toLayout"
+        android:padding="@dimen/mon_padding"
+        android:background="@drawable/xmessage_x"
+        android:layout_alignParentLeft="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/CHATMSG_headerFrom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/CHATMSG_chatNameFrom"
+                android:text="#ChatNameHere"
+                style="@style/TextStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RelativeLayout
+                android:id="@+id/CHATMSG_colorFrom"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <include layout="@layout/color_with_border" />
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/CHATMSG_fnameLayout"
+            android:layout_below="@id/CHATMSG_headerFrom"
+            android:padding="@dimen/mon_padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/CHATMSG_iconFrom"
+                android:layout_width="@dimen/mon_widest"
+                android:layout_height="@dimen/mon_widest"
+                android:src="@drawable/boy" />
+
+
+            <TextView
+                android:id="@+id/CHATMSG_fromStaff"
+                android:text="Aubrey Malabie"
+                android:layout_toRightOf="@id/CHATMSG_iconFrom"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/mon_padding"
+                style="@style/TextStyleBoldSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/CHATMSG_messageFrom"
+            android:layout_below="@id/CHATMSG_fnameLayout"
+            android:text="Message From Someone Out There"
+            android:padding="@dimen/mon_divider"
+            style="@style/TextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <RelativeLayout
+            android:layout_below="@id/CHATMSG_messageFrom"
+            android:padding="@dimen/mon_divider"
+            android:layout_marginTop="@dimen/mon_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/CHATMSG_messageFromDate"
+                android:text="9 December 2099"
+                style="@style/TextStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/CHATMSG_messageFromTime"
+                android:text="19:39"
+                style="@style/TextStyleBoldBlueSmall"
+                android:layout_toRightOf="@id/CHATMSG_messageFromDate"
+                android:layout_marginLeft="@dimen/mon_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>
